@@ -6,9 +6,11 @@ tag=${1:?usage: build_text.sh TAG}
 N=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../native" && pwd)
 out=/workspace/build/$tag
 mkdir -p "$out" && cd "$out"
-flags=(-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I "$N/include")
+# EXTRA_FLAGS: e.g. -DLFM_GEMM_TENSOR_CORE_MODEL for the validation build with Blackwell's tensor-core arithmetic.
+flags=(-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM ${EXTRA_FLAGS:-} -I "$N/include")
+echo "flags: ${flags[*]}" > /dev/null
 (cd "$N" && sha256sum src/lfm3_main.cu apps/lfm3_score.cu src/safetensors.cpp include/lfm/*.hpp include/lfm/*.cuh) > sources.sha256
-nvcc --version | tail -2 > toolchain.txt; gcc --version | head -1 >> toolchain.txt
+printf "%s\n" "${flags[*]}" > flags.txt; nvcc --version | tail -2 > toolchain.txt; gcc --version | head -1 >> toolchain.txt
 build() {  # NAME SOURCE
   if ! nvcc "${flags[@]}" -o "$1" "$N/$2" "$N/src/safetensors.cpp" > "$1.build.log" 2>&1; then
     grep -E "error" "$1.build.log" | sort | uniq -c | head -20; echo "build_text.sh: $1 FAILED"; exit 1
