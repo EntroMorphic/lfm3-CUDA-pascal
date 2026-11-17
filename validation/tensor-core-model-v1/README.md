@@ -62,6 +62,24 @@ Not established:
   tested, except `norm` and plain FMA, which agree.
 - A GPU implementation. The model has only run in NumPy.
 
+## Prior work (looked up after the result, 2026-11-17)
+
+This model was found here without reference to the literature, and it is not new. From search results (abstracts
+and summaries only; the papers have not been read):
+
+- FTTN (Li et al., CCGrid 2024, arXiv:2403.00232): tests that reveal tensor cores' rounding mode (truncation or
+  nearest), extra internal bits and block-FMA width; reports that these differ between GPU generations.
+- MMA-Sim (Xie et al., arXiv:2511.10909): bit-accurate reference models of tensor cores derived by black-box
+  testing, eight NVIDIA and two AMD architectures.
+- "Bit-Exact AI Inference Verification Without Performance Tradeoffs" (arXiv:2606.00279): a software emulator with
+  per-GPU profiles including Blackwell, described as aligning products to a maximum exponent within a fixed-point
+  window, truncating what is shifted out, summing as integers and truncating to FP32. That is the form found here.
+- Hawkeye (arXiv:2603.20421) and a MATLAB model set (arXiv:2512.07004): bit-exact CPU replication of tensor-core
+  tile updates.
+
+Before a GPU kernel is written from this record, those papers should be read: they may give the cases this record
+lists as not established, and reference code.
+
 ## What it is for
 
 If the remaining kernels also agree, a build of the Pascal engine whose prefill GEMM uses this arithmetic would have
