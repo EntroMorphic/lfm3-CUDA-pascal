@@ -1,0 +1,32 @@
+baseline: 34 rows
+  0.embed.bf16                       MATCH
+  0.layers.0.operator_norm.bf16      MATCH
+  0.layers.0.conv.in_proj.bf16       MATCH
+  0.layers.0.conv.product.bf16       MATCH
+  0.layers.0.operator.bf16           MATCH
+  0.layers.0.residual.bf16           MATCH  [fp32-then-bf16]
+  0.layers.0.ffn_norm.bf16           MATCH
+  0.layers.0.feed_forward.w1.bf16    MATCH
+  0.layers.0.feed_forward.w3.bf16    MATCH
+  0.layers.0.feed_forward.product.bf16 MATCH  [exp-correct]
+  0.layers.0.feed_forward.bf16       MATCH
+  0.layers.0.output.bf16             MATCH
+  (20 s)
+window257: 257 rows
+  0.embed.bf16                       MATCH
+  0.layers.0.operator_norm.bf16      MATCH
+  0.layers.0.conv.in_proj.bf16       MATCH
+  0.layers.0.conv.product.bf16       MATCH
+  0.layers.0.operator.bf16           MATCH
+  0.layers.0.residual.bf16           MATCH  [fp32-then-bf16]
+  0.layers.0.ffn_norm.bf16           MATCH
+  0.layers.0.feed_forward.w1.bf16    MATCH
+  0.layers.0.feed_forward.w3.bf16    MATCH
+  0.layers.0.feed_forward.product.bf16 MATCH  [exp-correct]
+  0.layers.0.feed_forward.bf16       MATCH
+  0.layers.0.output.bf16             MATCH
+  (149 s)
+single: 1 rows
+  0.embed.bf16                       MATCH
+  0.layers.0.operator_norm.bf16      MATCH
+  0.layers.0.conv.in_proj.bf16       differ ()

@@ -106,6 +106,31 @@ pins) the Blackwell parameters MMA-Sim reports for other Blackwell parts.
 The cases listed above as not established (zeros, subnormals, infinities, NaN, cancellation) are only partly
 covered in what was read of the paper; its code is the place to look.
 
+## All of layer 0 (2026-11-17)
+
+`tools/pascal/tensor_core/layer0.py` computes every traced tensor of layer 0 (a convolution layer) on the CPU: the
+four GEMMs with the published model (K = 2,048 three times and K = 7,680 once), everything else transcribed from
+the engine's kernels in IEEE FP32 (`layer0.log`).
+
+| Tensor | `arithmetic` (31 rows) | `baseline` (34) | `window257` (257) |
+|---|---|---|---|
+| `embed`, `operator_norm`, `ffn_norm` | equal | equal | equal |
+| `conv.in_proj`, `operator` (`conv.out_proj`), `feed_forward.w1`, `.w3`, `feed_forward` (`w2`) | equal | equal | equal |
+| `conv.product` (the width-7 convolution) | equal | equal | equal |
+| `residual`, `output` (norm, then BF16 add of the residual as an FP32 add rounded to BF16) | equal | equal | equal |
+| `feed_forward.product` (SwiGLU, with `expf` taken as the correctly rounded exponential) | equal | equal | equal |
+
+All 12 traced tensors of layer 0 equal the Thor pins on all three fixtures. On these inputs Blackwell's `expf` and
+`rsqrtf` gave the correctly rounded results (or results that round to the same BF16 outputs).
+
+The 1-row fixture (`single`) is not in the table: with one row the engine's GEMMs are the `thin` kernels (plain FMA,
+no tensor core), which the control above reproduces; `layer0.py` applies the tensor-core model to every GEMM and so
+does not reproduce that fixture past `operator_norm`, as expected.
+
+Still not established: the attention layers (FP32 scores, softmax, rotary `cosf`/`sinf`, the gate's `expf`), the
+decode steps, and all of it on the GTX 1080 itself, whose `expf`, `rsqrtf`, `cosf` and `sinf` have not been compared
+with anything yet.
+
 ## What it is for
 
 If the remaining kernels also agree, a build of the Pascal engine whose prefill GEMM uses this arithmetic would have
