@@ -77,8 +77,34 @@ and summaries only; the papers have not been read):
 - Hawkeye (arXiv:2603.20421) and a MATLAB model set (arXiv:2512.07004): bit-exact CPU replication of tensor-core
   tile updates.
 
-Before a GPU kernel is written from this record, those papers should be read: they may give the cases this record
-lists as not established, and reference code.
+### The published model, read and tested (2026-11-17)
+
+MMA-Sim's algorithm for NVIDIA's mixed-precision tensor cores (its "T-FDPA", as read from the paper's HTML by a
+helper; the per-architecture table came through a summary and should be checked against the paper): products
+exact; each term's exponent is the *sum of its operands' exponents*, the accumulator's its own; all terms are
+truncated toward zero to F fractional bits below the largest exponent, summed exactly, and rounded; for Blackwell
+16 products per step, F = 25 and the final rounding toward zero. MMA-Sim's hardware includes B200 and RTX PRO 6000
+Blackwell, not Jetson Thor. Code: github.com/microsoft/MMA-Sim.
+
+That is this record's model with one difference: where the window sits when a product is the largest term. This
+record used the product's leading bit, which is one higher than the exponent sum when the significands' product is
+2 or more.
+
+`tools/pascal/tensor_core/tfdpa.py` runs both forms:
+
+| Fixture | T-FDPA (L 16, F 25, RZ) | Leading-bit form | Outputs differing between them | Steps where their windows differ |
+|---|---|---|---:|---:|
+| `arithmetic` | equal to the Thor pin | equal | 0 of 190,464 | 3.47% |
+| `baseline` | equal | equal | 0 of 208,896 | 3.51% |
+| `window257` | equal | equal | 0 of 1,579,008 | 3.54% |
+
+So these data cannot tell the two forms apart: they place the window differently on 3.5% of steps and still give
+the same BF16 outputs. The published form was derived from targeted tests on hardware, which can tell them apart,
+and it is the one a GPU kernel here should implement. It also confirms on Jetson Thor (through the Thor engine's
+pins) the Blackwell parameters MMA-Sim reports for other Blackwell parts.
+
+The cases listed above as not established (zeros, subnormals, infinities, NaN, cancellation) are only partly
+covered in what was read of the paper; its code is the place to look.
 
 ## What it is for
 
