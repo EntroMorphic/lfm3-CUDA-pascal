@@ -62,4 +62,5 @@ with red-team, remediate, verify, commit.
 - **LFM3-1.7B at its 262,144-token context** (owner's question, 2026-11-17). Same backbone as Omni-2B's language
   model (3,297 MiB). By calculation it fits in 8 GB only with all three of: keys and values kept for the 6 full
   layers alone (12 KiB per token: 3,072 MiB), row-tiled prefill scratch, and prefill in chunks through the cache
-  (the engine prefills only into an empty cache today). Nothing measured.
+  (the engine prefills only into an empty cache today). Nothing measured. Written up in
+  [docs/long-context-memory.md](docs/long-context-memory.md).
