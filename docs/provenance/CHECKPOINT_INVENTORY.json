@@ -1,0 +1,10 @@
+{
+  "checkpoint": "/home/ztflynn/Projects/000-research/lfm3-omni-2B/models/LFM3-Omni-2B",
+  "architecture": "lfm3_omni",
+  "text_tensor_prefix": "model.language_model.",
+  "validated_text_tensors": 286,
+  "text_weight_bytes": 3457603072,
+  "other_tensors": 379,
+  "native_lfm3_execution_ready": false,
+  "validation_scope": "text tensor header names, shapes, BF16 dtype and byte ranges; no numerical parity test"
+}

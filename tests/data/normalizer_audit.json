@@ -1,0 +1,2803 @@
+{
+ "source": "tools/normalizer_audit_corpus.py",
+ "count": 373,
+ "entries": [
+  {
+   "category": "cardinal",
+   "text": "I counted 7 birds.",
+   "expect": "I counted seven birds.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "There were 13 of them.",
+   "expect": "There were thirteen of them.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "She is 42.",
+   "expect": "She is forty-two.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "We sold 389 tickets.",
+   "expect": "We sold three hundred eighty-nine tickets.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "It holds 100 people.",
+   "expect": "It holds one hundred people.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "About 1500 people came.",
+   "expect": "About one thousand five hundred people came.",
+   "also": [
+    "About fifteen hundred people came."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "The town has 12,000 residents.",
+   "expect": "The town has twelve thousand residents.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "The city has 1,234,567 people.",
+   "expect": "The city has one million two hundred thirty-four thousand five hundred sixty-seven people.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "We need 0 errors.",
+   "expect": "We need zero errors.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "He ran 10 miles and 3 laps.",
+   "expect": "He ran ten miles and three laps.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "It costs 99 cents.",
+   "expect": "It costs ninety-nine cents.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "There are 101 dalmatians.",
+   "expect": "There are one hundred one dalmatians.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "Page 250 is missing.",
+   "expect": "Page two hundred fifty is missing.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "They planted 3500 trees.",
+   "expect": "They planted three thousand five hundred trees.",
+   "also": [
+    "They planted thirty-five hundred trees."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "A crowd of 25,000 cheered.",
+   "expect": "A crowd of twenty-five thousand cheered.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "It weighs 7500 tons.",
+   "expect": "It weighs seven thousand five hundred tons.",
+   "also": [
+    "It weighs seventy-five hundred tons."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "The budget is 2,500,000,000 dollars.",
+   "expect": "The budget is two billion five hundred million dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "Room 12 is open.",
+   "expect": "Room twelve is open.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "Chapter 3 begins here.",
+   "expect": "Chapter three begins here.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "Flight 447 left late.",
+   "expect": "Flight four forty-seven left late.",
+   "also": [
+    "Flight four hundred forty-seven left late."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "cardinal",
+   "text": "Highway 101 was closed.",
+   "expect": "Highway one oh one was closed.",
+   "also": [
+    "Highway one hundred one was closed."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "cardinal",
+   "text": "Only 1 seat is left.",
+   "expect": "Only one seat is left.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "He scored 1000 points.",
+   "expect": "He scored one thousand points.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "Model 3 sold well.",
+   "expect": "Model three sold well.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "cardinal",
+   "text": "The 3 of us went.",
+   "expect": "The three of us went.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "She came 1st.",
+   "expect": "She came first.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "He finished 2nd.",
+   "expect": "He finished second.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 3rd try worked.",
+   "expect": "The third try worked.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "Our 4th child was born.",
+   "expect": "Our fourth child was born.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 11th hour arrived.",
+   "expect": "The eleventh hour arrived.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "It was the 12th day.",
+   "expect": "It was the twelfth day.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 13th floor is missing.",
+   "expect": "The thirteenth floor is missing.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "Her 21st birthday was fun.",
+   "expect": "Her twenty-first birthday was fun.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 22nd entry won.",
+   "expect": "The twenty-second entry won.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 23rd Psalm is short.",
+   "expect": "The twenty-third Psalm is short.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 40th anniversary came.",
+   "expect": "The fortieth anniversary came.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 100th visitor won.",
+   "expect": "The one hundredth visitor won.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 101st Airborne landed.",
+   "expect": "The one hundred first Airborne landed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "It was his 1000th game.",
+   "expect": "It was his one thousandth game.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 19th century ended.",
+   "expect": "The nineteenth century ended.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "In the 21st century we fly.",
+   "expect": "In the twenty-first century we fly.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 2nd and 3rd places tied.",
+   "expect": "The second and third places tied.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 52nd week ended.",
+   "expect": "The fifty-second week ended.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "The 99th percentile is high.",
+   "expect": "The ninety-ninth percentile is high.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "ordinal",
+   "text": "We live on the 5th floor.",
+   "expect": "We live on the fifth floor.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "It is 3.5 meters long.",
+   "expect": "It is three point five meters long.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "Pi is about 3.14159.",
+   "expect": "Pi is about three point one four one five nine.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "The rate is 0.25.",
+   "expect": "The rate is zero point two five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "Add 2.75 cups of flour.",
+   "expect": "Add two point seven five cups of flour.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "It grew by 1.5 times.",
+   "expect": "It grew by one point five times.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "The score was 9.8 out of 10.",
+   "expect": "The score was nine point eight out of ten.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "The value is 12.05.",
+   "expect": "The value is twelve point zero five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "It measured .5 inches.",
+   "expect": "It measured point five inches.",
+   "also": [
+    "It measured zero point five inches."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "The ratio is 1,234.5.",
+   "expect": "The ratio is one thousand two hundred thirty-four point five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "He ran 26.2 miles.",
+   "expect": "He ran twenty-six point two miles.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "The GPA was 3.85.",
+   "expect": "The GPA was three point eight five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "decimal",
+   "text": "It costs 4.99 a month.",
+   "expect": "It costs four point nine nine a month.",
+   "also": [
+    "It costs four ninety-nine a month."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "negative",
+   "text": "It fell to -5 overnight.",
+   "expect": "It fell to minus five overnight.",
+   "also": [
+    "It fell to negative five overnight."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "negative",
+   "text": "The balance is -200.",
+   "expect": "The balance is minus two hundred.",
+   "also": [
+    "The balance is negative two hundred."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "negative",
+   "text": "The slope is -0.5.",
+   "expect": "The slope is minus zero point five.",
+   "also": [
+    "The slope is negative zero point five."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "negative",
+   "text": "Set x to −3.",
+   "expect": "Set x to minus three.",
+   "also": [
+    "Set x to negative three."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "negative",
+   "text": "The change was -12%.",
+   "expect": "The change was minus twelve percent.",
+   "also": [
+    "The change was negative twelve percent."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "negative",
+   "text": "It is -40° outside.",
+   "expect": "It is minus forty degrees outside.",
+   "also": [
+    "It is negative forty degrees outside."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "negative",
+   "text": "Profits were -$3 million.",
+   "expect": "Profits were minus three million dollars.",
+   "also": [
+    "Profits were negative three million dollars."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "negative",
+   "text": "The score went from 5 to -2.",
+   "expect": "The score went from five to minus two.",
+   "also": [
+    "The score went from five to negative two."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "Wait 3-5 days.",
+   "expect": "Wait three to five days.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "Ages 18-25 may apply.",
+   "expect": "Ages eighteen to twenty-five may apply.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "He served from 1990-2000.",
+   "expect": "He served from nineteen ninety to two thousand.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "Read pages 10-20.",
+   "expect": "Read pages ten to twenty.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "The war lasted 1939-1945.",
+   "expect": "The war lasted nineteen thirty-nine to nineteen forty-five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "It takes 5–10 minutes.",
+   "expect": "It takes five to ten minutes.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "Temperatures of 70-75 are ideal.",
+   "expect": "Temperatures of seventy to seventy-five are ideal.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "Open 9-5 on weekdays.",
+   "expect": "Open nine to five on weekdays.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "Prices rose 2-3% this year.",
+   "expect": "Prices rose two to three percent this year.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "The 2010-2015 data is in.",
+   "expect": "The twenty ten to twenty fifteen data is in.",
+   "also": [
+    "The two thousand ten to two thousand fifteen data is in."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "range",
+   "text": "Costs run $10-$20.",
+   "expect": "Costs run ten to twenty dollars.",
+   "also": [
+    "Costs run ten dollars to twenty dollars."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "range",
+   "text": "We need 100-200 volunteers.",
+   "expect": "We need one hundred to two hundred volunteers.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "She was born in 1984.",
+   "expect": "She was born in nineteen eighty-four.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "It happened in 1905.",
+   "expect": "It happened in nineteen oh five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "By 1900 the city had grown.",
+   "expect": "By nineteen hundred the city had grown.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "In 2000 we moved.",
+   "expect": "In two thousand we moved.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "In 2005 it rained.",
+   "expect": "In two thousand five it rained.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "The plan ends in 2026.",
+   "expect": "The plan ends in twenty twenty-six.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "Since 2010 sales have risen.",
+   "expect": "Since twenty ten sales have risen.",
+   "also": [
+    "Since two thousand ten sales have risen."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "The 1990s were loud.",
+   "expect": "The nineteen nineties were loud.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "The 2000s began quietly.",
+   "expect": "The two thousands began quietly.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "Music of the 1960s endures.",
+   "expect": "Music of the nineteen sixties endures.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "The year 1776 matters.",
+   "expect": "The year seventeen seventy-six matters.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "It was built circa 1850.",
+   "expect": "It was built circa eighteen fifty.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "We hired 1999 workers.",
+   "expect": "We hired one thousand nine hundred ninety-nine workers.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "He wrote 1200 pages.",
+   "expect": "He wrote one thousand two hundred pages.",
+   "also": [
+    "He wrote twelve hundred pages."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "The treaty of 1648 ended it.",
+   "expect": "The treaty of sixteen forty-eight ended it.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "Back in 1066, England changed.",
+   "expect": "Back in ten sixty-six, England changed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "It was 2019.",
+   "expect": "It was twenty nineteen.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "We met in the summer of 1969.",
+   "expect": "We met in the summer of nineteen sixty-nine.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "During 1918 the flu spread.",
+   "expect": "During nineteen eighteen the flu spread.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "The 1800s saw railways.",
+   "expect": "The eighteen hundreds saw railways.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "Copyright 2024 by the authors.",
+   "expect": "Copyright twenty twenty-four by the authors.",
+   "also": [
+    "Copyright two thousand twenty-four by the authors."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "year",
+   "text": "In the '90s we danced.",
+   "expect": "In the nineties we danced.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "Founded in 1st century AD.",
+   "expect": "Founded in first century AD.",
+   "also": [
+    "Founded in first century A D."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "There were 2024 entries.",
+   "expect": "There were two thousand twenty-four entries.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "year",
+   "text": "He was born on May 4, 1970.",
+   "expect": "He was born on May fourth, nineteen seventy.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "It costs $5.",
+   "expect": "It costs five dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "It costs $1.",
+   "expect": "It costs one dollar.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "That is $3.50.",
+   "expect": "That is three dollars and fifty cents.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "Only $0.99 today.",
+   "expect": "Only ninety-nine cents today.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "A fee of $0.01 applies.",
+   "expect": "A fee of one cent applies.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "We raised $1,250.",
+   "expect": "We raised one thousand two hundred fifty dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "It sold for $1.5 million.",
+   "expect": "It sold for one point five million dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "A $2 billion deal closed.",
+   "expect": "A two billion dollar deal closed.",
+   "also": [
+    "A two billion dollars deal closed."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "money",
+   "text": "The bill was £5.",
+   "expect": "The bill was five pounds.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "It costs £2.50.",
+   "expect": "It costs two pounds and fifty pence.",
+   "also": [
+    "It costs two pounds fifty."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "Tickets are €20.",
+   "expect": "Tickets are twenty euros.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "That's €0.05.",
+   "expect": "That's five cents.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "She owes $1.01.",
+   "expect": "She owes one dollar and one cent.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "The fine is $100.",
+   "expect": "The fine is one hundred dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "A $5 bill fell out.",
+   "expect": "A five dollar bill fell out.",
+   "also": [
+    "A five dollars bill fell out."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "money",
+   "text": "Pay $12.10 now.",
+   "expect": "Pay twelve dollars and ten cents now.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "It grossed $3.2B.",
+   "expect": "It grossed three point two billion dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "Revenue hit $5M.",
+   "expect": "Revenue hit five million dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "It was 50 cents.",
+   "expect": "It was fifty cents.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "We spent $40k.",
+   "expect": "We spent forty thousand dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "He earns $75,000 a year.",
+   "expect": "He earns seventy-five thousand dollars a year.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "It costs USD 30.",
+   "expect": "It costs thirty US dollars.",
+   "also": [
+    "It costs USD thirty."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "That's $3.5.",
+   "expect": "That's three dollars and fifty cents.",
+   "also": [
+    "That's three point five dollars."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "money",
+   "text": "Gas is $3.999 a gallon.",
+   "expect": "Gas is three point nine nine nine dollars a gallon.",
+   "also": [
+    "Gas is three dollars and ninety-nine point nine cents a gallon."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "money",
+   "text": "Prices were £1.2 million.",
+   "expect": "Prices were one point two million pounds.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "percent",
+   "text": "Sales rose 5%.",
+   "expect": "Sales rose five percent.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "percent",
+   "text": "Only 0.5% passed.",
+   "expect": "Only zero point five percent passed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "percent",
+   "text": "We're 100% sure.",
+   "expect": "We're one hundred percent sure.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "percent",
+   "text": "It was 12.5 % higher.",
+   "expect": "It was twelve point five percent higher.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "percent",
+   "text": "About 1,000% growth.",
+   "expect": "About one thousand percent growth.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "percent",
+   "text": "Turnout was 67 percent.",
+   "expect": "Turnout was sixty-seven percent.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "percent",
+   "text": "A 3% raise helps.",
+   "expect": "A three percent raise helps.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "Meet me at 7:45.",
+   "expect": "Meet me at seven forty-five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "It starts at 9:00.",
+   "expect": "It starts at nine o'clock.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "The bus left at 7:05.",
+   "expect": "The bus left at seven oh five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "Call at 3:30 pm.",
+   "expect": "Call at three thirty pm.",
+   "also": [
+    "Call at three thirty p.m."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "Call at 3:30pm.",
+   "expect": "Call at three thirty pm.",
+   "also": [
+    "Call at three thirty p.m."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "Dinner is at 6:15 p.m.",
+   "expect": "Dinner is at six fifteen p.m.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "It opens at 9:00 AM.",
+   "expect": "It opens at nine AM.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "The train is at 15:00.",
+   "expect": "The train is at fifteen hundred.",
+   "also": [
+    "The train is at fifteen o'clock.",
+    "The train is at three o'clock."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "time",
+   "text": "Lunch at 12:30.",
+   "expect": "Lunch at twelve thirty.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "The meeting is at 10:00 a.m.",
+   "expect": "The meeting is at ten a.m.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "It ended at 23:59.",
+   "expect": "It ended at twenty-three fifty-nine.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "The alarm went off at 0:30.",
+   "expect": "The alarm went off at zero thirty.",
+   "also": [
+    "The alarm went off at twelve thirty."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "time",
+   "text": "He ran a 4:05 mile.",
+   "expect": "He ran a four oh five mile.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "The video is 1:23:45 long.",
+   "expect": "The video is one hour twenty-three minutes forty-five seconds long.",
+   "also": [
+    "The video is one twenty-three forty-five long."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "time",
+   "text": "Wake at 6 am.",
+   "expect": "Wake at six am.",
+   "also": [
+    "Wake at six a.m."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "We close at 5 p.m.",
+   "expect": "We close at five p.m.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "time",
+   "text": "The score at halftime was 2:1.",
+   "expect": "The score at halftime was two to one.",
+   "also": [
+    "The score at halftime was two one."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "time",
+   "text": "Mix in a 3:1 ratio.",
+   "expect": "Mix in a three to one ratio.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "Due 1/2/2024.",
+   "expect": "Due January second, twenty twenty-four.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "Born 11/9/2026.",
+   "expect": "Born November ninth, twenty twenty-six.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "On 12/25/2025 we rest.",
+   "expect": "On December twenty-fifth, twenty twenty-five we rest.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "See you Jan. 5.",
+   "expect": "See you January fifth.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "It began on March 3.",
+   "expect": "It began on March third.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "On July 4th we celebrate.",
+   "expect": "On July fourth we celebrate.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "On Sept. 11 the towers fell.",
+   "expect": "On September eleventh the towers fell.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "Dec. 31, 1999 was a Friday.",
+   "expect": "December thirty-first, nineteen ninety-nine was a Friday.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "The 4th of July is soon.",
+   "expect": "The fourth of July is soon.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "Due 2024-03-15.",
+   "expect": "Due March fifteenth, twenty twenty-four.",
+   "also": [
+    "Due twenty twenty-four oh three fifteen."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "date",
+   "text": "Born 15/03/1990.",
+   "expect": "Born March fifteenth, nineteen ninety.",
+   "also": [
+    "Born fifteen oh three nineteen ninety."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "date",
+   "text": "On May 1 we march.",
+   "expect": "On May first we march.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "On Feb. 29, 2024 it snowed.",
+   "expect": "On February twenty-ninth, twenty twenty-four it snowed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "Monday, June 10, 2024.",
+   "expect": "Monday, June tenth, twenty twenty-four.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "The 3rd of May is a holiday.",
+   "expect": "The third of May is a holiday.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "From Jan. to Mar. it rains.",
+   "expect": "From January to March it rains.",
+   "also": [
+    "From Jan. to Mar. it rains."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "In May 2020 we stayed home.",
+   "expect": "In May twenty twenty we stayed home.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "date",
+   "text": "The deadline is 6/30.",
+   "expect": "The deadline is June thirtieth.",
+   "also": [
+    "The deadline is six thirtieths."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "date",
+   "text": "On 3/4 we leave.",
+   "expect": "On March fourth we leave.",
+   "also": [
+    "On three quarters we leave."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "fraction",
+   "text": "Add 1/2 cup.",
+   "expect": "Add one half cup.",
+   "also": [
+    "Add a half cup."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "Eat 3/4 of it.",
+   "expect": "Eat three quarters of it.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "Only 2/3 remain.",
+   "expect": "Only two thirds remain.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "Cut 1/3 off.",
+   "expect": "Cut one third off.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "Use 1/8 teaspoon.",
+   "expect": "Use one eighth teaspoon.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "About 5/8 inch.",
+   "expect": "About five eighths inch.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "It is 2 1/2 miles.",
+   "expect": "It is two and a half miles.",
+   "also": [
+    "It is two and one half miles."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "It holds 1/10 of a liter.",
+   "expect": "It holds one tenth of a liter.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "Use ½ cup.",
+   "expect": "Use one half cup.",
+   "also": [
+    "Use a half cup.",
+    "Use ½ cup."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "A 50/50 split.",
+   "expect": "A fifty fifty split.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "fraction",
+   "text": "The odds were 9/1.",
+   "expect": "The odds were nine to one.",
+   "also": [
+    "The odds were nine ones."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "fraction",
+   "text": "He is 24/7 busy.",
+   "expect": "He is twenty-four seven busy.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "Call 555-0142.",
+   "expect": "Call five five five, oh one four two.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "Call (555) 123-4567.",
+   "expect": "Call five five five, one two three, four five six seven.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "Call 555-123-4567.",
+   "expect": "Call five five five, one two three, four five six seven.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "Call 555.123.4567.",
+   "expect": "Call five five five, one two three, four five six seven.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "Call 1-800-555-0199.",
+   "expect": "Call one, eight hundred, five five five, oh one nine nine.",
+   "also": [
+    "Call one, eight oh oh, five five five, oh one nine nine."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "Call 911 now.",
+   "expect": "Call nine one one now.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "Dial +1 415 555 0123.",
+   "expect": "Dial plus one, four one five, five five five, oh one two three.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "My extension is 4021.",
+   "expect": "My extension is four oh two one.",
+   "also": [
+    "My extension is forty twenty-one."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "phone",
+   "text": "The zip code is 12345.",
+   "expect": "The zip code is one two three four five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "phone",
+   "text": "The PIN is 0042.",
+   "expect": "The PIN is zero zero four two.",
+   "also": [
+    "The PIN is oh oh four two."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "World War II ended.",
+   "expect": "World War Two ended.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "Henry VIII had six wives.",
+   "expect": "Henry the Eighth had six wives.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "Queen Elizabeth II reigned long.",
+   "expect": "Queen Elizabeth the Second reigned long.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "I think so.",
+   "expect": "I think so.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "Super Bowl LVIII was close.",
+   "expect": "Super Bowl fifty-eight was close.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "Read Chapter IV first.",
+   "expect": "Read Chapter Four first.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "Louis XIV built Versailles.",
+   "expect": "Louis the Fourteenth built Versailles.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "roman",
+   "text": "Rocky III came out.",
+   "expect": "Rocky Three came out.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Drive 12 km north.",
+   "expect": "Drive twelve kilometers north.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It weighs 1 kg.",
+   "expect": "It weighs one kilogram.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Take 500 mg daily.",
+   "expect": "Take five hundred milligrams daily.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "The peak is 2,800 ft.",
+   "expect": "The peak is two thousand eight hundred feet.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "We drove 65 mph.",
+   "expect": "We drove sixty-five miles per hour.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It's 5 ft tall.",
+   "expect": "It's five feet tall.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Pour 250 ml of water.",
+   "expect": "Pour two hundred fifty milliliters of water.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It is 30 cm wide.",
+   "expect": "It is thirty centimeters wide.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Wait 10 min.",
+   "expect": "Wait ten minutes.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It's 72°F today.",
+   "expect": "It's seventy-two degrees Fahrenheit today.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Water boils at 100°C.",
+   "expect": "Water boils at one hundred degrees Celsius.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Set the oven to 350 °F.",
+   "expect": "Set the oven to three hundred fifty degrees Fahrenheit.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It was 20° today.",
+   "expect": "It was twenty degrees today.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "The file is 2 GB.",
+   "expect": "The file is two gigabytes.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Use 3 lbs of beef.",
+   "expect": "Use three pounds of beef.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It's 8 oz.",
+   "expect": "It's eight ounces.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "We used 40 kWh.",
+   "expect": "We used forty kilowatt hours.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It runs 2 hrs.",
+   "expect": "It runs two hours.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "The pipe is 15 mm thick.",
+   "expect": "The pipe is fifteen millimeters thick.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It went 0.5 mi.",
+   "expect": "It went zero point five miles.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "The room is 12 m long.",
+   "expect": "The room is twelve meters long.",
+   "also": [
+    "The room is twelve m long."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Add 5 g of salt.",
+   "expect": "Add five grams of salt.",
+   "also": [
+    "Add five g of salt."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It is 6 in. long.",
+   "expect": "It is six inches long.",
+   "also": [
+    "It is six in. long."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "unit",
+   "text": "The tank holds 20 L.",
+   "expect": "The tank holds twenty liters.",
+   "also": [
+    "The tank holds twenty L."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "A 100 W bulb.",
+   "expect": "A one hundred watt bulb.",
+   "also": [
+    "A one hundred W bulb."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It's 5'10\" tall.",
+   "expect": "It's five feet ten inches tall.",
+   "also": [
+    "It's five ten tall."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "It cost 5 min of work.",
+   "expect": "It cost five minutes of work.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "The 5k race starts soon.",
+   "expect": "The five K race starts soon.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "The car does 0-60 in 4 sec.",
+   "expect": "The car does zero to sixty in four seconds.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "The 2 ft. board broke.",
+   "expect": "The two foot board broke.",
+   "also": [
+    "The two feet board broke."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "unit",
+   "text": "It is 1 mile away.",
+   "expect": "It is one mile away.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "unit",
+   "text": "Speed: 120 kph.",
+   "expect": "Speed: one hundred twenty kilometers per hour.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Mr. Smith arrived.",
+   "expect": "Mister Smith arrived.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Mrs. Jones waved.",
+   "expect": "Missus Jones waved.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Ms. Lee spoke.",
+   "expect": "Miz Lee spoke.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Dr. Patel is in.",
+   "expect": "Doctor Patel is in.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Turn onto Elm Dr. now.",
+   "expect": "Turn onto Elm Drive now.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "St. Paul wrote letters.",
+   "expect": "Saint Paul wrote letters.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "He lives on Main St. now.",
+   "expect": "He lives on Main Street now.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "We visited St. Louis.",
+   "expect": "We visited Saint Louis.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Go down Oak St. Then turn.",
+   "expect": "Go down Oak Street. Then turn.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Bring pens, paper, etc.",
+   "expect": "Bring pens, paper, et cetera.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Fruit, e.g. apples, is good.",
+   "expect": "Fruit, for example apples, is good.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Use one, i.e. the red one.",
+   "expect": "Use one, that is the red one.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Fruit (e.g., apples) is good.",
+   "expect": "Fruit (for example, apples) is good.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "It's Lakers vs. Celtics.",
+   "expect": "It's Lakers versus Celtics.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "It's Lakers vs Celtics.",
+   "expect": "It's Lakers versus Celtics.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Prof. Kim teaches.",
+   "expect": "Professor Kim teaches.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Martin Luther King Jr. spoke.",
+   "expect": "Martin Luther King Junior spoke.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Mt. Everest is tall.",
+   "expect": "Mount Everest is tall.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Acme Inc. hired me.",
+   "expect": "Acme Incorporated hired me.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Apt. 4 is free.",
+   "expect": "Apartment four is free.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "It's approx. 5 miles.",
+   "expect": "It's approximately five miles.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Gen. Grant won.",
+   "expect": "General Grant won.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Sen. Warren spoke.",
+   "expect": "Senator Warren spoke.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "No. 5 is mine.",
+   "expect": "Number five is mine.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Ticket #12 won.",
+   "expect": "Ticket number twelve won.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "I said no. Then I left.",
+   "expect": "I said no. Then I left.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Est. 1920.",
+   "expect": "Established nineteen twenty.",
+   "also": [
+    "Est. nineteen twenty."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Smith & Sons built it.",
+   "expect": "Smith and Sons built it.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "R&D grew.",
+   "expect": "R and D grew.",
+   "also": [
+    "R&D grew."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Capt. Hook sailed.",
+   "expect": "Captain Hook sailed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Lt. Dan waited.",
+   "expect": "Lieutenant Dan waited.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Sgt. Pepper played.",
+   "expect": "Sergeant Pepper played.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Rep. Ortiz voted.",
+   "expect": "Representative Ortiz voted.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Gov. Brown signed it.",
+   "expect": "Governor Brown signed it.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "The Dept. of Energy.",
+   "expect": "The Department of Energy.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Acme Corp. grew.",
+   "expect": "Acme Corporation grew.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Smith Co. closed.",
+   "expect": "Smith Company closed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Max. speed is 50.",
+   "expect": "Maximum speed is fifty.",
+   "also": [
+    "Max. speed is fifty."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Wait 5 min. then go.",
+   "expect": "Wait five minutes then go.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Read it, etc. and so on.",
+   "expect": "Read it, et cetera and so on.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "He is a Jr. analyst.",
+   "expect": "He is a junior analyst.",
+   "also": [
+    "He is a Jr. analyst."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "It is the Co. that pays.",
+   "expect": "It is the company that pays.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "St. Patrick's Day is fun.",
+   "expect": "Saint Patrick's Day is fun.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "The Smiths live at 12 Oak St.",
+   "expect": "The Smiths live at twelve Oak Street.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Dr. Martin Luther King Jr. Blvd. is long.",
+   "expect": "Doctor Martin Luther King Junior Boulevard is long.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "Washington, D.C. is big.",
+   "expect": "Washington, D.C. is big.",
+   "also": [
+    "Washington, D C is big."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "abbrev",
+   "text": "The U.S. economy grew.",
+   "expect": "The U.S. economy grew.",
+   "also": [
+    "The U S economy grew."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "NASA launched it.",
+   "expect": "NASA launched it.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "The FBI called.",
+   "expect": "The FBI called.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "Use a USB cable.",
+   "expect": "Use a USB cable.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "The CEO resigned.",
+   "expect": "The CEO resigned.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "Ask the AI.",
+   "expect": "Ask the AI.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "The COVID-19 pandemic spread.",
+   "expect": "The COVID nineteen pandemic spread.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "I have an MP3 player.",
+   "expect": "I have an MP three player.",
+   "also": [
+    "I have an MP3 player."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "Use 4G or 5G.",
+   "expect": "Use four G or five G.",
+   "also": [
+    "Use 4G or 5G."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "It runs on an A15 chip.",
+   "expect": "It runs on an A fifteen chip.",
+   "also": [
+    "It runs on an A15 chip."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "I drive a 4x4.",
+   "expect": "I drive a four by four.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "Watch it in 3D.",
+   "expect": "Watch it in three D.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "A 401(k) plan helps.",
+   "expect": "A four oh one k plan helps.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "Take I-95 south.",
+   "expect": "Take I ninety-five south.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "The F-150 sells well.",
+   "expect": "The F one fifty sells well.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "She flew a Boeing 747.",
+   "expect": "She flew a Boeing seven forty-seven.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "acronym",
+   "text": "Use H2O and CO2.",
+   "expect": "Use H two O and C O two.",
+   "also": [
+    "Use H2O and CO2."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "version",
+   "text": "Update to v2.0.",
+   "expect": "Update to version two point oh.",
+   "also": [
+    "Update to v two point oh.",
+    "Update to v2.0."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "version",
+   "text": "Python 3.10 is out.",
+   "expect": "Python three point ten is out.",
+   "also": [
+    "Python three point one zero is out."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "version",
+   "text": "Install version 1.2.3.",
+   "expect": "Install version one point two point three.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "version",
+   "text": "Upgrade to iOS 17.",
+   "expect": "Upgrade to iOS seventeen.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "version",
+   "text": "Windows 11 shipped.",
+   "expect": "Windows eleven shipped.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "version",
+   "text": "Use HTTP/2.",
+   "expect": "Use HTTP two.",
+   "also": [
+    "Use HTTP/2."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "version",
+   "text": "Release 2.4.1 fixed it.",
+   "expect": "Release two point four point one fixed it.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "url",
+   "text": "Visit example.com today.",
+   "expect": "Visit example dot com today.",
+   "also": [
+    "Visit example.com today."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "url",
+   "text": "Email me at bob@example.com.",
+   "expect": "Email me at bob at example dot com.",
+   "also": [
+    "Email me at bob@example.com."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "url",
+   "text": "See https://example.org/page.",
+   "expect": "See example dot org slash page.",
+   "also": [
+    "See https://example.org/page."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "url",
+   "text": "Connect to 192.168.1.1 now.",
+   "expect": "Connect to one nine two dot one six eight dot one dot one now.",
+   "also": [
+    "Connect to 192.168.1.1 now."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "url",
+   "text": "Go to www.site2.com.",
+   "expect": "Go to w w w dot site two dot com.",
+   "also": [
+    "Go to www.site2.com."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "url",
+   "text": "Port 8080 is open.",
+   "expect": "Port eighty eighty is open.",
+   "also": [
+    "Port eight thousand eighty is open."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "hashtag",
+   "text": "Tag it #summer.",
+   "expect": "Tag it hashtag summer.",
+   "also": [
+    "Tag it #summer."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "hashtag",
+   "text": "We're #1!",
+   "expect": "We're number one!",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "hashtag",
+   "text": "Join #2024goals.",
+   "expect": "Join hashtag twenty twenty-four goals.",
+   "also": [
+    "Join #2024goals."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "hashtag",
+   "text": "See issue #42.",
+   "expect": "See issue number forty-two.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "2 + 2 = 4.",
+   "expect": "two plus two equals four.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "3 × 4 = 12.",
+   "expect": "three times four equals twelve.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "10 - 3 = 7.",
+   "expect": "ten minus three equals seven.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "8 / 2 = 4.",
+   "expect": "eight divided by two equals four.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "x = 5.",
+   "expect": "x equals five.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "If x > 3, stop.",
+   "expect": "If x is greater than three, stop.",
+   "also": [
+    "If x > three, stop."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "It's 2+2.",
+   "expect": "It's two plus two.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "Solve 5x + 3 = 18.",
+   "expect": "Solve five x plus three equals eighteen.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "The square root of 16 is 4.",
+   "expect": "The square root of sixteen is four.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "It's 2^10.",
+   "expect": "It's two to the tenth.",
+   "also": [
+    "It's two to the power of ten."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "a & b are true.",
+   "expect": "a and b are true.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "Prices +5% this week.",
+   "expect": "Prices plus five percent this week.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "About 3x faster.",
+   "expect": "About three times faster.",
+   "also": [
+    "About three x faster."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "math",
+   "text": "It's 1 in 10.",
+   "expect": "It's one in ten.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "grouped",
+   "text": "The population is 7,900,000,000.",
+   "expect": "The population is seven billion nine hundred million.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "grouped",
+   "text": "Serial 1234567 failed.",
+   "expect": "Serial one two three four five six seven failed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "grouped",
+   "text": "We have 10,000 users.",
+   "expect": "We have ten thousand users.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "grouped",
+   "text": "A total of 100,000.",
+   "expect": "A total of one hundred thousand.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "grouped",
+   "text": "It's 1 000 000 dollars.",
+   "expect": "It's one million dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "grouped",
+   "text": "Order 00123 shipped.",
+   "expect": "Order zero zero one two three shipped.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "grouped",
+   "text": "The ID is 98765.",
+   "expect": "The ID is ninety-eight thousand seven hundred sixty-five.",
+   "also": [
+    "The ID is nine eight seven six five."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "grouped",
+   "text": "We have 15,00 items.",
+   "expect": "We have fifteen hundred items.",
+   "also": [
+    "We have fifteen, zero zero items."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "scientific",
+   "text": "It is 3e8 m/s.",
+   "expect": "It is three times ten to the eighth meters per second.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "scientific",
+   "text": "About 6.02e23 atoms.",
+   "expect": "About six point zero two times ten to the twenty-third atoms.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "scientific",
+   "text": "It is 1.5 × 10^6.",
+   "expect": "It is one point five times ten to the sixth.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "scientific",
+   "text": "A value of 2E-5 is tiny.",
+   "expect": "A value of two times ten to the minus fifth is tiny.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "score",
+   "text": "They won 3-1.",
+   "expect": "They won three to one.",
+   "also": [
+    "They won three one."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "score",
+   "text": "The final was 104-98.",
+   "expect": "The final was one hundred four to ninety-eight.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "score",
+   "text": "A 2-0 win.",
+   "expect": "A two to nothing win.",
+   "also": [
+    "A two to zero win.",
+    "A two nothing win."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "score",
+   "text": "They went 10-2 this year.",
+   "expect": "They went ten and two this year.",
+   "also": [
+    "They went ten to two this year."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "score",
+   "text": "It ended 21–14.",
+   "expect": "It ended twenty-one to fourteen.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "score",
+   "text": "A 7-6 tiebreak.",
+   "expect": "A seven six tiebreak.",
+   "also": [
+    "A seven to six tiebreak."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "On Jan. 3, 2025 at 10:30 a.m., Dr. Lee paid $1,234.56.",
+   "expect": "On January third, twenty twenty-five at ten thirty a.m., Doctor Lee paid one thousand two hundred thirty-four dollars and fifty-six cents.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "The 2nd floor has 12 rooms, each 15 ft wide.",
+   "expect": "The second floor has twelve rooms, each fifteen feet wide.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "In 1969, 600 million people watched.",
+   "expect": "In nineteen sixty-nine, six hundred million people watched.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Mr. Brown, 54, lives at 221 Baker Street.",
+   "expect": "Mister Brown, fifty-four, lives at two twenty-one Baker Street.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Our team of 25 shipped v3 in Q4.",
+   "expect": "Our team of twenty-five shipped v three in Q four.",
+   "also": [
+    "Our team of twenty-five shipped v3 in Q4."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Stocks fell 2.3% to $45.10 on Monday.",
+   "expect": "Stocks fell two point three percent to forty-five dollars and ten cents on Monday.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "At 5:30 the 3 kids ate 2 pizzas.",
+   "expect": "At five thirty the three kids ate two pizzas.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "He was born 4/15/1990 in St. Paul.",
+   "expect": "He was born April fifteenth, nineteen ninety in Saint Paul.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "The 1600 Pennsylvania Ave. address is famous.",
+   "expect": "The sixteen hundred Pennsylvania Avenue address is famous.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Gate 22B opens at 6:40 am.",
+   "expect": "Gate twenty-two B opens at six forty am.",
+   "also": [
+    "Gate twenty-two B opens at six forty a.m."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Q3 revenue was $2.1 billion, up 8%.",
+   "expect": "Q three revenue was two point one billion dollars, up eight percent.",
+   "also": [
+    "Q3 revenue was two point one billion dollars, up eight percent."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "She ran the 100m in 10.49 seconds.",
+   "expect": "She ran the one hundred meters in ten point four nine seconds.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Take 2 tablets 3 times a day.",
+   "expect": "Take two tablets three times a day.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "The ratio was 16:9.",
+   "expect": "The ratio was sixteen by nine.",
+   "also": [
+    "The ratio was sixteen to nine."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Win 1 of 3 prizes!",
+   "expect": "Win one of three prizes!",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Section 4.2 explains it.",
+   "expect": "Section four point two explains it.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Item 3a is due.",
+   "expect": "Item three A is due.",
+   "also": [
+    "Item 3a is due."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "A 30-year-old man ran.",
+   "expect": "A thirty-year-old man ran.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Our 2-for-1 sale ends.",
+   "expect": "Our two-for-one sale ends.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "A 12-pack costs $9.",
+   "expect": "A twelve-pack costs nine dollars.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "The 3-4 defense held.",
+   "expect": "The three four defense held.",
+   "also": [
+    "The three to four defense held."
+   ],
+   "ambiguous": true
+  },
+  {
+   "category": "mixed",
+   "text": "Bus 7-A leaves at noon.",
+   "expect": "Bus seven A leaves at noon.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Exit 12-B is closed.",
+   "expect": "Exit twelve B is closed.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "The 9-11 Commission met.",
+   "expect": "The nine eleven Commission met.",
+   "also": [
+    "The nine to eleven Commission met."
+   ],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Kids aged 5 - 12 play free.",
+   "expect": "Kids aged five to twelve play free.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "A 6' 2\" man.",
+   "expect": "A six foot two man.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "Use a 1:100 scale.",
+   "expect": "Use a one to one hundred scale.",
+   "also": [],
+   "ambiguous": false
+  },
+  {
+   "category": "mixed",
+   "text": "He's 6 ft 2 in.",
+   "expect": "He's six feet two inches.",
+   "also": [
+    "He's six feet two in."
+   ],
+   "ambiguous": true
+  }
+ ]
+}

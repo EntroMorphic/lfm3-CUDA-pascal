@@ -1,0 +1,20 @@
+build/
+native/build/
+__pycache__/
+.pytest_cache/
+*.pyc
+# Keep numerical trace payloads local; commit comparison reports and hashes.
+validation/**/*.bf16
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Local outputs and model weights (never committed)
+outputs/
+*.safetensors
+
+# The Thor engine this repository was imported from (a local snapshot, not committed)
+reference/

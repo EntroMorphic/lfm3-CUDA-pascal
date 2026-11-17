@@ -1,0 +1,2 @@
+# Preserve raw tool evidence, including Compute Sanitizer's "========= " lines.
+validation/**/*.log whitespace=-blank-at-eol

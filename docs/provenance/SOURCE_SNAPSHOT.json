@@ -1,0 +1,292 @@
+{
+  "source": "/home/ztflynn/Projects/000-research/liquid-CUDA-inference-engine",
+  "revision": "8eef171183344e6acf9aa19e03b5c98cf8afd64f",
+  "snapshot": "working tree including current modifications, not just committed HEAD",
+  "git_status": " M README.md\n M docs/BENCHMARKING.md\n M docs/INFERENCE_P0_CLOSURE_CAMPAIGN.md\n M docs/INFERENCE_P0_READINESS.md\n M docs/INFERENCE_P0_ROOT_CAUSE_REVIEW.md\n M docs/TRANSPORT.md\n M experimental/README.md\n M experimental/innovation-routing/README.md\n M liquid_inference/cli.py\n M liquid_inference/serving.py\n M native/BATCH_GRAPHS.md\n M native/LFM25_SUITE.md\n M native/src/main.cu\n M native/tools/benchmark_decode.py\n M scripts/native_openai.py\n M tests/test_cli.py\n M tests/test_native_benchmark_tools.py\n M tests/test_native_openai.py\n M tests/test_repository_docs.py\n M tests/test_resident_serving.py\n?? docs/INFERENCE_INTEGRATION_HARNESS_V5_FIX.md\n?? docs/INFERENCE_IRT005_DISCOVERY_DDT_V4.md\n?? experimental/MEASUREMENT_MAP.md\n?? experimental/activation-geometry/\n?? experimental/coherence-diagnosis/integration_dependency_discovery_v4.py\n?? experimental/coherence-diagnosis/integration_dependency_discovery_v5.py\n?? experimental/coherence-diagnosis/integration_dependency_lineage_v4.py\n?? experimental/coherence-diagnosis/integration_dependency_lineage_v5.py\n?? experimental/coherence-diagnosis/integration_dependency_trace_v4.py\n?? experimental/coherence-diagnosis/integration_dependency_trace_v5.py\n?? experimental/coherence-diagnosis/integration_dependency_v5_review.py\n?? experimental/exact-floor/\n?? experimental/expert-scheduling/\n?? experimental/gemm-structure/\n?? experimental/grouped-expert/\n?? experimental/innovation-confirmation/\n?? experimental/innovation-routing/SCORECARD.json\n?? experimental/innovation-routing/SCORECARD.md\n?? experimental/innovation-routing/scorecard.py\n?? experimental/lincoln-manifold/\n?? experimental/moe-local-width/\n?? native/BATCH_GRAPH_INTEGRATION_RESULTS.json\n?? native/LFM25_BF16_B32_PROFILE_RESULTS.json\n?? native/LFM25_BF16_B32_RESULTS.json\n?? native/tests/batch_graphs.cu\n?? native/tools/summarize_profile_suite.py\n?? native/tools/validate_batch_graphs.py\n?? tests/test_activation_geometry.py\n?? tests/test_batch_graphs.py\n?? tests/test_coherence_integration_dependency_discovery_v4.py\n?? tests/test_coherence_integration_dependency_lineage_v4.py\n?? tests/test_coherence_integration_dependency_v5.py\n?? tests/test_coherence_integration_lineage_v4_coordinator.py\n?? tests/test_exact_floor.py\n?? tests/test_expert_scheduling.py\n?? tests/test_expert_scheduling_audit.py\n?? tests/test_gemm_structure.py\n?? tests/test_gemm_structure_redteam.py\n?? tests/test_grouped_engine_audit.py\n?? tests/test_grouped_engine_overlay.py\n?? tests/test_grouped_expert_probe.py\n?? tests/test_innovation_confirmation.py\n?? tests/test_innovation_confirmation_audit.py\n?? tests/test_innovation_confirmation_prefix.py\n?? tests/test_innovation_confirmation_results.py\n?? tests/test_innovation_scorecard.py\n?? tests/test_lincoln_manifold_plan.py\n?? tests/test_moe_local_width_experiment.py\n",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "4ff6d8f17a653dca3982918a3674a917430e1344063a1072392d13923aa8f047"
+    },
+    {
+      "path": "native/CMakeLists.txt",
+      "sha256": "7c30f26b236a2e89dcc9b376bffb83013a05e2c0cfe3f81be0d93f6e8c8b1dd4"
+    },
+    {
+      "path": "native/build.sh",
+      "sha256": "49ed6339e04ff15b36e9bef3ebcc747312067d795bcd82e8bcc01b94a63814cc"
+    },
+    {
+      "path": "native/include/lfm/allocation_metrics.hpp",
+      "sha256": "0c3c0a85fd1acae928a6e085cf2878beb0253c0b63df1f4662f94a78d0d52ff6"
+    },
+    {
+      "path": "native/include/lfm/argmax.cuh",
+      "sha256": "04b8ab0da7b9a9330e418a7d8fe519679903cc70649c481de82f0d0dd766b39e"
+    },
+    {
+      "path": "native/include/lfm/attention.cuh",
+      "sha256": "c0a9a6346075806d4b481620539c633d421a4e0ab08fa4b65117523962b9144e"
+    },
+    {
+      "path": "native/include/lfm/attention_candidates.cuh",
+      "sha256": "d7d14de17141d2f8a7fb129ba5f14a411f0a9df41b4cced19013b8daf7403d6d"
+    },
+    {
+      "path": "native/include/lfm/batch_sampler.cuh",
+      "sha256": "d1d00feed88da96da6590927dc8d68b89aaea375bae2e90c58fa12aabd01d23f"
+    },
+    {
+      "path": "native/include/lfm/checkpoint_path.hpp",
+      "sha256": "fb04b72e041342b08683a276dd1dc23d897a81a89901f53ec1d67c147de1e95d"
+    },
+    {
+      "path": "native/include/lfm/compact_attention.cuh",
+      "sha256": "ecd6c25ca8ace61fcc65dc3cc70ba0ed2e3eff30e2e0f34b84f6e8c35a218c37"
+    },
+    {
+      "path": "native/include/lfm/decode_tuning.cuh",
+      "sha256": "1050b958343b2b6fa95aab9299e350267727951c549015966727b4f2e99a668d"
+    },
+    {
+      "path": "native/include/lfm/dynamic_attention.cuh",
+      "sha256": "ba693baddd6e2f6afea14eb696f2751a653e3f88487609c591b5113ab085265f"
+    },
+    {
+      "path": "native/include/lfm/inference_metrics.hpp",
+      "sha256": "d50d8f9c03b0f3cf2cb66574a42b75eb038f9af00fbe62a1c45469344782eb90"
+    },
+    {
+      "path": "native/include/lfm/math_attention.cuh",
+      "sha256": "ea191769b52732502f7cc1a6484cc054e9d52c0ddaff46553dd7f8c0ffaed3fb"
+    },
+    {
+      "path": "native/include/lfm/model_config.hpp",
+      "sha256": "3b7c15da7c34d72179d65765b7d89741abf921573742c4832fb886d4f0284a54"
+    },
+    {
+      "path": "native/include/lfm/moe.cuh",
+      "sha256": "bb213fc27c30473cdc43537cd1d89ca7d75cae399f9aad5997129312ec8b94e6"
+    },
+    {
+      "path": "native/include/lfm/parity_attention.cuh",
+      "sha256": "14d5f3ad3fa26104762332867a1096e2d9406d65f1364d022c378f846552f97a"
+    },
+    {
+      "path": "native/include/lfm/profiling.hpp",
+      "sha256": "d4e8348564de7f78ef6cb6f6e5dd9ab6ba579ab300bde886f23502c307fc8242"
+    },
+    {
+      "path": "native/include/lfm/resident_protocol.hpp",
+      "sha256": "97eb4891285b56224f25a69381d5cd031e2536d5c70fd640ead2d77ab8741657"
+    },
+    {
+      "path": "native/include/lfm/rmsnorm.cuh",
+      "sha256": "ad8e8083de1b10976acfec38fd1676ecaed5291a49a13eb9355c6c6a4704609e"
+    },
+    {
+      "path": "native/include/lfm/safetensors.hpp",
+      "sha256": "90445d37042920cd6f37c8b78ab0328cc88ff8ee4143a3242c21e0fabdfa67f1"
+    },
+    {
+      "path": "native/include/lfm/tokenizer.hpp",
+      "sha256": "55963084ed7dfeefc7bb6e0a26c048d4b26c9e56ab2a6423c7b33606086c1d09"
+    },
+    {
+      "path": "native/profile.sh",
+      "sha256": "e2f346deda7cbdfa5a0b170125da4c94b6cd762e31dc1edc6554241d85389018"
+    },
+    {
+      "path": "native/src/main.cu",
+      "sha256": "f382c6efe5d860c8dc4ee174dae584e96448e28fe9e8929a4cf25a8aae0e0d0a"
+    },
+    {
+      "path": "native/src/safetensors.cpp",
+      "sha256": "27a95da46ed4f7fa43918ba20b8d287affb5fbe47c5c42fc8fa3be3ae2bcded6"
+    },
+    {
+      "path": "native/src/tokenizer.cpp",
+      "sha256": "807cfa51bb34d2b8e90e443f21f39d14e4654080ffa5aed4db368e63f907541b"
+    },
+    {
+      "path": "native/tests/argmax.cu",
+      "sha256": "736f3528d9dd119843f03cc72576587b3022d67138d4419b47cdce92748fc7fe"
+    },
+    {
+      "path": "native/tests/batch_graphs.cu",
+      "sha256": "4e00d65136290027bfbc7a74882ce79ed444da9d5fc69da3bb41d886e8966cb5"
+    },
+    {
+      "path": "native/tests/config_probe.cpp",
+      "sha256": "4f5891d60e129b3a6b801c3945b4c3388d8e4c3c34fee48988f1177fc0ea53eb"
+    },
+    {
+      "path": "native/tests/decode_optimizations.cu",
+      "sha256": "96516ea68cce5c0e01e3260d0e9048e135d1b6e839c264bd60ddaf3557d9b56b"
+    },
+    {
+      "path": "native/tests/math_attention_dynamic.cu",
+      "sha256": "bc31c903f18122594cca1d619ffe589251387873976ab129f37566ddeaa65e55"
+    },
+    {
+      "path": "native/tests/math_pack.cu",
+      "sha256": "161013c0f170dff0de5b56960c2c1519086dc3891dbd47e3aa4f9841f534ad69"
+    },
+    {
+      "path": "native/tests/moe.cu",
+      "sha256": "7a9ef59538664f861ffbf9c60ab3e2ce261ec9244adb41a53efcb80edb0ef7a4"
+    },
+    {
+      "path": "native/tests/moe_accumulate.cu",
+      "sha256": "6b4e0b7bf48daa1abdaae9eaffcc39d826137ef61f3c9e24d14546c5415c5c9a"
+    },
+    {
+      "path": "native/tests/parity_attention_replay.cu",
+      "sha256": "b006043d9ee3ad48b79e1df9fd84daf170dc35b98778fffb7da3278c1704d6ab"
+    },
+    {
+      "path": "native/tests/projection.cu",
+      "sha256": "40514d55ed1cc53ffe9e1dfb69b485b341cc008f5688bf4f2201e1255b0599b0"
+    },
+    {
+      "path": "native/tests/rms_warp.cu",
+      "sha256": "694c46a66d4fdee0427c8c7c11e4b0b5a4f43be1a72dcea9a4be5184b2e8013d"
+    },
+    {
+      "path": "native/tests/safetensors_probe.cpp",
+      "sha256": "87167c7dbfb5fbc4136abc040e6e6f4ee9ae80c7e4cb2d5c7edd8d186c0a9b64"
+    },
+    {
+      "path": "native/tests/scalar_parity.cu",
+      "sha256": "16c48063aea527cd8040d016962b577b41efc37d382c45b8095ba282b0de85be"
+    },
+    {
+      "path": "native/tools/analyze_prefix_structure.py",
+      "sha256": "5f914acb92d484dbe3faa2f50d538c2ef454e7804e3d7abf3b4a35ef03f4ee80"
+    },
+    {
+      "path": "native/tools/analyze_profile.py",
+      "sha256": "f2e2d832965b37fdb9641f7871132722c8357cfb37e0633adc80e5ae7e28e5ad"
+    },
+    {
+      "path": "native/tools/analyze_weight_structure.py",
+      "sha256": "e35cffb3cf885a8497650b96a56aa1642bedd5ba653fb99c16889b3c63aa3954"
+    },
+    {
+      "path": "native/tools/attention_bench.cu",
+      "sha256": "6be7b80cc4e8b76d46e2d893a7980191bf7a21c3d56b477974b12c6798f2e0f2"
+    },
+    {
+      "path": "native/tools/attention_debug.cu",
+      "sha256": "6c76ae0fec4111f22157969cf489b1d28467729479f43bfbd7248549d8e9d73d"
+    },
+    {
+      "path": "native/tools/batch_roofline.cu",
+      "sha256": "acffcffd51f0ab6858c17352ac350d8ba70d992f8593551624496985494e9348"
+    },
+    {
+      "path": "native/tools/batch_table.py",
+      "sha256": "721740ab2e205ca1834c1c802427b6622aed21658d24822668f5c80f7b749a7f"
+    },
+    {
+      "path": "native/tools/benchmark_common.py",
+      "sha256": "24f2f27f59a4b7f44af9c09159b111354100cae8c7db5c73a48e9a6842ce545d"
+    },
+    {
+      "path": "native/tools/benchmark_decode.py",
+      "sha256": "8959aebe5e07e078fa2dc789fa534253d6348b84617b16c1ff36fc06c23e33b4"
+    },
+    {
+      "path": "native/tools/benchmark_text_suite.py",
+      "sha256": "a8cb9170b6b0f16519fbe7b558dc9fbf508ad32e300d0b2e4390b99b4a95eeac"
+    },
+    {
+      "path": "native/tools/coherency_test.py",
+      "sha256": "bf1161d358ecfa4507823fac26782a6f46d78feec2070a69a6fc632cd8ebf603"
+    },
+    {
+      "path": "native/tools/compare_attention_paths.sh",
+      "sha256": "48d8e5ffff789f92b2f4b91db879f7fc32743f2f7bb4d7428dc508deaa5298ca"
+    },
+    {
+      "path": "native/tools/compare_hashes.sh",
+      "sha256": "9a34d8a1bbd5c26045d254c3fa29c57703444876d574e5c16aed53abf88ddeaa"
+    },
+    {
+      "path": "native/tools/component_floor.cu",
+      "sha256": "0e2522a3d3d64df4d8979d558c6579656e3d36307c0689f0d91a565d5d0e7e87"
+    },
+    {
+      "path": "native/tools/gemm_columns.cu",
+      "sha256": "849dfa5dfd43bcb114b60a6c9d6dd36aa3f1c0bccd47999fd7da49640ff3ca80"
+    },
+    {
+      "path": "native/tools/gemm_n_invariance.cu",
+      "sha256": "d4f922253a6b648761f69872a515b60e8a71173383af271e9c439bdb8e6afbb5"
+    },
+    {
+      "path": "native/tools/gemv.sh",
+      "sha256": "638ce2894c79da8e94870653f6383488feba1d56941d5056727a15f99a12f262"
+    },
+    {
+      "path": "native/tools/gemv_bench.cu",
+      "sha256": "e071fe8f789a07cfd1076a0c46f0c985b223472ce9be797bedd0b7a4821a21b7"
+    },
+    {
+      "path": "native/tools/gemv_concurrent.cu",
+      "sha256": "4403580e496dbc297c02f99b1ac5525da070849b2e404c26a1ac21acf4da9679"
+    },
+    {
+      "path": "native/tools/gemv_order.cu",
+      "sha256": "5e1c6a86ed95bd5c8b2c47245844bea655a9a1a1bb725d12f351b2f36e88647a"
+    },
+    {
+      "path": "native/tools/model_validate.py",
+      "sha256": "86a054c06b7cf315e707d6edc3f4de68bb7e68400671e181bc6ad8136aede1ec"
+    },
+    {
+      "path": "native/tools/profile_native.py",
+      "sha256": "22e435b1563ffa3773ef8711af44a64d62cbfe12fbb5c4d1051e8b4b3cacd9d6"
+    },
+    {
+      "path": "native/tools/roofline.cu",
+      "sha256": "f360a727cfd0434d5fed86da1b012216c371bca3f479d3b1ad57b6c0924ac034"
+    },
+    {
+      "path": "native/tools/sort_bench.cu",
+      "sha256": "348bc7720278390ae15f8cb2f20b14ea0128f97940fc4abe404f9c2cdea9cfe8"
+    },
+    {
+      "path": "native/tools/suite_audit.py",
+      "sha256": "cab0e5d4b3172febf9fca8188c388ad1c4b5dc616403b9a1195f6fe761aa65ea"
+    },
+    {
+      "path": "native/tools/suite_stage.py",
+      "sha256": "e135730f14cd54b5505791c45b57e1466bcf61c22277d75402c083155e359804"
+    },
+    {
+      "path": "native/tools/suite_validate.py",
+      "sha256": "992414560bec45941d162eab1cf667bdd90d8c46f8dfe012fa4fcdf03b463648"
+    },
+    {
+      "path": "native/tools/summarize_floor.py",
+      "sha256": "0e5435c57294f773656d5b71e87ebb1edebdc97e3965dbb006390389674227e6"
+    },
+    {
+      "path": "native/tools/summarize_profile_suite.py",
+      "sha256": "17d7e02c92bd1b7f16f20ff4fe2893d167479e679aa667a5ec49b0684f1e2909"
+    },
+    {
+      "path": "native/tools/transport_benchmark.py",
+      "sha256": "4822b94691d32476e0c4b7e225cdd912de5480239cba09283ac185b678ccf29c"
+    },
+    {
+      "path": "native/tools/validate_batch_graphs.py",
+      "sha256": "dfa101925fa5244ff342e6b4281dc046b438bbe18ba51ae113f49f91e9dc6e52"
+    },
+    {
+      "path": "tests/test_model_config.py",
+      "sha256": "d1c192a32c5f6c640e0b42a606f22f8fb59bc84e7f6a6e8b862de0c3bbd46203"
+    }
+  ]
+}
