@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Runs in the container: memory-v1's on-card checks of build NEW against build OLD (rules 3, 4, 5, 6, 7).
-#   tools/pascal/verify_memory.sh OLD_TAG NEW_TAG OLD_PPL_NAME
+#   tools/pascal/verify_memory.sh OLD_TAG NEW_TAG OLD_PPL_NAME [fast|slow|all]
+# fast: rules 3, 4 and the subsets of rule 5 (minutes). slow: every window at 256, 257 and 4,096, then 32,768 (hours).
 set -uo pipefail
-old=${1:?}; new=${2:?}; oldppl=${3:?}
+old=${1:?}; new=${2:?}; oldppl=${3:?}; part=${4:-all}
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd); B=/workspace/build; M=/workspace/models/LFM3-Omni-2B
 fail=0; say(){ echo "== $*"; }
 say "binaries"; sha256sum $B/$old/liquid-lfm3 $B/$old/lfm3-score $B/$new/liquid-lfm3 $B/$new/lfm3-score
 
+if [ "$part" != slow ]; then
 say "rule 3: fixtures, LFM3_COMPACT_WINDOWS unset"
 "$repo/tools/pascal/run_text_fixtures.sh" "$new" 2 || fail=1
 say "rule 3: fixtures, LFM3_COMPACT_WINDOWS=1"
@@ -48,6 +50,8 @@ WINDOWS_DIR=$P "$repo/tools/pascal/score.sh" "$old" "$new-subset-old" 256 257 40
 WINDOWS_DIR=$P "$repo/tools/pascal/score.sh" "$new" "$new-subset-new" 256 257 4096 || fail=1
 for L in 256 257 4096; do cmp "$B/$new-subset-old/nll-pascal-$L.f32" "$B/$new-subset-new/nll-pascal-$L.f32" && echo "subset $L: IDENTICAL" || { echo "subset $L: DIFFER"; fail=1; }; done
 
+fi
+if [ "$part" != fast ]; then
 say "rules 5, 6 (LFM3_COMPACT_WINDOWS=1): all windows"
 rm -rf $B/$new-ppl
 LFM3_COMPACT_WINDOWS=1 "$repo/tools/pascal/score.sh" "$new" "$new-ppl" 256 257 4096 || fail=1
@@ -55,4 +59,5 @@ for L in 256 257 4096; do cmp "$B/$oldppl/nll-pascal-$L.f32" "$B/$new-ppl/nll-pa
 
 say "rule 7: 32,768"
 "$repo/tools/pascal/score.sh" "$new" "$new-ppl" 32768; echo "32768 rc=$?"
+fi
 say "VERIFY $([ $fail = 0 ] && echo PASS || echo FAIL)"; exit $fail

@@ -1,0 +1,46 @@
++ date -u
+Tue Nov 17 20:46:21 UTC 2026
++ cd /workspace/lfm3-CUDA-pascal
++ sha256sum /workspace/build/text-v1/lfm3-score /workspace/build/text-v1/liquid-lfm3
+82681a433fa0f12516b7bddbc60f34f8e34d8f9bb008cbd45d5e78f2f91448cd  /workspace/build/text-v1/lfm3-score
+e30023b7dba656ffa94eaf0569c84d0a4ccefb1fe7ae69b376abbfea8e7aa593  /workspace/build/text-v1/liquid-lfm3
++ rm -rf /workspace/build/probe-score
++ tools/pascal/score.sh text-v1 ppl-v1 256 257 4096
+length 256: {"engine": "native", "length": 256, "windows": 1160, "scored_tokens": 295800, "mean_nll": 3.280306402, "perplexity": 26.583917, "seconds": 1918.59}
+  peak device memory 4407 MiB, wall 1919.9 s, nll sha256 95979e155761c7c5
+length 257: {"engine": "native", "length": 257, "windows": 1155, "scored_tokens": 295680, "mean_nll": 3.277541415, "perplexity": 26.510514, "seconds": 2081.117}
+  peak device memory 4413 MiB, wall 2082.4 s, nll sha256 ec238637c08ba8a2
+length 4096: {"engine": "native", "length": 4096, "windows": 72, "scored_tokens": 294840, "mean_nll": 2.569474382, "perplexity": 13.058959, "seconds": 2012.315}
+  peak device memory 5195 MiB, wall 2013.6 s, nll sha256 2886713bbb2e1a21
+score rc=0
++ echo 'score rc=0'
++ tools/pascal/score.sh text-v1 ppl-v1-repeat 256
+length 256: {"engine": "native", "length": 256, "windows": 1160, "scored_tokens": 295800, "mean_nll": 3.280306402, "perplexity": 26.583917, "seconds": 1916.931}
+  peak device memory 4407 MiB, wall 1918.2 s, nll sha256 95979e155761c7c5
+repeat rc=0
++ echo 'repeat rc=0'
++ sha256sum /workspace/build/ppl-v1/nll-pascal-256.f32 /workspace/build/ppl-v1-repeat/nll-pascal-256.f32
+95979e155761c7c547531b7f0e9c53498023557e8ea1841aebf73df2010ad17f  /workspace/build/ppl-v1/nll-pascal-256.f32
+95979e155761c7c547531b7f0e9c53498023557e8ea1841aebf73df2010ad17f  /workspace/build/ppl-v1-repeat/nll-pascal-256.f32
++ tools/pascal/run_text_fixtures.sh text-v1 1 /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+binary e30023b7dba656ffa94eaf0569c84d0a4ccefb1fe7ae69b376abbfea8e7aa593  tree d1cfe6b9c9ee2c99 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 6.316 s, decode 2.828 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 4.130 s, decode 0.189 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 25.389 s, decode 0.614 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.692 s, decode 0.988 s / 3 calls
+FIXTURES PASS
++ echo 'memcheck rc=0'
++ grep -h 'ERROR SUMMARY' /workspace/build/text-v1/fixtures-wrapped/arithmetic.1.log /workspace/build/text-v1/fixtures-wrapped/baseline.1.log /workspace/build/text-v1/fixtures-wrapped/single.1.log /workspace/build/text-v1/fixtures-wrapped/window257.1.log
+memcheck rc=0
++ tools/pascal/score.sh text-v1 ppl-v1 32768
+========= ERROR SUMMARY: 0 errors
+========= ERROR SUMMARY: 0 errors
+========= ERROR SUMMARY: 0 errors
+========= ERROR SUMMARY: 0 errors
+length 32768: scorer exit 1: FAIL: out of memory
++ echo 'score32k rc=1'
++ date -u
+score32k rc=1
+Tue Nov 17 23:00:04 UTC 2026

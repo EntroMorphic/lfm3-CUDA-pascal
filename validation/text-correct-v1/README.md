@@ -54,6 +54,57 @@ Informational, not rules: dNLL against Thor native; prefill and decode times.
 Rules 3 and 4 need the three NLL directories from Thor. Until they are on the workstation those rules are open, not
 passed.
 
-## Results
+## Results (2026-11-17)
 
-(none yet)
+Build `text-v1` at commit `ecb5f43`: `liquid-lfm3` `e30023b7…e7aa593`, `lfm3-score` `82681a43…91448cd`. Records in
+`records/`: the job as run (`ppl-v1.sh`, `ppl-v1.log`), each NLL file's metadata and the NLL files (gzip).
+
+| Rule | Result |
+|---|---|
+| 1. Build | **PASS**: 0 warnings; the binaries link the C and C++ runtime only (`libcudart` is linked statically, which the rule did not foresee) |
+| 2. Tokens | **PASS**: the Thor pins' ids on all four fixtures (16, 2, 4, 4) |
+| 3. Perplexity | **OPEN**: needs the per-token HF SDPA files from Thor |
+| 4. Fidelity | **OPEN**: needs the per-token FP32 anchor files from Thor |
+| 5. Determinism | **PASS**: fixtures identical across two runs; the 256-token NLL file byte-identical across two full runs (`95979e15…`) |
+| 6. Reset | **PASS** on every fixture |
+| 7. Memory | 256, 257, 4,096 recorded below. **32,768: FAIL** — the scorer stops with "out of memory" |
+| 8. Sanitizer | **PASS**: `compute-sanitizer --tool memcheck`, 0 errors on all four fixtures, ids equal to the plain run |
+| 9. Nothing else changes | Host suite with the checkpoint reachable: 2,397 passed, 5 skipped, 1 failed. See below |
+
+### Scores
+
+| Length | Windows | Mean NLL | Perplexity | Wall | Peak device memory | NLL sha256 |
+|---|---:|---:|---:|---:|---:|---|
+| 256 | 1,160 | 3.280306402 | 26.583917 | 1,920 s | 4,407 MiB | `95979e15…` |
+| 257 | 1,155 | 3.277541415 | 26.510514 | 2,082 s | 4,413 MiB | `ec238637…` |
+| 4,096 | 72 | 2.569474382 | 13.058959 | 2,014 s | 5,195 MiB | `2886713b…` |
+| 32,768 | 9 | — | — | — | out of memory | — |
+
+Informational, from the Thor records (means only; no paired comparison is possible without the per-token files):
+the FP32 anchor's mean NLL is 3.280256632, 3.277467314 and 2.569224751 at these lengths, so this engine's mean is
+5.0e-5, 7.4e-5 and 2.5e-4 nats per token above it. At 256, Thor's record gives HF SDPA perplexity 26.582084 and the
+Thor engine 26.578000, with a resolution of 1.25e-4 nats per token at that length.
+
+### 32,768 tokens
+
+Expected from the allocation arithmetic ([docs/long-context-memory.md](../../docs/long-context-memory.md)): the
+per-token buffers need about 3,881 MiB at that capacity and about 3,737 MiB is free. PLAN decision 3 applies: it is
+dealt with in [memory-v1](../memory-v1/).
+
+### The host suite
+
+Before the checkpoint was reachable at the path the tests expect, 721 tests skipped (phase 0). With
+`../models/LFM3-Omni-2B` linked: 2,391 passed, 5 skipped, 6 failed on the first run; 2,397 passed, 5 skipped, 1
+failed at `1664d89`.
+
+- 4 failures were caused here, by a change to `Runner::linear`'s signature in the memory work (Thor candidate tools
+  patch the source by that line). The signature is restored; they pass.
+- 1 was a Thor record the import had left out (`validation/speech-e2e-v1`); imported, passes.
+- 1 cannot run on this workstation: `tests/test_speech_text.py::test_every_validation_prompt_matches_hf_ids` loads
+  the checkpoint's own code through Transformers, which needs the pinned 5.x; every Python environment found here
+  has 4.57. It fails the same way with an empty private module cache. **Not counted as a pass.**
+
+### What is open
+
+Rules 3 and 4, on the Thor per-token files (`build/ppl-v5`, the tier 2b FP32 anchor, `build/ppl-g4-v3`). Phase 1
+does not pass until they do, and until 32,768 runs.
