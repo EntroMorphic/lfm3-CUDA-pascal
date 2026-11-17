@@ -16,6 +16,12 @@ must not change.
 2. **Code.** Copied from the reference at a recorded commit, not shared. The engines diverge in kernels and are
    validated separately.
 3. **Context length.** The 32,768-token bar is kept unless it causes problems; dealt with when it does.
+4. **Parity gate** (2026-11-17, after [tensor-core-model-v1](validation/tensor-core-model-v1/); the owner: "We are
+   going for parity so it makes sense."). Exact equality with the Thor engine is a standing gate: in the validation
+   build (the prefill GEMM with Blackwell's tensor-core arithmetic), every trace file of the four forward fixtures
+   must equal the Thor pins, 7,826 of 7,826 (`tools/pascal/gate_pins.sh`). It is run after every change to the
+   engine, in every phase from here on. It does not replace the perplexity and fidelity rules, which judge the
+   shipping build, whose prefill GEMM sums in a different order.
 
 ## The constraint
 
@@ -47,6 +53,8 @@ with red-team, remediate, verify, commit.
 - **No speed work before phase 1 passes.** A slow correct engine is the baseline everything else is measured against.
 - **Port, don't redesign.** Host-side code (tokenizer, template, JSON, HTTP, image and audio front ends) stays as
   imported; GPU kernels are rewritten.
+- **Parity is checked, not assumed.** No engine change is committed as done until the parity gate (decision 4) has
+  passed on the card with that tree.
 - **Nothing beyond the reference.** No video, no new features. Ideas go to the parking list below and are not acted
   on.
 
@@ -67,5 +75,6 @@ with red-team, remediate, verify, commit.
 - **A software model of Blackwell's tensor-core arithmetic** (owner's question, 2026-11-17; started the same day at
   the owner's request). Done for the four forward fixtures: a validation build of this engine with the published
   tensor-core model in its prefill GEMM reproduces all 7,826 of the Thor engine's pinned trace files on the GTX 1080
-  ([tensor-core-model-v1](validation/tensor-core-model-v1/)). Open: whether to make exact equality with the Thor
-  pins a standing gate, and pins for the paths the fixtures do not reach (long context, the scorer).
+  ([tensor-core-model-v1](validation/tensor-core-model-v1/)). Adopted as a standing gate (decision 4). Open: pins
+  for the paths the fixtures do not reach (long context, the scorer, the other modalities), which would have to
+  come from Thor; and, for phase 2, whether the shipping prefill kernel should itself be the exact one.
