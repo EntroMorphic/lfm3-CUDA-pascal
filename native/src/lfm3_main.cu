@@ -508,14 +508,19 @@ class Runner {
     write_logits_trace(trace+"/"+std::to_string(step),data);
   }
 #endif
-  // `wide`: these rows are a block of a prefill of more than 8 rows (lfm::gemm::Problem::wide).
-  void linear(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output, bool wide=false) {
 #ifdef LFM3_NATIVE_GEMM
+  // A block of rows of a prefill of more than 8 rows: the prefill kernel whatever the block's row count
+  // (lfm::gemm::Problem::wide).
+  void linear_block(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output) {
     auto problem=lfm::gemm::linear(x,w(name),out,rows,input,output);
-    problem.wide=wide;
+    problem.wide=true;
     lfm::gemm::run(problem);
+  }
+#endif
+  void linear(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output) {
+#ifdef LFM3_NATIVE_GEMM
+    lfm::gemm::run(lfm::gemm::linear(x,w(name),out,rows,input,output));
 #else
-    (void)wide;
     float alpha=1, beta=0;
     // Row-major X W^T = column-major W X^T, with W stored row-major.
     blas_check(cublasGemmEx(blas,CUBLAS_OP_T,CUBLAS_OP_N,output,rows,input,&alpha,
@@ -691,15 +696,22 @@ class Runner {
       // In blocks of rows through the three mlp-wide buffers; the kernel is the whole prefill's (rows > 8: wide).
       for(int first=0,block=mlp_block_rows(s.context);first<rows;first+=block) {
         const int n=std::min(block,rows-first);
-        const bool wide=rows>8 && rows>block;
         const bf16* x=normalized.p+size_t(first)*s.hidden;
-        linear(p+"feed_forward.w1.weight",x,a.p,n,s.hidden,s.mlp,wide);
-        linear(p+"feed_forward.w3.weight",x,b.p,n,s.hidden,s.mlp,wide);
+#ifdef LFM3_NATIVE_GEMM
+        const bool blocks=rows>block;  // more than one block: rows > 8, so the whole prefill's kernel is the wide one
+        auto project=[&](const std::string& name,const bf16* in,bf16* out,int input,int output) {
+          if(blocks) linear_block(name,in,out,n,input,output); else linear(name,in,out,n,input,output);
+        };
+#else
+        auto project=[&](const std::string& name,const bf16* in,bf16* out,int input,int output) { linear(name,in,out,n,input,output); };
+#endif
+        project(p+"feed_forward.w1.weight",x,a.p,s.hidden,s.mlp);
+        project(p+"feed_forward.w3.weight",x,b.p,s.hidden,s.mlp);
         dump(p+"feed_forward.w1",a.p,size_t(n)*s.mlp,first>0);
         dump(p+"feed_forward.w3",b.p,size_t(n)*s.mlp,first>0);
         swiglu<<<grid(size_t(n)*s.mlp),256>>>(a.p,b.p,act.p,size_t(n)*s.mlp);
         dump(p+"feed_forward.product",act.p,size_t(n)*s.mlp,first>0);
-        linear(p+"feed_forward.w2.weight",act.p,updated.p+size_t(first)*s.hidden,n,s.mlp,s.hidden,wide);
+        project(p+"feed_forward.w2.weight",act.p,updated.p+size_t(first)*s.hidden,s.mlp,s.hidden);
       }
       dump(p+"feed_forward",updated.p,size_t(rows)*s.hidden);
       norm<<<rows,norm_threads(rows,s.hidden)>>>(updated.p,w(p+"post_ffn_norm.weight"),hidden.p,s.hidden,s.epsilon,hidden.p);

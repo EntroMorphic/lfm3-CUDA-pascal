@@ -1,0 +1,101 @@
+{
+ "systems": {
+  "tts_male": "Perform TTS in American English using a male voice."
+ },
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "cases": [
+  {
+   "case": "len25-a",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "The old wooden bridge across the river creaked loudly under the weight of the farmer's cart, but it held firm as it always had for decades."
+  },
+  {
+   "case": "len25-b",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "After a long day of hiking through the hills, the tired travelers finally reached a small village where a warm meal was waiting for them."
+  },
+  {
+   "case": "len35-a",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "When the morning fog lifted from the valley, the shepherd could finally see his flock scattered across the green slopes, grazing quietly on the fresh grass that had grown thick after the spring rains."
+  },
+  {
+   "case": "len35-b",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "The library on the corner of Main Street, which had been closed for nearly a year while workers repaired its roof and replaced its old windows, opened its doors again last Tuesday to a crowd of eager readers."
+  },
+  {
+   "case": "len45-a",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "Long before the first trains crossed the continent, travelers who wanted to reach the western coast had to choose between a dangerous journey by wagon across the plains and mountains, or an even longer voyage by ship around the southern tip of South America, which could take many months."
+  },
+  {
+   "case": "len45-b",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "The young scientist spent most of her nights in the laboratory, carefully adjusting the delicate instruments and recording every small change in the readings, because she was convinced that the strange pattern she had noticed in the data was not an error but a sign of something entirely new."
+  },
+  {
+   "case": "len55-a",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "On the first warm evening of summer, the whole town gathered in the park beside the lake, where children chased each other between the trees, older couples sat on wooden benches sharing stories about years gone by, and a small band played familiar songs on a stage decorated with paper lanterns that glowed softly as the sun went down."
+  },
+  {
+   "case": "len55-b",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "The engineers who designed the new tunnel under the harbor had to solve problems that no one had faced before, including how to keep the water out while digging through soft mud, how to supply fresh air to the workers far below the surface, and how to make sure the finished structure could survive both strong storms and the slow movement of the earth."
+  },
+  {
+   "case": "len70-a",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "Every autumn, when the leaves begin to turn red and gold and the air carries the first hint of cold, thousands of birds gather along the northern shore of the bay, resting and feeding for several days before they set out on a long journey south, flying over forests, rivers, and open sea, guided by the stars, the sun, and an instinct that scientists are still working hard to understand completely."
+  },
+  {
+   "case": "len70-b",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "The small bakery at the end of the street opens before dawn every day, and by the time the first customers arrive, the shelves are already filled with fresh bread, warm rolls, and sweet pastries, while the baker, who learned the trade from her grandmother many years ago, keeps working in the back room, kneading dough, checking the ovens, and greeting regular visitors by name as they come through the door."
+  },
+  {
+   "case": "len90-a",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "Although the expedition had planned for almost every possible difficulty, from sudden storms and broken equipment to shortages of food and fuel, nobody had expected that the greatest challenge would be the silence of the frozen landscape, which stretched in every direction as far as the eye could see, and which slowly wore down the spirits of even the most experienced members of the team, until they began to count the days, then the hours, until the ship would return to carry them home again across the cold gray sea."
+  },
+  {
+   "case": "len90-b",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "In the years after the war, the city slowly rebuilt itself, street by street and block by block, as families returned from the countryside, shopkeepers reopened their stores with whatever goods they could find, and volunteers cleared the rubble from the squares where markets had once been held, so that by the end of the decade, visitors who walked through the busy neighborhoods would hardly have guessed how much had been lost, or how much effort it had taken to bring life back to those quiet ruins."
+  }
+ ]
+}

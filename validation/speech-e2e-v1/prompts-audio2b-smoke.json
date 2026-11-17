@@ -1,0 +1,19 @@
+{
+ "systems": {
+  "tts_female": "Perform TTS in American English using a female voice.",
+  "tts_male": "Perform TTS in American English using a male voice.",
+  "interleaved": "Respond with interleaved text and audio."
+ },
+ "cases": [
+  {
+   "case": "tts-fox-female",
+   "mode": "audio",
+   "system": "tts_female",
+   "max_new_tokens": 256,
+   "user": "The quick brown fox jumps over the lazy dog"
+  }
+ ],
+ "seeds": [
+  1
+ ]
+}

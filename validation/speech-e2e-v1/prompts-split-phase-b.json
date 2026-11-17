@@ -1,0 +1,52 @@
+{
+ "systems": {
+  "tts_male": "Perform TTS in American English using a male voice."
+ },
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "cases": [
+  {
+   "case": "dialogue",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "\"Where are you going so early?\" \"To the harbor, before the fishing boats leave.\" \"Can I come with you, or is it too far for me?\" \"It is not far at all, but you will need a warm coat.\" \"I have one in my room, and my good boots too.\" \"Then hurry, because the tide will not wait for us.\" \"Will we see the old lighthouse on the way?\" \"Yes, and if we are lucky, the keeper will let us climb to the very top.\""
+  },
+  {
+   "case": "paragraphs",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "Morning on the coast\n\nThe fishing boats leave the harbor one by one while the gulls circle low over the water\n\nOn the hill the lighthouse keeper writes the weather in the same old logbook his father used\n\nDown in the village the baker opens her shutters and the smell of bread drifts along the narrow streets\n\nBy noon the market square is full of voices and the first boats are already turning for home"
+  },
+  {
+   "case": "long-comma",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "Although the expedition had planned for almost every possible difficulty, from sudden storms and broken equipment to shortages of food and fuel, nobody had expected that the greatest challenge would be the silence of the frozen landscape, which stretched in every direction as far as the eye could see, and which slowly wore down the spirits of even the most experienced members of the team, until they began to count the days, then the hours, until the ship would return to carry them home again across the cold gray sea."
+  },
+  {
+   "case": "long-nocomma",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "The children ran down the hill and across the meadow and over the little wooden bridge and past the old mill where the miller waved at them from his window and then they followed the narrow path along the stream until they finally reached the edge of the dark forest where their grandfather was waiting for them with a basket full of red apples and a long story about the clever fox who lived under the great oak tree at the top of the ridge."
+  },
+  {
+   "case": "abbrev",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "Dr. Alvarez met Mr. Chen at 9 a.m. on Jan. 5 to discuss the new U.S. trade rules for small farms. They talked for an hour about costs, timelines, and the risks for families who sell at local markets. By 11 a.m. they had a draft plan, and Mrs. Patel from the St. Louis office joined them to review every part of it. Everyone agreed to meet again on Feb. 12 at the same time."
+  }
+ ]
+}

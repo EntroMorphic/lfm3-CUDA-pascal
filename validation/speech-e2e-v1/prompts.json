@@ -1,0 +1,20 @@
+{
+ "systems": {
+  "tts_female": "Perform TTS in American English using a female voice.",
+  "tts_male": "Perform TTS in American English using a male voice.",
+  "interleaved": "Respond with interleaved text and audio."
+ },
+ "cases": [
+  {"case": "tts-fox-female", "mode": "audio", "system": "tts_female", "max_new_tokens": 256, "user": "The quick brown fox jumps over the lazy dog"},
+  {"case": "tts-fox-male", "mode": "audio", "system": "tts_male", "max_new_tokens": 256, "user": "The quick brown fox jumps over the lazy dog"},
+  {"case": "tts-museum-female", "mode": "audio", "system": "tts_female", "max_new_tokens": 512, "user": "On March 3rd, 2024, the museum reopened after a two-year renovation; visitors could finally see the restored murals, which date back nearly four hundred years."},
+  {"case": "tts-museum-male", "mode": "audio", "system": "tts_male", "max_new_tokens": 512, "user": "On March 3rd, 2024, the museum reopened after a two-year renovation; visitors could finally see the restored murals, which date back nearly four hundred years."},
+  {"case": "tts-numbers-female", "mode": "audio", "system": "tts_female", "max_new_tokens": 512, "user": "Your flight leaves at 7:45 in the morning from gate 22, and the total fare comes to 389 dollars and 50 cents."},
+  {"case": "tts-numbers-male", "mode": "audio", "system": "tts_male", "max_new_tokens": 512, "user": "Your flight leaves at 7:45 in the morning from gate 22, and the total fare comes to 389 dollars and 50 cents."},
+  {"case": "tts-long-male", "mode": "audio", "system": "tts_male", "max_new_tokens": 1536, "user": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched."},
+  {"case": "il-reflective", "mode": "interleaved", "system": "interleaved", "max_new_tokens": 2048, "user": "Hypothetically, might reflective recursion be a function of cognition?"},
+  {"case": "il-study", "mode": "interleaved", "system": "interleaved", "max_new_tokens": 2048, "user": "What are three tips for staying focused while studying?"},
+  {"case": "il-fridge", "mode": "interleaved", "system": "interleaved", "max_new_tokens": 2048, "user": "Explain step by step how a refrigerator keeps food cold."}
+ ],
+ "seeds": [1, 2, 3]
+}

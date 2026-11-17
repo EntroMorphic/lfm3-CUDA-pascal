@@ -1,0 +1,37 @@
+{
+ "systems": {
+  "tts_female": "Perform TTS in American English using a female voice.",
+  "tts_male": "Perform TTS in American English using a male voice.",
+  "interleaved": "Respond with interleaved text and audio."
+ },
+ "cases": [
+  {
+   "case": "tts-numbers-female",
+   "mode": "audio",
+   "system": "tts_female",
+   "max_new_tokens": 512,
+   "user": "Your flight leaves at 7:45 in the morning from gate 22, and the total fare comes to 389 dollars and 50 cents."
+  },
+  {
+   "case": "tts-long-male",
+   "mode": "audio",
+   "system": "tts_male",
+   "max_new_tokens": 1536,
+   "user": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched."
+  }
+ ],
+ "seeds": [
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15
+ ]
+}

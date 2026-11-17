@@ -1,0 +1,30 @@
+{
+ "systems": {
+  "tts_female": "Perform TTS in American English using a female voice.",
+  "tts_male": "Perform TTS in American English using a male voice.",
+  "interleaved": "Respond with interleaved text and audio."
+ },
+ "cases": [
+  {
+   "case": "il-fridge",
+   "mode": "interleaved",
+   "system": "interleaved",
+   "max_new_tokens": 2048,
+   "user": "Explain step by step how a refrigerator keeps food cold."
+  }
+ ],
+ "seeds": [
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15
+ ]
+}
