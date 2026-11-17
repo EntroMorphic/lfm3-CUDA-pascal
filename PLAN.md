@@ -64,9 +64,8 @@ with red-team, remediate, verify, commit.
   layers alone (12 KiB per token: 3,072 MiB), row-tiled prefill scratch, and prefill in chunks through the cache
   (the engine prefills only into an empty cache today). Nothing measured. Written up in
   [docs/long-context-memory.md](docs/long-context-memory.md).
-- **A software model of Blackwell's tensor-core arithmetic** (owner's question, 2026-11-17). The Thor prefill
-  kernel's `mma.sync` (BF16 in, FP32 accumulate) can be computed on Pascal in plain FP32; whether it can be
-  reproduced bit for bit depends on the tensor core's undocumented summation order and rounding. If it can, the
-  Thor engine's pinned trace hashes (`g4-gates-v2/pins/`, already in the Thor repository) become exact gates for this
-  engine, and candidate models can be tested against those hashes on the GTX 1080 without Thor. Speed is not
-  recoverable this way. Nothing tried.
+- **A software model of Blackwell's tensor-core arithmetic** (owner's question, 2026-11-17; started the same day at
+  the owner's request). Found on the CPU: one model reproduces the Thor engine's first prefill GEMM bit for bit on
+  three fixtures ([tensor-core-model-v1](validation/tensor-core-model-v1/)). Open: the same arithmetic as a GPU
+  kernel for `sm_61`, and whether the other kernels agree between Blackwell and Pascal, which decides whether the
+  Thor pins can become exact gates here.

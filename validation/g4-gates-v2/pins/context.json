@@ -1,0 +1,99 @@
+{
+  "capacity1": {
+    "generated_ids": [
+      7061
+    ],
+    "files": {
+      "0.logits.bf16": "a894381e44869e09ed2dc66f7a64526fa08bef1ddfd3e96da32db553f28ade84",
+      "0.logits.f32": "255bbdfec806958b43d775b1fea89187c8493a482e3243c04f8cda327f9e2b5b"
+    }
+  },
+  "decode2": {
+    "generated_ids": null,
+    "files": {
+      "0.logits.bf16": "a894381e44869e09ed2dc66f7a64526fa08bef1ddfd3e96da32db553f28ade84",
+      "0.logits.f32": "255bbdfec806958b43d775b1fea89187c8493a482e3243c04f8cda327f9e2b5b",
+      "1.logits.bf16": "4963dacf832c206ac5c3ecc67f7eb7074ddd48760a59966c0bd98598df89c93a",
+      "1.logits.f32": "e7f90ae2a7f0946da3032469ab4190b2f843c06bdc051aeb95a0d70a48a4e084"
+    }
+  },
+  "conv7": {
+    "generated_ids": null,
+    "files": {
+      "0.logits.bf16": "a43a485607a59ff0c21c87eb8c0f903beb57dd8f6cfb1d643d41d133c9cbe69c",
+      "0.logits.f32": "ac7f252f3f7e5341e31ef4bc3c6293aae51ede228eb526408c46a05939a0beab",
+      "1.logits.bf16": "a4a88b40877d0d33289deb37a8a387e96fb88d70dd54f844355b6cfd000be380",
+      "1.logits.f32": "ed072e90a2ca1310a5bd915da4f7d5c71d21ecd8c6680972b09377fa9fcbdeef",
+      "2.logits.bf16": "fd44340ffd54e8a7e8fe9b6097f61b99d3f0649d4e5eb1f0eafdede8bdff62b3",
+      "2.logits.f32": "448070a67885b929a5cef510ded84aee3fb50009e5b076f7e5875163e3c6f53c"
+    }
+  },
+  "window255": {
+    "generated_ids": [
+      229,
+      1197,
+      20
+    ],
+    "files": {
+      "0.logits.bf16": "f4799d4a40f9923147d170c074131c77b223d9f1c9c90f7eaf885d10c9fad518",
+      "0.logits.f32": "47aa7fe7a3aa52a6c77bb13a6928aefc2d711a2382dd71f67c7bc7cd1a97e721",
+      "1.logits.bf16": "4ed35069a460be9273f3f61d6043f926bb59fad7cb8b5f394de924a5526d1caa",
+      "1.logits.f32": "e3a8d58f4845ec6d3ef82f05b713f9b2ca0fc313a7707c5c9dad5bbb76e16bde",
+      "2.logits.bf16": "c7fe20812a92365a1302b890a99af4fb9e691dc340953784fec3ee59b89d2816",
+      "2.logits.f32": "7a573e41c10078df798b20bee7901c51bdbea0d9480805839229eb49d9015a77"
+    }
+  },
+  "window256": {
+    "generated_ids": null,
+    "files": {
+      "0.logits.bf16": "fee30455094277f0b68e0815a1ca531a218b3cc6cb7dcbcdd2d3f877ed32b12c",
+      "0.logits.f32": "8c9e1144fce910666ea2b05b5b17d83d0d5e9ddf906ddb273635fc46e82bb855",
+      "1.logits.bf16": "c8da884bd693291eccabb9aee48acbb91e36b7c5ea5ccb80010bd0a2856b0175",
+      "1.logits.f32": "3c4760dfff0a9e0ef8fa2f2f35ac36e26d0fc61afd65f5353142185f2d3ce0f4"
+    }
+  },
+  "window257": {
+    "generated_ids": null,
+    "files": {
+      "0.logits.bf16": "5e1e33c257477593a3f2543fee27010bc1a34b22fcb0709b44d07032531f616d",
+      "0.logits.f32": "d9e5950a0f902e3da73de4a10691864449b731aa630a1a74dad6af4cc62a05d2",
+      "1.logits.bf16": "bccdcf554687790eff3b3ba2dd87156c9d6ff85c027dc058eea147a9e08b0c3e",
+      "1.logits.f32": "b0c95988093f4da2c28799303599b2e6f9cf7e0f54a8c72f4abce7a7679ae3fd"
+    }
+  },
+  "long1024": {
+    "generated_ids": null,
+    "files": {
+      "0.logits.bf16": "eab2bba553022b56525345c8cd5e8256a85f8dc0af4016010ffc8605496cd4ad",
+      "0.logits.f32": "7b33231bbc7cf7354b252a3b56bce908afdc2ac610b7f713d4a16214e240e97a",
+      "1.logits.bf16": "f0477814c756f648923dcfcbeafe1aa90aa9ba958f8b7af22eccf4bf1ae6d7c2",
+      "1.logits.f32": "4899baeed37b060cea58ba179772a1d8a3101219b75dd4b53c085af585b9ba74",
+      "2.logits.bf16": "e4a88fee81858530cacd0f7dffbfcf2fb46f60c745a90db4d427024c13767705",
+      "2.logits.f32": "cb1e3feebe08bf5aad416bd845aad76395013de7e9f26d110b3a5d8ad6504ab7"
+    }
+  },
+  "final4096": {
+    "generated_ids": [
+      20,
+      229
+    ],
+    "files": {
+      "0.logits.bf16": "56b8d0b6e1474353a42c9bd4c9b7bde91120ea3fa09529762d9c5dd913b054c7",
+      "0.logits.f32": "0d5eca57c13f344b2b1a170702d18aa59fe4c844bb5d32df23a04a214986b49d",
+      "1.logits.bf16": "f08297630f8aff3ff6607567420d4e7c47415cd58126f62a5e46bcd81cd0e29f",
+      "1.logits.f32": "c664635a54e203cccd8760a0f37a3c0219c9b923176ef91e483e7ba85ee90c0f"
+    }
+  },
+  "prefill4096": {
+    "generated_ids": null,
+    "files": {
+      "0.logits.bf16": "16cc2ed8281edc0d581ff027e6b4093300cfb42977a90c58895d1dcb3d0fd0d8",
+      "0.logits.f32": "3bdd00148c3334a570daf5a863dcc2962a4cbc0f3c5324d78833a023515d1725"
+    }
+  },
+  "_provenance": {
+    "binary_sha256": "a75e26b1f357e8bc1dc0adc6301f37207b531e414ab146fbb9352340709d3376",
+    "suite": "full",
+    "plan": "validation/g4-gates-v2/PLAN.md"
+  }
+}
