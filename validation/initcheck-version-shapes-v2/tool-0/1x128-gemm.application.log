@@ -1,0 +1,1 @@
+PASS: 128 sampled outputs of 384; producer=gemm; cublas=130100

@@ -1,0 +1,500 @@
+{
+ "summary": {
+  "plain": {
+   "replies": 30,
+   "with_digits": 25,
+   "mean_wer": 0.021979530854303993,
+   "mean_wer_with_digits": 0.015899246548974316,
+   "mean_wer_without_digits": 0.052380952380952375
+  },
+  "instructed": {
+   "replies": 30,
+   "with_digits": 19,
+   "mean_wer": 0.04053571428571428,
+   "mean_wer_with_digits": 0.022556390977443608,
+   "mean_wer_without_digits": 0.0715909090909091
+  }
+ },
+ "rows": [
+  {
+   "name": "instructed-q00-s1",
+   "arm": "instructed",
+   "text": "Mount Everest is about twenty nine thousand eight hundred and thirty eight feet tall.",
+   "heard": "Mount Everest is about 29,838 feet tall,",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q00-s2",
+   "arm": "instructed",
+   "text": "Mount Everest is about twenty nine thousand five hundred thirty two meters tall, which is roughly twenty nine thousand five hundred thirty two feet.",
+   "heard": "Mount Everest is about 29,532 meters tall, which is roughly 29,532 feet.",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q00-s3",
+   "arm": "instructed",
+   "text": "Mount Everest is about twenty nine thousand five hundred thirty two feet tall.",
+   "heard": "Mount Everest is about 29,532 feet tall.",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q01-s1",
+   "arm": "instructed",
+   "text": "The first person walked on the moon in 1969.",
+   "heard": "The first person walked on the moon in 1969.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q01-s2",
+   "arm": "instructed",
+   "text": "The first person walked on the moon in 1969.",
+   "heard": "The first person walked on the moon in 1969.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q01-s3",
+   "arm": "instructed",
+   "text": "The first person walked on the moon in 1969.",
+   "heard": "The first person walked on the moon in 1969.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q02-s1",
+   "arm": "instructed",
+   "text": "A leap year has 366 days. It happens every four years, and we add an extra day to help keep our calendar in sync with the Earth's orbit around the sun.",
+   "heard": "A leap year has 366 days. It happens every four years, and we add an extra day to help keep our calendar in sync with the Earth's orbit around the Sun.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q02-s2",
+   "arm": "instructed",
+   "text": "A leap year has 366 days. It happens every four years, and we add an extra day to help keep our calendar in sync with the Earth's orbit around the sun.",
+   "heard": "A leap year has 366 days. It happens every four years, and we add an extra day to help keep our calendar in sync with the Earth's orbit around the Sun.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q02-s3",
+   "arm": "instructed",
+   "text": "A leap year has 366 days. It happens every four years, and we add an extra day to help keep our calendar in sync with the Earth’s orbit around the sun.",
+   "heard": "A leap year has 366 days. It happens every four years, and we add an extra day to help keep our calendar in sync with the Earth's orbit around the Sun.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q03-s1",
+   "arm": "instructed",
+   "text": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Do you need any other temperature conversions?",
+   "heard": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Do you need any other temperature conversions?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q03-s2",
+   "arm": "instructed",
+   "text": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Do you need any other temperature conversions?",
+   "heard": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Do you need any other temperature conversions?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q03-s3",
+   "arm": "instructed",
+   "text": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Do you need any other temperature conversions?",
+   "heard": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Do you need any other temperature conversions?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q04-s1",
+   "arm": "instructed",
+   "text": "The Moon is roughly 238 million miles, about 384,400 kilometers, from Earth. Would you like that in another unit?",
+   "heard": "The Moon is roughly 238 million miles, about 384,400 kilometers, from Earth. Would you like that in another unit?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q04-s2",
+   "arm": "instructed",
+   "text": "The Moon is roughly 238 million miles, about 384,400 kilometers, from Earth on average. Want more details about its distance variations?",
+   "heard": "The Moon is roughly 238 million miles, about 384,400 kilometers, from Earth on average. Want more details about its distance variations?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q04-s3",
+   "arm": "instructed",
+   "text": "The Moon is roughly 238,855 miles, or about 384,400 kilometers, from Earth. Would you like that in another unit?",
+   "heard": "The Moon is roughly 238,855 miles, or about 384,400 kilometers, from Earth. Would you like that in another unit?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q05-s1",
+   "arm": "instructed",
+   "text": "Fifteen percent of two hundred forty is thirty-six.",
+   "heard": "15% of 240 is 36.",
+   "has_digit": false,
+   "wer": 0.2
+  },
+  {
+   "name": "instructed-q05-s2",
+   "arm": "instructed",
+   "text": "Fifteen percent of two hundred forty is thirty-six.",
+   "heard": "15% of 240 is 36.",
+   "has_digit": false,
+   "wer": 0.2
+  },
+  {
+   "name": "instructed-q05-s3",
+   "arm": "instructed",
+   "text": "Fifteen percent of two hundred forty is thirty-six.",
+   "heard": "15% of 240 is 36.",
+   "has_digit": false,
+   "wer": 0.2
+  },
+  {
+   "name": "instructed-q06-s1",
+   "arm": "instructed",
+   "text": "World War Two ended in September 1945.",
+   "heard": "World War II ended in September 1945.",
+   "has_digit": true,
+   "wer": 0.14285714285714285
+  },
+  {
+   "name": "instructed-q06-s2",
+   "arm": "instructed",
+   "text": "World War Two ended in September 1945.",
+   "heard": "World War II ended in September 1945.",
+   "has_digit": true,
+   "wer": 0.14285714285714285
+  },
+  {
+   "name": "instructed-q06-s3",
+   "arm": "instructed",
+   "text": "World War Two ended in September 1945.",
+   "heard": "World War II ended in September 1945.",
+   "has_digit": true,
+   "wer": 0.14285714285714285
+  },
+  {
+   "name": "instructed-q07-s1",
+   "arm": "instructed",
+   "text": "About 37 million people live in Tokyo.",
+   "heard": "About 37 million people live in Tokyo,",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q07-s2",
+   "arm": "instructed",
+   "text": "About 37 million people live in Tokyo.",
+   "heard": "About 37 million people live in Tokyo,",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q07-s3",
+   "arm": "instructed",
+   "text": "About 37 million people live in Tokyo.",
+   "heard": "About 37 million people live in Tokyo.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q08-s1",
+   "arm": "instructed",
+   "text": "New York is in the Eastern Standard Time zone, which is Eastern Time. It is five hours behind London.",
+   "heard": "New York is in the Eastern Standard Time Zone, which is Eastern Time. It is five hours behind London.",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q08-s2",
+   "arm": "instructed",
+   "text": "New York is in the Eastern Standard Time zone, which is 5 hours behind London.",
+   "heard": "New York is in the Eastern Standard Time Zone, which is five hours behind London.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q08-s3",
+   "arm": "instructed",
+   "text": "New York is in the Eastern Time Zone, and it’s five hours behind London.",
+   "heard": "New York is in the Eastern time zone, and it's five hours behind London.",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "instructed-q09-s1",
+   "arm": "instructed",
+   "text": "You should tip about fifteen to twenty percent, roughly nine to twelve dollars. Does that work for you?",
+   "heard": "You should tip about 15 to 20%, roughly $9 to $12. Does that work for you?",
+   "has_digit": false,
+   "wer": 0.0625
+  },
+  {
+   "name": "instructed-q09-s2",
+   "arm": "instructed",
+   "text": "You should tip about fifteen to twenty percent, roughly nine to twelve dollars. Does that work for you?",
+   "heard": "You should tip about 15 to 20%, roughly $9 to $12. Does that work for you?",
+   "has_digit": false,
+   "wer": 0.0625
+  },
+  {
+   "name": "instructed-q09-s3",
+   "arm": "instructed",
+   "text": "You should tip about fifteen to twenty percent, roughly nine to twelve dollars. Does that work for you?",
+   "heard": "You should tip about 15 to 20%, roughly $9 to $12. Does that work for you?",
+   "has_digit": false,
+   "wer": 0.0625
+  },
+  {
+   "name": "plain-q00-s1",
+   "arm": "plain",
+   "text": "Mount Everest is about 8,848 meters, or roughly 29,029 feet, making it the world’s highest peak. Would you like to know more about its climbing history?",
+   "heard": "Mount Everest is about 8,848 meters, or roughly 29,029 feet, making it the world's highest peak. Would you like to know more about its climbing history?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q00-s2",
+   "arm": "plain",
+   "text": "Mount Everest is about 29,032 feet tall, which is roughly 8,848 meters. Would you like to know anything else about it?",
+   "heard": "Mount Everest is about 29,032 feet tall, which is roughly 8,848 meters. Would you like to know anything else about it?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q00-s3",
+   "arm": "plain",
+   "text": "Mount Everest is about 29,032 feet tall, which is roughly 8,848 meters. Would you like to know its elevation in meters?",
+   "heard": "Mount Everest is about 29,032 feet tall, which is roughly 8,848 meters. Would you like to know its elevation in meters?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q01-s1",
+   "arm": "plain",
+   "text": "The first person walked on the moon in 1969. Would you like to know more about the Apollo mission?",
+   "heard": "The first person walked on the moon in 1969. Would you like to know more about the Apollo mission?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q01-s2",
+   "arm": "plain",
+   "text": "The first person walked on the moon in 1969. Would you like to know more about the Apollo mission?",
+   "heard": "The first person walked on the moon in 1969. Would you like to know more about the Apollo mission?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q01-s3",
+   "arm": "plain",
+   "text": "The first person walked on the moon in 1969. Would you like more details about the mission?",
+   "heard": "The first person walked on the moon in 1969. Would you like more details about the mission?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q02-s1",
+   "arm": "plain",
+   "text": "A leap year has 366 days, adding two extra days to keep the calendar aligned with the Earth's orbit. Want to know when the next leap year occurs?",
+   "heard": "The leap year has 366 days, adding two extra days to keep the calendar aligned with the Earth's orbit. Want to know when the next leap year occurs?",
+   "has_digit": true,
+   "wer": 0.034482758620689655
+  },
+  {
+   "name": "plain-q02-s2",
+   "arm": "plain",
+   "text": "A leap year has 366 days, adding two extra days to keep the calendar aligned with the Earth's orbit. Does that clarify why?",
+   "heard": "A leap year has 366 days, adding two extra days to keep the calendar aligned with the Earth's orbit. Does that clarify why?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q02-s3",
+   "arm": "plain",
+   "text": "A leap year has 366 days, adding two extra days to keep the calendar aligned with the Earth's orbit. Does that clarify why?",
+   "heard": "A leap year has 366 days, adding two extra days to keep the calendar aligned with the Earth's orbit. Does that clarify why?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q03-s1",
+   "arm": "plain",
+   "text": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Anything else you’d like to know?",
+   "heard": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Anything else you'd like to know?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q03-s2",
+   "arm": "plain",
+   "text": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Anything else you’d like to know?",
+   "heard": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Anything else you'd like to know?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q03-s3",
+   "arm": "plain",
+   "text": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Anything else you’d like to know?",
+   "heard": "Water boils at 212 degrees Fahrenheit and 100 degrees Celsius. Anything else you'd like to know?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q04-s1",
+   "arm": "plain",
+   "text": "The Moon is roughly 238,000 kilometers from Earth, about 148,000 miles. Would you like more details on its distance variations?",
+   "heard": "The Moon is roughly 233,000 kilometers from Earth, about 148,000 miles. Would you like more details on its distance variations?",
+   "has_digit": true,
+   "wer": 0.05
+  },
+  {
+   "name": "plain-q04-s2",
+   "arm": "plain",
+   "text": "The Moon is roughly 238,000 kilometers from Earth, about 149,000 miles. Would you like more details about its distance variations?",
+   "heard": "The Moon is roughly 238,000 kilometers from Earth, about 149,000 miles. Would you like more details about its distance variations?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q04-s3",
+   "arm": "plain",
+   "text": "The Moon is roughly 238,855 miles from Earth, about 384,400 kilometers. Would you like more details on its distance variations?",
+   "heard": "The Moon is roughly 238,855 miles from Earth, about 384,400 kilometers. Would you like more details on its distance variations?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q05-s1",
+   "arm": "plain",
+   "text": "Okay so 15% of 240 is 36. You just multiply 240 by 0.15, which gives you 36.",
+   "heard": "Okay, so 15% of 240 is 36. You just multiply 240 by 0.15, which gives you 36.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q05-s2",
+   "arm": "plain",
+   "text": "Okay so 15% of 240 is 36. You just multiply 240 by 0.15, which gives you 36.",
+   "heard": "Okay, so 15% of 240 is 36. You just multiply 240 by 0.15, which gives you 36.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q05-s3",
+   "arm": "plain",
+   "text": "Okay so 15% of 240 is 36. You just multiply 240 by 0.15, which gives you 36.",
+   "heard": "Okay, so 15% of 240 is 36. You just multiply 240 by 0.15, which gives you 36.",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q06-s1",
+   "arm": "plain",
+   "text": "World War Two ended in September 1945, with Germany’s surrender on May 8 1945. Would you like more details?",
+   "heard": "World War II ended in September 1945, with Germany's surrender on May 8, 1945. Would you like more details?",
+   "has_digit": true,
+   "wer": 0.05
+  },
+  {
+   "name": "plain-q06-s2",
+   "arm": "plain",
+   "text": "World War Two ended in September 1945, with Germany’s surrender on May 8 and Japan’s on August 15. Which aspect of the war are you curious about next?",
+   "heard": "World War II ended in September 1945, with Germany's surrender on May 8 and Japan's on August 15. Which aspect of the war are you curious about next?",
+   "has_digit": true,
+   "wer": 0.03333333333333333
+  },
+  {
+   "name": "plain-q06-s3",
+   "arm": "plain",
+   "text": "World War Two ended in September 1945, with Germany’s surrender on May 8, 1945. Anything else you’d like to know?",
+   "heard": "World War II ended in September 1945, with Germany's surrender on May 8, 1945. Anything else you'd like to know?",
+   "has_digit": true,
+   "wer": 0.045454545454545456
+  },
+  {
+   "name": "plain-q07-s1",
+   "arm": "plain",
+   "text": "Tokyo is home to about 37 million people. Does that answer your question?",
+   "heard": "Tokyo is home to about 37 million people. Does that answer your question?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q07-s2",
+   "arm": "plain",
+   "text": "Tokyo is home to about 13.8 million people, giving you a sense of its size. Need anything else about the city?",
+   "heard": "Tokyo is home to about 13.8 million people, giving you a sense of its size. Need anything else about the city?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q07-s3",
+   "arm": "plain",
+   "text": "Tokyo is home to about 37 million people. Does that answer your question?",
+   "heard": "Tokyo is home to about 37 million people. Does that answer your question?",
+   "has_digit": true,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q08-s1",
+   "arm": "plain",
+   "text": "New York is in the Eastern Time Zone, which is five hours behind London.",
+   "heard": "New York is in the Eastern time zone, which is five hours behind London.",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q08-s2",
+   "arm": "plain",
+   "text": "New York is in the Eastern Time Zone, which is five hours behind London.",
+   "heard": "New York is in the Eastern time zone, which is five hours behind London.",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q08-s3",
+   "arm": "plain",
+   "text": "New York is in the Eastern Time zone, which is five hours behind London.",
+   "heard": "New York is in the Eastern time zone, which is five hours behind London.",
+   "has_digit": false,
+   "wer": 0.0
+  },
+  {
+   "name": "plain-q09-s1",
+   "arm": "plain",
+   "text": "A typical tip is about fifteen to twenty percent, so on a 64 dollar dinner that works out to roughly nine to twelve dollars. If you’re a table for more than two people, you might aim toward the higher end.",
+   "heard": "The typical tip is about 15-20%, so on a $64 dinner, that works out to roughly $9-12. If you're a table for more than two people, you might aim toward the higher end.",
+   "has_digit": true,
+   "wer": 0.18421052631578946
+  },
+  {
+   "name": "plain-q09-s2",
+   "arm": "plain",
+   "text": "A typical tip is about fifteen to twenty percent, so on a sixty‑four dollar dinner that works out to roughly nine to thirteen dollars. If you thought the service was especially good you could aim toward the higher end, and if it was average stick closer to the lower end.",
+   "heard": "A typical tip is about 15-20%. So, on a $64 dinner, that works out to roughly $9-13. If you thought the service was especially good, you could aim toward the higher end, and if it was average, stick closer to the lower end.",
+   "has_digit": false,
+   "wer": 0.16666666666666666
+  },
+  {
+   "name": "plain-q09-s3",
+   "arm": "plain",
+   "text": "A typical tip is about fifteen percent of the bill, roughly eight dollars for a sixty‑four dollar dinner. Does that work for you?",
+   "heard": "A typical tip is about 15% of the bill, roughly $8 for a $64 dinner. Does that work for you?",
+   "has_digit": false,
+   "wer": 0.09523809523809523
+  }
+ ]
+}

@@ -1,0 +1,106 @@
+{
+ "set": "dev",
+ "system": "Perform TTS in American English using a female voice.",
+ "cases": [
+  {
+   "case": "d01-time",
+   "text": "The meeting starts at 7:45 and should end by 9:00.",
+   "spoken": "The meeting starts at seven forty-five and should end by nine o'clock."
+  },
+  {
+   "case": "d02-money",
+   "text": "The ticket costs $3.50, but the premium seat is $129.",
+   "spoken": "The ticket costs three dollars and fifty cents, but the premium seat is one hundred twenty-nine dollars."
+  },
+  {
+   "case": "d03-year-count",
+   "text": "In 1984 the town had 1,500 residents.",
+   "spoken": "In nineteen eighty-four the town had one thousand five hundred residents."
+  },
+  {
+   "case": "d04-percent",
+   "text": "Inflation rose 3.2% last quarter, up from 2.75% the year before.",
+   "spoken": "Inflation rose three point two percent last quarter, up from two point seven five percent the year before."
+  },
+  {
+   "case": "d05-date-ordinal",
+   "text": "The race is on Nov. 9, 2026, and she finished 2nd last year.",
+   "spoken": "The race is on November ninth, twenty twenty-six, and she finished second last year."
+  },
+  {
+   "case": "d06-large",
+   "text": "The city has 8,336,817 people.",
+   "spoken": "The city has eight million three hundred thirty-six thousand eight hundred seventeen people."
+  },
+  {
+   "case": "d07-c3-failure",
+   "text": "Order number 389 shipped at 7:45 this morning.",
+   "spoken": "Order number three hundred eighty-nine shipped at seven forty-five this morning."
+  },
+  {
+   "case": "d08-titles",
+   "text": "Dr. Patel and Mrs. Gomez met Mr. Lee at St. Mary's.",
+   "spoken": "Doctor Patel and Missus Gomez met Mister Lee at Saint Mary's."
+  },
+  {
+   "case": "d09-address",
+   "text": "Send the package to 1600 Main St. before Friday.",
+   "spoken": "Send the package to sixteen hundred Main Street before Friday."
+  },
+  {
+   "case": "d10-units",
+   "text": "The trail is 12 km long and climbs 2,800 ft.",
+   "spoken": "The trail is twelve kilometers long and climbs two thousand eight hundred feet."
+  },
+  {
+   "case": "d11-temperature",
+   "text": "It was -5\u00b0C at dawn and 41\u00b0F by noon.",
+   "spoken": "It was minus five degrees Celsius at dawn and forty-one degrees Fahrenheit by noon."
+  },
+  {
+   "case": "d12-phone",
+   "text": "Call 555-0142 after 6 p.m. tonight.",
+   "spoken": "Call five five five oh one four two after six p.m. tonight."
+  },
+  {
+   "case": "d13-fraction-range",
+   "text": "Add 1/2 cup of sugar and bake for 25-30 minutes.",
+   "spoken": "Add one half cup of sugar and bake for twenty-five to thirty minutes."
+  },
+  {
+   "case": "d14-latin",
+   "text": "Bring snacks, e.g. apples and nuts, to the 3rd floor.",
+   "spoken": "Bring snacks, for example apples and nuts, to the third floor."
+  },
+  {
+   "case": "d15-versus-decade",
+   "text": "It was Smith vs. Jones in the 1990s.",
+   "spoken": "It was Smith versus Jones in the nineteen nineties."
+  },
+  {
+   "case": "d16-million",
+   "text": "The company raised $1.2 million in 2021.",
+   "spoken": "The company raised one point two million dollars in twenty twenty-one."
+  },
+  {
+   "case": "d17-math",
+   "text": "If x = 4, then x + 3 = 7.",
+   "spoken": "If x equals four, then x plus three equals seven."
+  },
+  {
+   "case": "d18-decimal-unit",
+   "text": "The tablet is 0.5 mg, so take 2 a day.",
+   "spoken": "The tablet is zero point five milligrams, so take two a day."
+  },
+  {
+   "case": "d19-number-sign",
+   "text": "Room #12 is next to No. 14.",
+   "spoken": "Room number twelve is next to number fourteen."
+  },
+  {
+   "case": "d20-mixed",
+   "text": "On Jan. 3, 2025, at 10:30 a.m., about 2,500 runners paid $45 each to race 10 km through St. Paul.",
+   "spoken": "On January third, twenty twenty-five, at ten thirty a.m., about two thousand five hundred runners paid forty-five dollars each to race ten kilometers through Saint Paul."
+  }
+ ]
+}

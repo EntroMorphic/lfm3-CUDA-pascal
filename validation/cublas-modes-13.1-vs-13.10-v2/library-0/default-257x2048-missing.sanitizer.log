@@ -1,0 +1,31 @@
+========= COMPUTE-SANITIZER
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (64,0,0) in block (0,0,0)
+=========     Address 0x1c45000080
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x37d3] in lfm3-projection-modes-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (65,0,0) in block (0,0,0)
+=========     Address 0x1c45000082
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x37d3] in lfm3-projection-modes-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (66,0,0) in block (0,0,0)
+=========     Address 0x1c45000084
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x37d3] in lfm3-projection-modes-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (67,0,0) in block (0,0,0)
+=========     Address 0x1c45000086
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x37d3] in lfm3-projection-modes-probe
+========= 
+========= ERROR SUMMARY: 128 errors
+========= ERROR SUMMARY: 124 errors were not printed. Use --print-limit option to adjust the number of printed errors

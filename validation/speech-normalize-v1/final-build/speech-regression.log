@@ -1,0 +1,48 @@
+SAME   split-tts-long-male-s1.raw.i32
+SAME   split-tts-long-male-s1.frames.i32
+SAME   split-tts-long-male-s1.f32
+SAME   split-probe-other-long-s1.raw.i32
+SAME   split-probe-other-long-s1.frames.i32
+SAME   split-probe-other-long-s1.f32
+SAME   unsplit-tts-fox-female-s1.raw.i32
+SAME   unsplit-tts-fox-female-s1.frames.i32
+SAME   unsplit-tts-fox-female-s1.f32
+SAME   unsplit-il-study-s1.raw.i32
+SAME   unsplit-il-study-s1.frames.i32
+SAME   unsplit-il-study-s1.f32
+SAME   forced-tts-fox-female.hidden.bf16
+SAME   forced-tts-fox-female.embeds.bf16
+SAME   forced-tts-fox-female.raw.i32
+SAME   forced-tts-fox-female.f32
+SAME   forced-tts-fox-male.hidden.bf16
+SAME   forced-tts-fox-male.embeds.bf16
+SAME   forced-tts-fox-male.raw.i32
+SAME   forced-tts-fox-male.f32
+SAME   forced-tts-museum-female.hidden.bf16
+SAME   forced-tts-museum-female.embeds.bf16
+SAME   forced-tts-museum-female.raw.i32
+SAME   forced-tts-museum-female.f32
+SAME   forced-tts-museum-male.hidden.bf16
+SAME   forced-tts-museum-male.embeds.bf16
+SAME   forced-tts-museum-male.raw.i32
+SAME   forced-tts-museum-male.f32
+SAME   forced-interleaved-study.hidden.bf16
+SAME   forced-interleaved-study.embeds.bf16
+SAME   forced-interleaved-study.raw.i32
+SAME   forced-interleaved-study.f32
+SAME   forced-ref-interleaved.hidden.bf16
+SAME   forced-ref-interleaved.embeds.bf16
+SAME   forced-ref-interleaved.raw.i32
+SAME   forced-ref-interleaved.f32
+tts-long-male-s1 chunks ended_by_eos (strict): [True, True, True, True, True] rtf 3.1 e2e 3.06
+probe-other-long-s1 chunks ended_by_eos (strict): [True, True, True, True, True] rtf 3.09 e2e 3.05
+REFUSE empty-prompt: status 1, outputs left 0: lfm3-speech: empty prompt
+REFUSE empty-chunk: status 1, outputs left 0: lfm3-speech: empty prompt
+REFUSE bad-mode: status 1, outputs left 0: lfm3-speech: mode must be audio, interleaved, text or none
+REFUSE placeholder: status 1, outputs left 0: lfm3-speech: speech: more <|audio|> spans than audio clips
+REFUSE capacity: status 1, outputs left 0: lfm3-speech: prompt (36) + max_new_tokens exceeds capacity (4096)
+REFUSE split-no-messages: status 1, outputs left 0: lfm3-speech: split needs messages
+REFUSE forced-leftover-token: status 1, outputs left 0: lfm3-speech: speech: forced replay ended with tokens or frames unused
+REFUSE forced-leftover-frame: status 1, outputs left 0: lfm3-speech: speech: forced replay ended with tokens or frames unused
+REFUSE request-is-output: status 1, request kept yes: lfm3-speech: an input (/workspace/liquid-CUDA/build/audioin-v6-check/self.json) is one of OUT_STEM's outputs; use another stem
+stale hidden removed

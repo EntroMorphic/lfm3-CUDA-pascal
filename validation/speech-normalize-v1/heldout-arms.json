@@ -1,0 +1,246 @@
+{
+ "set": "heldout",
+ "summary": {
+  "cases": 11,
+  "guard_passes": 1,
+  "text_accuracy": {
+   "none": 0,
+   "rules": 8,
+   "model": 1,
+   "hybrid": 8
+  },
+  "rewrite_seconds_mean": 0.40626349090909086,
+  "rewrite_seconds_max": 0.47746069999999996
+ },
+ "cases": [
+  {
+   "case": "h01",
+   "spoken": "The store opened at nine AM on March fifteenth, twenty twenty-four, with prices at five dollars and ninety-nine cents per item.",
+   "arms": {
+    "none": "The store opened at 9:00 AM on March 15, 2024, with prices at $5.99 per item.",
+    "rules": "The store opened at nine o'clock AM on March fifteenth, twenty twenty-four, with prices at five dollars and ninety-nine cents per item.",
+    "model": "The store opened at 9:00 AM on March 15, 2024, with prices at $5.99 per item.",
+    "hybrid": "The store opened at nine o'clock AM on March fifteenth, twenty twenty-four, with prices at five dollars and ninety-nine cents per item."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.4729887,
+   "accurate": {
+    "none": false,
+    "rules": false,
+    "model": false,
+    "hybrid": false
+   }
+  },
+  {
+   "case": "h02",
+   "spoken": "She left home at seven thirty PM on June twelfth, twenty twenty-three, and the total bill was forty-two dollars and fifty cents.",
+   "arms": {
+    "none": "She left home at 7:30 PM on June 12, 2023, and the total bill was $42.50.",
+    "rules": "She left home at seven thirty PM on June twelfth, twenty twenty-three, and the total bill was forty-two dollars and fifty cents.",
+    "model": "She left home at 7:30 PM on June 12, 2023, and the total bill was $42.50.",
+    "hybrid": "She left home at seven thirty PM on June twelfth, twenty twenty-three, and the total bill was forty-two dollars and fifty cents."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.4754498,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "h03",
+   "spoken": "The delivery arrived at three forty-five PM on October fifth, twenty twenty-two, and the package weighed two point three pounds.",
+   "arms": {
+    "none": "The delivery arrived at 3:45 PM on October 5, 2022, and the package weighed 2.3 pounds.",
+    "rules": "The delivery arrived at three forty-five PM on October fifth, twenty twenty-two, and the package weighed two point three pounds.",
+    "model": "The delivery arrived at 3:45 PM on October 5, 2022, and the package weighed 2.3 pounds.",
+    "hybrid": "The delivery arrived at three forty-five PM on October fifth, twenty twenty-two, and the package weighed two point three pounds."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.47746069999999996,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "h04",
+   "spoken": "The restaurant offers a twenty percent discount for orders over fifty dollars, and the total cost was thirty-eight dollars.",
+   "arms": {
+    "none": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.00.",
+    "rules": "The restaurant offers a twenty percent discount for orders over fifty dollars and the total cost was thirty-eight dollars.",
+    "model": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.00.",
+    "hybrid": "The restaurant offers a twenty percent discount for orders over fifty dollars and the total cost was thirty-eight dollars."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.4138551,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "h05",
+   "spoken": "The car's fuel efficiency is thirty miles per gallon, and the gas price was three dollars and twenty cents per gallon.",
+   "arms": {
+    "none": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+    "rules": "The car's fuel efficiency is thirty miles per gallon, and the gas price was three dollars and twenty cents per gallon.",
+    "model": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+    "hybrid": "The car's fuel efficiency is thirty miles per gallon, and the gas price was three dollars and twenty cents per gallon."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.4115522,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "h06",
+   "spoken": "The bakery sells twelve loaves of bread daily, and the price per loaf is two dollars and fifty cents.",
+   "arms": {
+    "none": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+    "rules": "The bakery sells twelve loaves of bread daily, and the price per loaf is two dollars and fifty cents.",
+    "model": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+    "hybrid": "The bakery sells twelve loaves of bread daily, and the price per loaf is two dollars and fifty cents."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3986425,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "h07",
+   "spoken": "The gym membership costs forty-five dollars per month, and the first month was charged at ten percent discount.",
+   "arms": {
+    "none": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+    "rules": "The gym membership costs forty-five dollars per month, and the first month was charged at ten percent discount.",
+    "model": "The gym membership costs forty-five dollars per month, and the first month was charged at ten percent discount.",
+    "hybrid": "The gym membership costs forty-five dollars per month, and the first month was charged at ten percent discount."
+   },
+   "guard": true,
+   "guard_reasons": [],
+   "rewrite_seconds": 0.3656986,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": true,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "h08",
+   "spoken": "The school's attendance rate is eighty-five percent, and the number of students is three hundred twenty.",
+   "arms": {
+    "none": "The school's attendance rate is 85%, and the number of students is 320.",
+    "rules": "The school's attendance rate is eighty-five percent, and the number of students is three hundred twenty.",
+    "model": "The school's attendance rate is 85% and the number of students is 320.",
+    "hybrid": "The school's attendance rate is eighty-five percent, and the number of students is three hundred twenty."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3197918,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "h09",
+   "spoken": "The phone number for the emergency service is nine one one, and the response time is under two minutes.",
+   "arms": {
+    "none": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+    "rules": "The phone number for the emergency service is nine hundred eleven, and the response time is under two minutes.",
+    "model": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+    "hybrid": "The phone number for the emergency service is nine hundred eleven, and the response time is under two minutes."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.36894289999999996,
+   "accurate": {
+    "none": false,
+    "rules": false,
+    "model": false,
+    "hybrid": false
+   }
+  },
+  {
+   "case": "h10",
+   "spoken": "The address on the building is one twenty-three Main Street, and the zip code is one two three four five.",
+   "arms": {
+    "none": "The address on the building is 123 Main Street, and the zip code is 12345.",
+    "rules": "The address on the building is one twenty-three Main Street, and the zip code is twelve thousand three hundred forty-five.",
+    "model": "The address on the building is 123 Main Street, and the zip code is 12345.",
+    "hybrid": "The address on the building is one twenty-three Main Street, and the zip code is twelve thousand three hundred forty-five."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3508394,
+   "accurate": {
+    "none": false,
+    "rules": false,
+    "model": false,
+    "hybrid": false
+   }
+  },
+  {
+   "case": "h11",
+   "spoken": "The temperature was seventy-two degrees Fahrenheit on July tenth, twenty twenty-three, and the humidity was forty-five percent.",
+   "arms": {
+    "none": "The temperature was 72°F on July 10, 2023, and the humidity was 45%.",
+    "rules": "The temperature was seventy-two degrees Fahrenheit on July tenth, twenty twenty-three, and the humidity was forty-five percent.",
+    "model": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45 percent.",
+    "hybrid": "The temperature was seventy-two degrees Fahrenheit on July tenth, twenty twenty-three, and the humidity was forty-five percent."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.4136767,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  }
+ ]
+}

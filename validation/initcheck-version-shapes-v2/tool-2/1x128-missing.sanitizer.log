@@ -1,0 +1,703 @@
+========= COMPUTE-SANITIZER
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (0,0,0) in block (0,0,0)
+=========     Address 0x1c43618200
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (1,0,0) in block (0,0,0)
+=========     Address 0x1c43618202
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (2,0,0) in block (0,0,0)
+=========     Address 0x1c43618204
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (3,0,0) in block (0,0,0)
+=========     Address 0x1c43618206
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (4,0,0) in block (0,0,0)
+=========     Address 0x1c43618208
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (5,0,0) in block (0,0,0)
+=========     Address 0x1c4361820a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (6,0,0) in block (0,0,0)
+=========     Address 0x1c4361820c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (7,0,0) in block (0,0,0)
+=========     Address 0x1c4361820e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (8,0,0) in block (0,0,0)
+=========     Address 0x1c43618210
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (9,0,0) in block (0,0,0)
+=========     Address 0x1c43618212
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (10,0,0) in block (0,0,0)
+=========     Address 0x1c43618214
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (11,0,0) in block (0,0,0)
+=========     Address 0x1c43618216
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (12,0,0) in block (0,0,0)
+=========     Address 0x1c43618218
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (13,0,0) in block (0,0,0)
+=========     Address 0x1c4361821a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (14,0,0) in block (0,0,0)
+=========     Address 0x1c4361821c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (15,0,0) in block (0,0,0)
+=========     Address 0x1c4361821e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (16,0,0) in block (0,0,0)
+=========     Address 0x1c43618220
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (17,0,0) in block (0,0,0)
+=========     Address 0x1c43618222
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (18,0,0) in block (0,0,0)
+=========     Address 0x1c43618224
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (19,0,0) in block (0,0,0)
+=========     Address 0x1c43618226
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (20,0,0) in block (0,0,0)
+=========     Address 0x1c43618228
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (21,0,0) in block (0,0,0)
+=========     Address 0x1c4361822a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (22,0,0) in block (0,0,0)
+=========     Address 0x1c4361822c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (23,0,0) in block (0,0,0)
+=========     Address 0x1c4361822e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (24,0,0) in block (0,0,0)
+=========     Address 0x1c43618230
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (25,0,0) in block (0,0,0)
+=========     Address 0x1c43618232
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (26,0,0) in block (0,0,0)
+=========     Address 0x1c43618234
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (27,0,0) in block (0,0,0)
+=========     Address 0x1c43618236
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (28,0,0) in block (0,0,0)
+=========     Address 0x1c43618238
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (29,0,0) in block (0,0,0)
+=========     Address 0x1c4361823a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (30,0,0) in block (0,0,0)
+=========     Address 0x1c4361823c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (31,0,0) in block (0,0,0)
+=========     Address 0x1c4361823e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (32,0,0) in block (0,0,0)
+=========     Address 0x1c43618240
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (33,0,0) in block (0,0,0)
+=========     Address 0x1c43618242
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (34,0,0) in block (0,0,0)
+=========     Address 0x1c43618244
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (35,0,0) in block (0,0,0)
+=========     Address 0x1c43618246
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (36,0,0) in block (0,0,0)
+=========     Address 0x1c43618248
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (37,0,0) in block (0,0,0)
+=========     Address 0x1c4361824a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (38,0,0) in block (0,0,0)
+=========     Address 0x1c4361824c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (39,0,0) in block (0,0,0)
+=========     Address 0x1c4361824e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (40,0,0) in block (0,0,0)
+=========     Address 0x1c43618250
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (41,0,0) in block (0,0,0)
+=========     Address 0x1c43618252
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (42,0,0) in block (0,0,0)
+=========     Address 0x1c43618254
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (43,0,0) in block (0,0,0)
+=========     Address 0x1c43618256
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (44,0,0) in block (0,0,0)
+=========     Address 0x1c43618258
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (45,0,0) in block (0,0,0)
+=========     Address 0x1c4361825a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (46,0,0) in block (0,0,0)
+=========     Address 0x1c4361825c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (47,0,0) in block (0,0,0)
+=========     Address 0x1c4361825e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (48,0,0) in block (0,0,0)
+=========     Address 0x1c43618260
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (49,0,0) in block (0,0,0)
+=========     Address 0x1c43618262
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (50,0,0) in block (0,0,0)
+=========     Address 0x1c43618264
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (51,0,0) in block (0,0,0)
+=========     Address 0x1c43618266
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (52,0,0) in block (0,0,0)
+=========     Address 0x1c43618268
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (53,0,0) in block (0,0,0)
+=========     Address 0x1c4361826a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (54,0,0) in block (0,0,0)
+=========     Address 0x1c4361826c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (55,0,0) in block (0,0,0)
+=========     Address 0x1c4361826e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (56,0,0) in block (0,0,0)
+=========     Address 0x1c43618270
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (57,0,0) in block (0,0,0)
+=========     Address 0x1c43618272
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (58,0,0) in block (0,0,0)
+=========     Address 0x1c43618274
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (59,0,0) in block (0,0,0)
+=========     Address 0x1c43618276
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (60,0,0) in block (0,0,0)
+=========     Address 0x1c43618278
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (61,0,0) in block (0,0,0)
+=========     Address 0x1c4361827a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (62,0,0) in block (0,0,0)
+=========     Address 0x1c4361827c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (63,0,0) in block (0,0,0)
+=========     Address 0x1c4361827e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (64,0,0) in block (0,0,0)
+=========     Address 0x1c43618280
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (65,0,0) in block (0,0,0)
+=========     Address 0x1c43618282
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (66,0,0) in block (0,0,0)
+=========     Address 0x1c43618284
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (67,0,0) in block (0,0,0)
+=========     Address 0x1c43618286
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (68,0,0) in block (0,0,0)
+=========     Address 0x1c43618288
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (69,0,0) in block (0,0,0)
+=========     Address 0x1c4361828a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (70,0,0) in block (0,0,0)
+=========     Address 0x1c4361828c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (71,0,0) in block (0,0,0)
+=========     Address 0x1c4361828e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (72,0,0) in block (0,0,0)
+=========     Address 0x1c43618290
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (73,0,0) in block (0,0,0)
+=========     Address 0x1c43618292
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (74,0,0) in block (0,0,0)
+=========     Address 0x1c43618294
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (75,0,0) in block (0,0,0)
+=========     Address 0x1c43618296
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (76,0,0) in block (0,0,0)
+=========     Address 0x1c43618298
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (77,0,0) in block (0,0,0)
+=========     Address 0x1c4361829a
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (78,0,0) in block (0,0,0)
+=========     Address 0x1c4361829c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (79,0,0) in block (0,0,0)
+=========     Address 0x1c4361829e
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (80,0,0) in block (0,0,0)
+=========     Address 0x1c436182a0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (81,0,0) in block (0,0,0)
+=========     Address 0x1c436182a2
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (82,0,0) in block (0,0,0)
+=========     Address 0x1c436182a4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (83,0,0) in block (0,0,0)
+=========     Address 0x1c436182a6
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (84,0,0) in block (0,0,0)
+=========     Address 0x1c436182a8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (85,0,0) in block (0,0,0)
+=========     Address 0x1c436182aa
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (86,0,0) in block (0,0,0)
+=========     Address 0x1c436182ac
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (87,0,0) in block (0,0,0)
+=========     Address 0x1c436182ae
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (88,0,0) in block (0,0,0)
+=========     Address 0x1c436182b0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (89,0,0) in block (0,0,0)
+=========     Address 0x1c436182b2
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (90,0,0) in block (0,0,0)
+=========     Address 0x1c436182b4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (91,0,0) in block (0,0,0)
+=========     Address 0x1c436182b6
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (92,0,0) in block (0,0,0)
+=========     Address 0x1c436182b8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (93,0,0) in block (0,0,0)
+=========     Address 0x1c436182ba
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (94,0,0) in block (0,0,0)
+=========     Address 0x1c436182bc
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (95,0,0) in block (0,0,0)
+=========     Address 0x1c436182be
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (96,0,0) in block (0,0,0)
+=========     Address 0x1c436182c0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (97,0,0) in block (0,0,0)
+=========     Address 0x1c436182c2
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (98,0,0) in block (0,0,0)
+=========     Address 0x1c436182c4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= Uninitialized __global__ memory read of size 2 bytes
+=========     at read_output(const __nv_bfloat16 *, __nv_bfloat16 *, unsigned long)+0x100
+=========     by thread (99,0,0) in block (0,0,0)
+=========     Address 0x1c436182c6
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: main [0x1d63] in lfm3-projection-probe
+========= 
+========= ERROR SUMMARY: 128 errors
+========= ERROR SUMMARY: 28 errors were not printed. Use --print-limit option to adjust the number of printed errors

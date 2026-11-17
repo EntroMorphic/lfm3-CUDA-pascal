@@ -38,9 +38,25 @@ First run: tree `5ce49a02…503c8b` on both ends, 2.9 s for sync, hash and a com
 29 files, 4,499,839,711 bytes; `sha256sum -c` against `model-checksums.sha256` passes on the workstation and inside
 the container.
 
-### 3. Host tests
+### 3. Host tests — PASS
 
-(pending)
+`PYTHONPATH=tests python3 -m pytest tests audit/test_host_contracts.py -q` on the workstation (x86-64, GCC 11.4,
+Python 3 with pytest 9.0.2):
+
+| Tree | Passed | Skipped | Failed |
+|---|---:|---:|---:|
+| Reference (`reference/liquid-CUDA`) | 1,656 | 721 | 0 |
+| This repository, as first imported | 1,641 | 721 | 15 |
+| This repository, with three Thor record directories | 1,656 | 721 | 0 |
+
+The 15 were all `FileNotFoundError` on Thor validation records the tests read, which the import had left out. The
+three directories they read are now imported unchanged: `validation/initcheck-version-shapes-v2`,
+`validation/speech-normalize-v1`, `validation/cublas-modes-13.1-vs-13.10-v2` (2.2 MB). Other Thor records are
+imported when a phase needs them as comparators.
+
+Not covered: the 721 skips are the same in both trees and nearly all want the checkpoint or its tokenizer at the path
+the reference's machine layout puts it. Pointing the suite at this workstation's checkpoint is the first item of
+phase 1, before any engine change.
 
 ### 4. Memory — measured
 
@@ -65,3 +81,10 @@ the windowed layers also keep every token.
 
 Also learned: a BF16-input, FP32-accumulate kernel built with these flags gives sums bit-identical to the same
 order on the host CPU (4,096 rows × 2,048), so `__nv_bfloat16` conversions are exact on `sm_61`.
+
+## Red-team
+
+| Finding | Remediation |
+|---|---|
+| A remote file changed with its size and modification time kept is invisible to `rsync -a`. Tested: the tree hash caught it (exit 3), but the tool could only fail, and every later sync would fail the same way. | `remote.sh` now repeats the sync by content (`rsync -ac`) when the hashes differ, and fails only if they still do. Tested: the tampered file is restored and the hashes agree. |
+| The rules of this round were written with the results, not before them. | Recorded here. From phase 1 on, rules are committed before the first run on the card. |

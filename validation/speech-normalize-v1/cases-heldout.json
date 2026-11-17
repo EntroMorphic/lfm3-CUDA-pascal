@@ -1,0 +1,63 @@
+{
+ "set": "heldout",
+ "system": "Perform TTS in American English using a female voice.",
+ "source": "/workspace/liquid-CUDA/build/speech-normalize-v1/heldout.json",
+ "cases": [
+  {
+   "case": "h01",
+   "text": "The store opened at 9:00 AM on March 15, 2024, with prices at $5.99 per item.",
+   "spoken": "The store opened at nine AM on March fifteenth, twenty twenty-four, with prices at five dollars and ninety-nine cents per item."
+  },
+  {
+   "case": "h02",
+   "text": "She left home at 7:30 PM on June 12, 2023, and the total bill was $42.50.",
+   "spoken": "She left home at seven thirty PM on June twelfth, twenty twenty-three, and the total bill was forty-two dollars and fifty cents."
+  },
+  {
+   "case": "h03",
+   "text": "The delivery arrived at 3:45 PM on October 5, 2022, and the package weighed 2.3 pounds.",
+   "spoken": "The delivery arrived at three forty-five PM on October fifth, twenty twenty-two, and the package weighed two point three pounds."
+  },
+  {
+   "case": "h04",
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.00.",
+   "spoken": "The restaurant offers a twenty percent discount for orders over fifty dollars, and the total cost was thirty-eight dollars."
+  },
+  {
+   "case": "h05",
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "spoken": "The car's fuel efficiency is thirty miles per gallon, and the gas price was three dollars and twenty cents per gallon."
+  },
+  {
+   "case": "h06",
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "spoken": "The bakery sells twelve loaves of bread daily, and the price per loaf is two dollars and fifty cents."
+  },
+  {
+   "case": "h07",
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "spoken": "The gym membership costs forty-five dollars per month, and the first month was charged at ten percent discount."
+  },
+  {
+   "case": "h08",
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "spoken": "The school's attendance rate is eighty-five percent, and the number of students is three hundred twenty."
+  },
+  {
+   "case": "h09",
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "spoken": "The phone number for the emergency service is nine one one, and the response time is under two minutes."
+  },
+  {
+   "case": "h10",
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "spoken": "The address on the building is one twenty-three Main Street, and the zip code is one two three four five."
+  },
+  {
+   "case": "h11",
+   "text": "The temperature was 72°F on July 10, 2023, and the humidity was 45%.",
+   "spoken": "The temperature was seventy-two degrees Fahrenheit on July tenth, twenty twenty-three, and the humidity was forty-five percent."
+  }
+ ],
+ "references_note": "written by hand after the sentences were generated and before any arm ran; the style guide does not cover emergency numbers or ZIP codes, read here digit by digit as people say them"
+}

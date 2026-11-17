@@ -34,19 +34,22 @@ tree_hash_cmd() {
 }
 
 sync() {
-  local rs=() e
+  local rs=() e cmd local_hash remote_hash mode
   for e in "${excludes[@]}"; do rs+=(--exclude "$e"); done
-  rsync -a --delete "${rs[@]}" \
-    -e "ssh ${ssh_opts[*]} -p $PASCAL_JUMP_PORT $PASCAL_JUMP ssh ${ssh_opts[*]} -p $PASCAL_HOST_PORT -l ${PASCAL_HOST%@*}" \
-    "$repo/" "${PASCAL_HOST#*@}:$PASCAL_HOST_WORKSPACE/$name/"
-  local cmd local_hash remote_hash
   cmd=$(tree_hash_cmd)
-  local_hash=$(cd "$repo" && eval "$cmd")
-  remote_hash=$(on_host "mkdir -p $PASCAL_HOST_WORKSPACE/build && cd $PASCAL_HOST_WORKSPACE/$name && $cmd" </dev/null)
-  if [ "$local_hash" != "$remote_hash" ] || [ ${#local_hash} -ne 64 ]; then
-    echo "remote.sh: SYNC MISMATCH local=$local_hash remote=$remote_hash" >&2; exit 3
-  fi
-  echo "remote.sh: synced, tree sha256 $local_hash (both ends)" >&2
+  # First by size and time; if the hashes then differ (a remote file changed with neither), once more by content.
+  for mode in -a -ac; do
+    rsync "$mode" --delete "${rs[@]}" \
+      -e "ssh ${ssh_opts[*]} -p $PASCAL_JUMP_PORT $PASCAL_JUMP ssh ${ssh_opts[*]} -p $PASCAL_HOST_PORT -l ${PASCAL_HOST%@*}" \
+      "$repo/" "${PASCAL_HOST#*@}:$PASCAL_HOST_WORKSPACE/$name/"
+    local_hash=$(cd "$repo" && eval "$cmd")
+    remote_hash=$(on_host "mkdir -p $PASCAL_HOST_WORKSPACE/build && cd $PASCAL_HOST_WORKSPACE/$name && $cmd" </dev/null)
+    if [ "$local_hash" = "$remote_hash" ] && [ ${#local_hash} -eq 64 ]; then
+      echo "remote.sh: synced, tree sha256 $local_hash (both ends)" >&2; return 0
+    fi
+    echo "remote.sh: tree differs after rsync $mode (local=$local_hash remote=$remote_hash)" >&2
+  done
+  echo "remote.sh: SYNC MISMATCH" >&2; exit 3
 }
 
 run() {

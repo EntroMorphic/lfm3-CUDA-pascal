@@ -1,0 +1,192 @@
+{
+  "status": "failed-controls-or-timeout",
+  "diagnostic_completed": false,
+  "integrated_initcheck_accepted": false,
+  "records": [
+    {
+      "library": 0,
+      "mode": "default",
+      "rows": 257,
+      "width": 2048,
+      "producer": "kernel",
+      "command": [
+        "/workspace/liquid-CUDA/build/sanitizer-13.5.25/cuda_sanitizer_api-linux-sbsa-13.5.25-archive/compute-sanitizer/compute-sanitizer",
+        "--tool",
+        "initcheck",
+        "--error-exitcode",
+        "86",
+        "--print-limit",
+        "4",
+        "--log-file",
+        "/workspace/liquid-CUDA/build/cublas-modes-13.1-vs-13.10-v2/library-0/default-257x2048-kernel.sanitizer.log",
+        "/workspace/liquid-CUDA/build/cmake-bounded-prefill-v1/lfm3-projection-modes-probe",
+        "kernel",
+        "257",
+        "2048",
+        "default"
+      ],
+      "classification": "clean",
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 2.43771806299992,
+      "group_cleanup_complete": true
+    },
+    {
+      "library": 0,
+      "mode": "default",
+      "rows": 257,
+      "width": 2048,
+      "producer": "missing",
+      "command": [
+        "/workspace/liquid-CUDA/build/sanitizer-13.5.25/cuda_sanitizer_api-linux-sbsa-13.5.25-archive/compute-sanitizer/compute-sanitizer",
+        "--tool",
+        "initcheck",
+        "--error-exitcode",
+        "86",
+        "--print-limit",
+        "4",
+        "--log-file",
+        "/workspace/liquid-CUDA/build/cublas-modes-13.1-vs-13.10-v2/library-0/default-257x2048-missing.sanitizer.log",
+        "/workspace/liquid-CUDA/build/cmake-bounded-prefill-v1/lfm3-projection-modes-probe",
+        "missing",
+        "257",
+        "2048",
+        "default"
+      ],
+      "classification": "unexpected-failure",
+      "returncode": 86,
+      "timed_out": false,
+      "seconds": 0.517731181000272,
+      "group_cleanup_complete": true
+    }
+  ],
+  "libraries": [
+    {
+      "root": "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib",
+      "resolved": {
+        "libcudart.so.13": {
+          "path": "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcudart.so.13",
+          "sha256": "7bdba2b5b08cbdc85203c41cc94598adedb1bcfea7cb574ca693ac73599e4e63"
+        },
+        "libcublas.so.13": {
+          "path": "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcublas.so.13",
+          "sha256": "7761d260387b95fa13b7ec101453abca45ef972d3e6ccc8bcf54251e1ac0470b"
+        },
+        "libstdc++.so.6": {
+          "path": "/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "6e3112d35cfc86db7ee85b27e1746f67408e2837ff8628b46386c3eabd5682a4"
+        },
+        "libgcc_s.so.1": {
+          "path": "/usr/lib/aarch64-linux-gnu/libgcc_s.so.1",
+          "sha256": "f2d3ad2bf0b61f6bc944cc37d7b6ab7f88d2582b41ff989ca164803f56cc5f20"
+        },
+        "libc.so.6": {
+          "path": "/usr/lib/aarch64-linux-gnu/libc.so.6",
+          "sha256": "0f1905dc27dbc6715875c70527bc8da846a10084c9c483e9d8ff76dce8d69d0e"
+        },
+        "ld-linux-aarch64.so.1": {
+          "path": "/usr/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1",
+          "sha256": "390027e5f45f236bd1838bc54bf464c5ff01d260ab9f8b415ea8276641bce505"
+        },
+        "libdl.so.2": {
+          "path": "/usr/lib/aarch64-linux-gnu/libdl.so.2",
+          "sha256": "1c16b2692a155191c97d7fdc5ce937d37c242435f05745046a794a9832b16af4"
+        },
+        "libpthread.so.0": {
+          "path": "/usr/lib/aarch64-linux-gnu/libpthread.so.0",
+          "sha256": "6f1ab9e7d7de142dc5e2feaf6d19faceff0a0f40d5e225c922899f5362b8c353"
+        },
+        "librt.so.1": {
+          "path": "/usr/lib/aarch64-linux-gnu/librt.so.1",
+          "sha256": "93d0d5ab643b50ac1a61c2c7baf670e8aa94973fa5a2584d13db05295d5b5a0e"
+        },
+        "libm.so.6": {
+          "path": "/usr/lib/aarch64-linux-gnu/libm.so.6",
+          "sha256": "5e0391562de36de323fb9cb0f2c1b6bd6d034c840b1dac018499f5fe4ded1b4a"
+        },
+        "libcublasLt.so.13": {
+          "path": "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcublasLt.so.13",
+          "sha256": "3839e12c3b69ed8eb732e5d5f8e749403a582a9d706f779017c785152d9e62f9"
+        }
+      },
+      "version": 130100,
+      "expected_version": 130100,
+      "version_provenance": "expected-config-verified-per-case",
+      "ld_library_path": "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib"
+    },
+    {
+      "root": "/workspace/liquid-CUDA/build/cublas-13.10.0.20-diagnostic/libcublas-linux-sbsa-13.10.0.20-archive/lib",
+      "resolved": {
+        "libcudart.so.13": {
+          "path": "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcudart.so.13",
+          "sha256": "7bdba2b5b08cbdc85203c41cc94598adedb1bcfea7cb574ca693ac73599e4e63"
+        },
+        "libcublas.so.13": {
+          "path": "/workspace/liquid-CUDA/build/cublas-13.10.0.20-diagnostic/libcublas-linux-sbsa-13.10.0.20-archive/lib/libcublas.so.13.10.0.20",
+          "sha256": "67e2805e90d4d705db39ffa4d2996b29955c2346e86540813688c1a70a0f2fff"
+        },
+        "libstdc++.so.6": {
+          "path": "/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "6e3112d35cfc86db7ee85b27e1746f67408e2837ff8628b46386c3eabd5682a4"
+        },
+        "libgcc_s.so.1": {
+          "path": "/usr/lib/aarch64-linux-gnu/libgcc_s.so.1",
+          "sha256": "f2d3ad2bf0b61f6bc944cc37d7b6ab7f88d2582b41ff989ca164803f56cc5f20"
+        },
+        "libc.so.6": {
+          "path": "/usr/lib/aarch64-linux-gnu/libc.so.6",
+          "sha256": "0f1905dc27dbc6715875c70527bc8da846a10084c9c483e9d8ff76dce8d69d0e"
+        },
+        "ld-linux-aarch64.so.1": {
+          "path": "/usr/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1",
+          "sha256": "390027e5f45f236bd1838bc54bf464c5ff01d260ab9f8b415ea8276641bce505"
+        },
+        "libdl.so.2": {
+          "path": "/usr/lib/aarch64-linux-gnu/libdl.so.2",
+          "sha256": "1c16b2692a155191c97d7fdc5ce937d37c242435f05745046a794a9832b16af4"
+        },
+        "libpthread.so.0": {
+          "path": "/usr/lib/aarch64-linux-gnu/libpthread.so.0",
+          "sha256": "6f1ab9e7d7de142dc5e2feaf6d19faceff0a0f40d5e225c922899f5362b8c353"
+        },
+        "librt.so.1": {
+          "path": "/usr/lib/aarch64-linux-gnu/librt.so.1",
+          "sha256": "93d0d5ab643b50ac1a61c2c7baf670e8aa94973fa5a2584d13db05295d5b5a0e"
+        },
+        "libm.so.6": {
+          "path": "/usr/lib/aarch64-linux-gnu/libm.so.6",
+          "sha256": "5e0391562de36de323fb9cb0f2c1b6bd6d034c840b1dac018499f5fe4ded1b4a"
+        },
+        "libcublasLt.so.13": {
+          "path": "/workspace/liquid-CUDA/build/cublas-13.10.0.20-diagnostic/libcublas-linux-sbsa-13.10.0.20-archive/lib/libcublasLt.so.13.10.0.20",
+          "sha256": "bc15865aaf76da36068bc0dce529c00c4c6ed807934ec2974e8c6dc7b99b0055"
+        }
+      },
+      "version": 131000,
+      "expected_version": 131000,
+      "version_provenance": "versioned-filename",
+      "ld_library_path": "/workspace/liquid-CUDA/build/cublas-13.10.0.20-diagnostic/libcublas-linux-sbsa-13.10.0.20-archive/lib:/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib"
+    }
+  ],
+  "hashes": {
+    "/workspace/liquid-CUDA/tools/check_lfm3_cublas_modes.py": "c710895f03750421a2e3018bed26e35c7a52265ca924eee7fbc69c17ba523073",
+    "/workspace/liquid-CUDA/native/tests/lfm3_projection_modes_probe.cu": "7e4e15f2463088a9438d32e4dd522c2b75aeaea5488b9fa95e9b0b9305703f02",
+    "/workspace/liquid-CUDA/build/cmake-bounded-prefill-v1/lfm3-projection-modes-probe": "0593533b9c1cbd29a874d109cf0b236add5a74c4f4a7ab06b290e430752bb532",
+    "/workspace/liquid-CUDA/build/sanitizer-13.5.25/cuda_sanitizer_api-linux-sbsa-13.5.25-archive/compute-sanitizer/compute-sanitizer": "528bf1c6e6397f529d595391991ce33c5a6c2a243c1457d84f67b29c565a462d",
+    "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcudart.so.13": "7bdba2b5b08cbdc85203c41cc94598adedb1bcfea7cb574ca693ac73599e4e63",
+    "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcublas.so.13": "7761d260387b95fa13b7ec101453abca45ef972d3e6ccc8bcf54251e1ac0470b",
+    "/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.33": "6e3112d35cfc86db7ee85b27e1746f67408e2837ff8628b46386c3eabd5682a4",
+    "/usr/lib/aarch64-linux-gnu/libgcc_s.so.1": "f2d3ad2bf0b61f6bc944cc37d7b6ab7f88d2582b41ff989ca164803f56cc5f20",
+    "/usr/lib/aarch64-linux-gnu/libc.so.6": "0f1905dc27dbc6715875c70527bc8da846a10084c9c483e9d8ff76dce8d69d0e",
+    "/usr/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1": "390027e5f45f236bd1838bc54bf464c5ff01d260ab9f8b415ea8276641bce505",
+    "/usr/lib/aarch64-linux-gnu/libdl.so.2": "1c16b2692a155191c97d7fdc5ce937d37c242435f05745046a794a9832b16af4",
+    "/usr/lib/aarch64-linux-gnu/libpthread.so.0": "6f1ab9e7d7de142dc5e2feaf6d19faceff0a0f40d5e225c922899f5362b8c353",
+    "/usr/lib/aarch64-linux-gnu/librt.so.1": "93d0d5ab643b50ac1a61c2c7baf670e8aa94973fa5a2584d13db05295d5b5a0e",
+    "/usr/lib/aarch64-linux-gnu/libm.so.6": "5e0391562de36de323fb9cb0f2c1b6bd6d034c840b1dac018499f5fe4ded1b4a",
+    "/opt/venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcublasLt.so.13": "3839e12c3b69ed8eb732e5d5f8e749403a582a9d706f779017c785152d9e62f9",
+    "/workspace/liquid-CUDA/build/cublas-13.10.0.20-diagnostic/libcublas-linux-sbsa-13.10.0.20-archive/lib/libcublas.so.13.10.0.20": "67e2805e90d4d705db39ffa4d2996b29955c2346e86540813688c1a70a0f2fff",
+    "/workspace/liquid-CUDA/build/cublas-13.10.0.20-diagnostic/libcublas-linux-sbsa-13.10.0.20-archive/lib/libcublasLt.so.13.10.0.20": "bc15865aaf76da36068bc0dce529c00c4c6ed807934ec2974e8c6dc7b99b0055"
+  },
+  "scope": "128 samples; checkpoint-free, not runtime acceptance",
+  "hashes_stable": true
+}

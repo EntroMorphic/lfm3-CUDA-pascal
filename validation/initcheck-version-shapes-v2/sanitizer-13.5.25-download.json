@@ -1,0 +1,13 @@
+{
+  "manifest_url": "https://developer.download.nvidia.com/compute/cuda/redist/redistrib_13.5.0.json",
+  "manifest_sha256": "401529e951b845788177f999c0756c520c4d0db1cd4cd05c0a295e331884b596",
+  "release_date": "2026-11-04",
+  "package_version": "13.5.25",
+  "entry": {
+    "relative_path": "cuda_sanitizer_api/linux-sbsa/cuda_sanitizer_api-linux-sbsa-13.5.25-archive.tar.xz",
+    "sha256": "bfa752a2033f2abccccacced35055a12852a4b6da18d8b100789f09fbec312c5",
+    "md5": "26314da19dd13025d756f44dcabd0a6d",
+    "size": "7974152"
+  },
+  "scope": "standalone sanitizer experiment; compatibility not inferred from CUDA minor compatibility"
+}

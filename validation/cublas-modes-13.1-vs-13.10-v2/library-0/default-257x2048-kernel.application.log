@@ -1,0 +1,4 @@
+CONFIG producer=kernel; rows=257; width=2048; mode=default; compute=68; algo=99; nvcc=13.0.88; cudart_build=13000; cublas_build=13.1.0.3
+LIBRARY cublas=130100; mode=default
+MATH actual=0; mode=default
+PASS: 128 sampled outputs of 1579008; producer=kernel; mode=default; cublas=130100; numerical-only (not sanitizer acceptance)

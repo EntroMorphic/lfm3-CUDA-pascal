@@ -1,0 +1,1 @@
+{"time": "2026-11-10T07:30:04-0700", "mode": "MAXN", "gpu_governor": "nvhost_podgov", "gpu_min_hz": 1575000000, "gpu_max_hz": 1575000000, "gpu_cur_hz": 1575000000, "cpu_governor": "schedutil", "cpu_min_khz": 2601000, "cpu_max_khz": 2601000, "clocks_locked": true}

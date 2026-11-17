@@ -1,0 +1,431 @@
+{
+ "set": "dev",
+ "summary": {
+  "cases": 20,
+  "guard_passes": 3,
+  "text_accuracy": {
+   "none": 0,
+   "rules": 20,
+   "model": 2,
+   "hybrid": 19
+  },
+  "rewrite_seconds_mean": 0.566083545,
+  "rewrite_seconds_max": 4.243235
+ },
+ "cases": [
+  {
+   "case": "d01-time",
+   "spoken": "The meeting starts at seven forty-five and should end by nine o'clock.",
+   "arms": {
+    "none": "The meeting starts at 7:45 and should end by 9:00.",
+    "rules": "The meeting starts at seven forty-five and should end by nine o'clock.",
+    "model": "The meeting starts at 7:45 and should end by 9:00.",
+    "hybrid": "The meeting starts at seven forty-five and should end by nine o'clock."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.37112259999999997,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d02-money",
+   "spoken": "The ticket costs three dollars and fifty cents, but the premium seat is one hundred twenty-nine dollars.",
+   "arms": {
+    "none": "The ticket costs $3.50, but the premium seat is $129.",
+    "rules": "The ticket costs three dollars and fifty cents, but the premium seat is one hundred twenty-nine dollars.",
+    "model": "The ticket costs three dollars and fifty cents, but the premium seat is one hundred twenty-nine dollars.",
+    "hybrid": "The ticket costs three dollars and fifty cents, but the premium seat is one hundred twenty-nine dollars."
+   },
+   "guard": true,
+   "guard_reasons": [],
+   "rewrite_seconds": 0.4549489,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": true,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d03-year-count",
+   "spoken": "In nineteen eighty-four the town had one thousand five hundred residents.",
+   "arms": {
+    "none": "In 1984 the town had 1,500 residents.",
+    "rules": "In nineteen eighty-four the town had one thousand five hundred residents.",
+    "model": "In 1984 the town had 1,500 residents.",
+    "hybrid": "In nineteen eighty-four the town had one thousand five hundred residents."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.2983671,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d04-percent",
+   "spoken": "Inflation rose three point two percent last quarter, up from two point seven five percent the year before.",
+   "arms": {
+    "none": "Inflation rose 3.2% last quarter, up from 2.75% the year before.",
+    "rules": "Inflation rose three point two percent last quarter, up from two point seven five percent the year before.",
+    "model": "Inflation rose 3.2% last quarter, up from 2.75% the year before.",
+    "hybrid": "Inflation rose three point two percent last quarter, up from two point seven five percent the year before."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.4759757,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d05-date-ordinal",
+   "spoken": "The race is on November ninth, twenty twenty-six, and she finished second last year.",
+   "arms": {
+    "none": "The race is on Nov. 9, 2026, and she finished 2nd last year.",
+    "rules": "The race is on November ninth, twenty twenty-six, and she finished second last year.",
+    "model": "The race is on Nov. 9, 2026, and she finished 2nd last year.",
+    "hybrid": "The race is on November ninth, twenty twenty-six, and she finished second last year."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 4.243235,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d06-large",
+   "spoken": "The city has eight million three hundred thirty-six thousand eight hundred seventeen people.",
+   "arms": {
+    "none": "The city has 8,336,817 people.",
+    "rules": "The city has eight million three hundred thirty-six thousand eight hundred seventeen people.",
+    "model": "The city has eight million three hundred thirty-six thousand eight hundred seventeen people.",
+    "hybrid": "The city has eight million three hundred thirty-six thousand eight hundred seventeen people."
+   },
+   "guard": true,
+   "guard_reasons": [],
+   "rewrite_seconds": 0.33549840000000003,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": true,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d07-c3-failure",
+   "spoken": "Order number three hundred eighty-nine shipped at seven forty-five this morning.",
+   "arms": {
+    "none": "Order number 389 shipped at 7:45 this morning.",
+    "rules": "Order number three hundred eighty-nine shipped at seven forty-five this morning.",
+    "model": "Order number 389 shipped at 7:45 this morning.",
+    "hybrid": "Order number three hundred eighty-nine shipped at seven forty-five this morning."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.2965088,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d08-titles",
+   "spoken": "Doctor Patel and Missus Gomez met Mister Lee at Saint Mary's.",
+   "arms": {
+    "none": "Dr. Patel and Mrs. Gomez met Mr. Lee at St. Mary's.",
+    "rules": "Doctor Patel and Missus Gomez met Mister Lee at Saint Mary's.",
+    "model": "Dr. Patel and Mrs. Gomez met Mr. Lee at St. Mary's.",
+    "hybrid": "Dr. Patel and Mrs. Gomez met Mr. Lee at St. Mary's."
+   },
+   "guard": true,
+   "guard_reasons": [],
+   "rewrite_seconds": 0.4157518,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": false
+   }
+  },
+  {
+   "case": "d09-address",
+   "spoken": "Send the package to sixteen hundred Main Street before Friday.",
+   "arms": {
+    "none": "Send the package to 1600 Main St. before Friday.",
+    "rules": "Send the package to sixteen hundred Main Street before Friday.",
+    "model": "Send the package to 1600 Main St. before Friday.",
+    "hybrid": "Send the package to sixteen hundred Main Street before Friday."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.29933350000000003,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d10-units",
+   "spoken": "The trail is twelve kilometers long and climbs two thousand eight hundred feet.",
+   "arms": {
+    "none": "The trail is 12 km long and climbs 2,800 ft.",
+    "rules": "The trail is twelve kilometers long and climbs two thousand eight hundred feet.",
+    "model": "The trail is 12 km long and climbs 2,800 ft.",
+    "hybrid": "The trail is twelve kilometers long and climbs two thousand eight hundred feet."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.35816499999999996,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d11-temperature",
+   "spoken": "It was minus five degrees Celsius at dawn and forty-one degrees Fahrenheit by noon.",
+   "arms": {
+    "none": "It was -5°C at dawn and 41°F by noon.",
+    "rules": "It was minus five degrees Celsius at dawn and forty-one degrees Fahrenheit by noon.",
+    "model": "It was -5 degrees Celsius at dawn and 41 degrees Fahrenheit by noon.",
+    "hybrid": "It was minus five degrees Celsius at dawn and forty-one degrees Fahrenheit by noon."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3567914,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d12-phone",
+   "spoken": "Call five five five oh one four two after six p.m. tonight.",
+   "arms": {
+    "none": "Call 555-0142 after 6 p.m. tonight.",
+    "rules": "Call five five five, oh one four two after six p.m. tonight.",
+    "model": "Call 555-0142 after 6 p.m. tonight.",
+    "hybrid": "Call five five five, oh one four two after six p.m. tonight."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.316581,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d13-fraction-range",
+   "spoken": "Add one half cup of sugar and bake for twenty-five to thirty minutes.",
+   "arms": {
+    "none": "Add 1/2 cup of sugar and bake for 25-30 minutes.",
+    "rules": "Add one half cup of sugar and bake for twenty-five to thirty minutes.",
+    "model": "Add 1/2 cup of sugar and bake for 25-30 minutes.",
+    "hybrid": "Add one half cup of sugar and bake for twenty-five to thirty minutes."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3786862,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d14-latin",
+   "spoken": "Bring snacks, for example apples and nuts, to the third floor.",
+   "arms": {
+    "none": "Bring snacks, e.g. apples and nuts, to the 3rd floor.",
+    "rules": "Bring snacks, for example apples and nuts, to the third floor.",
+    "model": "Bring snacks, e.g. apples and nuts, to the 3rd floor.",
+    "hybrid": "Bring snacks, for example apples and nuts, to the third floor."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3787039,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d15-versus-decade",
+   "spoken": "It was Smith versus Jones in the nineteen nineties.",
+   "arms": {
+    "none": "It was Smith vs. Jones in the 1990s.",
+    "rules": "It was Smith versus Jones in the nineteen nineties.",
+    "model": "It was Smith vs. Jones in the 1990s.",
+    "hybrid": "It was Smith versus Jones in the nineteen nineties."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.2972632,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d16-million",
+   "spoken": "The company raised one point two million dollars in twenty twenty-one.",
+   "arms": {
+    "none": "The company raised $1.2 million in 2021.",
+    "rules": "The company raised one point two million dollars in twenty twenty-one.",
+    "model": "The company raised $1.2 million in 2021.",
+    "hybrid": "The company raised one point two million dollars in twenty twenty-one."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.29818619999999996,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d17-math",
+   "spoken": "If x equals four, then x plus three equals seven.",
+   "arms": {
+    "none": "If x = 4, then x + 3 = 7.",
+    "rules": "If x equals four, then x plus three equals seven.",
+    "model": "If x equals 4, then x plus 3 equals 7.",
+    "hybrid": "If x equals four, then x plus three equals seven."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3365292,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d18-decimal-unit",
+   "spoken": "The tablet is zero point five milligrams, so take two a day.",
+   "arms": {
+    "none": "The tablet is 0.5 mg, so take 2 a day.",
+    "rules": "The tablet is zero point five milligrams, so take two a day.",
+    "model": "The tablet is 0.5 mg, so take 2 a day.",
+    "hybrid": "The tablet is zero point five milligrams, so take two a day."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.3572941,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d19-number-sign",
+   "spoken": "Room number twelve is next to number fourteen.",
+   "arms": {
+    "none": "Room #12 is next to No. 14.",
+    "rules": "Room number twelve is next to number fourteen.",
+    "model": "Room #12 is next to No. 14.",
+    "hybrid": "Room number twelve is next to number fourteen."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.2566291,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  },
+  {
+   "case": "d20-mixed",
+   "spoken": "On January third, twenty twenty-five, at ten thirty a.m., about two thousand five hundred runners paid forty-five dollars each to race ten kilometers through Saint Paul.",
+   "arms": {
+    "none": "On Jan. 3, 2025, at 10:30 a.m., about 2,500 runners paid $45 each to race 10 km through St. Paul.",
+    "rules": "On January third, twenty twenty-five, at ten thirty a.m., about two thousand five hundred runners paid forty-five dollars each to race ten kilometers through Saint Paul.",
+    "model": "On Jan. 3, 2025, at 10:30 a.m., about 2,500 runners paid $45 each to race 10 km through St. Paul.",
+    "hybrid": "On January third, twenty twenty-five, at ten thirty a.m., about two thousand five hundred runners paid forty-five dollars each to race ten kilometers through Saint Paul."
+   },
+   "guard": false,
+   "guard_reasons": [
+    "digit left in the rewrite"
+   ],
+   "rewrite_seconds": 0.7960998,
+   "accurate": {
+    "none": false,
+    "rules": true,
+    "model": false,
+    "hybrid": true
+   }
+  }
+ ]
+}

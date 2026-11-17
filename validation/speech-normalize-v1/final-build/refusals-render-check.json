@@ -1,0 +1,93 @@
+{
+ "failed": 0,
+ "results": {
+  "render-asr": {
+   "ok": true,
+   "stderr": ""
+  },
+  "render-question": {
+   "ok": true,
+   "stderr": ""
+  },
+  "render-two-clips": {
+   "ok": true,
+   "stderr": ""
+  },
+  "render-multiturn": {
+   "ok": true,
+   "stderr": ""
+  },
+  "rate": {
+   "ok": true,
+   "stderr": "lfm3-speech: /workspace/liquid-CUDA/build/server-audioin-v3-check/misc/in-rate24k.wav: expected 16000 Hz audio, got 24000"
+  },
+  "stereo": {
+   "ok": true,
+   "stderr": "lfm3-speech: wav: expected mono audio, got 2 channels"
+  },
+  "empty": {
+   "ok": true,
+   "stderr": "lfm3-speech: /workspace/liquid-CUDA/build/server-audioin-v3-check/misc/in-empty.wav: no samples"
+  },
+  "pcm8": {
+   "ok": true,
+   "stderr": "lfm3-speech: wav: expected 16-bit PCM or 32-bit float samples (format 1, 8 bits)"
+  },
+  "garbage": {
+   "ok": true,
+   "stderr": "lfm3-speech: wav: not a RIFF/WAVE file"
+  },
+  "missing-file": {
+   "ok": true,
+   "stderr": "lfm3-speech: wav: cannot open /workspace/liquid-CUDA/build/server-audioin-v3-check/misc/in-nonexistent.wav"
+  },
+  "too-few-placeholders": {
+   "ok": true,
+   "stderr": "lfm3-speech: speech: audio clip 0 needs 131 placeholders, the prompt has 130"
+  },
+  "too-many-placeholders": {
+   "ok": true,
+   "stderr": "lfm3-speech: speech: audio clip 0 needs 131 placeholders, the prompt has 132"
+  },
+  "no-markers": {
+   "ok": true,
+   "stderr": "lfm3-speech: speech: an <|audio|> span must be wrapped in <|vision_start|> and <|vision_end|>"
+  },
+  "clip-without-span": {
+   "ok": true,
+   "stderr": "lfm3-speech: speech: fewer <|audio|> spans than audio clips"
+  },
+  "span-without-clip": {
+   "ok": true,
+   "stderr": "lfm3-speech: speech: more <|audio|> spans than audio clips"
+  },
+  "image-placeholder": {
+   "ok": true,
+   "stderr": "lfm3-speech: speech: image, video or speech-output placeholder in the prompt (not supported as input)"
+  },
+  "chunks": {
+   "ok": true,
+   "stderr": "lfm3-speech: chunks cannot take audio input"
+  },
+  "split": {
+   "ok": true,
+   "stderr": "lfm3-speech: lfm3 chat: content parts must be text-only {type: text, text: string}"
+  },
+  "messages-and-audio": {
+   "ok": true,
+   "stderr": "lfm3-speech: with messages, audio clips are the messages' audio parts"
+  },
+  "assistant-audio": {
+   "ok": true,
+   "stderr": "lfm3-speech: lfm3 chat: audio parts are supported in user messages only"
+  },
+  "capacity": {
+   "ok": true,
+   "stderr": "lfm3-speech: lfm3 chat: prompt (147+) + output (16) exceeds capacity (139)"
+  },
+  "in-good": {
+   "ok": true,
+   "stderr": "lfm3-speech: an input (/workspace/liquid-CUDA/build/server-audioin-v3-check/misc/in-good.wav) is one of OUT_STEM's outputs; use another stem"
+  }
+ }
+}

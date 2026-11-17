@@ -1,0 +1,2517 @@
+{
+ "summary": {
+  "set": "heldout",
+  "seeds": 15,
+  "mean_wer": {
+   "none": 0.23205535749653397,
+   "rules": 0.16154188948306594,
+   "model": 0.20843087740146563,
+   "hybrid": 0.16154188948306594
+  },
+  "wilcoxon_rules_lt_none_p": 0.0029296875,
+  "wilcoxon_rules_lt_model_p": 0.01171875,
+  "wilcoxon_rules_lt_hybrid_p": 1.0,
+  "all_chunks_ended_by_eos": true,
+  "asr_seconds": 165.13191390037537
+ },
+ "rows": [
+  {
+   "case": "h01",
+   "arm": "none",
+   "mean_wer": 0.36000000000000004,
+   "max_wer": 0.4,
+   "wers": [
+    0.35,
+    0.4,
+    0.4,
+    0.3,
+    0.35,
+    0.4,
+    0.35,
+    0.4,
+    0.4,
+    0.3,
+    0.3,
+    0.35,
+    0.4,
+    0.4,
+    0.3
+   ],
+   "example": "The store opened at 9-0 a.m. on March 15, 2024, with prices at $5.99 per item."
+  },
+  {
+   "case": "h01",
+   "arm": "rules",
+   "mean_wer": 0.40000000000000013,
+   "max_wer": 0.4,
+   "wers": [
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4
+   ],
+   "example": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item."
+  },
+  {
+   "case": "h01",
+   "arm": "model",
+   "mean_wer": 0.36000000000000004,
+   "max_wer": 0.4,
+   "wers": [
+    0.35,
+    0.4,
+    0.4,
+    0.3,
+    0.35,
+    0.4,
+    0.35,
+    0.4,
+    0.4,
+    0.3,
+    0.3,
+    0.35,
+    0.4,
+    0.4,
+    0.3
+   ],
+   "example": "The store opened at 9-0 a.m. on March 15, 2024, with prices at $5.99 per item."
+  },
+  {
+   "case": "h01",
+   "arm": "hybrid",
+   "mean_wer": 0.40000000000000013,
+   "max_wer": 0.4,
+   "wers": [
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4
+   ],
+   "example": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item."
+  },
+  {
+   "case": "h02",
+   "arm": "none",
+   "mean_wer": 0.3499999999999999,
+   "max_wer": 0.35,
+   "wers": [
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35
+   ],
+   "example": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50."
+  },
+  {
+   "case": "h02",
+   "arm": "rules",
+   "mean_wer": 0.3499999999999999,
+   "max_wer": 0.35,
+   "wers": [
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35
+   ],
+   "example": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50."
+  },
+  {
+   "case": "h02",
+   "arm": "model",
+   "mean_wer": 0.3499999999999999,
+   "max_wer": 0.35,
+   "wers": [
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35
+   ],
+   "example": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50."
+  },
+  {
+   "case": "h02",
+   "arm": "hybrid",
+   "mean_wer": 0.3499999999999999,
+   "max_wer": 0.35,
+   "wers": [
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35,
+    0.35
+   ],
+   "example": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50."
+  },
+  {
+   "case": "h03",
+   "arm": "none",
+   "mean_wer": 0.26666666666666666,
+   "max_wer": 0.4117647058823529,
+   "wers": [
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.35294117647058826,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.4117647058823529,
+    0.4117647058823529,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882
+   ],
+   "example": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds."
+  },
+  {
+   "case": "h03",
+   "arm": "rules",
+   "mean_wer": 0.23529411764705885,
+   "max_wer": 0.23529411764705882,
+   "wers": [
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882
+   ],
+   "example": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds,"
+  },
+  {
+   "case": "h03",
+   "arm": "model",
+   "mean_wer": 0.26666666666666666,
+   "max_wer": 0.4117647058823529,
+   "wers": [
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.35294117647058826,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.4117647058823529,
+    0.4117647058823529,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882
+   ],
+   "example": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds."
+  },
+  {
+   "case": "h03",
+   "arm": "hybrid",
+   "mean_wer": 0.23529411764705885,
+   "max_wer": 0.23529411764705882,
+   "wers": [
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882
+   ],
+   "example": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds,"
+  },
+  {
+   "case": "h04",
+   "arm": "none",
+   "mean_wer": 0.22745098039215686,
+   "max_wer": 0.47058823529411764,
+   "wers": [
+    0.4117647058823529,
+    0.11764705882352941,
+    0.4117647058823529,
+    0.11764705882352941,
+    0.17647058823529413,
+    0.35294117647058826,
+    0.11764705882352941,
+    0.47058823529411764,
+    0.17647058823529413,
+    0.11764705882352941,
+    0.29411764705882354,
+    0.23529411764705882,
+    0.17647058823529413,
+    0.11764705882352941,
+    0.11764705882352941
+   ],
+   "example": "The restaurant offers a 20 pence discount for orders over Dalsar 50, and the total cost was Dalsar 30 Suam."
+  },
+  {
+   "case": "h04",
+   "arm": "rules",
+   "mean_wer": 0.11764705882352942,
+   "max_wer": 0.11764705882352941,
+   "wers": [
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941
+   ],
+   "example": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38."
+  },
+  {
+   "case": "h04",
+   "arm": "model",
+   "mean_wer": 0.22745098039215686,
+   "max_wer": 0.47058823529411764,
+   "wers": [
+    0.4117647058823529,
+    0.11764705882352941,
+    0.4117647058823529,
+    0.11764705882352941,
+    0.17647058823529413,
+    0.35294117647058826,
+    0.11764705882352941,
+    0.47058823529411764,
+    0.17647058823529413,
+    0.11764705882352941,
+    0.29411764705882354,
+    0.23529411764705882,
+    0.17647058823529413,
+    0.11764705882352941,
+    0.11764705882352941
+   ],
+   "example": "The restaurant offers a 20 pence discount for orders over Dalsar 50, and the total cost was Dalsar 30 Suam."
+  },
+  {
+   "case": "h04",
+   "arm": "hybrid",
+   "mean_wer": 0.11764705882352942,
+   "max_wer": 0.11764705882352941,
+   "wers": [
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941
+   ],
+   "example": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38."
+  },
+  {
+   "case": "h05",
+   "arm": "none",
+   "mean_wer": 0.059259259259259255,
+   "max_wer": 0.1111111111111111,
+   "wers": [
+    0.05555555555555555,
+    0.05555555555555555,
+    0.0,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.1111111111111111,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.1111111111111111,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555
+   ],
+   "example": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 12.22 per gallon,"
+  },
+  {
+   "case": "h05",
+   "arm": "rules",
+   "mean_wer": 0.0,
+   "max_wer": 0.0,
+   "wers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "example": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon."
+  },
+  {
+   "case": "h05",
+   "arm": "model",
+   "mean_wer": 0.059259259259259255,
+   "max_wer": 0.1111111111111111,
+   "wers": [
+    0.05555555555555555,
+    0.05555555555555555,
+    0.0,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.1111111111111111,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.1111111111111111,
+    0.05555555555555555,
+    0.05555555555555555,
+    0.05555555555555555
+   ],
+   "example": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 12.22 per gallon,"
+  },
+  {
+   "case": "h05",
+   "arm": "hybrid",
+   "mean_wer": 0.0,
+   "max_wer": 0.0,
+   "wers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "example": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon."
+  },
+  {
+   "case": "h06",
+   "arm": "none",
+   "mean_wer": 0.08,
+   "max_wer": 0.13333333333333333,
+   "wers": [
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.13333333333333333,
+    0.0,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.13333333333333333,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667
+   ],
+   "example": "The bakery sells 12 loaves of bread daily, and the price per loaf is 12.250."
+  },
+  {
+   "case": "h06",
+   "arm": "rules",
+   "mean_wer": 0.0,
+   "max_wer": 0.0,
+   "wers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "example": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50."
+  },
+  {
+   "case": "h06",
+   "arm": "model",
+   "mean_wer": 0.08,
+   "max_wer": 0.13333333333333333,
+   "wers": [
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.13333333333333333,
+    0.0,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.13333333333333333,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667,
+    0.06666666666666667
+   ],
+   "example": "The bakery sells 12 loaves of bread daily, and the price per loaf is 12.250."
+  },
+  {
+   "case": "h06",
+   "arm": "hybrid",
+   "mean_wer": 0.0,
+   "max_wer": 0.0,
+   "wers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "example": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50."
+  },
+  {
+   "case": "h07",
+   "arm": "none",
+   "mean_wer": 0.23921568627450981,
+   "max_wer": 0.29411764705882354,
+   "wers": [
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.23529411764705882,
+    0.29411764705882354,
+    0.23529411764705882,
+    0.23529411764705882
+   ],
+   "example": "The gym membership costs 45 per month, and the first month was charged at 10 perncet discount."
+  },
+  {
+   "case": "h07",
+   "arm": "rules",
+   "mean_wer": 0.1215686274509804,
+   "max_wer": 0.17647058823529413,
+   "wers": [
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.17647058823529413
+   ],
+   "example": "The gym membership costs $45 per month, and the first month was charged at 10% discount."
+  },
+  {
+   "case": "h07",
+   "arm": "model",
+   "mean_wer": 0.1215686274509804,
+   "max_wer": 0.17647058823529413,
+   "wers": [
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.17647058823529413
+   ],
+   "example": "The gym membership costs $45 per month, and the first month was charged at 10% discount."
+  },
+  {
+   "case": "h07",
+   "arm": "hybrid",
+   "mean_wer": 0.1215686274509804,
+   "max_wer": 0.17647058823529413,
+   "wers": [
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.17647058823529413
+   ],
+   "example": "The gym membership costs $45 per month, and the first month was charged at 10% discount."
+  },
+  {
+   "case": "h08",
+   "arm": "none",
+   "mean_wer": 0.22222222222222227,
+   "max_wer": 0.3333333333333333,
+   "wers": [
+    0.2,
+    0.3333333333333333,
+    0.2,
+    0.2,
+    0.2,
+    0.26666666666666666,
+    0.2,
+    0.26666666666666666,
+    0.2,
+    0.2,
+    0.2,
+    0.26666666666666666,
+    0.2,
+    0.26666666666666666,
+    0.13333333333333333
+   ],
+   "example": "The school's attendance rate is 85 peers, and the number of students is 29."
+  },
+  {
+   "case": "h08",
+   "arm": "rules",
+   "mean_wer": 0.13333333333333333,
+   "max_wer": 0.13333333333333333,
+   "wers": [
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333
+   ],
+   "example": "The school's attendance rate is 85%, and the number of students is 320."
+  },
+  {
+   "case": "h08",
+   "arm": "model",
+   "mean_wer": 0.21333333333333335,
+   "max_wer": 0.26666666666666666,
+   "wers": [
+    0.2,
+    0.26666666666666666,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.26666666666666666,
+    0.2,
+    0.2,
+    0.26666666666666666,
+    0.26666666666666666,
+    0.13333333333333333
+   ],
+   "example": "The school's attendance rate is 85 parents and the number of students is 220."
+  },
+  {
+   "case": "h08",
+   "arm": "hybrid",
+   "mean_wer": 0.13333333333333333,
+   "max_wer": 0.13333333333333333,
+   "wers": [
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333,
+    0.13333333333333333
+   ],
+   "example": "The school's attendance rate is 85%, and the number of students is 320."
+  },
+  {
+   "case": "h09",
+   "arm": "none",
+   "mean_wer": 0.07450980392156863,
+   "max_wer": 0.11764705882352941,
+   "wers": [
+    0.058823529411764705,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.0,
+    0.11764705882352941,
+    0.058823529411764705,
+    0.11764705882352941,
+    0.058823529411764705,
+    0.11764705882352941,
+    0.0,
+    0.058823529411764705,
+    0.11764705882352941,
+    0.0,
+    0.058823529411764705
+   ],
+   "example": "The phone number for the emergency service is 919 and the response time is under 2 minutes."
+  },
+  {
+   "case": "h09",
+   "arm": "rules",
+   "mean_wer": 0.0,
+   "max_wer": 0.0,
+   "wers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "example": "The phone number for the emergency service is 911 and the response time is under 2 minutes."
+  },
+  {
+   "case": "h09",
+   "arm": "model",
+   "mean_wer": 0.07450980392156863,
+   "max_wer": 0.11764705882352941,
+   "wers": [
+    0.058823529411764705,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.11764705882352941,
+    0.0,
+    0.11764705882352941,
+    0.058823529411764705,
+    0.11764705882352941,
+    0.058823529411764705,
+    0.11764705882352941,
+    0.0,
+    0.058823529411764705,
+    0.11764705882352941,
+    0.0,
+    0.058823529411764705
+   ],
+   "example": "The phone number for the emergency service is 919 and the response time is under 2 minutes."
+  },
+  {
+   "case": "h09",
+   "arm": "hybrid",
+   "mean_wer": 0.0,
+   "max_wer": 0.0,
+   "wers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "example": "The phone number for the emergency service is 911 and the response time is under 2 minutes."
+  },
+  {
+   "case": "h10",
+   "arm": "none",
+   "mean_wer": 0.24583333333333332,
+   "max_wer": 0.4375,
+   "wers": [
+    0.1875,
+    0.4375,
+    0.1875,
+    0.1875,
+    0.3125,
+    0.3125,
+    0.1875,
+    0.3125,
+    0.1875,
+    0.1875,
+    0.3125,
+    0.1875,
+    0.1875,
+    0.1875,
+    0.3125
+   ],
+   "example": "The address on the building is 237 Main Street and the zip code is 23745."
+  },
+  {
+   "case": "h10",
+   "arm": "rules",
+   "mean_wer": 0.125,
+   "max_wer": 0.125,
+   "wers": [
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125
+   ],
+   "example": "The address on the building is 123 Main Street and the zip code is 12345."
+  },
+  {
+   "case": "h10",
+   "arm": "model",
+   "mean_wer": 0.24583333333333332,
+   "max_wer": 0.4375,
+   "wers": [
+    0.1875,
+    0.4375,
+    0.1875,
+    0.1875,
+    0.3125,
+    0.3125,
+    0.1875,
+    0.3125,
+    0.1875,
+    0.1875,
+    0.3125,
+    0.1875,
+    0.1875,
+    0.1875,
+    0.3125
+   ],
+   "example": "The address on the building is 237 Main Street and the zip code is 23745."
+  },
+  {
+   "case": "h10",
+   "arm": "hybrid",
+   "mean_wer": 0.125,
+   "max_wer": 0.125,
+   "wers": [
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125,
+    0.125
+   ],
+   "example": "The address on the building is 123 Main Street and the zip code is 12345."
+  },
+  {
+   "case": "h11",
+   "arm": "none",
+   "mean_wer": 0.42745098039215695,
+   "max_wer": 0.5294117647058824,
+   "wers": [
+    0.47058823529411764,
+    0.4117647058823529,
+    0.4117647058823529,
+    0.47058823529411764,
+    0.4117647058823529,
+    0.35294117647058826,
+    0.4117647058823529,
+    0.47058823529411764,
+    0.4117647058823529,
+    0.4117647058823529,
+    0.5294117647058824,
+    0.4117647058823529,
+    0.4117647058823529,
+    0.4117647058823529,
+    0.4117647058823529
+   ],
+   "example": "The temperature was 17 Fahrenheit on July 10, 2023, and the humidity was 40 feet per ounce."
+  },
+  {
+   "case": "h11",
+   "arm": "rules",
+   "mean_wer": 0.2941176470588235,
+   "max_wer": 0.29411764705882354,
+   "wers": [
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354
+   ],
+   "example": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%."
+  },
+  {
+   "case": "h11",
+   "arm": "model",
+   "mean_wer": 0.2941176470588235,
+   "max_wer": 0.29411764705882354,
+   "wers": [
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354
+   ],
+   "example": "The temperature was 72 degrees Fahrenheit on July 10, 2233, and the humidity was 45%."
+  },
+  {
+   "case": "h11",
+   "arm": "hybrid",
+   "mean_wer": 0.2941176470588235,
+   "max_wer": 0.29411764705882354,
+   "wers": [
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354,
+    0.29411764705882354
+   ],
+   "example": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%."
+  }
+ ],
+ "transcripts": {
+  "f031797984fd3d95-s1": {
+   "text": "The store opened at 9-0 a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s2": {
+   "text": "The store opened at 9-0 AIM on March 15, 2024, with prices at Dallisham 99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s3": {
+   "text": "The store opened at 9-0 AIM on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s4": {
+   "text": "The store opened at 9.00am on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s5": {
+   "text": "The store opened at 9.01am on March 15, 202-4, with prices at Dalish 5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s6": {
+   "text": "The store opened at 9-0 AIM on March 15, 2024, with prices at Dalsher's $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s7": {
+   "text": "The store opened at 9-0 a.m. on March 15, 224, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s8": {
+   "text": "The store opened at 9-0 AIM on March 15, 224, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s9": {
+   "text": "The store opened at 9-0 AIM on March 15, 2094, with prices at Dalish 599 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s10": {
+   "text": "The store opened at 9.00 a.m. on March 15, 224, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s11": {
+   "text": "The store opened at 9.00 am on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s12": {
+   "text": "The store opened at 9-0 a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s13": {
+   "text": "The store opened at 9-0 AIM on March 15, 224, with prices at $19.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s14": {
+   "text": "The store opened at 9-0 AIM on March 15, 2024, with prices at Dalish Pfev 99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "f031797984fd3d95-s15": {
+   "text": "The store opened at 9.00 a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s1": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s2": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s3": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s4": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s5": {
+   "text": "The store opened at 9 o'clock AM on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s6": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s7": {
+   "text": "The store opened at 9 o'clock am on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s8": {
+   "text": "The store opened at 9 o'clock AM on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s9": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s10": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s11": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s12": {
+   "text": "The store opened at 9 o'clock AM on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s13": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s14": {
+   "text": "The store opened at 9 o'clock AM on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "c3a6f9c80e2c1cba-s15": {
+   "text": "The store opened at 9 o'clock a.m. on March 15, 2024, with prices at $5.99 per item.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s1": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s2": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s3": {
+   "text": "She left home at 7.30 pm on June 12, 213, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s4": {
+   "text": "She left home at 7.30 p.m. on June 12, 223, and the total bill was $42,000.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s5": {
+   "text": "She left home at 7.30 p.m. on June 12, 23-3, and the total bill was $42,000.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s6": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $4.25.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s7": {
+   "text": "She left home at 7.03 p.m. on June 12, 2023, and the total bill was 42 Pfund.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s8": {
+   "text": "She left home at 7.30 pm on June 12, 233, and the total bill was 42 fin sous.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s9": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $5.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s10": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s11": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s12": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s13": {
+   "text": "She left home at 7.30 p.m. on June 12, 2033, and the total bill was 42 fensu.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s14": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d21ab0f95371776-s15": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $40.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s1": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s2": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s3": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s4": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s5": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s6": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s7": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s8": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s9": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s10": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s11": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s12": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s13": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s14": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "c6b69fd1c69a4260-s15": {
+   "text": "She left home at 7.30 p.m. on June 12, 2023, and the total bill was $42.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s1": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s2": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 202, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s3": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s4": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 222, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s5": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds,",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s6": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds,",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s7": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2002, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s8": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 22, and the package weighed two-three pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s9": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s10": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s11": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed two tree pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s12": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2002, and the package weighed two tree pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s13": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 222, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s14": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2002, and the package weighed 2.3 pounds,",
+   "chunks_ended_by_eos": true
+  },
+  "0dbbb0e651e2a44b-s15": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s1": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds,",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s2": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s3": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s4": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s5": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds,",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s6": {
+   "text": "The delivery arrived at 3.45pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s7": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s8": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s9": {
+   "text": "The delivery arrived at 3.45 p.m. on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s10": {
+   "text": "The delivery arrived at 3.45pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s11": {
+   "text": "The delivery arrived at 3.45pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s12": {
+   "text": "The delivery arrived at 3.45pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s13": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s14": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "785d1451741a9fe0-s15": {
+   "text": "The delivery arrived at 3.45 pm on October 5, 2022, and the package weighed 2.3 pounds.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s1": {
+   "text": "The restaurant offers a 20 pence discount for orders over Dalsar 50, and the total cost was Dalsar 30 Suam.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s2": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $33.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s3": {
+   "text": "The restaurant offers a 20-paren set discount for orders over $10.50, and the total cost was ETH 13 ZOO.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s4": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $30.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s5": {
+   "text": "The restaurant offers a 20% discount for orders over 1,050 and the total cost was 1,030 YOS.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s6": {
+   "text": "The restaurant offers a 20-princess discount for orders over 50 Dalser, and the total cost was 13 Bels.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s7": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $30.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s8": {
+   "text": "The restaurant offers a 20% discount for orders over Dallas of 50, and the total cost was Dallas' third E3 zone.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s9": {
+   "text": "The restaurant offers a 20% discount for orders over Dalsod, and the total cost was $1.30.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s10": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $32.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s11": {
+   "text": "The restaurant offers a 20% discount for orders over Dalsif 50, and the total cost was Dalsif 30 Osum.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s12": {
+   "text": "The restaurant offers a 20% discount for orders over 50 Dals and the total cost was 36 Bels.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s13": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was ETH or TZ.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s14": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was ₩3,000.",
+   "chunks_ended_by_eos": true
+  },
+  "a2c68e158ea2d05a-s15": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $3,300.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s1": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s2": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s3": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s4": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s5": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s6": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s7": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s8": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s9": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s10": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s11": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s12": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s13": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s14": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "5b1c3c3f3cea2f7b-s15": {
+   "text": "The restaurant offers a 20% discount for orders over $50, and the total cost was $38.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s1": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 12.22 per gallon,",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s2": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 13,200 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s3": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s4": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 30.22 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s5": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 322 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s6": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.2 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s7": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 12.22 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s8": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was darjur per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s9": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 30 suo per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s10": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 30.12 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s11": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.22 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s12": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was Tars 22 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s13": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 322 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s14": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 32 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9b363e43141e4109-s15": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was 32 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s1": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s2": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s3": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s4": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s5": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s6": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s7": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s8": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s9": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s10": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s11": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s12": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s13": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s14": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "9cae202f8b6ffb89-s15": {
+   "text": "The car's fuel efficiency is 30 miles per gallon, and the gas price was $3.20 per gallon.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s1": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 12.250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s2": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s3": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 12.2.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s4": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s5": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 2 centimes.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s6": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s7": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is Dils 250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s8": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is Tuls 250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s9": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s10": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s11": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 2 fichu.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s12": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s13": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s14": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 2.250.",
+   "chunks_ended_by_eos": true
+  },
+  "0d61ee8b0a4616f0-s15": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is 250.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s1": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s2": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s3": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s4": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s5": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s6": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s7": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s8": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s9": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s10": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s11": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s12": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s13": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s14": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "109497f3e88ed492-s15": {
+   "text": "The bakery sells 12 loaves of bread daily, and the price per loaf is $2.50.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s1": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 perncet discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s2": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s3": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 Pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s4": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s5": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s6": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s7": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s8": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s9": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s10": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s11": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 Pernsit discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s12": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s13": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 per set discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s14": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "b6505a3d9765de47-s15": {
+   "text": "The gym membership costs 45 per month, and the first month was charged at 10 pernset discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s1": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s2": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s3": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s4": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s5": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s6": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s7": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s8": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s9": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s10": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s11": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s12": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s13": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s14": {
+   "text": "The gym membership costs $45 per month, and the first month was charged at 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "86d576d3effd4871-s15": {
+   "text": "The gym membership costs $45 per month, and the first month was charged a 10% discount.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s1": {
+   "text": "The school's attendance rate is 85 peers, and the number of students is 29.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s2": {
+   "text": "The school's attendance rate is 80 Phe Pairs and the number of students is 3 Thuy.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s3": {
+   "text": "The school's attendance rate is 85 peers, and the number of students is twin-twenty.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s4": {
+   "text": "The school's attendance rate is 85 peers and the number of students is 13.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s5": {
+   "text": "The school's attendance rate is 80 Faye-Payers, and the number of students is 13.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s6": {
+   "text": "The school's attendance rate is 80 fave parents, and the number of students is 13.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s7": {
+   "text": "The school's attendance rate is 85 pairs, and the number of students is 220.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s8": {
+   "text": "The school's attendance rate is 85 parents, and the number of students is 3 team.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s9": {
+   "text": "The school's attendance rate is 85 Perns and the number of students is 12.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s10": {
+   "text": "The school's attendance rate is 85 parents, and the number of students is 13.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s11": {
+   "text": "The school's attendance rate is 85 parents, and the number of students is 12.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s12": {
+   "text": "The school's attendance rate is 85 parents, and the number of students is 3 tundi.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s13": {
+   "text": "The school's attendance rate is 85 parents, and the number of students is 3,200.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s14": {
+   "text": "The school's attendance rate is 80 phi pairs, and the number of students is 13.",
+   "chunks_ended_by_eos": true
+  },
+  "20a54d2b10f07db6-s15": {
+   "text": "The school's attendance rate is 85 parents, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s1": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s2": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s3": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s4": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s5": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s6": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s7": {
+   "text": "The school's attendance rate is 85% and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s8": {
+   "text": "The school's attendance rate is 85% and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s9": {
+   "text": "The school's attendance rate is 85% and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s10": {
+   "text": "The school's attendance rate is 85% and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s11": {
+   "text": "The school's attendance rate is 85% and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s12": {
+   "text": "The school's attendance rate is 85% and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s13": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s14": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "57bf4474d42485fc-s15": {
+   "text": "The school's attendance rate is 85%, and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s1": {
+   "text": "The school's attendance rate is 85 parents and the number of students is 220.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s2": {
+   "text": "The school's attendance rate is 80 faith parents, and the number of students is 22.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s3": {
+   "text": "The school's attendance rate is 85 parents, and the number of students is 22.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s4": {
+   "text": "The school's attendance rate is 85 parents and the number of students is 20.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s5": {
+   "text": "The school's attendance rate is 85 pence and the number of students is 13.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s6": {
+   "text": "The school's attendance rate is 85 pants and the number of students is three-toony.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s7": {
+   "text": "The school's attendance rate is 85% and the number of students is 20.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s8": {
+   "text": "The school's attendance rate is 85 per cent, and the number of students is three-toony.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s9": {
+   "text": "The school's attendance rate is 85 grants, and the number of students is 18.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s10": {
+   "text": "The school's attendance rate is 85 parents and the number of students is twin 20.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s11": {
+   "text": "The school's attendance rate is 85 parents and the number of students is 22.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s12": {
+   "text": "The school's attendance rate is 85 parencen and the number of students is 13.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s13": {
+   "text": "The school's attendance rate is 85 pence and the number of students is 3 team.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s14": {
+   "text": "The school's attendance rate is 80 faith parents, and the number of students is three-tune.",
+   "chunks_ended_by_eos": true
+  },
+  "7d68a5c0202e5b07-s15": {
+   "text": "The school's attendance rate is 85 prints and the number of students is 320.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s1": {
+   "text": "The phone number for the emergency service is 919 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s2": {
+   "text": "The phone number for the emergency service is 91-ZALM and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s3": {
+   "text": "The phone number for the emergency service is 91-VINE and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s4": {
+   "text": "The phone number for the emergency service is 91-ZEIN, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s5": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s6": {
+   "text": "The phone number for the emergency service is 91-VINE, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s7": {
+   "text": "The phone number for the emergency service is 919 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s8": {
+   "text": "The phone number for the emergency service is 91-VINE and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s9": {
+   "text": "The phone number for the emergency service is 919 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s10": {
+   "text": "The phone number for the emergency service is 91-FEN, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s11": {
+   "text": "The phone number for the emergency service is 911 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s12": {
+   "text": "The phone number for the emergency service is 盲望站 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s13": {
+   "text": "The phone number for the emergency service is 9-1-Vine, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s14": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "821169d407bf2280-s15": {
+   "text": "The phone number for the emergency service is 919, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s1": {
+   "text": "The phone number for the emergency service is 911 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s2": {
+   "text": "The phone number for the emergency service is 911 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s3": {
+   "text": "The phone number for the emergency service is 911 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s4": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s5": {
+   "text": "The phone number for the emergency service is 911 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s6": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s7": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s8": {
+   "text": "The phone number for the emergency service is 911 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s9": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s10": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s11": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s12": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s13": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s14": {
+   "text": "The phone number for the emergency service is 911, and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "b411e6d10067c024-s15": {
+   "text": "The phone number for the emergency service is 911 and the response time is under 2 minutes.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s1": {
+   "text": "The address on the building is 237 Main Street and the zip code is 23745.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s2": {
+   "text": "The address on the building is Dwan 3 Sit Main Street and the zip code is Dwan 3 Sit 45.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s3": {
+   "text": "The address on the building is 23 T Main Street and the zip code is 23345.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s4": {
+   "text": "The address on the building is 23C Main Street, and the zip code is 2345.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s5": {
+   "text": "The address on the building is 23C Main Street and the zip code is 23C45.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s6": {
+   "text": "The address on the building is 23C Main Street and the zip code is 23C45.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s7": {
+   "text": "The address on the building is 235 Main Street and the zip code is 2345.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s8": {
+   "text": "The address on the building is 23 Seft Main Street and the zip code is 23 Seft 45.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s9": {
+   "text": "The address on the building is 237 Main Street, and the zip code is 2345.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s10": {
+   "text": "The address on the building is 23 Sec Main Street and the zip code is 2344.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s11": {
+   "text": "The address on the building is 23 Ceph Main Street and the zip code is 23 Ceph45.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s12": {
+   "text": "The address on the building is 23C Main Street, and the zip code is 2345.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s13": {
+   "text": "The address on the building is 213 Main Street, and the zip code is 21345.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s14": {
+   "text": "The address on the building is 23 Thiem Main Street and the zip code is 23345.",
+   "chunks_ended_by_eos": true
+  },
+  "e7b8f9d3464ac11b-s15": {
+   "text": "The address on the building is 23 6th Main Street and the zip code is 23 far 4th.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s1": {
+   "text": "The address on the building is 123 Main Street and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s2": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s3": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s4": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s5": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s6": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s7": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s8": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s9": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s10": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s11": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s12": {
+   "text": "The address on the building is 123 Main Street and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s13": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s14": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "9fea03a914460d5e-s15": {
+   "text": "The address on the building is 123 Main Street, and the zip code is 12345.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s1": {
+   "text": "The temperature was 17 Fahrenheit on July 10, 2023, and the humidity was 40 feet per ounce.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s2": {
+   "text": "The temperature was 72°F on July 10, 223, and the humidity was 45°C.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s3": {
+   "text": "The temperature was 72°F on July 10, 2023, and the humidity was 45°C.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s4": {
+   "text": "The temperature was 7 T F on July 10, Tm3C, and the humidity was 4 F.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s5": {
+   "text": "The temperature was 72°F on July 10, 2023, and the humidity was 45°F.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s6": {
+   "text": "The temperature was 72 T Fahrenheit on July 10, 201033, and the humidity was 45 p.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s7": {
+   "text": "The temperature was 72°F on July 10, 2003, and the humidity was 45°F.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s8": {
+   "text": "The temperature was 72 °F on July 10-22-3, and the humidity was 45 °F.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s9": {
+   "text": "The temperature was 72 T on July 10, 2023, and the humidity was 45 P .",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s10": {
+   "text": "The temperature was 72 F on July 10, 2233, and the humidity was 45 p.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s11": {
+   "text": "The temperature was 72 T.R.F. on July 10, 2023, and the humidity was 45 P.E.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s12": {
+   "text": "The temperature was 72°F on July 10, 2023, and the humidity was 45°F.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s13": {
+   "text": "The temperature was 72 F on July 10, 213, and the humidity was 45 P.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s14": {
+   "text": "The temperature was 72 F on July 10, 2023, and the humidity was 40 F.",
+   "chunks_ended_by_eos": true
+  },
+  "4cf433c5a91e5c10-s15": {
+   "text": "The temperature was 72 F on July 10, 233, and the humidity was 40 F.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s1": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s2": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s3": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s4": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s5": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s6": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45 percent,",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s7": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s8": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s9": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s10": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s11": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s12": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s13": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s14": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "cf9db64155fe1e00-s15": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s1": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2233, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s2": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 213 C, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s3": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s4": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 223, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s5": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 2233, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s6": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 2003, and the humidity was 40%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s7": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 2233, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s8": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 2233, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s9": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 2003, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s10": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 203, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s11": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 223, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s12": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s13": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2003, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s14": {
+   "text": "The temperature was 72 degrees Fahrenheit on July 10, 2023, and the humidity was 45%.",
+   "chunks_ended_by_eos": true
+  },
+  "c9ff4f510462b6cb-s15": {
+   "text": "The temperature was 70 degrees Fahrenheit on July 10, 2023, and the humidity was 40%.",
+   "chunks_ended_by_eos": true
+  }
+ }
+}

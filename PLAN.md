@@ -54,7 +54,8 @@ with red-team, remediate, verify, commit.
 
 | Phase | State |
 |---|---|
-| 0 | in progress (2026-11-17) |
+| 0 | passed 2026-11-17 ([phase0-foundations-v1](validation/phase0-foundations-v1/)) |
+| 1 | not started |
 
 ## Parking list
 

@@ -1,0 +1,13 @@
+{
+  "manifest_url": "https://developer.download.nvidia.com/compute/cuda/redist/redistrib_13.4.2.json",
+  "manifest_sha256": "015b97aa3977d4d0bade1631b226b6d4cbe48751cc841aad9193295df7f9047a",
+  "release_date": "2026-09-16",
+  "package_version": "13.4.92",
+  "entry": {
+    "relative_path": "cuda_sanitizer_api/linux-sbsa/cuda_sanitizer_api-linux-sbsa-13.4.92-archive.tar.xz",
+    "sha256": "b422bd263ec671fd3217f8329fa81423befe64e81332773af1a52df7819f63d7",
+    "md5": "dd07b326f009691601c5bd2f91a5d9e4",
+    "size": "7594740"
+  },
+  "scope": "downloaded verified standalone sanitizer only; no toolkit or driver replacement"
+}
