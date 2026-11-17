@@ -75,9 +75,10 @@ loader (`lfm::Safetensors`, unmodified) and checks the small tensors' device byt
 Upload of both files: 4.1 s wall (page cache warm). After release the device returns to 7,995.8 MiB.
 
 What the remaining 3.7 GiB must hold, from the checkpoint's configuration (computed, to be measured in phase 1):
-the backbone has 12 attention layers (6 full, 6 with a 256-token window) of 4 key-value heads × 128, so keys and
-values cost 2,048 bytes per token per layer in BF16 — 384 MiB for the 6 full layers at 32,768 tokens, 768 MiB if
-the windowed layers also keep every token.
+the backbone has 11 attention layers (6 full, 5 with a 256-token window) of 4 key-value heads × 128, so keys and
+values cost 2,048 bytes per token per layer in BF16 — 384 MiB for the 6 full layers at 32,768 tokens, 704 MiB if
+the windowed layers also keep every token. (Corrected 2026-11-17: this first said 12 layers, 6 windowed, 768 MiB;
+the configuration lists 5 windowed layers.)
 
 Also learned: a BF16-input, FP32-accumulate kernel built with these flags gives sums bit-identical to the same
 order on the host CPU (4,096 rows × 2,048), so `__nv_bfloat16` conversions are exact on `sm_61`.
