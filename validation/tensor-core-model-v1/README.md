@@ -131,6 +131,43 @@ Still not established: the attention layers (FP32 scores, softmax, rotary `cosf`
 decode steps, and all of it on the GTX 1080 itself, whose `expf`, `rsqrtf`, `cosf` and `sinf` have not been compared
 with anything yet.
 
+## On the GTX 1080: every pinned trace file (2026-11-17)
+
+Build `text-tc`: the Pascal engine at commit `ad7948f` with `-DLFM_GEMM_TENSOR_CORE_MODEL`, which replaces the
+prefill GEMM by the published model in integer arithmetic (`native/include/lfm/gemm.cuh`, `wide_model_kernel`).
+`liquid-lfm3` `0f8c7169…2a6453a`; flags and source hashes in `records/`. `tools/pascal/compare_pins.py` traces
+each fixture teacher-forced, as the Thor round did, and compares the SHA-256 of every trace file with the Thor
+engine's pins (`records/compare-pins.log`, `records/pins-text-tc/*/result.json`).
+
+| Fixture | Rows, steps | Trace files equal to the Thor pins | Argmax ids |
+|---|---|---:|---|
+| `baseline` | 34, prefill + 15 decode | 4,816 of 4,816 | equal |
+| `arithmetic` | 31, prefill + 1 | 602 of 602 | equal |
+| `window257` | 257, prefill + 3 | 1,204 of 1,204 | equal |
+| `single` | 1, prefill + 3 | 1,204 of 1,204 | equal |
+| **All** | | **7,826 of 7,826** | |
+
+Every activation the Thor engine pinned — all 24 layers, convolution and attention (rotary, probabilities, attended,
+gated), the MLPs, the final norm, and the FP32 logits of every step — is bit-identical on the GTX 1080.
+
+Contrast, the plain engine (`text-v2`, FMA in k order) on the same script: `arithmetic` 5 of 602 equal, the first
+difference at `0.layers.0.conv.in_proj` (the first prefill GEMM); `single` 1,204 of 1,204 equal, because with one
+row every GEMM is a `thin` kernel and no tensor core is involved on Thor either.
+
+So, for these fixtures:
+
+- The only arithmetic difference between the Thor engine and this one is the tensor core's summation in the prefill
+  GEMM. `rsqrtf`, `expf`, `cosf`, `sinf`, the softmax and every other kernel give the same bits on Pascal (`sm_61`,
+  CUDA 12.9) as on Blackwell (`sm_110`, CUDA 13.0).
+- The decode path was already bit-identical to Thor's without the model.
+
+Cost: prefill 4.4 s against 1.2 s (34 rows) and 24.4 s against 2.6 s (257 rows) for the plain kernel. A validation
+build.
+
+Limits: four fixtures, at most 257 rows of prefill, capacity 512; inputs with no infinities or NaN. The 128-row
+attention tiles used above 4,096 tokens, the scorer's logit tiles and the long-context path are not covered by
+pins.
+
 ## What it is for
 
 If the remaining kernels also agree, a build of the Pascal engine whose prefill GEMM uses this arithmetic would have

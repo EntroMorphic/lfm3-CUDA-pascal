@@ -37,6 +37,23 @@ Baseline: build `text-v1` (`e30023b7…` CLI, `82681a43…` scorer) and its resu
    `text-v1` counterpart if `text-v1` cannot run that length, so it is judged by text-correct-v1's rules 3 and 4.
 8. **Nothing else changes.** The host suite's result is the one recorded before the change, plus the new test.
 
-## Results
+## Results (2026-11-17, in progress)
 
-(none yet)
+Builds from commit `ad7948f`: `text-v2` `liquid-lfm3` `0dc31546…e4519a2`, `lfm3-score` `75d017f9…29cb9b7`.
+`verify-fast.log` is the first half of the job as run.
+
+| Rule | Result |
+|---|---|
+| 1. Build | **PASS**: 0 warnings, same linkage |
+| 2. Bookkeeping | **PASS** (`tests/test_window_slots.py`) |
+| 3. Fixtures | **PASS** with `LFM3_COMPACT_WINDOWS` unset and with it 1: pinned ids, two identical runs, reset passing |
+| 4. Long decode | **PASS**: 701 argmax ids equal; the FP32 logits of all 701 steps byte-identical between `text-v1` and `text-v2` with compact windows (digest `7b36221a…`); decode 11.0 s both |
+| 5. NLL, unset, subsets | **PASS**: byte-identical at 256 (64 windows), 257 (64) and 4,096 (2) |
+| 5. NLL, compact, all windows | running |
+| 6. Memory | 4,096 tokens, unset: peak 5,027 MiB against `text-v1`'s 5,195 (the MLP buffers: computed 169 MiB, measured 168). 256 and 257: unchanged at 4,407 and 4,413, as computed (the capacity is at most one block). Compact figures and 32,768: running |
+| 7. 32,768 | running |
+| 8. Nothing else changes | host suite at `1664d89`: 2,397 passed, 5 skipped, 1 not runnable here (text-correct-v1) |
+
+Also: the fixtures' traces under `text-v2` built with the tensor-core model equal all 7,826 Thor pins
+([tensor-core-model-v1](../tensor-core-model-v1/)); that build includes both changes of this round (the 257-row
+fixture runs the MLP in two blocks).

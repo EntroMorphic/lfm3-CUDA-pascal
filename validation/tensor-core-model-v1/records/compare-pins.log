@@ -1,0 +1,14 @@
+binary 0f8c71693570c8d5524e85fb77c89d7be5d2ba295ea6c6774504e4d1e2a6453a  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 4.38 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 4.19 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 24.39 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.10 s
+PINS EQUAL
+pins tc rc=0
+binary 0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  Thor pins from binary a75e26b1f357e8bc
+arithmetic: 5 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.90 s
+  first different: 0.layers.0.conv.in_proj.bf16   (before it, 2 files in order are equal)
+  different, by kind: operator.bf16 48, residual.bf16 48, ffn_norm.bf16 48, feed_forward.w1.bf16 48, feed_forward.w3.bf16 48, feed_forward.product.bf16 48, feed_forward.bf16 48, output.bf16 48, operator_norm.bf16 46, conv.product.bf16 26, conv.in_proj.bf16 25, self_attn.q_rotary.bf16 22, self_attn.k_rotary.bf16 22, self_attn.probabilities.bf16 22, self_attn.attended.bf16 22, self_attn.gated.bf16 22, final_norm.bf16 2
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.10 s
+PINS DIFFER
+pins plain rc=1

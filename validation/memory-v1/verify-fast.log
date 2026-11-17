@@ -1,0 +1,43 @@
+== binaries
+e30023b7dba656ffa94eaf0569c84d0a4ccefb1fe7ae69b376abbfea8e7aa593  /workspace/build/text-v1/liquid-lfm3
+82681a433fa0f12516b7bddbc60f34f8e34d8f9bb008cbd45d5e78f2f91448cd  /workspace/build/text-v1/lfm3-score
+0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  /workspace/build/text-v2/liquid-lfm3
+75d017f9523736be19c5735b4e959c8d537cfba24cdf4ac7113695d4429cb9b7  /workspace/build/text-v2/lfm3-score
+== rule 3: fixtures, LFM3_COMPACT_WINDOWS unset
+binary 0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  tree 895e4c9bb0d5c90b (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 1.222 s, decode 0.229 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.804 s, decode 0.023 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 2.561 s, decode 0.045 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.081 s, decode 0.241 s / 3 calls
+FIXTURES PASS
+== rule 3: fixtures, LFM3_COMPACT_WINDOWS=1
+binary 0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  tree 895e4c9bb0d5c90b (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 1.248 s, decode 0.229 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.803 s, decode 0.023 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 2.571 s, decode 0.044 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.081 s, decode 0.241 s / 3 calls
+FIXTURES PASS
+== rule 4: long decode
+long decode: 701 argmax ids equal; 1402 trace files, logits digest old 7b36221a127fb8fb new 7b36221a127fb8fb: IDENTICAL; decode 11.0 s old, 11.0 s new
+== rule 5 (unset): subsets
+length 256: {"engine": "native", "length": 256, "windows": 64, "scored_tokens": 16320, "mean_nll": 3.25671968, "perplexity": 25.964226, "seconds": 107.006}
+  peak device memory 4407 MiB, wall 108.3 s, nll sha256 bbd311f9a2ee3c1a
+length 257: {"engine": "native", "length": 257, "windows": 64, "scored_tokens": 16384, "mean_nll": 3.273711283, "perplexity": 26.40917, "seconds": 115.643}
+  peak device memory 4413 MiB, wall 117.3 s, nll sha256 cc8a92228da5449a
+length 4096: {"engine": "native", "length": 4096, "windows": 2, "scored_tokens": 8190, "mean_nll": 2.692392193, "perplexity": 14.766959, "seconds": 56.681}
+  peak device memory 5195 MiB, wall 58.0 s, nll sha256 f24ef13b5136b28c
+length 256: {"engine": "native", "length": 256, "windows": 64, "scored_tokens": 16320, "mean_nll": 3.25671968, "perplexity": 25.964226, "seconds": 107.434}
+  peak device memory 4407 MiB, wall 109.1 s, nll sha256 bbd311f9a2ee3c1a
+length 257: {"engine": "native", "length": 257, "windows": 64, "scored_tokens": 16384, "mean_nll": 3.273711283, "perplexity": 26.40917, "seconds": 117.662}
+  peak device memory 4413 MiB, wall 119.0 s, nll sha256 cc8a92228da5449a
+length 4096: {"engine": "native", "length": 4096, "windows": 2, "scored_tokens": 8190, "mean_nll": 2.692392193, "perplexity": 14.766959, "seconds": 58.538}
+  peak device memory 5027 MiB, wall 59.8 s, nll sha256 f24ef13b5136b28c
+subset 256: IDENTICAL
+subset 257: IDENTICAL
+subset 4096: IDENTICAL
+== VERIFY PASS
+verify fast rc=0

@@ -65,7 +65,7 @@ with red-team, remediate, verify, commit.
   (the engine prefills only into an empty cache today). Nothing measured. Written up in
   [docs/long-context-memory.md](docs/long-context-memory.md).
 - **A software model of Blackwell's tensor-core arithmetic** (owner's question, 2026-11-17; started the same day at
-  the owner's request). Found on the CPU: one model reproduces the Thor engine's first prefill GEMM bit for bit on
-  three fixtures ([tensor-core-model-v1](validation/tensor-core-model-v1/)). Open: the same arithmetic as a GPU
-  kernel for `sm_61`, and whether the other kernels agree between Blackwell and Pascal, which decides whether the
-  Thor pins can become exact gates here.
+  the owner's request). Done for the four forward fixtures: a validation build of this engine with the published
+  tensor-core model in its prefill GEMM reproduces all 7,826 of the Thor engine's pinned trace files on the GTX 1080
+  ([tensor-core-model-v1](validation/tensor-core-model-v1/)). Open: whether to make exact equality with the Thor
+  pins a standing gate, and pins for the paths the fixtures do not reach (long context, the scorer).
