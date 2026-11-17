@@ -9,8 +9,8 @@
 //
 // Kernels: `thin` and `thin_k128` for M <= 8 with B stored N x K (decode projections and Q·Kᵀ: weight-
 // bandwidth bound), `split_kn` for M <= 8 with B stored K x N (decode P·V), and `wide` otherwise
-// (prefill: tensor cores, mma.sync m16n8k16, a multistage cp.async pipeline through XOR-swizzled shared
-// memory, ldmatrix).
+// (prefill). This is the Pascal (sm_61) engine: `wide` is a plain FP32 shared-memory kernel, where the
+// Thor engine it was imported from uses tensor cores (mma.sync, cp.async, ldmatrix).
 // Quality bar (journal §9): perplexity equal or better than the standard stack within the 95% CI.
 // No reproduction of cuBLAS's kernel selection or reduction order is attempted or claimed.
 #include <cuda_bf16.h>
@@ -58,176 +58,51 @@ __device__ __forceinline__ void put(const Problem& p, long long index, float v) 
   else p.c[index] = __float2bfloat16_rn(v);
 }
 
-__device__ __forceinline__ unsigned smem_u32(const void* p) {
-  return static_cast<unsigned>(__cvta_generic_to_shared(p));
-}
-__device__ __forceinline__ void cp_async16(unsigned dst, const void* src, bool valid) {
-  asm volatile("cp.async.cg.shared.global [%0], [%1], 16, %2;\n" ::"r"(dst), "l"(src), "r"(valid ? 16 : 0));
-}
-__device__ __forceinline__ void cp_commit() { asm volatile("cp.async.commit_group;\n" ::); }
-template <int N>
-__device__ __forceinline__ void cp_wait() { asm volatile("cp.async.wait_group %0;\n" ::"n"(N)); }
-
-__device__ __forceinline__ void ldmatrix_x4(unsigned addr, unsigned& r0, unsigned& r1, unsigned& r2, unsigned& r3) {
-  asm volatile("ldmatrix.sync.aligned.m8n8.x4.shared.b16 {%0,%1,%2,%3}, [%4];\n"
-               : "=r"(r0), "=r"(r1), "=r"(r2), "=r"(r3) : "r"(addr));
-}
-__device__ __forceinline__ void ldmatrix_x4_trans(unsigned addr, unsigned& r0, unsigned& r1, unsigned& r2, unsigned& r3) {
-  asm volatile("ldmatrix.sync.aligned.m8n8.x4.trans.shared.b16 {%0,%1,%2,%3}, [%4];\n"
-               : "=r"(r0), "=r"(r1), "=r"(r2), "=r"(r3) : "r"(addr));
-}
-__device__ __forceinline__ void mma_bf16(float (&d)[4], const unsigned (&a)[4], unsigned b0, unsigned b1) {
-  asm volatile("mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32 {%0,%1,%2,%3}, {%4,%5,%6,%7}, {%8,%9}, {%0,%1,%2,%3};\n"
-               : "+f"(d[0]), "+f"(d[1]), "+f"(d[2]), "+f"(d[3])
-               : "r"(a[0]), "r"(a[1]), "r"(a[2]), "r"(a[3]), "r"(b0), "r"(b1));
-}
-
-// Tile configuration: block BM x BN, K per stage BK, warps WARPS_M x WARPS_N, pipeline STAGES.
-template <int BM_, int BN_, int BK_, int WARPS_M_, int WARPS_N_, int STAGES_>
-struct Tile {
-  static constexpr int BM = BM_, BN = BN_, BK = BK_, WARPS_M = WARPS_M_, WARPS_N = WARPS_N_, STAGES = STAGES_;
-  static constexpr int THREADS = 32 * WARPS_M * WARPS_N;
-  static constexpr int WM = BM / WARPS_M, WN = BN / WARPS_N, MI = WM / 16, NI = WN / 8;
-  static constexpr int KCH = BK / 8;  // 16-byte chunks per K row
-  static constexpr int A_CHUNKS = BM * KCH, B_CHUNKS = BN * KCH;
-  static constexpr int SMEM = STAGES * (A_CHUNKS + B_CHUNKS) * 16;
-  static_assert(WM % 16 == 0 && WN % 16 == 0 && (KCH == 4 || KCH == 8) && BN % 64 == 0, "tile");
-};
-
-// K-row tiles: XOR-swizzle the 16-byte chunk so the eight rows an ldmatrix phase reads land on eight
-// distinct bank groups (64-byte rows pair up, 128-byte rows stand alone).
-template <int KCH>
-__device__ __forceinline__ int swz_k(int row, int chunk) {
-  return row * KCH + (chunk ^ (KCH == 8 ? (row & 7) : ((row >> 1) & 3)));
-}
-// K x BN tiles (BN/8 chunks per row): chunk ^= row & 7.
-template <int CPR>
-__device__ __forceinline__ int swz_n(int row, int chunk) { return row * CPR + (chunk ^ (row & 7)); }
-
-template <class T, bool BK_CONTIGUOUS>
-__global__ void __launch_bounds__(T::THREADS) wide_kernel(Problem p) {
-  constexpr int BM = T::BM, BN = T::BN, BK = T::BK, MI = T::MI, NI = T::NI, KCH = T::KCH, STAGES = T::STAGES;
-  constexpr int NCH = BN / 8;  // chunks per row of a K x BN tile
-  extern __shared__ __align__(128) unsigned char smem[];
-  int4* sa = reinterpret_cast<int4*>(smem);
-  int4* sb = sa + STAGES * T::A_CHUNKS;
-
+// Pascal (sm_61) has no tensor cores, cp.async or ldmatrix: the prefill kernel is plain FP32.
+// One block computes a 32 x 32 tile of C; each of its 256 threads owns a 2 x 2 patch. K advances 32 at a
+// time through shared memory, operands converted to FP32 as they are loaded (exact). The reduction order
+// of every output is fixed and simple: k ascending, one fused multiply-add per term.
+// Elements outside the operands read as zero: rows >= m, columns >= n, k >= K (or >= b_rows for a K x N B).
+inline constexpr int kWideTile = 32;
+template <bool BK_CONTIGUOUS>
+__global__ void __launch_bounds__(256) wide_kernel(Problem p) {
+  constexpr int T = kWideTile;
+  __shared__ float sa[T][T];  // [row][k]
+  __shared__ float sb[T][T];  // [column][k]
   const int z = blockIdx.z;
   const bf16* A = p.a + z * p.stride_a;
   const bf16* B = p.b + (z / p.group) * p.stride_b;
   const long long c0 = z * p.stride_c;
-  const int n0 = blockIdx.x * BN, m0 = blockIdx.y * BM;
-  const int tid = threadIdx.x, warp = tid / 32, lane = tid % 32;
-  const int wm = warp / T::WARPS_N, wn = warp % T::WARPS_N;
-  const int ktiles = (p.k + BK - 1) / BK;
-
-  auto load = [&](int slot, int kt) {
-    const int k0 = kt * BK;
-    int4* da = sa + slot * T::A_CHUNKS;
+  const int n0 = blockIdx.x * T, m0 = blockIdx.y * T;
+  const int tid = threadIdx.x, ty = tid / 16, tx = tid % 16;
+  float acc[2][2] = {{0.f, 0.f}, {0.f, 0.f}};
+  for (int k0 = 0; k0 < p.k; k0 += T) {
 #pragma unroll
-    for (int i = tid; i < T::A_CHUNKS; i += T::THREADS) {
-      const int row = i / KCH, ch = i % KCH;
-      const int gm = m0 + row, gk = k0 + ch * 8;
-      const bool ok = gm < p.m && gk < p.k;
-      cp_async16(smem_u32(da + swz_k<KCH>(row, ch)), ok ? A + gm * p.lda + gk : A, ok);
+    for (int i = tid; i < T * T; i += 256) {
+      const int r = i / T, kk = i % T;
+      const long long gm = m0 + r, gn = n0 + r, gk = k0 + kk;
+      sa[r][kk] = gm < p.m && gk < p.k ? __bfloat162float(A[gm * p.lda + gk]) : 0.f;
+      if constexpr (BK_CONTIGUOUS) sb[r][kk] = gn < p.n && gk < p.k ? __bfloat162float(B[gn * p.ldb + gk]) : 0.f;
+      else sb[r][kk] = gn < p.n && gk < p.b_rows ? __bfloat162float(B[gk * p.ldb + gn]) : 0.f;
     }
-    int4* db = sb + slot * T::B_CHUNKS;
-    if constexpr (BK_CONTIGUOUS) {
-#pragma unroll
-      for (int i = tid; i < T::B_CHUNKS; i += T::THREADS) {
-        const int row = i / KCH, ch = i % KCH;
-        const int gn = n0 + row, gk = k0 + ch * 8;
-        const bool ok = gn < p.n && gk < p.k;
-        cp_async16(smem_u32(db + swz_k<KCH>(row, ch)), ok ? B + gn * p.ldb + gk : B, ok);
-      }
-    } else {
-#pragma unroll
-      for (int i = tid; i < T::B_CHUNKS; i += T::THREADS) {
-        const int row = i / NCH, ch = i % NCH;
-        const int gk = k0 + row, gn = n0 + ch * 8;
-        const bool ok = gk < p.b_rows && gn < p.n;
-        cp_async16(smem_u32(db + swz_n<NCH>(row, ch)), ok ? B + gk * p.ldb + gn : B, ok);
-      }
-    }
-  };
-
-  float acc[MI][NI][4];
-#pragma unroll
-  for (int i = 0; i < MI; ++i)
-#pragma unroll
-    for (int j = 0; j < NI; ++j)
-#pragma unroll
-      for (int e = 0; e < 4; ++e) acc[i][j][e] = 0.f;
-
-#pragma unroll
-  for (int s = 0; s < STAGES - 1; ++s) {
-    if (s < ktiles) load(s, s);
-    cp_commit();
-  }
-  for (int kt = 0; kt < ktiles; ++kt) {
-    cp_wait<STAGES - 2>();
     __syncthreads();
-    const int next = kt + STAGES - 1;
-    if (next < ktiles) load(next % STAGES, next);
-    cp_commit();
-    const int slot = kt % STAGES;
-    const int4* ta = sa + slot * T::A_CHUNKS;
-    const int4* tb = sb + slot * T::B_CHUNKS;
 #pragma unroll
-    for (int kk = 0; kk < BK / 16; ++kk) {
-      unsigned af[MI][4];
-#pragma unroll
-      for (int mi = 0; mi < MI; ++mi) {
-        const int row = wm * T::WM + mi * 16 + (lane % 16);
-        ldmatrix_x4(smem_u32(ta + swz_k<KCH>(row, kk * 2 + lane / 16)), af[mi][0], af[mi][1], af[mi][2], af[mi][3]);
-      }
-      unsigned bfr[NI][2];
-#pragma unroll
-      for (int pair = 0; pair < NI / 2; ++pair) {
-        unsigned r0, r1, r2, r3;
-        if constexpr (BK_CONTIGUOUS) {
-          const int row = wn * T::WN + pair * 16 + (lane % 8) + (lane / 16) * 8;
-          ldmatrix_x4(smem_u32(tb + swz_k<KCH>(row, kk * 2 + (lane / 8) % 2)), r0, r1, r2, r3);
-        } else {
-          const int row = kk * 16 + (lane % 8) + ((lane / 8) % 2) * 8;
-          const int chunk = (wn * T::WN + pair * 16) / 8 + lane / 16;
-          ldmatrix_x4_trans(smem_u32(tb + swz_n<NCH>(row, chunk)), r0, r1, r2, r3);
-        }
-        bfr[pair * 2][0] = r0; bfr[pair * 2][1] = r1;
-        bfr[pair * 2 + 1][0] = r2; bfr[pair * 2 + 1][1] = r3;
-      }
-#pragma unroll
-      for (int mi = 0; mi < MI; ++mi)
-#pragma unroll
-        for (int ni = 0; ni < NI; ++ni) mma_bf16(acc[mi][ni], af[mi], bfr[ni][0], bfr[ni][1]);
+    for (int kk = 0; kk < T; ++kk) {
+      const float a0 = sa[2 * ty][kk], a1 = sa[2 * ty + 1][kk], b0 = sb[2 * tx][kk], b1 = sb[2 * tx + 1][kk];
+      acc[0][0] = fmaf(a0, b0, acc[0][0]);
+      acc[0][1] = fmaf(a0, b1, acc[0][1]);
+      acc[1][0] = fmaf(a1, b0, acc[1][0]);
+      acc[1][1] = fmaf(a1, b1, acc[1][1]);
     }
+    __syncthreads();
   }
-  cp_wait<0>();
-
-  const int g = lane / 4, t = lane % 4;
 #pragma unroll
-  for (int mi = 0; mi < MI; ++mi)
+  for (int i = 0; i < 2; ++i)
 #pragma unroll
-    for (int ni = 0; ni < NI; ++ni)
-#pragma unroll
-      for (int half = 0; half < 2; ++half) {
-        const int row = m0 + wm * T::WM + mi * 16 + g + half * 8;
-        const int col = n0 + wn * T::WN + ni * 8 + 2 * t;
-        if (row >= p.m) continue;
-        const long long at = c0 + row * p.ldc + col;
-        const float x = acc[mi][ni][half * 2], y = acc[mi][ni][half * 2 + 1];
-        if (p.c_f32) {
-          if (col < p.n) p.c_f32[at] = x;
-          if (col + 1 < p.n) p.c_f32[at + 1] = y;
-          continue;
-        }
-        bf16* out = p.c + at;
-        if (col + 1 < p.n && (reinterpret_cast<std::uintptr_t>(out) & 3) == 0) *reinterpret_cast<__nv_bfloat162*>(out) = __floats2bfloat162_rn(x, y);
-        else {
-          if (col < p.n) out[0] = __float2bfloat16_rn(x);
-          if (col + 1 < p.n) out[1] = __float2bfloat16_rn(y);
-        }
-      }
+    for (int j = 0; j < 2; ++j) {
+      const long long row = m0 + 2 * ty + i, col = n0 + 2 * tx + j;
+      if (row < p.m && col < p.n) put(p, c0 + row * p.ldc + col, acc[i][j]);
+    }
 }
 
 // M <= 8 rows: each warp produces COLS outputs for all rows, streaming B rows with 16-byte loads.
@@ -407,19 +282,11 @@ inline void launch_thin(const Problem& p, cudaStream_t stream) {
   thin_kernel<R><<<dim3((warps + 7) / 8, p.batch), 256, 0, stream>>>(p);
 }
 
-template <class T, bool KC>
+template <bool KC>
 inline void launch_wide(const Problem& p, cudaStream_t stream) {
-  static const bool configured =
-      cudaFuncSetAttribute(wide_kernel<T, KC>, cudaFuncAttributeMaxDynamicSharedMemorySize, T::SMEM) == cudaSuccess;
-  if (!configured) throw std::runtime_error("gemm: cannot configure shared memory");
-  wide_kernel<T, KC><<<dim3((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch), T::THREADS, T::SMEM, stream>>>(p);
+  constexpr int T = kWideTile;
+  wide_kernel<KC><<<dim3((p.n + T - 1) / T, (p.m + T - 1) / T, p.batch), 256, 0, stream>>>(p);
 }
-
-// Measured on Thor (validation/gemm-probe-v1, sweep): 128x128x64 with four 64x64 warp tiles and three
-// stages is the fastest on every prefill shape (36-42 TFLOPS, ~70% of mma.sync's 57 TFLOPS ceiling).
-using Wide128 = Tile<128, 128, 64, 2, 2, 3>;
-using Wide64 = Tile<64, 128, 64, 2, 2, 3>;
-using Wide32 = Tile<32, 128, 64, 2, 2, 3>;
 
 }  // namespace detail
 
@@ -472,10 +339,8 @@ inline void run(const Problem& p, cudaStream_t stream = 0) {
       default: detail::launch_split_kn<8>(p, stream); return;
     }
   }
-  const bool kc = p.b_k_contiguous;
-  if (p.m <= 32) kc ? detail::launch_wide<detail::Wide32, true>(p, stream) : detail::launch_wide<detail::Wide32, false>(p, stream);
-  else if (p.m <= 64) kc ? detail::launch_wide<detail::Wide64, true>(p, stream) : detail::launch_wide<detail::Wide64, false>(p, stream);
-  else kc ? detail::launch_wide<detail::Wide128, true>(p, stream) : detail::launch_wide<detail::Wide128, false>(p, stream);
+  if (p.b_k_contiguous) detail::launch_wide<true>(p, stream);
+  else detail::launch_wide<false>(p, stream);
 }
 
 // Row-major Y[rows x out] = X[rows x in] · W[out x in]ᵀ (a projection).

@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Respond with text."}, {"role": "user", "content": "Hypothetically, might reflective recursion be a function of cognition?"}], "max_new_tokens": 16, "check_reset": true}

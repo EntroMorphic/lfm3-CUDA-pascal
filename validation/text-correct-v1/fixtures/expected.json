@@ -1,0 +1,40 @@
+{
+ "source": "liquid-CUDA validation/g4-gates-v2/pins/forward.json (generated_ids)",
+ "thor_binary_sha256": "a75e26b1f357e8bc1dc0adc6301f37207b531e414ab146fbb9352340709d3376",
+ "generated_ids": {
+  "baseline": [
+   12447,
+   20,
+   43709,
+   91506,
+   355,
+   8586,
+   3691,
+   267,
+   7641,
+   5491,
+   302,
+   1994,
+   40657,
+   22,
+   810,
+   10834
+  ],
+  "arithmetic": [
+   3843,
+   124900
+  ],
+  "window257": [
+   2223,
+   43709,
+   91506,
+   373
+  ],
+  "single": [
+   348,
+   305,
+   305,
+   305
+  ]
+ }
+}

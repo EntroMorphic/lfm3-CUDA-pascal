@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Respond with text."}, {"role": "user", "content": "What is 17 plus 25? Answer briefly."}], "max_new_tokens": 2, "check_reset": true}
