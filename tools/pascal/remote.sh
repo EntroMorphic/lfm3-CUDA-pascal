@@ -4,6 +4,7 @@
 #   tools/pascal/remote.sh sync                 sync and verify only
 #   tools/pascal/remote.sh run  'COMMAND'       sync, verify, then run COMMAND in the container
 #   tools/pascal/remote.sh exec 'COMMAND'       run COMMAND without syncing
+#   tools/pascal/remote.sh detach NAME 'COMMAND'  sync, verify, start COMMAND detached; /workspace/build/jobs/NAME.{log,rc}
 #
 # COMMAND runs with bash -l as uid 1000 in /workspace/lfm3-CUDA-pascal (this repository). Next to it:
 # /workspace/models (checkpoints), /workspace/data, /workspace/build (build outputs; never synced or deleted).
@@ -16,6 +17,7 @@ repo=$(cd "$here/../.." && pwd)
 . "$here/target.env"
 : "${PASCAL_JUMP:?}" "${PASCAL_JUMP_PORT:?}" "${PASCAL_HOST:?}" "${PASCAL_HOST_PORT:?}" "${PASCAL_CONTAINER:?}" "${PASCAL_HOST_WORKSPACE:?}"
 name=lfm3-CUDA-pascal
+name_repo=$name
 ssh_opts=(-o BatchMode=yes -o ServerAliveInterval=30 -o ConnectTimeout=15)
 # What is not part of the synced tree. The same list drives rsync and both tree hashes.
 excludes=(.git reference build __pycache__ .pytest_cache '*.pyc' target.env)
@@ -59,9 +61,18 @@ run() {
   return $rc
 }
 
+detach() {  # NAME COMMAND: survives this connection; NAME.rc appears when it ends
+  local name=$1 jobs=$PASCAL_HOST_WORKSPACE/build/jobs
+  on_host "mkdir -p $jobs && test ! -e $jobs/$name.log" </dev/null || { echo "remote.sh: job $name exists" >&2; exit 2; }
+  printf '%s\n' "$2" | on_host "cat > $jobs/$name.sh"
+  on_host "nohup sh -c 'sudo lxc exec $PASCAL_CONTAINER --user 1000 --group 1000 --cwd /workspace/$name_repo --env HOME=/home/ubuntu -- bash -l /workspace/build/jobs/$name.sh </dev/null > $jobs/$name.log 2>&1; echo \$? > $jobs/$name.rc' > /dev/null 2>&1 &" </dev/null
+  echo "remote.sh: started $name; log /workspace/build/jobs/$name.log" >&2
+}
+
 case "${1:-}" in
   sync) sync ;;
   run)  [ $# -eq 2 ] || { echo "usage: remote.sh run 'COMMAND'" >&2; exit 2; }; sync; run "$2" ;;
+  detach) [ $# -eq 3 ] || { echo "usage: remote.sh detach NAME 'COMMAND'" >&2; exit 2; }; sync; detach "$2" "$3" ;;
   exec) [ $# -eq 2 ] || { echo "usage: remote.sh exec 'COMMAND'" >&2; exit 2; }; run "$2" ;;
-  *) sed -n '2,10p' "${BASH_SOURCE[0]}" >&2; exit 2 ;;
+  *) sed -n '2,11p' "${BASH_SOURCE[0]}" >&2; exit 2 ;;
 esac
