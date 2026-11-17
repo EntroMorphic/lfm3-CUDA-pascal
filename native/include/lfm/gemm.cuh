@@ -41,6 +41,9 @@ struct Problem {
   // FP32 scratch for the split-K path (M <= 8 with a K x N B: decode P·V); see workspace_bytes().
   float* workspace = nullptr;
   size_t workspace_size = 0;  // bytes
+  // Use the prefill kernel whatever m is: for a block of rows of a larger prefill, whose last block may have
+  // 8 rows or fewer. Every output then has the arithmetic it has when the prefill is one call.
+  bool wide = false;
 };
 
 // Keys per split of the decode P·V path, and the scratch it needs.
@@ -303,6 +306,11 @@ inline void check(const Problem& p) {
 // The engine's GEMM: thin (M <= 8, B stored N x K), split-K (M <= 8, B stored K x N) or wide.
 inline void run(const Problem& p, cudaStream_t stream = 0) {
   check(p);
+  if (p.wide) {
+    if (p.b_k_contiguous) detail::launch_wide<true>(p, stream);
+    else detail::launch_wide<false>(p, stream);
+    return;
+  }
   if (p.b_k_contiguous && p.m <= 8 && p.k == 128) {
     switch (p.m) {
       case 1: detail::launch_thin_k128<1>(p, stream); return;

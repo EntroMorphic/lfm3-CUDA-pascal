@@ -16,7 +16,8 @@ repo=$(cd "$here/../.." && pwd)
 # shellcheck disable=SC1091
 . "$here/target.env"
 : "${PASCAL_JUMP:?}" "${PASCAL_JUMP_PORT:?}" "${PASCAL_HOST:?}" "${PASCAL_HOST_PORT:?}" "${PASCAL_CONTAINER:?}" "${PASCAL_HOST_WORKSPACE:?}"
-name=lfm3-CUDA-pascal
+# PASCAL_TREE: another directory name on the target, so a tree can be synced and built while a job runs from the main one.
+name=${PASCAL_TREE:-lfm3-CUDA-pascal}
 name_repo=$name
 ssh_opts=(-o BatchMode=yes -o ServerAliveInterval=30 -o ConnectTimeout=15)
 # What is not part of the synced tree. The same list drives rsync and both tree hashes.

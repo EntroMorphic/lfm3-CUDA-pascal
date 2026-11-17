@@ -4,6 +4,7 @@
 #include <lfm/lfm3_ops.cuh>
 #include <lfm/text_serving_limits.hpp>
 #include <lfm/text_attention_tiles.hpp>
+#include <lfm/window_slots.hpp>
 #include <lfm/text_sampling.hpp>
 #include <lfm/handle_setup.hpp>
 #include <lfm/lfm3_text_request.hpp>
@@ -318,6 +319,36 @@ inline void write_logits_trace(const std::string& stem,const std::vector<float>&
 }
 #endif
 
+// Rows of the MLP computed at a time in prefill (docs/long-context-memory.md): the MLP is row-independent, so its
+// three mlp-wide buffers hold one block instead of the whole context. The cuBLAS build keeps whole-prompt calls
+// (its kernel choice depends on the row count).
+inline int mlp_block_rows(int context) {
+#ifdef LFM3_NATIVE_GEMM
+  return std::min(context, 256);
+#else
+  return context;
+#endif
+}
+// Windowed layers keep their keys and values in 2 x window slots per head (lfm::text::WindowSlots) when the
+// capacity is above 4,096; at or below it the imported full-length layout is unchanged, as its attention schedule
+// is. LFM3_COMPACT_WINDOWS=1 or 0 overrides, for measurement only.
+inline bool compact_windows(int context) {
+  static const int requested = [] {
+    const char* v = std::getenv("LFM3_COMPACT_WINDOWS");
+    if (!v) return -1;
+    const std::string text = v;
+    if (text != "0" && text != "1") throw std::runtime_error("LFM3_COMPACT_WINDOWS must be 0 or 1");
+    return text == "1" ? 1 : 0;
+  }();
+#ifdef LFM3_NATIVE_GEMM
+  return requested < 0 ? context > 4096 : requested == 1;
+#else
+  (void)context;
+  if (requested == 1) throw std::runtime_error("LFM3_COMPACT_WINDOWS needs the native GEMM build");
+  return false;
+#endif
+}
+
 class Runner {
  public:
   lfm::ModelConfig config;
@@ -335,6 +366,14 @@ class Runner {
   Buffer<const bf16*> pointer_a, pointer_b;
   Buffer<bf16*> pointer_c;
   std::vector<std::unique_ptr<Buffer<bf16>>> keys, values, states;
+  // Per layer: the positions per head its key and value buffers hold (the context, or 2 x window for a compact
+  // windowed layer), and that layer's slot bookkeeping. `window_keys`/`window_values`: one full-length pair shared
+  // by the compact layers, holding the layer being prefilled.
+  std::vector<int> kv_stride;
+  std::vector<lfm::text::WindowSlots> slots;
+  std::unique_ptr<Buffer<bf16>> window_keys, window_values;
+  bool compact(int layer) const { return kv_stride[layer] != s.context; }
+  size_t kv_elements(int layer) const { return size_t(s.kv_heads) * kv_stride[layer] * s.head_dim; }
   std::vector<std::unique_ptr<Buffer<float>>> frequencies;
   std::unique_ptr<Buffer<int>> injected_rows;
   size_t injected_capacity = 0;
@@ -350,7 +389,8 @@ class Runner {
         projected(size_t(s.context)*3*s.hidden), operated(size_t(s.context)*s.hidden), updated(size_t(s.context)*s.hidden),
         q(size_t(s.context)*s.hidden), k(size_t(s.context)*s.kv_width()), v(size_t(s.context)*s.kv_width()),
         gates(size_t(s.context)*s.query_heads), attended(size_t(s.context)*s.hidden), gated(size_t(s.context)*s.hidden),
-        a(size_t(s.context)*s.mlp), b(size_t(s.context)*s.mlp), act(size_t(s.context)*s.mlp), logits(s.vocabulary),
+        a(size_t(mlp_block_rows(s.context))*s.mlp), b(size_t(mlp_block_rows(s.context))*s.mlp),
+        act(size_t(mlp_block_rows(s.context))*s.mlp), logits(s.vocabulary),
 #ifdef LFM3_NATIVE_GEMM
         positions(s.context), tokens(s.context), workspace(gemm_workspace_bytes(s,s.context)),
         score_buffer(padded_attention_scratch(s)), probability_buffer(padded_attention_scratch(s)),
@@ -373,7 +413,14 @@ class Runner {
         for (auto name : {"k_proj.weight", "v_proj.weight"}) weight(p+"self_attn."+name, {s.kv_width(),s.hidden});
         for (auto name : {"q_norm.weight", "k_norm.weight"}) weight(p+"self_attn."+name, {s.head_dim});
         weight(p+"self_attn.gate_proj.weight", {s.query_heads,s.hidden});
-        keys.emplace_back(new Buffer<bf16>(s.kv_layer_stride())); values.emplace_back(new Buffer<bf16>(s.kv_layer_stride()));
+        const int window=config.layer_specs[i].window;
+        const bool small=window>0 && 2*window<s.context && compact_windows(s.context);
+        kv_stride.push_back(small?2*window:s.context); slots.emplace_back(small?window:0);
+        keys.emplace_back(new Buffer<bf16>(kv_elements(i))); values.emplace_back(new Buffer<bf16>(kv_elements(i)));
+        if(small && !window_keys) {
+          window_keys=std::make_unique<Buffer<bf16>>(s.kv_layer_stride());
+          window_values=std::make_unique<Buffer<bf16>>(s.kv_layer_stride());
+        }
         states.emplace_back(nullptr);
         frequencies.emplace_back(new Buffer<float>(s.head_dim/2));
         std::vector<float> inverse(s.head_dim/2,0.0f);
@@ -386,6 +433,7 @@ class Runner {
       } else {
         weight(p+"conv.conv.weight", {s.hidden,1,7}); weight(p+"conv.in_proj.weight", {3*s.hidden,s.hidden});
         weight(p+"conv.out_proj.weight", {s.hidden,s.hidden});
+        kv_stride.push_back(s.context); slots.emplace_back(0);
         keys.emplace_back(nullptr); values.emplace_back(nullptr); states.emplace_back(new Buffer<bf16>(size_t(s.hidden)*7));
         frequencies.emplace_back(nullptr);
       }
@@ -417,16 +465,18 @@ class Runner {
     for (int i=0;i<s.layers;++i) {
       if (states[i]) cuda_check(cudaMemset(states[i]->p,0,size_t(s.hidden)*7*sizeof(bf16)));
       if (keys[i]) {
-        cuda_check(cudaMemset(keys[i]->p,0,s.kv_layer_stride()*sizeof(bf16)));
-        cuda_check(cudaMemset(values[i]->p,0,s.kv_layer_stride()*sizeof(bf16)));
+        cuda_check(cudaMemset(keys[i]->p,0,kv_elements(i)*sizeof(bf16)));
+        cuda_check(cudaMemset(values[i]->p,0,kv_elements(i)*sizeof(bf16)));
+        slots[i].reset();
       }
     }
   }
-  void dump(const std::string& name, const bf16* ptr, size_t n) {
+  // `append`: a later block of rows of the same tensor, written after the earlier blocks.
+  void dump(const std::string& name, const bf16* ptr, size_t n, bool append=false) {
     if (trace.empty() || (trace_logits_only && name!="logits")) return;
     std::vector<bf16> data(n);
     cuda_check(cudaMemcpy(data.data(),ptr,n*sizeof(bf16),cudaMemcpyDeviceToHost));
-    std::ofstream f(trace+"/"+std::to_string(step)+"."+name+".bf16",std::ios::binary);
+    std::ofstream f(trace+"/"+std::to_string(step)+"."+name+".bf16",append?std::ios::binary|std::ios::app:std::ios::binary);
     f.write(reinterpret_cast<const char*>(data.data()),n*sizeof(bf16));
     if (!f) throw std::runtime_error("trace write failed");
   }
@@ -458,10 +508,14 @@ class Runner {
     write_logits_trace(trace+"/"+std::to_string(step),data);
   }
 #endif
-  void linear(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output) {
+  // `wide`: these rows are a block of a prefill of more than 8 rows (lfm::gemm::Problem::wide).
+  void linear(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output, bool wide=false) {
 #ifdef LFM3_NATIVE_GEMM
-    lfm::gemm::run(lfm::gemm::linear(x,w(name),out,rows,input,output));
+    auto problem=lfm::gemm::linear(x,w(name),out,rows,input,output);
+    problem.wide=wide;
+    lfm::gemm::run(problem);
 #else
+    (void)wide;
     float alpha=1, beta=0;
     // Row-major X W^T = column-major W X^T, with W stored row-major.
     blas_check(cublasGemmEx(blas,CUBLAS_OP_T,CUBLAS_OP_N,output,rows,input,&alpha,
@@ -472,7 +526,9 @@ class Runner {
   void normalize(const bf16* x, const std::string& weight_name, bf16* out, int rows, int width) {
     norm<<<rows,norm_threads(rows,width)>>>(x,w(weight_name),out,width,s.epsilon);
   }
-  void attention_tile(int layer,int rows,int window,int first,int total_rows) {
+  // `key_cache`/`value_cache` hold `stride` positions per head, slot 0 being absolute position `origin`.
+  void attention_tile(int layer,int rows,int window,int first,int total_rows,
+                      const bf16* key_cache,const bf16* value_cache,int stride,int origin) {
     // Dynamic sliding cache returns only its last window for one-token decode.
     // Masking a larger product is mathematically equivalent, but not BF16-equivalent.
     const auto range=lfm::text::attention_key_range(s.context,cursor,total_rows,first,rows,window);
@@ -485,20 +541,20 @@ class Runner {
     // Decode (one row): all heads at once. Prefill: prefill_heads() at a time (see its comment).
     const int group=rows==1?s.query_heads:prefill_heads(s);
     for(int h0=0;h0<s.query_heads;h0+=group) {
-      const size_t kv=size_t(h0/(s.query_heads/s.kv_heads))*s.context*s.head_dim;
-      head_scores(s,s.context,q.p+size_t(first)*s.hidden+size_t(h0)*s.head_dim,keys[layer]->p+kv,key_start,rows,end,
+      const size_t kv=size_t(h0/(s.query_heads/s.kv_heads))*stride*s.head_dim;
+      head_scores(s,stride,q.p+size_t(first)*s.hidden+size_t(h0)*s.head_dim,key_cache+kv,key_start-origin,rows,end,
                   score_buffer.p,group);
       if(end<=2048) probabilities<<<rows*group,32>>>(score_buffer.p,probability_buffer.p,rows,end,cursor+first,window,s.head_dim,key_start,pitch);
       else probabilities_large<<<rows*group,1024>>>(score_buffer.p,probability_buffer.p,rows,end,cursor+first,window,s.head_dim,key_start,pitch);
       dump_rows(label,probability_buffer.p,size_t(group)*rows,end,pitch,h0>0);
-      head_values(s,s.context,probability_buffer.p,values[layer]->p+kv,key_start,rows,end,
+      head_values(s,stride,probability_buffer.p,value_cache+kv,key_start-origin,rows,end,
                   attended.p+size_t(first)*s.hidden+size_t(h0)*s.head_dim,workspace.p,gemm_workspace_bytes(s,s.context),group);
     }
 #else
     std::vector<const bf16*> ap(s.query_heads),bp(s.query_heads);
     std::vector<bf16*> cp(s.query_heads);
     for(int h=0;h<s.query_heads;++h) {
-      ap[h]=keys[layer]->p+(size_t(h/(s.query_heads/s.kv_heads))*s.context+key_start)*s.head_dim;
+      ap[h]=key_cache+(size_t(h/(s.query_heads/s.kv_heads))*stride+key_start-origin)*s.head_dim;
       bp[h]=q.p+size_t(first)*s.hidden+h*s.head_dim;
       cp[h]=score_buffer.p+size_t(h)*rows*end;
     }
@@ -519,7 +575,7 @@ class Runner {
     if(total_rows>lfm::text::scratch_rows(s.context)) label+=".tile"+std::to_string(first);
     dump(label,probability_buffer.p,size_t(s.query_heads)*rows*end);
     for(int h=0;h<s.query_heads;++h) {
-      ap[h]=values[layer]->p+(size_t(h/(s.query_heads/s.kv_heads))*s.context+key_start)*s.head_dim;
+      ap[h]=value_cache+(size_t(h/(s.query_heads/s.kv_heads))*stride+key_start-origin)*s.head_dim;
       bp[h]=probability_buffer.p+size_t(h)*rows*end;
       cp[h]=attended.p+size_t(first)*s.hidden+h*s.head_dim;
     }
@@ -530,10 +586,44 @@ class Runner {
       reinterpret_cast<void* const*>(pointer_c.p),CUDA_R_16BF,s.hidden,s.query_heads,CUBLAS_COMPUTE_32F,CUBLAS_GEMM_DEFAULT_TENSOR_OP));
 #endif
   }
-  void attention(int layer,int rows,int window) {
+  void attention(int layer,int rows,int window,const bf16* key_cache,const bf16* value_cache,int stride,int origin) {
     const int tile=lfm::text::scratch_rows(s.context);
     for(int first=0;first<rows;first+=tile)
-      attention_tile(layer,std::min(tile,rows-first),window,first,rows);
+      attention_tile(layer,std::min(tile,rows-first),window,first,rows,key_cache,value_cache,stride,origin);
+  }
+  // Moves `n` positions of every KV head from slot `from` of `source` (`source_stride` positions per head) to slot
+  // `to` of `target` (`target_stride` per head). The ranges do not overlap when source and target are one buffer.
+  void move_slots(bf16* target,int target_stride,int to,const bf16* source,int source_stride,int from,int n) {
+    for(int h=0;h<s.kv_heads;++h)
+      cuda_check(cudaMemcpy(target+(size_t(h)*target_stride+to)*s.head_dim,source+(size_t(h)*source_stride+from)*s.head_dim,
+                            size_t(n)*s.head_dim*sizeof(bf16),cudaMemcpyDeviceToDevice));
+  }
+  // Stores this call's keys and values and attends. A compact windowed layer prefills through the shared
+  // full-length pair and keeps the last window; in decode it stores into, and reads from, its own slots.
+  void store_and_attend(int layer,int rows,int window) {
+    if(!compact(layer)) {
+      scatter<<<grid(size_t(rows)*s.kv_width()),256>>>(k.p,v.p,keys[layer]->p,values[layer]->p,rows,s.kv_heads,s.head_dim,s.context,cursor);
+      attention(layer,rows,window,keys[layer]->p,values[layer]->p,s.context,0);
+      return;
+    }
+    auto& held=slots[layer];
+    const int stride=kv_stride[layer];
+    if(cursor==0) {
+      scatter<<<grid(size_t(rows)*s.kv_width()),256>>>(k.p,v.p,window_keys->p,window_values->p,rows,s.kv_heads,s.head_dim,s.context,0);
+      attention(layer,rows,window,window_keys->p,window_values->p,s.context,0);
+      const auto keep=held.prefill(rows);
+      move_slots(keys[layer]->p,stride,keep.to,window_keys->p,s.context,keep.from,keep.n);
+      move_slots(values[layer]->p,stride,keep.to,window_values->p,s.context,keep.from,keep.n);
+      return;
+    }
+    const auto room=held.make_room(cursor);
+    if(room.n) {
+      move_slots(keys[layer]->p,stride,room.to,keys[layer]->p,stride,room.from,room.n);
+      move_slots(values[layer]->p,stride,room.to,values[layer]->p,stride,room.from,room.n);
+    }
+    const int slot=held.push(cursor);
+    scatter<<<grid(size_t(rows)*s.kv_width()),256>>>(k.p,v.p,keys[layer]->p,values[layer]->p,rows,s.kv_heads,s.head_dim,stride,slot);
+    attention(layer,rows,window,keys[layer]->p,values[layer]->p,stride,held.base);
   }
   // `injected` (device, [count][hidden]): the input embeddings of the rows holding `placeholder`, in order, in place of
   // the placeholder's own embedding row (audio input; HF's masked_scatter of the audio features). Prefill only.
@@ -586,8 +676,7 @@ class Runner {
         rotary_from_frequencies<<<grid(size_t(rows)*s.hidden/2),256>>>(q.p,positions.p,frequencies[layer]->p,rows,s.query_heads,s.head_dim,spec.rotary_pairs);
         rotary_from_frequencies<<<grid(size_t(rows)*s.kv_width()/2),256>>>(k.p,positions.p,frequencies[layer]->p,rows,s.kv_heads,s.head_dim,spec.rotary_pairs);
         dump(at+"q_rotary",q.p,size_t(rows)*s.hidden); dump(at+"k_rotary",k.p,size_t(rows)*s.kv_width());
-        scatter<<<grid(size_t(rows)*s.kv_width()),256>>>(k.p,v.p,keys[layer]->p,values[layer]->p,rows,s.kv_heads,s.head_dim,s.context,cursor);
-        attention(layer,rows,spec.window);
+        store_and_attend(layer,rows,spec.window);
         dump(at+"attended",attended.p,size_t(rows)*s.hidden);
         linear(at+"gate_proj.weight",normalized.p,gates.p,rows,s.hidden,s.query_heads);
         lfm::lfm3::head_gate<<<grid(size_t(rows)*s.hidden),256>>>(attended.p,gates.p,gated.p,size_t(rows)*s.hidden,s.head_dim);
@@ -599,13 +688,19 @@ class Runner {
       dump(p+"residual",hidden.p,size_t(rows)*s.hidden);
       normalize(hidden.p,p+"ffn_norm.weight",normalized.p,rows,s.hidden);
       dump(p+"ffn_norm",normalized.p,size_t(rows)*s.hidden);
-      linear(p+"feed_forward.w1.weight",normalized.p,a.p,rows,s.hidden,s.mlp);
-      linear(p+"feed_forward.w3.weight",normalized.p,b.p,rows,s.hidden,s.mlp);
-      dump(p+"feed_forward.w1",a.p,size_t(rows)*s.mlp);
-      dump(p+"feed_forward.w3",b.p,size_t(rows)*s.mlp);
-      swiglu<<<grid(size_t(rows)*s.mlp),256>>>(a.p,b.p,act.p,size_t(rows)*s.mlp);
-      dump(p+"feed_forward.product",act.p,size_t(rows)*s.mlp);
-      linear(p+"feed_forward.w2.weight",act.p,updated.p,rows,s.mlp,s.hidden);
+      // In blocks of rows through the three mlp-wide buffers; the kernel is the whole prefill's (rows > 8: wide).
+      for(int first=0,block=mlp_block_rows(s.context);first<rows;first+=block) {
+        const int n=std::min(block,rows-first);
+        const bool wide=rows>8 && rows>block;
+        const bf16* x=normalized.p+size_t(first)*s.hidden;
+        linear(p+"feed_forward.w1.weight",x,a.p,n,s.hidden,s.mlp,wide);
+        linear(p+"feed_forward.w3.weight",x,b.p,n,s.hidden,s.mlp,wide);
+        dump(p+"feed_forward.w1",a.p,size_t(n)*s.mlp,first>0);
+        dump(p+"feed_forward.w3",b.p,size_t(n)*s.mlp,first>0);
+        swiglu<<<grid(size_t(n)*s.mlp),256>>>(a.p,b.p,act.p,size_t(n)*s.mlp);
+        dump(p+"feed_forward.product",act.p,size_t(n)*s.mlp,first>0);
+        linear(p+"feed_forward.w2.weight",act.p,updated.p+size_t(first)*s.hidden,n,s.mlp,s.hidden,wide);
+      }
       dump(p+"feed_forward",updated.p,size_t(rows)*s.hidden);
       norm<<<rows,norm_threads(rows,s.hidden)>>>(updated.p,w(p+"post_ffn_norm.weight"),hidden.p,s.hidden,s.epsilon,hidden.p);
       dump(p+"output",hidden.p,size_t(rows)*s.hidden);
