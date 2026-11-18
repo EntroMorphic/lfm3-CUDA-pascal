@@ -63,8 +63,8 @@ Build `text-v1` at commit `ecb5f43`: `liquid-lfm3` `e30023b7…e7aa593`, `lfm3-s
 |---|---|
 | 1. Build | **PASS**: 0 warnings; the binaries link the C and C++ runtime only (`libcudart` is linked statically, which the rule did not foresee) |
 | 2. Tokens | **PASS**: the Thor pins' ids on all four fixtures (16, 2, 4, 4) |
-| 3. Perplexity | **OPEN**: needs the per-token HF SDPA files from Thor |
-| 4. Fidelity | **OPEN**: needs the per-token FP32 anchor files from Thor |
+| 3. Perplexity | **FAIL at 257** (the plain kernel): worse than HF SDPA by the rule's reading; 256 and 4,096 equal, 32,768 better. See "Against Hugging Face" |
+| 4. Fidelity | **PASS** at all four lengths: closer to the FP32 model than HF SDPA is |
 | 5. Determinism | **PASS**: fixtures identical across two runs; the 256-token NLL file byte-identical across two full runs (`95979e15…`) |
 | 6. Reset | **PASS** on every fixture |
 | 7. Memory | 256, 257, 4,096 recorded below. **32,768: FAIL** — the scorer stops with "out of memory" |
@@ -104,7 +104,60 @@ failed at `1664d89`.
   the checkpoint's own code through Transformers, which needs the pinned 5.x; every Python environment found here
   has 4.57. It fails the same way with an empty private module cache. **Not counted as a pass.**
 
+### Against Hugging Face (2026-11-18)
+
+The per-token files were copied from Thor's host file system, read-only (`liquid-CUDA/build/ppl-v5`, `ppl-fp32-v2`,
+`ppl-g4-v3`; the owner gave the address). Every one of the 26 NLL files matches its own metadata, the hashes
+committed in the Thor repository where one exists (19 of them; the 7 HF copies inside `ppl-g4-v3` have none), and
+the windows rebuilt here. This engine's files: `text-v1` at 256, 257 and 4,096, and `text-v2` at 32,768 (the same
+arithmetic; [memory-v1](../memory-v1/)). Reports: `records/compare/`.
+
+**Rule 3, `tools/ppl_compare.py` unchanged, against HF SDPA:**
+
+| Length | Windows | PPL SDPA | PPL eager | PPL here | dNLL | 95% CI | Resolution | Verdict |
+|---|---:|---:|---:|---:|---:|---|---:|---|
+| 256 | 1,160 | 26.5821 | 26.5812 | 26.5839 | +6.89e-05 | [−6.31e-05, +1.99e-04] | 1.31e-04 | equal: PASS |
+| 257 | 1,155 | 26.5045 | 26.5066 | 26.5105 | +2.27e-04 | [+9.94e-05, +3.57e-04] | 1.29e-04 | **worse: FAIL** |
+| 4,096 | 72 | 13.0596 | 13.0590 | 13.0590 | −5.29e-05 | [−1.76e-04, +7.19e-05] | 1.24e-04 | equal: PASS |
+| 32,768 | 9 | 12.5771 | — | 12.5746 | −1.96e-04 | [−3.43e-04, −5.90e-05] | 1.42e-04 | better: PASS |
+
+The bar fails: at 257 tokens the whole interval lies above +1e-5.
+
+**Rule 4, `tools/ppl_fidelity.py` unchanged, mean |NLL − NLL_FP32| per token:**
+
+| Length | This engine | HF SDPA | Difference, 95% CI | Verdict |
+|---|---:|---:|---|---|
+| 256 | 1.672e-02 | 1.940e-02 | [−2.77e-03, −2.60e-03] | closer than SDPA |
+| 257 | 1.673e-02 | 1.948e-02 | [−2.84e-03, −2.66e-03] | closer |
+| 4,096 | 1.505e-02 | 1.753e-02 | [−2.56e-03, −2.38e-03] | closer |
+| 32,768 | 1.587e-02 | 1.818e-02 | [−2.42e-03, −2.21e-03] | closer |
+
+PASS: 12.7% to 14.1% closer to the FP32 model than SDPA at every length (the Thor engine's record: 12.8-14.4%).
+
+**Where each engine's mean sits relative to the FP32 model (nats per token):**
+
+| Length | HF SDPA | HF eager | Thor engine | This engine (plain kernel) |
+|---|---:|---:|---:|---:|
+| 256 | −1.92e-05 | −5.10e-05 | −1.73e-04 | +4.98e-05 |
+| 257 | −1.53e-04 | −7.40e-05 | −6.97e-05 | +7.41e-05 |
+| 4,096 | +3.02e-04 | +2.55e-04 | +2.29e-04 | +2.50e-04 |
+| 32,768 | +4.23e-04 | — | +3.51e-04 | +2.27e-04 |
+
+At 257 SDPA's mean is 1.5e-4 below the FP32 model's and this engine's is 0.7e-4 above it: nearer to FP32, and on the
+other side of it from SDPA, which is what the rule counts as worse. That describes the failure; it does not excuse
+it. The rule is the owner's and stands as written.
+
+**Informational, this engine minus the Thor engine, paired:** +2.23e-04 at 256 (CI [+1.02e-04, +3.41e-04]),
++1.44e-04 at 257 ([+2.8e-05, +2.63e-04]), +2.1e-05 at 4,096 (CI spans zero), −1.24e-04 at 32,768 (CI spans zero).
+The two engines differ only in the prefill GEMM's summation (decode is bit-identical), and under 1.1% of tokens
+have identical NLL. At the two short lengths the plain kernel's sums give a slightly higher NLL than the tensor
+core's.
+
 ### What is open
 
-Rules 3 and 4, on the Thor per-token files (`build/ppl-v5`, the tier 2b FP32 anchor, `build/ppl-g4-v3`). Phase 1
-does not pass until they do, and until 32,768 runs.
+- Rule 3 fails at 257 with the plain prefill kernel. The exact kernel
+  ([tensor-core-model-v1](../tensor-core-model-v1/)) reproduces the Thor engine's arithmetic, and the Thor engine
+  passes rule 3 at every length; whether the exact build's NLL files equal Thor's byte for byte has not been run.
+- The full files have not been regenerated with the re-tiled kernels (running as `ppl-v2`).
+
+Phase 1 is not passed.

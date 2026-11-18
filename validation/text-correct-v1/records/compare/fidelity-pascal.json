@@ -1,0 +1,140 @@
+{
+  "status": "complete",
+  "full_gate": true,
+  "definition": "G4 tier 2b: is an engine's per-token NLL as close to an FP32 model's as HF SDPA's is? (validation/g4-gates-v2/PLAN.md)",
+  "epsilon": 1e-05,
+  "engine": "pascal",
+  "anchor_engine": "hf-eager_blocked-fp32",
+  "lengths": [
+    256,
+    257,
+    4096,
+    32768
+  ],
+  "rows": [
+    {
+      "length": 256,
+      "windows": 1160,
+      "engine_nll_sha256": "95979e155761c7c547531b7f0e9c53498023557e8ea1841aebf73df2010ad17f",
+      "engine_mean_abs_dev": 0.016715991727388923,
+      "hf-sdpa": {
+        "ref_mean_abs_dev": 0.019400418546822392,
+        "delta": -0.002684426819433467,
+        "ci95": [
+          -0.0027690932205477444,
+          -0.0026001301319417297
+        ],
+        "t_ci95_information": [
+          -0.0027698155555688406,
+          -0.0025990380832980934
+        ],
+        "engine_closer_windows": 1116
+      },
+      "hf-eager": {
+        "ref_mean_abs_dev": 0.021348651103855722,
+        "delta": -0.004632659376466798,
+        "ci95": [
+          -0.004729618270449957,
+          -0.0045396484323035405
+        ],
+        "t_ci95_information": [
+          -0.004726912908619306,
+          -0.004538405844314289
+        ],
+        "engine_closer_windows": 1158
+      },
+      "fails": false,
+      "verdict": "closer than SDPA"
+    },
+    {
+      "length": 257,
+      "windows": 1155,
+      "engine_nll_sha256": "ec238637c08ba8a2ccac7ea0b0efc756adcd479eb019617338637bd5033472c4",
+      "engine_mean_abs_dev": 0.016728687458811335,
+      "hf-sdpa": {
+        "ref_mean_abs_dev": 0.019476384159743544,
+        "delta": -0.0027476967009322055,
+        "ci95": [
+          -0.0028361312737739336,
+          -0.002660438142242412
+        ],
+        "t_ci95_information": [
+          -0.0028346093532254897,
+          -0.0026607840486389213
+        ],
+        "engine_closer_windows": 1119
+      },
+      "hf-eager": {
+        "ref_mean_abs_dev": 0.02136753210706329,
+        "delta": -0.004638844648251954,
+        "ci95": [
+          -0.004738956769444553,
+          -0.004542407923458873
+        ],
+        "t_ci95_information": [
+          -0.004737114055639245,
+          -0.004540575240864664
+        ],
+        "engine_closer_windows": 1152
+      },
+      "fails": false,
+      "verdict": "closer than SDPA"
+    },
+    {
+      "length": 4096,
+      "windows": 72,
+      "engine_nll_sha256": "2886713bbb2e1a21bc602a6ffd50cecbd3cc720b970d9f03d2cfe6121ac9a3f6",
+      "engine_mean_abs_dev": 0.015053887722805902,
+      "hf-sdpa": {
+        "ref_mean_abs_dev": 0.017526535931172055,
+        "delta": -0.0024726482083661577,
+        "ci95": [
+          -0.0025594186373249753,
+          -0.002382571718157841
+        ],
+        "t_ci95_information": [
+          -0.0025641477911396747,
+          -0.0023811486255926407
+        ],
+        "engine_closer_windows": 72
+      },
+      "hf-eager": {
+        "ref_mean_abs_dev": 0.019743155042213734,
+        "delta": -0.004689267319407836,
+        "ci95": [
+          -0.004805251895282261,
+          -0.004577456770672103
+        ],
+        "t_ci95_information": [
+          -0.004805285701244551,
+          -0.00457324893757112
+        ],
+        "engine_closer_windows": 72
+      },
+      "fails": false,
+      "verdict": "closer than SDPA"
+    },
+    {
+      "length": 32768,
+      "windows": 9,
+      "engine_nll_sha256": "25df36d8bcc668e5bed1892cea64bdff687ab32acdc3b8c0876c71a026b65e96",
+      "engine_mean_abs_dev": 0.015870210587201908,
+      "hf-sdpa": {
+        "ref_mean_abs_dev": 0.018177388307743514,
+        "delta": -0.0023071777205416074,
+        "ci95": [
+          -0.0024155679174259876,
+          -0.002214790380504314
+        ],
+        "t_ci95_information": [
+          -0.0024323380665263643,
+          -0.0021820173745568505
+        ],
+        "engine_closer_windows": 9
+      },
+      "fails": false,
+      "verdict": "closer than SDPA"
+    }
+  ],
+  "passes": true
+}

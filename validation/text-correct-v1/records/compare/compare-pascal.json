@@ -1,0 +1,97 @@
+{
+  "engine": "pascal",
+  "reference": "hf-sdpa",
+  "corpus_sha256": "696cca6b65a171b0a358a4be6732cdfdf2dd6164a32e20fd70e3c13fc4dfae83",
+  "rows": [
+    {
+      "length": 256,
+      "windows": 1160,
+      "tokens": 295800,
+      "ppl_sdpa": 26.582084471721966,
+      "ppl_pascal": 26.583916818837476,
+      "delta_mean_nll": 6.892928080908847e-05,
+      "delta_ci95": [
+        -6.305032493109915e-05,
+        0.00019918537083498316
+      ],
+      "resolution": 0.00013111784788304116,
+      "max_abs_token_delta": 0.49679088592529297,
+      "ppl_eager": 26.58123731943994,
+      "tolerance": 3.18698024712738e-05,
+      "tolerance_source": "measured at this length",
+      "pascal_minus_eager_mean_nll": 0.00010079908328031293,
+      "passes_bar": true,
+      "verdict": "equal",
+      "equal_or_better": false,
+      "within_standard": false
+    },
+    {
+      "length": 257,
+      "windows": 1155,
+      "tokens": 295680,
+      "ppl_sdpa": 26.504491131762766,
+      "ppl_pascal": 26.51051416371306,
+      "delta_mean_nll": 0.00022721989529726495,
+      "delta_ci95": [
+        9.939685394705187e-05,
+        0.0003566647725605933
+      ],
+      "resolution": 0.00012863395930677073,
+      "max_abs_token_delta": 0.5938568115234375,
+      "ppl_eager": 26.5065872322391,
+      "tolerance": 7.908160113379026e-05,
+      "tolerance_source": "measured at this length",
+      "pascal_minus_eager_mean_nll": 0.00014813829416347661,
+      "passes_bar": false,
+      "verdict": "worse",
+      "equal_or_better": false,
+      "within_standard": false
+    },
+    {
+      "length": 4096,
+      "windows": 72,
+      "tokens": 294840,
+      "ppl_sdpa": 13.059648934794824,
+      "ppl_pascal": 13.058958617039021,
+      "delta_mean_nll": -5.286022653289632e-05,
+      "delta_ci95": [
+        -0.00017616537641147314,
+        7.187261987074739e-05
+      ],
+      "resolution": 0.00012401899814111026,
+      "max_abs_token_delta": 0.7084619998931885,
+      "ppl_eager": 13.059032163848027,
+      "tolerance": 4.722833780013147e-05,
+      "tolerance_source": "measured at this length",
+      "pascal_minus_eager_mean_nll": -5.631888733188094e-06,
+      "passes_bar": true,
+      "verdict": "equal",
+      "equal_or_better": true,
+      "within_standard": true
+    },
+    {
+      "length": 32768,
+      "windows": 9,
+      "tokens": 294903,
+      "ppl_sdpa": 12.577095697882086,
+      "ppl_pascal": 12.574634964684288,
+      "delta_mean_nll": -0.0001956710843207158,
+      "delta_ci95": [
+        -0.0003431913641509722,
+        -5.8956969381172565e-05
+      ],
+      "resolution": 0.0001421171973848998,
+      "max_abs_token_delta": 0.6124658584594727,
+      "tolerance": 4.722833780013147e-05,
+      "tolerance_source": "borrowed from length 4096 (eager not measured here)",
+      "passes_bar": true,
+      "verdict": "better",
+      "equal_or_better": true,
+      "within_standard": true
+    }
+  ],
+  "equal_eps": 1e-05,
+  "passes_bar": false,
+  "all_equal_or_better": false,
+  "all_within_standard": false
+}
