@@ -151,4 +151,16 @@ Predictions if the reading is right:
 If instead `bosexact` shows nothing and `bosplain` carries `exact`'s difference, the reading is wrong: the effect
 comes from the arithmetic of the other 64 rows.
 
-Results: (none yet)
+**Result for `bosexact` (2026-11-18; `ar-exact` scorer `454dcc1b…`, `LFM_TCM_ROWS=1`):**
+
+| Variant | Positions 2-64, minus `plain` | 95% CI | Position 1 |
+|---|---:|---|---|
+| `exact` (all 65 rows) | −4.25e-04 | [−5.50e-04, −3.04e-04] | −4.760e-03 |
+| `bosexact` (row 0 only) | −4.47e-04 | [−5.64e-04, −3.23e-04] | −4.760e-03, equal to `exact` value for value |
+
+`bosexact` − `exact` on positions 2-64: −2.2e-05 [−1.48e-04, +1.04e-04].
+
+Prediction 1 holds. Giving the tensor-core arithmetic to the [BOS] row alone, one row in 65, reproduces the whole
+difference between the two arithmetics; the arithmetic of the other 64 rows adds nothing detectable.
+
+`bosplain`: running.
