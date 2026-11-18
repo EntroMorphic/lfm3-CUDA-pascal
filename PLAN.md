@@ -78,7 +78,7 @@ with red-team, remediate, verify, commit.
 | Phase | State |
 |---|---|
 | 0 | passed 2026-11-17 ([phase0-foundations-v1](validation/phase0-foundations-v1/)) |
-| 1 | passed 2026-11-18 ([text-correct-v2](validation/text-correct-v2/)): the original bar and the amended one at all four lengths, with position 0 on the tensor-core arithmetic (decision 5). The plain kernel alone did not pass the original bar at 257 ([text-correct-v1](validation/text-correct-v1/)) |
+| 1 | passed 2026-11-18 ([text-correct-v2](validation/text-correct-v2/)): the original bar and the amended one at all four lengths, with position 0 on the tensor-core arithmetic (decision 5). The plain kernel alone did not pass the original bar at 257 ([text-correct-v1](validation/text-correct-v1/)). Decode above 4,096 tokens of capacity, where the compact window buffers are the default: identical to the full-length layout and consistent with prefill ([long-decode-v1](validation/long-decode-v1/)) |
 | 2 | not started. Carried in: position 0 costs about 0.155 s per prefill as built (tiles of 8 rows for one row) |
 
 ## Parking list

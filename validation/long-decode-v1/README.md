@@ -1,6 +1,6 @@
 # long-decode-v1: decode above 4,096 tokens of capacity
 
-Status: **rules written, nothing run** (2026-11-18).
+Status: **passed** (2026-11-18). Rules and prediction committed at `05024b5` before the run.
 
 ## Why
 
@@ -68,3 +68,54 @@ that case and is reported as such.
 - The server, batch and tree code above 4,096 (phase 3).
 - Sampling (the runs are greedy or teacher-forced), and prompts given as chat messages.
 - Capacities between 4,096 and 32,768.
+
+## Results
+
+Run on the card 2026-11-18, tree `7734f25f…`, binary `7464f580…` (rule 1: equal to text-correct-v2's). Records in
+`records/` (one JSON per run with the ids, every step's logits SHA-256 and NLL; `summary.json`; `rule4.json`;
+`job.log`), fetched and checked against `SHA256SUMS`.
+
+| Rule | Result |
+|---|---|
+| 1. Build | **PASS** |
+| 2. Compact equals full | **PASS**: ids and every step's FP32 logits identical in all four cases |
+| 3. Deterministic | **PASS**: the second default run identical in all four cases |
+| 4. Decode against prefill | **PASS**: ratios 0.68 to 0.82 |
+
+### Rules 2 and 3
+
+| Case | Steps | Compact against full | Repeat | Peak, compact (MiB) | Peak, full (MiB) | Prefill (s) | Decode (s) |
+|---|---:|---|---|---:|---:|---:|---:|
+| short | 1,101 | identical | identical | 6,451 | 6,703 | 1.0 | 18.4 |
+| middle | 1,101 | identical | identical | 6,451 | 6,703 | 9.4 | 18.6 |
+| end | 1,101 | identical | identical | 6,451 | 6,703 | 84.2 | 24.0 |
+| free (window 1, 600 tokens) | 600 | identical | identical | 6,451 | 6,703 | 12.9 | 10.3 |
+
+Decode time is the same in the two layouts. Per token: 16.7 ms from position 300, 16.9 ms from 4,000, 21.8 ms at
+the end of the context, 17.2 ms in `free` (these runs write every step's logits to disk, so they are not speed
+measurements).
+
+### Rule 4
+
+d = decode minus our prefill; y = Thor's prefill minus ours; NLL in nats, 1,101 positions per case.
+
+| Case | Positions | Mean d | Mean \|d\| | Max \|d\| | Mean \|y\| | Max \|y\| | Ratio |
+|---|---|---:|---:|---:|---:|---:|---:|
+| control (4,096) | 300–1,400 | +3.77e-04 | 1.518e-02 | 0.323 | 1.855e-02 | 0.221 | 0.82 |
+| short | 300–1,400 | +5.75e-04 | 1.364e-02 | 0.188 | 1.771e-02 | 0.302 | 0.77 |
+| middle | 4,000–5,100 | −6.21e-04 | 1.872e-02 | 0.209 | 2.362e-02 | 0.244 | 0.79 |
+| end | 31,667–32,767 | +1.27e-04 | 1.736e-02 | 0.214 | 2.571e-02 | 0.334 | 0.68 |
+
+### Against the prediction
+
+Every item held: identical under rules 2 and 3; ratios inside 0.5 to 1.5 with no trend toward the end of the
+context; the full-length layout fits at 32,768 with a peak 252 MiB above the compact one; `free` ran its 600
+tokens on window 1; and the control's logits equal the `short` case's at every step, so a 300-token prefill and
+the decode after it give the same bits at a capacity of 4,096 and of 32,768.
+
+### Seen, not explained
+
+The control and `short` have identical decode logits but different d (1.518e-02 and 1.364e-02). The difference is
+on the prefill side: our scorer's NLL at positions 300–1,400 of the same tokens is not the same in the 4,096-token
+windows as in the 32,768-token ones. The two prefills tile attention differently (whole prompt at 4,096, 128-row
+tiles above); that this is the cause was not tested.

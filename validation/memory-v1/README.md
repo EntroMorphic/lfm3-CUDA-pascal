@@ -80,5 +80,6 @@ windows are off at the fixtures' capacity (512), so the parity gate does not exe
 ### Not covered
 
 - Decode above 4,096 tokens of capacity with compact windows on by default has been run only through the scorer
-  (prefill). The long-decode test forces the layout at capacity 1,024.
+  (prefill). The long-decode test forces the layout at capacity 1,024. Closed later by
+  [long-decode-v1](../long-decode-v1/).
 - The batch, tree and decode-batch code is not ported to the compact layout (phase 3).

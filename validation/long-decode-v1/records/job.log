@@ -1,0 +1,23 @@
+binary 7464f580b1f5ec7eb610e3167abc26b687a490a27d120e25fd230744e1eb45a0  /workspace/build/text-v6/liquid-lfm3
+c8a4407fb67b4b1dd49cb6608eb6bc601833a4023096457772c4f09ee2a55eee  /workspace/data/ppl-windows/windows-4096.i32
+54df38e05bddde9717b61c75d018c5023d546e3e352151f807b715c2d2d638fc  /workspace/data/ppl-windows/windows-32768.i32
+control.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 4903 MiB
+short.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 6451 MiB
+short.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 6703 MiB
+short.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 6451 MiB
+middle.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 9.4 s, decode 18.6 s, peak 6451 MiB
+middle.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 9.4 s, decode 18.6 s, peak 6703 MiB
+middle.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 9.4 s, decode 18.6 s, peak 6451 MiB
+end.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 84.2 s, decode 24.0 s, peak 6451 MiB
+end.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 84.3 s, decode 24.0 s, peak 6703 MiB
+end.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 84.7 s, decode 24.0 s, peak 6451 MiB
+free.default (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 12.9 s, decode 10.3 s, peak 6451 MiB
+free: window 1 generated 600 tokens
+free.full (LFM3_COMPACT_WINDOWS 0): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 13.0 s, decode 10.3 s, peak 6703 MiB
+free.again (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 12.9 s, decode 10.3 s, peak 6451 MiB
+short: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.4 s compact, 18.4 s full
+middle: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.6 s compact, 18.6 s full
+end: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 24.0 s compact, 24.0 s full
+free: 600 steps (want 600); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 10.3 s compact, 10.3 s full
+control (capacity 4,096): 1101 steps; its logits equal the short case's at capacity 32,768 (information)
+LONG DECODE (rules 2 and 3) PASS
