@@ -283,19 +283,19 @@ inline size_t padded_attention_scratch(const lfm::RuntimeShape& s) {
 // the capacity of the cache that holds the keys (its per-head stride).
 // `heads` query heads starting at `queries`, whose KV heads start at `key_cache` (a multiple of the group).
 inline void head_scores(const lfm::RuntimeShape& s,int context,const bf16* queries,const bf16* key_cache,
-                        int key_start,int rows,int end,float* scores,int heads=0) {
+                        int key_start,int rows,int end,float* scores,int heads=0,int row0=0) {
   lfm::gemm::Problem p;
   p.a=queries; p.b=key_cache+size_t(key_start)*s.head_dim; p.c=nullptr; p.c_f32=scores;
   p.m=rows; p.n=end; p.k=s.head_dim;
   p.lda=s.hidden; p.ldb=s.head_dim; p.ldc=key_pitch(end);
   p.stride_a=s.head_dim; p.stride_b=(long long)context*s.head_dim; p.stride_c=(long long)rows*key_pitch(end);
   p.batch=heads?heads:s.query_heads; p.group=s.query_heads/s.kv_heads;
-  p.site=lfm::gemm::kSiteAttention;
+  p.site=lfm::gemm::kSiteAttention; p.row0=row0;
   lfm::gemm::run(p);
 }
 // out_h (rows x head_dim, row stride hidden) = P_h (rows x pitch) · V_{h/group}[key_start, key_start+end).
 inline void head_values(const lfm::RuntimeShape& s,int context,const bf16* probs,const bf16* value_cache,
-                        int key_start,int rows,int end,bf16* out,void* workspace,size_t workspace_size,int heads=0) {
+                        int key_start,int rows,int end,bf16* out,void* workspace,size_t workspace_size,int heads=0,int row0=0) {
   lfm::gemm::Problem p;
   p.a=probs; p.b=value_cache+size_t(key_start)*s.head_dim; p.c=out;
   p.m=rows; p.n=s.head_dim; p.k=key_pitch(end); p.b_rows=end; p.b_k_contiguous=false;
@@ -303,7 +303,7 @@ inline void head_values(const lfm::RuntimeShape& s,int context,const bf16* probs
   p.stride_a=(long long)rows*key_pitch(end); p.stride_b=(long long)context*s.head_dim; p.stride_c=s.head_dim;
   p.batch=heads?heads:s.query_heads; p.group=s.query_heads/s.kv_heads;
   p.workspace=static_cast<float*>(workspace); p.workspace_size=workspace_size;
-  p.site=lfm::gemm::kSiteAttention;
+  p.site=lfm::gemm::kSiteAttention; p.row0=row0;
   lfm::gemm::run(p);
 }
 #endif
@@ -497,9 +497,10 @@ class Runner {
 #endif
 #ifdef LFM3_NATIVE_GEMM
   // lm_head with the FP32 accumulator stored unrounded.
-  void lm_head(const bf16* x, float* out, int rows) {
+  // `row0`: the prompt position of the first row (for lfm::gemm::Problem::row0; the scorer's tiles).
+  void lm_head(const bf16* x, float* out, int rows, int row0=0) {
     auto p=lfm::gemm::linear(x,w("embed_tokens.weight"),nullptr,rows,s.hidden,s.vocabulary);
-    p.c_f32=out; p.site=lfm::gemm::kSiteHead; lfm::gemm::run(p);
+    p.c_f32=out; p.site=lfm::gemm::kSiteHead; p.row0=row0; lfm::gemm::run(p);
   }
   // Logits traces: STEP.logits.f32 holds the exact FP32 values the engine returns (and samples from);
   // STEP.logits.bf16 keeps the established format, rounded, for comparisons against BF16 references.
@@ -513,9 +514,9 @@ class Runner {
 #ifdef LFM3_NATIVE_GEMM
   // A block of rows of a prefill of more than 8 rows: the prefill kernel whatever the block's row count
   // (lfm::gemm::Problem::wide).
-  void linear_block(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output) {
+  void linear_block(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output, int row0) {
     auto problem=lfm::gemm::linear(x,w(name),out,rows,input,output);
-    problem.wide=true; problem.site=site_of(name);
+    problem.wide=true; problem.site=site_of(name); problem.row0=row0;
     lfm::gemm::run(problem);
   }
   // The part of the model a projection belongs to (lfm::gemm::Problem::site).
@@ -559,12 +560,12 @@ class Runner {
     for(int h0=0;h0<s.query_heads;h0+=group) {
       const size_t kv=size_t(h0/(s.query_heads/s.kv_heads))*stride*s.head_dim;
       head_scores(s,stride,q.p+size_t(first)*s.hidden+size_t(h0)*s.head_dim,key_cache+kv,key_start-origin,rows,end,
-                  score_buffer.p,group);
+                  score_buffer.p,group,cursor+first);
       if(end<=2048) probabilities<<<rows*group,32>>>(score_buffer.p,probability_buffer.p,rows,end,cursor+first,window,s.head_dim,key_start,pitch);
       else probabilities_large<<<rows*group,1024>>>(score_buffer.p,probability_buffer.p,rows,end,cursor+first,window,s.head_dim,key_start,pitch);
       dump_rows(label,probability_buffer.p,size_t(group)*rows,end,pitch,h0>0);
       head_values(s,stride,probability_buffer.p,value_cache+kv,key_start-origin,rows,end,
-                  attended.p+size_t(first)*s.hidden+size_t(h0)*s.head_dim,workspace.p,gemm_workspace_bytes(s,s.context),group);
+                  attended.p+size_t(first)*s.hidden+size_t(h0)*s.head_dim,workspace.p,gemm_workspace_bytes(s,s.context),group,cursor+first);
     }
 #else
     std::vector<const bf16*> ap(s.query_heads),bp(s.query_heads);
@@ -711,7 +712,7 @@ class Runner {
 #ifdef LFM3_NATIVE_GEMM
         const bool blocks=rows>block;  // more than one block: rows > 8, so the whole prefill's kernel is the wide one
         auto project=[&](const std::string& name,const bf16* in,bf16* out,int input,int output) {
-          if(blocks) linear_block(name,in,out,n,input,output); else linear(name,in,out,n,input,output);
+          if(blocks) linear_block(name,in,out,n,input,output,first); else linear(name,in,out,n,input,output);
         };
 #else
         auto project=[&](const std::string& name,const bf16* in,bf16* out,int input,int output) { linear(name,in,out,n,input,output); };

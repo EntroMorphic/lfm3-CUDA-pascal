@@ -91,4 +91,64 @@ equal the Thor engine's byte for byte (`nll-native-gemm-256.f32` `692a3f9f…`, 
 
 ## Results
 
-(none yet)
+### The first four variants (2026-11-18)
+
+4,622 windows of 65 tokens; `arith-first4.txt`. `plain`: mean NLL 4.293430001.
+
+| Variant | Minus `plain`, all 64 positions | 95% CI | Position 1 alone | Positions 2-64 | 95% CI |
+|---|---:|---|---:|---:|---|
+| `exact` | −4.93e-04 | [−6.15e-04, −3.74e-04] | −4.76e-03 | −4.25e-04 | [−5.50e-04, −3.04e-04] |
+| `rz` | −1.10e-03 | [−1.22e-03, −9.70e-04] | −4.41e-02 | −4.16e-04 | [−5.44e-04, −2.86e-04] |
+| `away` | −6.91e-04 | [−8.16e-04, −5.70e-04] | −3.45e-02 | −1.55e-04 | [−2.82e-04, −3.2e-05] |
+
+- **Prediction 1 (consistency): holds.** `exact` − `plain` is −4.93e-04, inside [−8.0e-04, −2.5e-04], and equal to
+  what the Thor engine minus this engine showed on positions 1-64 of the longer windows (−4.9e-04, −5.6e-04).
+- **Prediction 2 (bias): fails by the rule set for it.** Rounding away from zero lowers the NLL too. `rz` and `away`
+  have the same sign, so the direction of the rounding bias is not the cause.
+
+### What the first four showed that was not looked for
+
+Position 1 is predicted from [BOS] alone, and [BOS] is the first token of every window. In `plain`, the NLL at
+position 1 is identical for every window whose first token is the same (1,950 distinct tokens over 4,622 windows):
+it is one fixed distribution, evaluated 4,622 times. A change of arithmetic moves that one distribution once, and
+the move is counted in every window: `rz` lowers the NLL of position 1 by 4.4e-02 on average, nearly uniformly over
+the first tokens (per distinct token: mean −4.6e-02, sd 2.0e-02). Most of `rz`'s and `away`'s difference from
+`plain` is that one position.
+
+In the longer windows the same holds across engines. Position 1, engine minus the FP32 model, length 257: SDPA
+−3.17e-02, eager −3.17e-02, Thor −2.61e-02, this engine −2.14e-02; and Thor minus this engine there, −4.7e-03, is
+`exact` minus `plain` at position 1 here (−4.76e-03).
+
+A window bootstrap treats windows as independent. For position 1 they are not: it is a single draw.
+
+### Reading under test: the first row is shared by every window
+
+Row 0 of a prefill, the [BOS] row, does not depend on the rest of the window, so its activations, and the keys and
+values every later position attends to, are the same in every window. Any arithmetic computes that one row once,
+with its own rounding, and every window inherits the result. A difference between two arithmetics in that row is
+then a fixed perturbation applied to all 295,808 tokens, not noise that averages out over them; its sign is whatever
+it happens to be. Attention to the first token is strongest at short context, which would put the effect in the
+first positions of a window and nowhere else.
+
+That would make the 257-token failure one draw of a quantity that has no reason to favour either arithmetic, which
+the bar's statistics count as 1,155 independent observations.
+
+**Test, fixed before it has run.** The validation build can give the tensor-core arithmetic to chosen prompt
+positions only (`LFM_TCM_ROWS`).
+
+| Variant | Arithmetic |
+|---|---|
+| `bosexact` | tensor-core model for row 0 only, at every site; plain for every other row |
+| `bosplain` | plain for row 0 only; tensor-core model for every other row |
+
+Predictions if the reading is right:
+
+1. `bosexact` − `plain` on positions 2-64 is negative with its interval excluding zero, and overlaps `exact`'s
+   [−5.50e-04, −3.04e-04]. At position 1 `bosexact` equals `exact` exactly, value for value.
+2. `bosplain` − `plain` on positions 2-64 has an interval that includes zero. At position 1 it equals `plain`
+   exactly.
+
+If instead `bosexact` shows nothing and `bosplain` carries `exact`'s difference, the reading is wrong: the effect
+comes from the arithmetic of the other 64 rows.
+
+Results: (none yet)

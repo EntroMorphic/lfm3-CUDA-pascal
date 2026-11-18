@@ -52,6 +52,8 @@ struct Problem {
   // Which part of the model this product belongs to (kSite*), for experiments that give parts of the model different
   // prefill arithmetic (validation/prefill-arithmetic-v1). It never changes what the default builds compute.
   int site = 0;
+  // The prompt position of row 0, for the same experiments (rows are positions in every prefill product).
+  int row0 = 0;
 };
 inline constexpr int kSiteHead = 1, kSiteMlp = 2, kSiteConv = 4, kSiteAttentionProjection = 8, kSiteAttention = 16, kSiteOther = 32;
 
@@ -534,25 +536,58 @@ inline int model_sites() {
   return mask;
 }
 #endif
-template <bool KC>
-inline void launch_wide(const Problem& p, cudaStream_t stream) {
 #ifdef LFM_GEMM_TENSOR_CORE_MODEL
-  if (model_sites() & (p.site ? p.site : kSiteOther)) {
-    for_wide_tile<LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, 6>(p.m, [&](auto ty) {  // an FP32 value and a 16-bit exponent
-      constexpr int TY = decltype(ty)::value;
-      using T = WideTile<TY, LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN>;
-      const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
-      wide_model_kernel<TY, LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
-    });
-    return;
-  }
+// Experiment (validation/prefill-arithmetic-v1): LFM_TCM_ROWS=N gives the tensor-core arithmetic to prompt positions
+// below N only (every site), the plain kernel to the rest; -N the reverse. 0 or unset: no row rule.
+inline int model_rows() {
+  static const int rows = [] {
+    const char* v = std::getenv("LFM_TCM_ROWS");
+    if (!v) return 0;
+    char* end = nullptr;
+    const long n = std::strtol(v, &end, 10);
+    if (end == v || *end != '\0' || n < -1000000 || n > 1000000) throw std::runtime_error("LFM_TCM_ROWS out of range");
+    return int(n);
+  }();
+  return rows;
+}
 #endif
+template <bool KC>
+inline void launch_wide_plain(const Problem& p, cudaStream_t stream) {
   for_wide_tile<LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, 4>(p.m, [&](auto ty) {
     constexpr int TY = decltype(ty)::value;
     using T = WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>;
     const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
     wide_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
   });
+}
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+template <bool KC>
+inline void launch_wide_model(const Problem& p, cudaStream_t stream) {
+  for_wide_tile<LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, 6>(p.m, [&](auto ty) {  // an FP32 value and a 16-bit exponent
+    constexpr int TY = decltype(ty)::value;
+    using T = WideTile<TY, LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN>;
+    const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
+    wide_model_kernel<TY, LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
+  });
+}
+#endif
+template <bool KC>
+inline void launch_wide(const Problem& p, cudaStream_t stream) {
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+  if (const int rule = model_rows()) {
+    // The whole product with one arithmetic, then the first rows again with the other (they overwrite).
+    const int first = std::max(0, std::min(p.m, (rule > 0 ? rule : -rule) - p.row0));
+    if (rule > 0) launch_wide_plain<KC>(p, stream); else launch_wide_model<KC>(p, stream);
+    if (first > 0) {
+      Problem head = p;
+      head.m = first;
+      if (rule > 0) launch_wide_model<KC>(head, stream); else launch_wide_plain<KC>(head, stream);
+    }
+    return;
+  }
+  if (model_sites() & (p.site ? p.site : kSiteOther)) return launch_wide_model<KC>(p, stream);
+#endif
+  launch_wide_plain<KC>(p, stream);
 }
 
 }  // namespace detail
