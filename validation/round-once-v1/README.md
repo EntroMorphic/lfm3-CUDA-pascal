@@ -65,6 +65,87 @@ the expectation; the rule above decides.
 **Not judged here:** speed (the kernel is integer arithmetic at a few rows; in an engine the [BOS] row would be
 computed once), and parity (this arithmetic is not the Thor engine's).
 
-## Results
+## Results (2026-11-18)
 
-(none yet)
+Tree `8a1a7ba5…`, scorer `ar-once` (`da7facd9…`), `LFM_ONCE_ROWS=1`. Files and reports in `records/`.
+
+**Rule 0: PASS.** 3,168 of 3,168 outputs equal the exact dot product rounded once (`records/round-once-check.txt`).
+For information, from the same run: on operands of the model's magnitudes the plain kernel's BF16 outputs already
+equal the correct rounding in every case tried (272 of 272); its FP32 outputs (the format of attention scores and
+logits) differ from it in 262 of 272.
+
+**Rule 1, the bar against HF SDPA: FAIL at both lengths.**
+
+| Length | PPL SDPA | PPL round once | dNLL | 95% CI | Verdict | Plain kernel | Tensor-core [BOS] row |
+|---|---:|---:|---:|---|---|---|---|
+| 256 | 26.5821 | 26.5872 | +1.92e-04 | [+5.97e-05, +3.24e-04] | **worse** | +6.89e-05, equal | −8.68e-05, equal |
+| 257 | 26.5045 | 26.5123 | +2.96e-04 | [+1.67e-04, +4.26e-04] | **worse** | +2.27e-04, worse | +3.87e-05, equal |
+
+**Rule 2, nearer the FP32 model: not accepted.** Engine minus FP32, mean NLL
+(`tools/pascal/analysis/round_once_report.py`):
+
+| | Position 1 | | Positions 1-64 | | Mean abs. difference per token | |
+|---|---:|---:|---:|---:|---:|---:|
+| | 256 | 257 | 256 | 257 | 256 | 257 |
+| HF SDPA | −3.139e-02 | −3.169e-02 | −8.28e-04 | −9.77e-04 | 1.9400e-02 | 1.9476e-02 |
+| Thor engine | −2.572e-02 | −2.605e-02 | −7.33e-04 | −7.93e-04 | 1.6741e-02 | 1.6773e-02 |
+| Tensor-core [BOS] row, plain elsewhere | −2.572e-02 | −2.605e-02 | −6.68e-04 | −9.26e-04 | 1.6825e-02 | 1.6750e-02 |
+| Plain kernel | −2.110e-02 | −2.142e-02 | −1.69e-04 | −3.06e-04 | 1.6716e-02 | 1.6729e-02 |
+| Round-once [BOS] row, plain elsewhere | −1.852e-02 | −1.868e-02 | −9.76e-05 | −3.30e-04 | 1.6707e-02 | 1.6713e-02 |
+
+1. Position 1: nearer than the plain kernel at both lengths, and the nearest of every engine measured. Holds; the
+   prediction holds.
+2. Positions 1-64: nearer at 256, farther at 257 (−3.30e-04 against −3.06e-04). **Fails at 257.**
+3. `ppl_fidelity.py`: 1.671e-02 at both lengths, not larger than the plain kernel's. Holds (and PASS against SDPA).
+
+By the rule written beforehand the claim needed all three at both lengths. It is not accepted. What the data show
+is narrower: round once moves the one distribution at position 1 about 13% of the way from the plain kernel's to the
+FP32 model's, and the per-token closeness to FP32 improves by 0.05% to 0.1%, which is nothing.
+
+### What was not looked for
+
+**The more accurately the [BOS] row is summed, the higher the NLL at position 1, in every case measured.** Position 1
+minus the FP32 model, 257 tokens (the last two from prefill-arithmetic-v1's 65-token windows, relative to the plain
+kernel there):
+
+| [BOS] row arithmetic | Position 1, minus FP32 |
+|---|---:|
+| FP32 model | 0 |
+| Round once | −1.87e-02 |
+| Plain kernel (nearest, every multiply-add) | −2.14e-02 |
+| Tensor-core truncation (Thor engine) | −2.61e-02 |
+| HF SDPA | −3.17e-02 |
+| Every multiply-add rounded away from zero | about −5.6e-02 (plain − 3.45e-02) |
+| Every multiply-add rounded toward zero | about −6.6e-02 (plain − 4.41e-02) |
+
+Rounding error in that row lowers the NLL of the first scored token, and the reference of the bar, HF SDPA, is among
+the lowest. So an engine is judged "worse" at short context in proportion to how accurately it computes the [BOS]
+row.
+
+**The FP32 model itself does not pass the bar at 257 tokens.** The Thor project's FP32 run against HF SDPA, with
+`ppl_compare`'s own bootstrap (10,000 resamples over windows, seed 0):
+
+| Length | FP32 − SDPA | 95% CI | Verdict by the bar's rule |
+|---|---:|---|---|
+| 256 | +1.92e-05 | [−9.60e-05, +1.31e-04] | equal |
+| 257 | +1.53e-04 | [+4.08e-05, +2.64e-04] | **worse** |
+| 4,096 | −3.02e-04 | [−4.21e-04, −1.80e-04] | better |
+| 32,768 | −4.23e-04 | [−5.62e-04, −2.81e-04] | better |
+
+At 257 tokens the bar fails the model computed at full precision, the thing every BF16 engine is an approximation
+of. The 257-token failure of this engine's plain kernel is the same failure.
+
+## Conclusion
+
+- A third arithmetic exists and is built: exact sums, one rounding. Checked against integer arithmetic.
+- In the [BOS] row it is the nearest to the FP32 model at position 1 of anything measured, as predicted. Past
+  position 1 it is not distinguishable from the plain kernel, and the full claim fails its rule at 257.
+- It does not help with the bar; it fails it at both short lengths, further than the plain kernel does. That is
+  because the bar's reference sits on the far side: SDPA's short-context NLL is below the FP32 model's, and the FP32
+  model itself is "worse" than SDPA at 257 by the bar's rule.
+- For choosing what to ship: closeness to SDPA at short context and closeness to the FP32 model pull in opposite
+  directions in this one row. The tensor-core [BOS] row passes the bar and matches the Thor engine; the plain kernel
+  and round once are nearer the FP32 model and fail the bar at 257.
+
+Not established: why rounding error in the [BOS] row lowers the NLL of the next token (which elements, at which
+layer); and the 65-token run of this variant, which is in progress as this is written.
