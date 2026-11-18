@@ -69,10 +69,22 @@ End to end, no tracing, one run (process start to first logits, fixed costs incl
 - The plain kernel is at 1.6 TFLOPS. The card's FP32 ceiling by its specification is several times that; unmeasured
   here.
 
-## Not explained
+## Decode, steady state (measured after the note below was first written)
 
-In the fixture timing of `text-v4`, the `baseline` fixture's 15 decode calls took 0.34 s, against 0.23 s in the
-earlier plain build and 0.22 s in the exact build of the same tree. Decode uses none of the changed kernels, and the
-701-step long decode takes 11.0 s with both `text-v1` and `text-v4`. The first decode calls after a short prefill
-carry start-up costs (the 1-row fixture: 3 calls in 0.24 s), and a shorter prefill may leave more of them in the
-decode figure; that is a guess. A steady-state decode benchmark is needed before any decode number is quoted.
+`liquid-lfm3`, greedy, batch one, no tracing, two runs each (identical to within 0.1%):
+
+| Request | `text-v1` | `text-v4` (re-tiled plain) | `parity` (exact) |
+|---|---:|---:|---:|
+| 300-token prompt, 700 teacher-forced steps, capacity 1,024, one warm-up run | 14.71 ms per token (68.0 tokens/s) | 14.72 (67.9) | 14.75 (67.8) |
+| `baseline` fixture, 15 steps, two warm-up runs | 14.4-14.5 | 14.4-14.5 | 14.5 |
+| `baseline` fixture, 15 steps, cold (no warm-up) | 15.0-15.2 | **22.3-22.5** | 14.5 |
+
+Warm prefill of the 34-token fixture: 0.367 s, 0.245 s and 0.694 s.
+
+- Steady-state decode is 14.7 ms per token, 68 tokens per second, at about 1,000 tokens of context, and is the same
+  in all three builds, as it must be: decode runs none of the changed kernels.
+- The slow figure is a cold-start effect in one build: with warm-up runs it is gone. What in a cold `text-v4` process
+  moves 0.11 s into the first decode calls is not identified (start-up work done lazily on first use is the guess).
+  It affects a process's first request only.
+- For reference, the Thor engine's README gives 62 tokens per second at batch one for its decode loop. The
+  conditions of that figure are not matched here, so it is context, not a comparison.
