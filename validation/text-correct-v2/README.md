@@ -10,7 +10,7 @@ Phase 1 of [PLAN.md](../../PLAN.md) again, after the owner's two decisions of 20
   and "worse" than the FP32 model, by `ppl_compare`'s own statistic. `ppl_compare` is still run, unchanged, and
   reported first.
 
-Build under test: `text-v3`. [text-correct-v1](../text-correct-v1/) is the record of the plain kernel and is not
+Build under test: `text-v6` (the tag after `text-v5`, the last plain-kernel build). [text-correct-v1](../text-correct-v1/) is the record of the plain kernel and is not
 changed.
 
 ## What is already known (so that the rules are read with it)
@@ -20,18 +20,18 @@ changed.
   kernel PASS (257: worse than SDPA, not worse than FP32); experiment hybrid PASS; round-once [BOS] row FAIL at 256
   and 257. Those are not results of this round.
 
-## Rules (committed before `text-v3` has run on the card)
+## Rules (committed before `text-v6` has run on the card)
 
 1. **Build.** As text-correct-v1 rule 1.
 2. **Tokens, determinism, reset.** The four forward fixtures: the Thor pins' ids, two runs identical, reset passing;
    with `LFM3_COMPACT_WINDOWS` unset and set to 1.
-3. **Identity with the experiment.** `text-v3`'s NLL files at 256 and 257 are byte-identical to the experiment
+3. **Identity with the experiment.** `text-v6`'s NLL files at 256 and 257 are byte-identical to the experiment
    hybrid's: `c47912b0…` and `75430bb6…`. If not, the engine is not computing what was decided, and nothing below
    counts.
 4. **Position 0 is the Thor engine's.** At 256, 257, 4,096 and 32,768 the NLL at position 1 (computed from row 0
    alone) equals the Thor engine's (`nll-native-gemm-L.f32`) value for value in every window.
 5. **Perplexity, original bar.** `tools/ppl_compare.py`, unchanged, against HF SDPA at all four lengths, with
-   `text-v3`'s own files at every length. No length "worse".
+   `text-v6`'s own files at every length. No length "worse".
 6. **Perplexity, amended bar.** `tools/pascal/bar_amended.py` at all four lengths: PASS.
 7. **Fidelity.** `tools/ppl_fidelity.py`, unchanged: PASS at all four lengths.
 8. **Parity gate.** `tools/pascal/gate_pins.sh` on this tree: 7,826 of 7,826.
