@@ -148,4 +148,21 @@ of. The 257-token failure of this engine's plain kernel is the same failure.
   and round once are nearer the FP32 model and fail the bar at 257.
 
 Not established: why rounding error in the [BOS] row lowers the NLL of the next token (which elements, at which
-layer); and the 65-token run of this variant, which is in progress as this is written.
+layer).
+
+## The 65-token windows (added when the run finished, 2026-11-18)
+
+4,622 windows, positions 1-64 only, minus the plain kernel, paired, 95% bootstrap over windows
+(`records/nll-once-65.meta.json`; NLL sha256 `29b59940…`; 5,608 s). The first three rows are prefill-arithmetic-v1's.
+
+| [BOS] row | Other rows | All 64 positions | 95% CI | Position 1 | Positions 2-64 | 95% CI |
+|---|---|---:|---|---:|---:|---|
+| tensor-core | tensor-core | −4.93e-04 | [−6.15e-04, −3.66e-04] | −4.760e-03 | −4.25e-04 | [−5.50e-04, −3.04e-04] |
+| tensor-core | plain | −5.14e-04 | [−6.33e-04, −3.94e-04] | −4.760e-03 | −4.47e-04 | [−5.67e-04, −3.28e-04] |
+| plain | tensor-core | −9.88e-05 | [−2.25e-04, +2.55e-05] | 0 | −1.00e-04 | [−2.26e-04, +2.71e-05] |
+| round once | plain | +1.47e-04 | [+3.11e-05, +2.63e-04] | +2.795e-03 | +1.05e-04 | [−1.53e-05, +2.23e-04] |
+
+Consistent with the longer windows: round once in the [BOS] row raises the NLL at position 1 (+2.8e-03 here; +2.6e-03
+and +2.7e-03 at 256 and 257), the opposite direction from the tensor-core row (−4.8e-03). On positions 2-64 its
+difference from the plain kernel has an interval that includes zero. No FP32 run exists for these windows, so
+nearness to FP32 is not judged here.
