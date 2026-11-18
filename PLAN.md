@@ -88,3 +88,7 @@ with red-team, remediate, verify, commit.
   against the pins already in its repository; and a `tcgen05` kernel's arithmetic can be tested the same way (the
   published model has a separate row for it). That work belongs to the Thor repository, which is read-only from here:
   it is a proposal to bring to that team, not something to do in this one.
+- **The card's clocks** ([decode-atoms-v1](validation/decode-atoms-v1/), 2026-11-17). Decode is 90% weight reads at
+  the memory's rate. Two host-level settings would change its speed and neither is the engine's to make: the memory
+  clock under compute load (4,513 MHz in state P2, 5,005 MHz in P0), and the clock ramp after idle (about 2 s at up
+  to 50% longer steps). For phase 3: decide whether the server keeps the card warm between requests.
