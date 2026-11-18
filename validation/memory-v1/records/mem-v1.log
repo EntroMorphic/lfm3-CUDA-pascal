@@ -1,0 +1,104 @@
++ date -u
+Tue Nov 17 23:03:19 UTC 2026
++ cd /workspace/lfm3-CUDA-pascal
++ tools/pascal/build_text.sh text-v2
+liquid-lfm3: warnings 0, sha256 0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2, 2399528 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 75d017f9523736be19c5735b4e959c8d537cfba24cdf4ac7113695d4429cb9b7, 2251000 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_text.sh text-tc
+liquid-lfm3: warnings 0, sha256 0f8c71693570c8d5524e85fb77c89d7be5d2ba295ea6c6774504e4d1e2a6453a, 2624824 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 d0302c66cd17aab2eba33f1dc9d2ed8e3eabe92cbfecdd616ec317b84ac6e924, 2480392 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
++ tools/pascal/verify_memory.sh text-v1 text-v2 ppl-v1 fast
+== binaries
+e30023b7dba656ffa94eaf0569c84d0a4ccefb1fe7ae69b376abbfea8e7aa593  /workspace/build/text-v1/liquid-lfm3
+82681a433fa0f12516b7bddbc60f34f8e34d8f9bb008cbd45d5e78f2f91448cd  /workspace/build/text-v1/lfm3-score
+0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  /workspace/build/text-v2/liquid-lfm3
+75d017f9523736be19c5735b4e959c8d537cfba24cdf4ac7113695d4429cb9b7  /workspace/build/text-v2/lfm3-score
+== rule 3: fixtures, LFM3_COMPACT_WINDOWS unset
+binary 0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  tree 895e4c9bb0d5c90b (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 1.222 s, decode 0.229 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.804 s, decode 0.023 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 2.561 s, decode 0.045 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.081 s, decode 0.241 s / 3 calls
+FIXTURES PASS
+== rule 3: fixtures, LFM3_COMPACT_WINDOWS=1
+binary 0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  tree 895e4c9bb0d5c90b (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 1.248 s, decode 0.229 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.803 s, decode 0.023 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 2.571 s, decode 0.044 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.081 s, decode 0.241 s / 3 calls
+FIXTURES PASS
+== rule 4: long decode
+long decode: 701 argmax ids equal; 1402 trace files, logits digest old 7b36221a127fb8fb new 7b36221a127fb8fb: IDENTICAL; decode 11.0 s old, 11.0 s new
+== rule 5 (unset): subsets
+length 256: {"engine": "native", "length": 256, "windows": 64, "scored_tokens": 16320, "mean_nll": 3.25671968, "perplexity": 25.964226, "seconds": 107.006}
+  peak device memory 4407 MiB, wall 108.3 s, nll sha256 bbd311f9a2ee3c1a
+length 257: {"engine": "native", "length": 257, "windows": 64, "scored_tokens": 16384, "mean_nll": 3.273711283, "perplexity": 26.40917, "seconds": 115.643}
+  peak device memory 4413 MiB, wall 117.3 s, nll sha256 cc8a92228da5449a
+length 4096: {"engine": "native", "length": 4096, "windows": 2, "scored_tokens": 8190, "mean_nll": 2.692392193, "perplexity": 14.766959, "seconds": 56.681}
+  peak device memory 5195 MiB, wall 58.0 s, nll sha256 f24ef13b5136b28c
+length 256: {"engine": "native", "length": 256, "windows": 64, "scored_tokens": 16320, "mean_nll": 3.25671968, "perplexity": 25.964226, "seconds": 107.434}
+  peak device memory 4407 MiB, wall 109.1 s, nll sha256 bbd311f9a2ee3c1a
+length 257: {"engine": "native", "length": 257, "windows": 64, "scored_tokens": 16384, "mean_nll": 3.273711283, "perplexity": 26.40917, "seconds": 117.662}
+  peak device memory 4413 MiB, wall 119.0 s, nll sha256 cc8a92228da5449a
+length 4096: {"engine": "native", "length": 4096, "windows": 2, "scored_tokens": 8190, "mean_nll": 2.692392193, "perplexity": 14.766959, "seconds": 58.538}
+  peak device memory 5027 MiB, wall 59.8 s, nll sha256 f24ef13b5136b28c
+subset 256: IDENTICAL
+subset 257: IDENTICAL
+subset 4096: IDENTICAL
+== VERIFY PASS
++ echo 'verify fast rc=0'
++ python3 tools/pascal/compare_pins.py text-tc
+verify fast rc=0
+binary 0f8c71693570c8d5524e85fb77c89d7be5d2ba295ea6c6774504e4d1e2a6453a  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 4.38 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 4.19 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 24.39 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.10 s
+PINS EQUAL
++ echo 'pins tc rc=0'
++ python3 tools/pascal/compare_pins.py text-v2 arithmetic single
+pins tc rc=0
+binary 0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  Thor pins from binary a75e26b1f357e8bc
+arithmetic: 5 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.90 s
+  first different: 0.layers.0.conv.in_proj.bf16   (before it, 2 files in order are equal)
+  different, by kind: operator.bf16 48, residual.bf16 48, ffn_norm.bf16 48, feed_forward.w1.bf16 48, feed_forward.w3.bf16 48, feed_forward.product.bf16 48, feed_forward.bf16 48, output.bf16 48, operator_norm.bf16 46, conv.product.bf16 26, conv.in_proj.bf16 25, self_attn.q_rotary.bf16 22, self_attn.k_rotary.bf16 22, self_attn.probabilities.bf16 22, self_attn.attended.bf16 22, self_attn.gated.bf16 22, final_norm.bf16 2, logits.bf16 2, logits.f32 2
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.10 s
+PINS DIFFER
++ echo 'pins plain rc=1'
++ date -u
+pins plain rc=1
+Tue Nov 17 23:16:38 UTC 2026
++ tools/pascal/verify_memory.sh text-v1 text-v2 ppl-v1 slow
+== binaries
+e30023b7dba656ffa94eaf0569c84d0a4ccefb1fe7ae69b376abbfea8e7aa593  /workspace/build/text-v1/liquid-lfm3
+82681a433fa0f12516b7bddbc60f34f8e34d8f9bb008cbd45d5e78f2f91448cd  /workspace/build/text-v1/lfm3-score
+0dc31546cea963f35c8b8c48cae16850130737c958805690f105ca7a8e4519a2  /workspace/build/text-v2/liquid-lfm3
+75d017f9523736be19c5735b4e959c8d537cfba24cdf4ac7113695d4429cb9b7  /workspace/build/text-v2/lfm3-score
+== rules 5, 6 (LFM3_COMPACT_WINDOWS=1): all windows
+length 256: {"engine": "native", "length": 256, "windows": 1160, "scored_tokens": 295800, "mean_nll": 3.280306402, "perplexity": 26.583917, "seconds": 1929.788}
+  peak device memory 4407 MiB, wall 1931.1 s, nll sha256 95979e155761c7c5
+length 257: {"engine": "native", "length": 257, "windows": 1155, "scored_tokens": 295680, "mean_nll": 3.277541415, "perplexity": 26.510514, "seconds": 2102.131}
+  peak device memory 4413 MiB, wall 2103.4 s, nll sha256 ec238637c08ba8a2
+length 4096: {"engine": "native", "length": 4096, "windows": 72, "scored_tokens": 294840, "mean_nll": 2.569474382, "perplexity": 13.058959, "seconds": 2073.616}
+  peak device memory 4999 MiB, wall 2075.0 s, nll sha256 2886713bbb2e1a21
+full 256: IDENTICAL to ppl-v1
+full 257: IDENTICAL to ppl-v1
+full 4096: IDENTICAL to ppl-v1
+== rule 7: 32,768
+length 32768: {"engine": "native", "length": 32768, "windows": 9, "scored_tokens": 294903, "mean_nll": 2.531681687, "perplexity": 12.574635, "seconds": 2334.313}
+  peak device memory 6575 MiB, wall 2335.7 s, nll sha256 25df36d8bcc668e5
+32768 rc=0
+== VERIFY PASS
++ echo 'verify slow rc=0'
+verify slow rc=0
++ date -u
+Wed Nov 18 01:37:23 UTC 2026

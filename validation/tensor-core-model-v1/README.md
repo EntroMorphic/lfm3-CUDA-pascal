@@ -168,6 +168,28 @@ Limits: four fixtures, at most 257 rows of prefill, capacity 512; inputs with no
 attention tiles used above 4,096 tokens, the scorer's logit tiles and the long-context path are not covered by
 pins.
 
+## A faster exact step (2026-11-17, the owner having lifted the speed guardrail for it)
+
+`native/include/lfm/tensor_core_model.hpp` holds the step twice, one source for GPU and host: `mma_step_reference`
+(integers throughout) and `mma_step` (FP32 where FP32 is exact: the product of two BF16 values, the scaling by a
+power of two; the truncation is the float-to-integer conversion toward zero).
+
+| Check | Fast step | Reference step |
+|---|---|---|
+| Host (`tools/pascal/tensor_core/host_kernel_check.py`): layer 0 `conv.in_proj`, three fixtures | equal to the pins | equal |
+| GTX 1080, parity gate, tree `bbf9e5e7…` (`tools/pascal/gate_pins.sh`) | 7,826 of 7,826 (`liquid-lfm3` `24f9f84f…`) | 7,826 of 7,826 (`b08cea64…`) |
+
+Prefill time on the card, no tracing, one run each (process start to the first logits, so it includes fixed costs):
+
+| Fixture | Plain kernel (`390c2ac7…`) | Exact, fast step | Exact, reference step |
+|---|---:|---:|---:|
+| `arithmetic`, 31 rows | 0.80 s | 1.71 s | 2.98 s |
+| `baseline`, 34 rows | 1.24 s | 2.12 s | 3.77 s |
+| `window257`, 257 rows | 2.56 s | 7.02 s | 16.23 s |
+
+At 257 rows the fast exact kernel takes 2.7 times the plain kernel's time and the reference 6.3 times. All three use
+the same simple tiling (32 x 32 block, 2 x 2 outputs per thread); none is tuned.
+
 ## What it is for
 
 If the remaining kernels also agree, a build of the Pascal engine whose prefill GEMM uses this arithmetic would have

@@ -1,0 +1,21 @@
+{
+  "engine": "pascal",
+  "length": 257,
+  "windows_file": "windows-257.i32",
+  "windows_sha256": "0dad54b2ecada2d6eb85e7ffd983fac062a58cadf81504bb2a39aa133b48a590",
+  "nll_sha256": "ec238637c08ba8a2ccac7ea0b0efc756adcd479eb019617338637bd5033472c4",
+  "scorer": "build/text-v2/lfm3-score",
+  "scorer_sha256": "75d017f9523736be19c5735b4e959c8d537cfba24cdf4ac7113695d4429cb9b7",
+  "hashes_taken": "inside the lfm3-pascal container, at the scorer's paths, just before it ran",
+  "peak_device_mib": 4413,
+  "wall_seconds": 2103.43,
+  "scorer_output": {
+    "engine": "native",
+    "length": 257,
+    "windows": 1155,
+    "scored_tokens": 295680,
+    "mean_nll": 3.277541415,
+    "perplexity": 26.510514,
+    "seconds": 2102.131
+  }
+}
