@@ -91,5 +91,5 @@ with red-team, remediate, verify, commit.
 - **The card's clocks** ([decode-atoms-v1](validation/decode-atoms-v1/)). Decode is 90% weight reads at the memory's
   rate. The cold-start slowdown was the driver re-initializing the card when nothing held it open; the host's
   persistence daemon now runs in persistence mode, permanently, by a systemd drop-in (2026-11-18, at the owner's
-  instruction; not yet seen across a reboot). Still open: the memory clock under compute load (4,513 MHz in state
+  instruction; confirmed across a reboot). Still open: the memory clock under compute load (4,513 MHz in state
   P2 against 5,005 MHz in P0, about 10% of decode), for which no Linux switch was found.

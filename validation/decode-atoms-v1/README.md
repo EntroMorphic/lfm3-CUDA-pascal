@@ -146,8 +146,10 @@ Made permanent the same day at the owner's instruction, as a systemd drop-in on 
 The service was restarted through systemd and is active with that command line, still wanted by the driver's device
 unit as before (`sys-bus-pci-drivers-nvidia.device`), so it starts at boot the way it did. Checked afterwards with
 no other GPU process and the card at P8: cold prefill 0.236 s, decode 15.46 ms per token. To go back: remove the
-file, `systemctl daemon-reload`, `systemctl restart nvidia-persistenced`. Not checked: that it comes up this way
-after a reboot (the host has not been rebooted).
+file, `systemctl daemon-reload`, `systemctl restart nvidia-persistenced`. After a reboot by the owner
+(2026-11-18, 03:56 UTC): the daemon came up with `--persistence-mode` ("persistence mode enabled" in its log), the
+container started by itself with the GPU and `/workspace`, the first GPU request since boot ran the cold fixture in
+0.265 s of prefill and 15.47 ms per token, and the parity gate passed (7,826 of 7,826).
 
 Also tried: `CUDA_DISABLE_PERF_BOOST=1` (a driver environment variable of this branch) leaves the card in P2 at
 4,513 MHz under load and decode at 14.73 ms per token: no effect.
