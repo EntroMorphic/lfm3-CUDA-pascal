@@ -23,6 +23,19 @@ must not change.
    engine, in every phase from here on. It does not replace the perplexity and fidelity rules, which judge the
    shipping build, whose prefill GEMM sums in a different order.
 
+5. **The prefill kernel** (2026-11-18, after [prefill-arithmetic-v1](validation/prefill-arithmetic-v1/) and
+   [round-once-v1](validation/round-once-v1/)). Prompt position 0 is computed with the tensor-core arithmetic, as
+   the Thor engine computes it; every other prefill row with the plain kernel. That row is shared by every prompt,
+   every later position attends to it, and it carries the whole measured difference between the two arithmetics.
+   Not chosen: the tensor-core arithmetic everywhere (bit-identical to Thor, several times the prefill cost), the
+   plain kernel alone, and exact sums rounded once (nearest the FP32 model at position 1, fails the bar).
+6. **The perplexity bar, amended** (2026-11-18). The bar's windows all start with the same token, so one row is
+   shared by every window and the bootstrap counts a single draw once per window; and its reference, HF SDPA in
+   BF16, is itself "worse" than the FP32 model's run at 257 tokens by the bar's own rule. From here a length fails
+   only if the engine is "worse" than HF SDPA and "worse" than the FP32 model (`tools/pascal/bar_amended.py`).
+   `tools/ppl_compare.py` stays as imported and is still reported. A proposal for the Thor project, whose bar has
+   the same property: [docs/proposal-perplexity-bar.md](docs/proposal-perplexity-bar.md).
+
 ## The constraint
 
 | | MiB |
@@ -65,7 +78,7 @@ with red-team, remediate, verify, commit.
 | Phase | State |
 |---|---|
 | 0 | passed 2026-11-17 ([phase0-foundations-v1](validation/phase0-foundations-v1/)) |
-| 1 | not started |
+| 1 | under test: [text-correct-v2](validation/text-correct-v2/). With the plain kernel alone it did not pass ([text-correct-v1](validation/text-correct-v1/): the original bar fails at 257) |
 
 ## Parking list
 

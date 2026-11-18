@@ -11,11 +11,25 @@
 // bandwidth bound), `split_kn` for M <= 8 with B stored K x N (decode P·V), and `wide` otherwise
 // (prefill). This is the Pascal (sm_61) engine: `wide` is a plain FP32 shared-memory kernel, where the
 // Thor engine it was imported from uses tensor cores (mma.sync, cp.async, ldmatrix).
+//
+// Prompt position 0 (PLAN decision 5): in a prefill, the row of position 0 is computed with the arithmetic of
+// Blackwell's tensor cores (lfm/tensor_core_model.hpp), as the Thor engine computes it, and every other row
+// with the plain kernel. That row is the same for every prompt that starts with the same token, and every later
+// position attends to it (validation/prefill-arithmetic-v1). -DLFM_GEMM_TENSOR_CORE_MODEL (the validation build
+// of the parity gate) gives every row that arithmetic; -DLFM_GEMM_FIRST_ROW=0 gives none (the engine as it was
+// before decision 5, for reproducing earlier records).
 // Quality bar (journal §9): perplexity equal or better than the standard stack within the 95% CI.
 // No reproduction of cuBLAS's kernel selection or reduction order is attempted or claimed.
 #include <cuda_bf16.h>
-#ifdef LFM_GEMM_TENSOR_CORE_MODEL
 #include <lfm/tensor_core_model.hpp>
+// Which statement of the tensor-core step the model kernel uses: 1 the fast one, 2 the integer reference.
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+#define LFM_GEMM_MODEL_STEP (LFM_GEMM_TENSOR_CORE_MODEL + 0 == 2 ? 2 : 1)
+#else
+#define LFM_GEMM_MODEL_STEP 1
+#endif
+#ifndef LFM_GEMM_FIRST_ROW
+#define LFM_GEMM_FIRST_ROW 1
 #endif
 #include <algorithm>
 #include <cstdint>
@@ -52,7 +66,8 @@ struct Problem {
   // Which part of the model this product belongs to (kSite*), for experiments that give parts of the model different
   // prefill arithmetic (validation/prefill-arithmetic-v1). It never changes what the default builds compute.
   int site = 0;
-  // The prompt position of row 0, for the same experiments (rows are positions in every prefill product).
+  // The prompt position of row 0 (rows are positions in every prefill product). The prefill kernel gives position 0
+  // the tensor-core arithmetic (see the top of this file); a caller that passes a block of a prompt's rows sets it.
   int row0 = 0;
 };
 inline constexpr int kSiteHead = 1, kSiteMlp = 2, kSiteConv = 4, kSiteAttentionProjection = 8, kSiteAttention = 16, kSiteOther = 32;
@@ -352,10 +367,9 @@ inline void launch_thin(const Problem& p, cudaStream_t stream) {
   thin_kernel<R><<<dim3((warps + 7) / 8, p.batch), 256, 0, stream>>>(p);
 }
 
-#ifdef LFM_GEMM_TENSOR_CORE_MODEL
-// Validation build only (validation/tensor-core-model-v1, PLAN decision 4): the prefill kernel with the arithmetic of
-// Blackwell's mma.sync.aligned.m16n8k16 (lfm/tensor_core_model.hpp), so that outputs can be compared bit for bit
-// with the Thor engine's. Steps of 16 k chain over k ascending from 0, as the Thor kernel's do. Same tiling as the
+// The prefill kernel with the arithmetic of Blackwell's mma.sync.aligned.m16n8k16 (lfm/tensor_core_model.hpp;
+// validation/tensor-core-model-v1), so that outputs equal the Thor engine's bit for bit. The engine uses it for
+// prompt position 0 (PLAN decision 5); the validation build of the parity gate (decision 4) for every row. Steps of 16 k chain over k ascending from 0, as the Thor kernel's do. Same tiling as the
 // plain kernel; each operand's exponent is kept beside its value.
 // -DLFM_GEMM_TENSOR_CORE_MODEL=2 uses the integer statement of the model for every step (the reference).
 template <int TY, int RM, int RN, bool BK_CONTIGUOUS>
@@ -367,7 +381,7 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
   __shared__ short ea[kWideK][T::BM], eb[kWideK][T::BN];
   // Per step of 16 k: the largest exponent of each row's and each column's operands. Their sum bounds every
   // product's exponent of that output from above.
-#if LFM_GEMM_TENSOR_CORE_MODEL != 2
+#if LFM_GEMM_MODEL_STEP != 2
   __shared__ short ra[kWideK / 16][T::BM], cb[kWideK / 16][T::BN];
 #endif
   const int z = blockIdx.z;
@@ -388,7 +402,7 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
       else { sa[kk][index] = __bfloat162float(v); ea[kk][index] = e; }
     });
     __syncthreads();
-#if LFM_GEMM_TENSOR_CORE_MODEL != 2
+#if LFM_GEMM_MODEL_STEP != 2
 #pragma unroll
     for (int i = threadIdx.x; i < (T::BM + T::BN) * (kWideK / 16); i += T::THREADS) {
       const int index = i / (kWideK / 16), step = i % (kWideK / 16);
@@ -406,7 +420,7 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
     __syncthreads();
 #endif
     for (int step = 0; step < kWideK; step += 16) {
-#if LFM_GEMM_TENSOR_CORE_MODEL == 2
+#if LFM_GEMM_MODEL_STEP == 2
       bool fast = false;
 #else
       // The window of every output of the patch: the largest exponent among its accumulator and 16 products.
@@ -491,7 +505,6 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
       if (row < p.m && col < p.n) put(p, c0 + row * p.ldc + col, acc[i][j]);
     }
 }
-#endif
 
 #ifdef LFM_GEMM_ROUND_ONCE
 // Experiment build only (validation/round-once-v1): the prefill kernel with every output rounded once. No floating
@@ -655,7 +668,6 @@ inline void launch_wide_plain(const Problem& p, cudaStream_t stream) {
     wide_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
   });
 }
-#ifdef LFM_GEMM_TENSOR_CORE_MODEL
 template <bool KC>
 inline void launch_wide_model(const Problem& p, cudaStream_t stream) {
   for_wide_tile<LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, 6>(p.m, [&](auto ty) {  // an FP32 value and a 16-bit exponent
@@ -665,7 +677,6 @@ inline void launch_wide_model(const Problem& p, cudaStream_t stream) {
     wide_model_kernel<TY, LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
   });
 }
-#endif
 #ifdef LFM_GEMM_ROUND_ONCE
 // LFM_ONCE_ROWS=N: prompt positions below N are computed again by the round-once kernel (they overwrite), at every
 // site. Unset or 0: the build computes what the plain build does.
@@ -705,8 +716,17 @@ inline void launch_wide_base(const Problem& p, cudaStream_t stream) {
     return;
   }
   if (model_sites() & (p.site ? p.site : kSiteOther)) return launch_wide_model<KC>(p, stream);
-#endif
   launch_wide_plain<KC>(p, stream);
+#else
+  launch_wide_plain<KC>(p, stream);
+#if LFM_GEMM_FIRST_ROW
+  if (p.row0 == 0) {  // position 0 again, with the tensor-core arithmetic (it overwrites)
+    Problem first = p;
+    first.m = 1;
+    launch_wide_model<KC>(first, stream);
+  }
+#endif
+#endif
 }
 template <bool KC>
 inline void launch_wide(const Problem& p, cudaStream_t stream) {
