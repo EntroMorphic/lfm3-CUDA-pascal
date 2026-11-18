@@ -51,6 +51,8 @@ with red-team, remediate, verify, commit.
 ## Guardrails
 
 - **No speed work before phase 1 passes.** A slow correct engine is the baseline everything else is measured against.
+  *Lifted by the owner on 2026-11-17* ("lift the guardrail on speed. I think we're close enough to make this call"),
+  first for a faster exact prefill kernel. Phase 1's open rules stay open and are not waived by this.
 - **Port, don't redesign.** Host-side code (tokenizer, template, JSON, HTTP, image and audio front ends) stays as
   imported; GPU kernels are rewritten.
 - **Parity is checked, not assumed.** No engine change is committed as done until the parity gate (decision 4) has
@@ -78,3 +80,11 @@ with red-team, remediate, verify, commit.
   ([tensor-core-model-v1](validation/tensor-core-model-v1/)). Adopted as a standing gate (decision 4). Open: pins
   for the paths the fixtures do not reach (long context, the scorer, the other modalities), which would have to
   come from Thor; and, for phase 2, whether the shipping prefill kernel should itself be the exact one.
+- **For the Thor engine, after the exact Pascal kernel is fast** (owner, 2026-11-17: "#3 will come after #1 … make
+  sure we don't lose sight of that one"). The Thor prefill kernel reaches 36-42 TFLOPS of a 57 TFLOPS `mma.sync`
+  ceiling by its own record, and a `tcgen05` kernel is its planned stage B. What this project can hand it: the
+  tensor core's arithmetic is known and reproduced here, so any Thor kernel that keeps 16 products per step in
+  ascending k gives identical bits, and its tiling, data movement and pipeline can be restructured freely and checked
+  against the pins already in its repository; and a `tcgen05` kernel's arithmetic can be tested the same way (the
+  published model has a separate row for it). That work belongs to the Thor repository, which is read-only from here:
+  it is a proposal to bring to that team, not something to do in this one.

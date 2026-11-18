@@ -14,6 +14,9 @@
 // Quality bar (journal §9): perplexity equal or better than the standard stack within the 95% CI.
 // No reproduction of cuBLAS's kernel selection or reduction order is attempted or claimed.
 #include <cuda_bf16.h>
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+#include <lfm/tensor_core_model.hpp>
+#endif
 #include <algorithm>
 #include <cstdint>
 #include <stdexcept>
@@ -286,62 +289,16 @@ inline void launch_thin(const Problem& p, cudaStream_t stream) {
 }
 
 #ifdef LFM_GEMM_TENSOR_CORE_MODEL
-// Validation build only (validation/tensor-core-model-v1): the prefill kernel with the arithmetic of Blackwell's
-// mma.sync.aligned.m16n8k16 (BF16 in, FP32 accumulate), in integers, so that outputs can be compared bit for bit
-// with the Thor engine's. The published model (MMA-Sim's T-FDPA; L = 16, F = 25, round toward zero), per step of
-// 16 k: the accumulator and the 16 exact products are aligned to the largest exponent among them (a product's
-// exponent is the sum of its operands'), each truncated toward zero to 25 fractional bits below 2^emax, summed
-// exactly, and the sum truncated toward zero to FP32. Steps chain over k ascending from 0, as the Thor kernel's do.
-// Not modelled: infinities and NaN (the engine's operands are finite). Much slower than the plain kernel.
-inline constexpr int kNoExponent = -4096;  // a zero term: never the largest
-// BF16 bits -> value = sig * 2^(exp - 7): sig signed, |sig| in [128, 255] (or below 128 for a subnormal), 0 for zero.
-__device__ __forceinline__ void split_bf16(bf16 v, short& sig, short& exp) {
-  const unsigned u = *reinterpret_cast<const unsigned short*>(&v);
-  const int e = (u >> 7) & 0xff, m = u & 0x7f;
-  const int mag = e ? (m | 0x80) : m;
-  sig = short((u & 0x8000) ? -mag : mag);
-  exp = short(mag ? (e ? e - 127 : -126) : kNoExponent);
-}
-__device__ __forceinline__ float mma_step(float c, const short* as, const short* ae, const short* bs, const short* be,
-                                           int stride_a, int stride_b) {
-  const unsigned cu = __float_as_uint(c);
-  const int cb = (cu >> 23) & 0xff, cm = cu & 0x7fffff;
-  const int cmag = cb ? (cm | 0x800000) : cm;                 // value = cmag * 2^(cexp - 23)
-  const int cexp = cmag ? (cb ? cb - 127 : -126) : kNoExponent;
-  int emax = cexp;
-#pragma unroll
-  for (int i = 0; i < 16; ++i) emax = max(emax, int(as[i * stride_a]) && int(bs[i * stride_b])
-                                                  ? int(ae[i * stride_a]) + int(be[i * stride_b]) : kNoExponent);
-  if (emax == kNoExponent) return 0.f;
-  // In units of 2^(emax - 25). The accumulator: cmag * 2^(2 - (emax - cexp)).
-  long long sum = 0;
-  if (cmag) {
-    const int d = emax - cexp;
-    const long long mag = d <= 2 ? (long long)cmag << (2 - d) : (d - 2 < 31 ? (long long)(cmag >> (d - 2)) : 0);
-    sum = (cu >> 31) ? -mag : mag;
-  }
-#pragma unroll
-  for (int i = 0; i < 16; ++i) {
-    const int prod = int(as[i * stride_a]) * int(bs[i * stride_b]);  // exact; value = prod * 2^(e - 14)
-    if (!prod) continue;
-    const int d = emax - (int(ae[i * stride_a]) + int(be[i * stride_b]));
-    const unsigned pmag = prod < 0 ? -prod : prod;
-    const long long mag = d <= 11 ? (long long)pmag << (11 - d) : (d - 11 < 31 ? (long long)(pmag >> (d - 11)) : 0);
-    sum += prod < 0 ? -mag : mag;
-  }
-  // sum * 2^(emax - 25), toward zero. The conversion truncates; the scaling by a power of two is exact in range.
-  const float value = __ll2float_rz(sum);
-  int n = emax - 25;
-  float scaled = value;
-  while (n > 127) { scaled = __fmul_rz(scaled, __uint_as_float(254u << 23)); n -= 127; }
-  while (n < -126) { scaled = __fmul_rz(scaled, __uint_as_float(1u << 23)); n += 126; }
-  return __fmul_rz(scaled, __uint_as_float(unsigned(n + 127) << 23));
-}
+// Validation build only (validation/tensor-core-model-v1, PLAN decision 4): the prefill kernel with the arithmetic of
+// Blackwell's mma.sync.aligned.m16n8k16 (lfm/tensor_core_model.hpp), so that outputs can be compared bit for bit
+// with the Thor engine's. Steps of 16 k chain over k ascending from 0, as the Thor kernel's do.
+// -DLFM_GEMM_TENSOR_CORE_MODEL=2 uses the integer statement of the model for every step (the reference).
 template <bool BK_CONTIGUOUS>
 __global__ void __launch_bounds__(256) wide_model_kernel(Problem p) {
   constexpr int T = kWideTile;
-  __shared__ short sas[T][T], sae[T][T];  // A: [row][k] significand, exponent
-  __shared__ short sbs[T][T], sbe[T][T];  // B: [column][k]
+  __shared__ float sa[T][T];   // A: [row][k] value
+  __shared__ float sb[T][T];   // B: [column][k]
+  __shared__ short ea[T][T], eb[T][T];  // their exponents
   const int z = blockIdx.z;
   const bf16* A = p.a + z * p.stride_a;
   const bf16* B = p.b + (z / p.group) * p.stride_b;
@@ -354,12 +311,12 @@ __global__ void __launch_bounds__(256) wide_model_kernel(Problem p) {
     for (int i = tid; i < T * T; i += 256) {
       const int r = i / T, kk = i % T;
       const long long gm = m0 + r, gn = n0 + r, gk = k0 + kk;
-      const bf16 zero = __float2bfloat16_rn(0.f);
-      split_bf16(gm < p.m && gk < p.k ? A[gm * p.lda + gk] : zero, sas[r][kk], sae[r][kk]);
-      bf16 b = zero;
+      bf16 a = __float2bfloat16_rn(0.f), b = a;
+      if (gm < p.m && gk < p.k) a = A[gm * p.lda + gk];
       if constexpr (BK_CONTIGUOUS) { if (gn < p.n && gk < p.k) b = B[gn * p.ldb + gk]; }
       else { if (gn < p.n && gk < p.b_rows) b = B[gk * p.ldb + gn]; }
-      split_bf16(b, sbs[r][kk], sbe[r][kk]);
+      sa[r][kk] = __bfloat162float(a); ea[r][kk] = lfm::tcm::exponent_of_bf16_bits(*reinterpret_cast<const unsigned short*>(&a));
+      sb[r][kk] = __bfloat162float(b); eb[r][kk] = lfm::tcm::exponent_of_bf16_bits(*reinterpret_cast<const unsigned short*>(&b));
     }
     __syncthreads();
 #pragma unroll
@@ -368,8 +325,13 @@ __global__ void __launch_bounds__(256) wide_model_kernel(Problem p) {
       for (int i = 0; i < 2; ++i)
 #pragma unroll
         for (int j = 0; j < 2; ++j)
-          acc[i][j] = mma_step(acc[i][j], &sas[2 * ty + i][step], &sae[2 * ty + i][step],
-                               &sbs[2 * tx + j][step], &sbe[2 * tx + j][step], 1, 1);
+#if LFM_GEMM_TENSOR_CORE_MODEL == 2
+          acc[i][j] = lfm::tcm::mma_step_reference(acc[i][j], &sa[2 * ty + i][step], &ea[2 * ty + i][step],
+                                                   &sb[2 * tx + j][step], &eb[2 * tx + j][step], 1, 1);
+#else
+          acc[i][j] = lfm::tcm::mma_step(acc[i][j], &sa[2 * ty + i][step], &ea[2 * ty + i][step],
+                                         &sb[2 * tx + j][step], &eb[2 * tx + j][step], 1, 1);
+#endif
     __syncthreads();
   }
 #pragma unroll
