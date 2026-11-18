@@ -128,15 +128,26 @@ above it should not; that has not been tested with the server itself).
 
 ### The host change (2026-11-18, the owner being the machine's only user)
 
-Runtime only, on the GPU host:
+First at runtime, on the GPU host:
 
     sudo systemctl stop nvidia-persistenced
     sudo /usr/bin/nvidia-persistenced --user nvidia-persistenced --persistence-mode --verbose
 
-Its log: "device 0000:07:00.0 - persistence mode enabled". To undo: kill that process and
-`sudo systemctl start nvidia-persistenced`. It does not survive a reboot or a restart of the service; making it
-permanent is a systemd drop-in overriding `ExecStart`, not done. (`nvidia-smi -pm 1` from inside the container is
+Its log: "device 0000:07:00.0 - persistence mode enabled". (`nvidia-smi -pm 1` from inside the container is
 refused: insufficient permissions. The host has no `nvidia-smi`.)
+
+Made permanent the same day at the owner's instruction, as a systemd drop-in on the host,
+`/etc/systemd/system/nvidia-persistenced.service.d/persistence-mode.conf`:
+
+    [Service]
+    ExecStart=
+    ExecStart=/usr/bin/nvidia-persistenced --user nvidia-persistenced --persistence-mode --verbose
+
+The service was restarted through systemd and is active with that command line, still wanted by the driver's device
+unit as before (`sys-bus-pci-drivers-nvidia.device`), so it starts at boot the way it did. Checked afterwards with
+no other GPU process and the card at P8: cold prefill 0.236 s, decode 15.46 ms per token. To go back: remove the
+file, `systemctl daemon-reload`, `systemctl restart nvidia-persistenced`. Not checked: that it comes up this way
+after a reboot (the host has not been rebooted).
 
 Also tried: `CUDA_DISABLE_PERF_BOOST=1` (a driver environment variable of this branch) leaves the card in P2 at
 4,513 MHz under load and decode at 14.73 ms per token: no effect.
@@ -150,7 +161,7 @@ Without changing any output:
 | Run with the memory clock at 5,005 MHz instead of 4,513 | the 13.4 ms of weight reads, if they scale with the clock | about 1.3 ms |
 | Fuse or batch the small kernels (119 norms are 0.43 ms; 399 launches leave 0.48 ms between kernels) | the 1.5 ms that is not weight reads | under 1 ms |
 | Stop `lm_head` at the last live token (125,033 of 128,000 rows) | 2.3% of 1.97 ms | 0.05 ms |
-| Persistence mode on the host | the cold start: prefill 0.85 to 0.24 s and 22.5 to 15.5 ms per step on the first request | **done at runtime**, see above |
+| Persistence mode on the host | the cold start: prefill 0.85 to 0.24 s and 22.5 to 15.5 ms per step on the first request | **done**, see above |
 
 The memory clock under load is a property of the driver's power management: no documented switch for it was found
 for Linux (forum reports disagree; nothing tried beyond the environment variable above).
