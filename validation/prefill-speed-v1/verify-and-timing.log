@@ -1,0 +1,40 @@
+== binaries
+== rule 3: fixtures, LFM3_COMPACT_WINDOWS unset
+binary a7037d74ddd86363d244ab5062f6eabe83d741a5e85853332ea6b4eb9450807a  tree 776637df03cca349 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.845 s, decode 0.337 s / 15 calls
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.826 s, decode 0.023 s / 1 calls
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 1.758 s, decode 0.045 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.081 s, decode 0.241 s / 3 calls
+FIXTURES PASS
+== rule 3: fixtures, LFM3_COMPACT_WINDOWS=1
+binary a7037d74ddd86363d244ab5062f6eabe83d741a5e85853332ea6b4eb9450807a  tree 776637df03cca349 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.852 s, decode 0.337 s / 15 calls
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.829 s, decode 0.023 s / 1 calls
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 1.767 s, decode 0.045 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.081 s, decode 0.241 s / 3 calls
+FIXTURES PASS
+== rule 4: long decode
+long decode: 701 argmax ids equal; 1402 trace files, logits digest old 7b36221a127fb8fb new 7b36221a127fb8fb: IDENTICAL; decode 11.0 s old, 11.0 s new
+== rule 5 (unset): subsets
+  peak device memory 4407 MiB, wall 108.1 s, nll sha256 bbd311f9a2ee3c1a
+  peak device memory 4413 MiB, wall 116.9 s, nll sha256 cc8a92228da5449a
+  peak device memory 5195 MiB, wall 58.3 s, nll sha256 f24ef13b5136b28c
+  peak device memory 4407 MiB, wall 42.6 s, nll sha256 bbd311f9a2ee3c1a
+  peak device memory 4413 MiB, wall 57.1 s, nll sha256 cc8a92228da5449a
+  peak device memory 5027 MiB, wall 24.0 s, nll sha256 f24ef13b5136b28c
+subset 256: IDENTICAL
+subset 257: IDENTICAL
+subset 4096: IDENTICAL
+== VERIFY PASS
+verify rc=0
+== text-v4
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.860 s, decode 0.338 s / 15 calls
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.865 s, decode 0.023 s / 1 calls
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 1.749 s, decode 0.045 s / 3 calls
+== parity
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 1.687 s, decode 0.220 s / 15 calls
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 1.240 s, decode 0.018 s / 1 calls
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 3.940 s, decode 0.044 s / 3 calls
+rc=0
+
+[exited with code 0]
