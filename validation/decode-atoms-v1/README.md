@@ -68,7 +68,12 @@ step's kernels, not copy time.
 
 ## Why a cold process decodes slower
 
-The card lowers its clocks when idle and raises them only gradually under load (`decay-changes.txt`):
+Short answer: with nothing holding the card open, the driver tears the device down, and the first process to use
+it again gets a card whose clocks climb over about 2 s. The driver's persistence mode removes that.
+
+### What was seen first
+
+Sampled during cold runs (`decay-changes.txt`), the core clock climbs slowly once work begins:
 
 | Since load began | State | Core clock | Memory clock |
 |---|---|---:|---:|
@@ -79,26 +84,62 @@ The card lowers its clocks when idle and raises them only gradually under load (
 | 1.4 s | P2 | 1,721 MHz | 4,513 MHz |
 | 1.8 s | P2 | 1,999 MHz | 4,513 MHz |
 
-After the load ends the card holds its clocks for about 2.6 s, then steps down about every 2.7 s: 1,265 MHz, then
-772 MHz with the memory clock at 810 MHz after 8 s, and 139 MHz from about 13 s.
-
 Profiles of the cold `baseline` fixture (34-token prompt, 15 decode steps):
 
-| Build | Prefill (kernel time) | Decode starts at | Step time | MLP weights read at |
-|---|---:|---:|---:|---:|
-| `text-v1` (original plain kernel) | 1.15 s | 1.15 s | 15.7 falling to 14.9 ms | 255 rising to 261 GB/s |
-| `text-v4` (re-tiled plain kernel) | 0.82 s | 0.82 s | 22.6-22.9 ms | 179-181 GB/s |
+| Build | Prefill (kernel time) | Step time | MLP weights read at |
+|---|---:|---:|---:|
+| `text-v1` (original plain kernel) | 1.15 s | 15.7 falling to 14.9 ms | 255 rising to 261 GB/s |
+| `text-v4` (re-tiled plain kernel) | 0.82 s | 22.6-22.9 ms | 179-181 GB/s |
 
-During the `text-v4` run the core clock was between 250 and 580 MHz. At that clock the projection kernel cannot keep
-up with the memory: it reads weights at 180 GB/s, not 260, in every call of every step. `text-v1`'s slower prefill
-ended later in the ramp, so its decode ran nearly at full clock. With warm-up runs all builds decode the fixture at
-14.5 ms per step ([prefill-speed-v1](../prefill-speed-v1/)).
+During the `text-v4` run the core clock was between 250 and 580 MHz, and at that clock the projection kernel reads
+weights at 180 GB/s, not 260. `text-v1`'s slower prefill ended later in the climb. So the faster prefill exposed the
+effect; nothing in decode changed.
 
-So the slow figure that prompted this was the card's clock ramp, which the faster prefill exposed. Nothing in the
-engine changed in decode.
+### What the cause is
 
-It is not only a first-request effect: after about 3 s without work the clocks begin to fall, and after about 13 s
-the next request starts from the bottom and spends its first 2 s on a slow card.
+The slow climb is not what the card does whenever it has been idle. The same cold fixture, `text-v4`, after 40 s
+with no engine process:
+
+| Condition before the request | Card just before | Prefill | Decode per token |
+|---|---|---:|---:|
+| No process has the card open | P5, 810 MHz memory | 0.844 s | 22.45 ms |
+| Another process holds an idle CUDA context | P8, 139 MHz core, 405 MHz memory | 0.234 s | 14.50 ms |
+| Another process launches a 50 µs kernel every 250 ms, 1 s or 3 s | P2, 1,721 MHz, 4,513 MHz, 41.7 W | 0.234 s | 14.4-14.5 ms |
+
+With the card at its lowest clocks but held open by anything, the request runs at full speed: the clocks come up at
+once. The slow climb belongs to a device the driver has just re-initialized because its last client had gone.
+
+The host's `nvidia-persistenced` was running with Ubuntu's default `--no-persistence-mode`. Restarted in
+persistence mode (below), with no other GPU process and the card at P8 before each request:
+
+| Build | Prefill | Decode per token | Whole process |
+|---|---:|---:|---:|
+| `text-v4` | 0.236 s (was 0.845) | 15.5 ms (was 22.45) | 1.97 s |
+| `text-v1` | 0.366 s (was 1.23) | 15.4 ms | 2.11 s |
+| `parity` (exact) | 0.684 s (was 1.63) | 15.5 ms | 2.42 s |
+
+The 1 ms over the warm 14.5 is what is left of the climb in the first steps. Idle draw with the daemon holding the
+card: 13.4 W in P8 (17 to 35 W was seen before, in P5).
+
+Earlier readings of this section's subject that were wrong, kept for the record: "start-up work done lazily"
+(prefill-speed-v1), then "the card's clock ramp after any idle period" (the first version of this section, which
+also said a running server would see it after a few idle seconds: a server holds a CUDA context, so by the table
+above it should not; that has not been tested with the server itself).
+
+### The host change (2026-11-18, the owner being the machine's only user)
+
+Runtime only, on the GPU host:
+
+    sudo systemctl stop nvidia-persistenced
+    sudo /usr/bin/nvidia-persistenced --user nvidia-persistenced --persistence-mode --verbose
+
+Its log: "device 0000:07:00.0 - persistence mode enabled". To undo: kill that process and
+`sudo systemctl start nvidia-persistenced`. It does not survive a reboot or a restart of the service; making it
+permanent is a systemd drop-in overriding `ExecStart`, not done. (`nvidia-smi -pm 1` from inside the container is
+refused: insufficient permissions. The host has no `nvidia-smi`.)
+
+Also tried: `CUDA_DISABLE_PERF_BOOST=1` (a driver environment variable of this branch) leaves the card in P2 at
+4,513 MHz under load and decode at 14.73 ms per token: no effect.
 
 ## What could make a step cheaper (none of it done; estimates are arithmetic, not measurements)
 
@@ -109,10 +150,10 @@ Without changing any output:
 | Run with the memory clock at 5,005 MHz instead of 4,513 | the 13.4 ms of weight reads, if they scale with the clock | about 1.3 ms |
 | Fuse or batch the small kernels (119 norms are 0.43 ms; 399 launches leave 0.48 ms between kernels) | the 1.5 ms that is not weight reads | under 1 ms |
 | Stop `lm_head` at the last live token (125,033 of 128,000 rows) | 2.3% of 1.97 ms | 0.05 ms |
-| Keep the clocks up between requests (a host power setting, or a trickle of work from the server) | the first 2 s after an idle period: 22.8 against 14.9 ms per step, and a slower prefill | cold-start only |
+| Persistence mode on the host | the cold start: prefill 0.85 to 0.24 s and 22.5 to 15.5 ms per step on the first request | **done at runtime**, see above |
 
-The first and last are properties of the host's driver and power management, not of the engine, and changing them is
-a decision about the machine.
+The memory clock under load is a property of the driver's power management: no documented switch for it was found
+for Linux (forum reports disagree; nothing tried beyond the environment variable above).
 
 Past that, a single stream cannot go faster while each token reads 3.46 GB at the memory's rate. What changes the
 arithmetic is reading the weights once for several rows: the batch decoder and the tree-verify decoder of the

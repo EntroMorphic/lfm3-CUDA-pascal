@@ -84,8 +84,8 @@ Warm prefill of the 34-token fixture: 0.367 s, 0.245 s and 0.694 s.
 - Steady-state decode is 14.7 ms per token, 68 tokens per second, at about 1,000 tokens of context, and is the same
   in all three builds, as it must be: decode runs none of the changed kernels.
 - The slow figure is a cold-start effect: with warm-up runs it is gone. Explained in
-  [decode-atoms-v1](../decode-atoms-v1/): the card raises its core clock over about 2 s of load, and the faster
-  prefill starts decode earlier in that ramp. (The guess first written here, lazy start-up work, was wrong, and so was
-  "a process's first request only": any request after a few idle seconds starts on lowered clocks.)
+  [decode-atoms-v1](../decode-atoms-v1/): with no process holding the card, the driver re-initializes it for the next
+  one and its clocks climb over about 2 s; the faster prefill starts decode earlier in that climb. The driver's
+  persistence mode removes it.
 - For reference, the Thor engine's README gives 62 tokens per second at batch one for its decode loop. The
   conditions of that figure are not matched here, so it is context, not a comparison.
