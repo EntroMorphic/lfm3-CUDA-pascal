@@ -195,3 +195,22 @@ engine's plain kernel is the nearest to it.
 Not established: why the particular rounding of that row moves the mean the way it does (which elements, at which
 layer); and whether the same shared-row effect explains the differences *between* the HF configurations and the
 FP32 model (SDPA's own shift at 257 relative to 256), which the data here are consistent with but do not test.
+
+## The hybrid against the bar (2026-11-18)
+
+The validation build with `LFM_TCM_ROWS=1`: the tensor-core arithmetic for the [BOS] row, the plain kernel for every
+other row (scorer `454dcc1b…`), on the full 256- and 257-token windows; `tools/ppl_compare.py` unchanged, against HF
+SDPA (`records/compare-hybrid.json`; the 4,096 and 32,768 rows of that report are the plain kernel's files, the
+hybrid was not run at those lengths).
+
+| Length | PPL SDPA | PPL hybrid | dNLL | 95% CI | Verdict | Plain kernel, for comparison |
+|---|---:|---:|---:|---|---|---|
+| 256 | 26.5821 | 26.5798 | −8.68e-05 | [−2.14e-04, +4.17e-05] | equal: PASS | +6.89e-05, equal |
+| 257 | 26.5045 | 26.5055 | +3.87e-05 | [−9.09e-05, +1.67e-04] | equal: PASS | +2.27e-04, **worse** |
+
+Against the Thor engine the hybrid's mean differs by −4.5e-05 at 257 and +6.7e-05 at 256, both intervals spanning
+zero, and its NLL at position 1 equals the Thor engine's value for value in all 1,155 and 1,160 windows.
+
+Changing one row of the prefill moves the 257-token verdict from "worse" to "equal". Time: 1,190 s and 931 s for the
+two lengths (plain: 1,005 s and 737 s), in a build whose plain kernel is not the tuned one's only cost: every GEMM
+is launched twice.

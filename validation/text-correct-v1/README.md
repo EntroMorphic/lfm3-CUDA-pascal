@@ -155,6 +155,10 @@ core's.
 
 ### What is open
 
+- **Why rule 3 fails at 257 is known** ([prefill-arithmetic-v1](../prefill-arithmetic-v1/)): the difference is made
+  in the [BOS] row, which every window shares, so it is one fixed perturbation that the rule's window bootstrap
+  counts 1,155 times. With the tensor-core arithmetic in that row alone the verdict at 257 is "equal". What to ship
+  and whether the rule's statistics should change are the owner's decisions and are not made.
 - Rule 3 fails at 257 with the plain prefill kernel. The exact kernel
   ([tensor-core-model-v1](../tensor-core-model-v1/)) reproduces the Thor engine's arithmetic, and the Thor engine
   passes rule 3 at every length; whether the exact build's NLL files equal Thor's byte for byte has not been run.
