@@ -65,48 +65,88 @@ __device__ __forceinline__ void put(const Problem& p, long long index, float v) 
 }
 
 // Pascal (sm_61) has no tensor cores, cp.async or ldmatrix: the prefill kernel is plain FP32.
-// One block computes a 32 x 32 tile of C; each of its 256 threads owns a 2 x 2 patch. K advances 32 at a
-// time through shared memory, operands converted to FP32 as they are loaded (exact). The reduction order
-// of every output is fixed and simple: k ascending, one fused multiply-add per term.
-// Elements outside the operands read as zero: rows >= m, columns >= n, k >= K (or >= b_rows for a K x N B).
-inline constexpr int kWideTile = 32;
-template <bool BK_CONTIGUOUS>
-__global__ void __launch_bounds__(256) wide_kernel(Problem p) {
-  constexpr int T = kWideTile;
-  __shared__ float sa[T][T];  // [row][k]
-  __shared__ float sb[T][T];  // [column][k]
+//
+// A block of 8 x TY threads computes a (TY x RM) x (8 x RN) tile of C; each thread owns an RM x RN patch in
+// registers. K advances kWideK at a time through shared memory, operands converted to FP32 as they are loaded
+// (exact). The reduction order of every output is fixed and does not depend on the tiling: k ascending, one fused
+// multiply-add per term. Elements outside the operands read as zero: rows >= m, columns >= n, k >= K (or >= b_rows
+// for a K x N B).
+//
+// Shared memory is laid out [k][row] and [k][column], so that the threads of a warp (8 columns x 4 rows of
+// patches) read 4 addresses RM apart and 8 addresses RN apart: with RM = 8 and RN = 4, all in different banks.
+// (The first Pascal kernel stored [column][k] with 32 k per row: every thread of a warp hit the same bank.)
+inline constexpr int kWideK = 32, kWideTX = 8;
+template <int TY, int RM, int RN>
+struct WideTile {
+  static constexpr int THREADS = kWideTX * TY, BM = TY * RM, BN = kWideTX * RN;
+};
+// Loads one K stage: A rows [m0, m0 + BM) and B columns [n0, n0 + BN) for k in [k0, k0 + kWideK).
+// store(is_b, kk, index, value): where the caller keeps it.
+template <int THREADS, int BM, int BN, bool BK_CONTIGUOUS, class Store>
+__device__ __forceinline__ void wide_load(const Problem& p, const bf16* A, const bf16* B, int m0, int n0, int k0, Store store) {
+  const bf16 zero = __float2bfloat16_rn(0.f);
+#pragma unroll
+  for (int i = threadIdx.x; i < BM * kWideK; i += THREADS) {
+    const int r = i / kWideK, kk = i % kWideK;  // consecutive threads: consecutive k of one row
+    const long long gm = m0 + r, gk = k0 + kk;
+    store(false, kk, r, gm < p.m && gk < p.k ? A[gm * p.lda + gk] : zero);
+  }
+  if constexpr (BK_CONTIGUOUS) {
+#pragma unroll
+    for (int i = threadIdx.x; i < BN * kWideK; i += THREADS) {
+      const int c = i / kWideK, kk = i % kWideK;
+      const long long gn = n0 + c, gk = k0 + kk;
+      store(true, kk, c, gn < p.n && gk < p.k ? B[gn * p.ldb + gk] : zero);
+    }
+  } else {
+#pragma unroll
+    for (int i = threadIdx.x; i < BN * kWideK; i += THREADS) {
+      const int kk = i / BN, c = i % BN;        // a K x N operand: consecutive columns of one k
+      const long long gn = n0 + c, gk = k0 + kk;
+      store(true, kk, c, gn < p.n && gk < p.b_rows ? B[gk * p.ldb + gn] : zero);
+    }
+  }
+}
+template <int TY, int RM, int RN, bool BK_CONTIGUOUS>
+__global__ void __launch_bounds__(kWideTX * TY) wide_kernel(Problem p) {
+  using T = WideTile<TY, RM, RN>;
+  __shared__ float sa[kWideK][T::BM];
+  __shared__ float sb[kWideK][T::BN];
   const int z = blockIdx.z;
   const bf16* A = p.a + z * p.stride_a;
   const bf16* B = p.b + (z / p.group) * p.stride_b;
   const long long c0 = z * p.stride_c;
-  const int n0 = blockIdx.x * T, m0 = blockIdx.y * T;
-  const int tid = threadIdx.x, ty = tid / 16, tx = tid % 16;
-  float acc[2][2] = {{0.f, 0.f}, {0.f, 0.f}};
-  for (int k0 = 0; k0 < p.k; k0 += T) {
+  const int n0 = blockIdx.x * T::BN, m0 = blockIdx.y * T::BM;
+  const int ty = threadIdx.x / kWideTX, tx = threadIdx.x % kWideTX;
+  float acc[RM][RN];
 #pragma unroll
-    for (int i = tid; i < T * T; i += 256) {
-      const int r = i / T, kk = i % T;
-      const long long gm = m0 + r, gn = n0 + r, gk = k0 + kk;
-      sa[r][kk] = gm < p.m && gk < p.k ? __bfloat162float(A[gm * p.lda + gk]) : 0.f;
-      if constexpr (BK_CONTIGUOUS) sb[r][kk] = gn < p.n && gk < p.k ? __bfloat162float(B[gn * p.ldb + gk]) : 0.f;
-      else sb[r][kk] = gn < p.n && gk < p.b_rows ? __bfloat162float(B[gk * p.ldb + gn]) : 0.f;
-    }
+  for (int i = 0; i < RM; ++i)
+#pragma unroll
+    for (int j = 0; j < RN; ++j) acc[i][j] = 0.f;
+  for (int k0 = 0; k0 < p.k; k0 += kWideK) {
+    wide_load<T::THREADS, T::BM, T::BN, BK_CONTIGUOUS>(p, A, B, m0, n0, k0, [&](bool is_b, int kk, int index, bf16 v) {
+      if (is_b) sb[kk][index] = __bfloat162float(v); else sa[kk][index] = __bfloat162float(v);
+    });
     __syncthreads();
 #pragma unroll
-    for (int kk = 0; kk < T; ++kk) {
-      const float a0 = sa[2 * ty][kk], a1 = sa[2 * ty + 1][kk], b0 = sb[2 * tx][kk], b1 = sb[2 * tx + 1][kk];
-      acc[0][0] = fmaf(a0, b0, acc[0][0]);
-      acc[0][1] = fmaf(a0, b1, acc[0][1]);
-      acc[1][0] = fmaf(a1, b0, acc[1][0]);
-      acc[1][1] = fmaf(a1, b1, acc[1][1]);
+    for (int kk = 0; kk < kWideK; ++kk) {
+      float a[RM], b[RN];
+#pragma unroll
+      for (int i = 0; i < RM; ++i) a[i] = sa[kk][ty * RM + i];
+#pragma unroll
+      for (int j = 0; j < RN; ++j) b[j] = sb[kk][tx * RN + j];
+#pragma unroll
+      for (int i = 0; i < RM; ++i)
+#pragma unroll
+        for (int j = 0; j < RN; ++j) acc[i][j] = fmaf(a[i], b[j], acc[i][j]);
     }
     __syncthreads();
   }
 #pragma unroll
-  for (int i = 0; i < 2; ++i)
+  for (int i = 0; i < RM; ++i)
 #pragma unroll
-    for (int j = 0; j < 2; ++j) {
-      const long long row = m0 + 2 * ty + i, col = n0 + 2 * tx + j;
+    for (int j = 0; j < RN; ++j) {
+      const long long row = m0 + ty * RM + i, col = n0 + tx * RN + j;
       if (row < p.m && col < p.n) put(p, c0 + row * p.ldc + col, acc[i][j]);
     }
 }
@@ -291,67 +331,187 @@ inline void launch_thin(const Problem& p, cudaStream_t stream) {
 #ifdef LFM_GEMM_TENSOR_CORE_MODEL
 // Validation build only (validation/tensor-core-model-v1, PLAN decision 4): the prefill kernel with the arithmetic of
 // Blackwell's mma.sync.aligned.m16n8k16 (lfm/tensor_core_model.hpp), so that outputs can be compared bit for bit
-// with the Thor engine's. Steps of 16 k chain over k ascending from 0, as the Thor kernel's do.
+// with the Thor engine's. Steps of 16 k chain over k ascending from 0, as the Thor kernel's do. Same tiling as the
+// plain kernel; each operand's exponent is kept beside its value.
 // -DLFM_GEMM_TENSOR_CORE_MODEL=2 uses the integer statement of the model for every step (the reference).
-template <bool BK_CONTIGUOUS>
-__global__ void __launch_bounds__(256) wide_model_kernel(Problem p) {
-  constexpr int T = kWideTile;
-  __shared__ float sa[T][T];   // A: [row][k] value
-  __shared__ float sb[T][T];   // B: [column][k]
-  __shared__ short ea[T][T], eb[T][T];  // their exponents
+template <int TY, int RM, int RN, bool BK_CONTIGUOUS>
+__global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
+  using T = WideTile<TY, RM, RN>;
+  namespace tcm = lfm::tcm;
+  __shared__ float sa[kWideK][T::BM];
+  __shared__ float sb[kWideK][T::BN];
+  __shared__ short ea[kWideK][T::BM], eb[kWideK][T::BN];
+  // Per step of 16 k: the largest exponent of each row's and each column's operands. Their sum bounds every
+  // product's exponent of that output from above.
+#if LFM_GEMM_TENSOR_CORE_MODEL != 2
+  __shared__ short ra[kWideK / 16][T::BM], cb[kWideK / 16][T::BN];
+#endif
   const int z = blockIdx.z;
   const bf16* A = p.a + z * p.stride_a;
   const bf16* B = p.b + (z / p.group) * p.stride_b;
   const long long c0 = z * p.stride_c;
-  const int n0 = blockIdx.x * T, m0 = blockIdx.y * T;
-  const int tid = threadIdx.x, ty = tid / 16, tx = tid % 16;
-  float acc[2][2] = {{0.f, 0.f}, {0.f, 0.f}};
-  for (int k0 = 0; k0 < p.k; k0 += T) {
+  const int n0 = blockIdx.x * T::BN, m0 = blockIdx.y * T::BM;
+  const int ty = threadIdx.x / kWideTX, tx = threadIdx.x % kWideTX;
+  float acc[RM][RN];
 #pragma unroll
-    for (int i = tid; i < T * T; i += 256) {
-      const int r = i / T, kk = i % T;
-      const long long gm = m0 + r, gn = n0 + r, gk = k0 + kk;
-      bf16 a = __float2bfloat16_rn(0.f), b = a;
-      if (gm < p.m && gk < p.k) a = A[gm * p.lda + gk];
-      if constexpr (BK_CONTIGUOUS) { if (gn < p.n && gk < p.k) b = B[gn * p.ldb + gk]; }
-      else { if (gn < p.n && gk < p.b_rows) b = B[gk * p.ldb + gn]; }
-      sa[r][kk] = __bfloat162float(a); ea[r][kk] = lfm::tcm::exponent_of_bf16_bits(*reinterpret_cast<const unsigned short*>(&a));
-      sb[r][kk] = __bfloat162float(b); eb[r][kk] = lfm::tcm::exponent_of_bf16_bits(*reinterpret_cast<const unsigned short*>(&b));
+  for (int i = 0; i < RM; ++i)
+#pragma unroll
+    for (int j = 0; j < RN; ++j) acc[i][j] = 0.f;
+  for (int k0 = 0; k0 < p.k; k0 += kWideK) {
+    wide_load<T::THREADS, T::BM, T::BN, BK_CONTIGUOUS>(p, A, B, m0, n0, k0, [&](bool is_b, int kk, int index, bf16 v) {
+      const short e = tcm::exponent_of_bf16_bits(*reinterpret_cast<const unsigned short*>(&v));
+      if (is_b) { sb[kk][index] = __bfloat162float(v); eb[kk][index] = e; }
+      else { sa[kk][index] = __bfloat162float(v); ea[kk][index] = e; }
+    });
+    __syncthreads();
+#if LFM_GEMM_TENSOR_CORE_MODEL != 2
+#pragma unroll
+    for (int i = threadIdx.x; i < (T::BM + T::BN) * (kWideK / 16); i += T::THREADS) {
+      const int index = i / (kWideK / 16), step = i % (kWideK / 16);
+      int e = tcm::kNoExponent;
+      if (index < T::BM) {
+#pragma unroll
+        for (int kk = 0; kk < 16; ++kk) e = max(e, int(ea[step * 16 + kk][index]));
+        ra[step][index] = short(e);
+      } else {
+#pragma unroll
+        for (int kk = 0; kk < 16; ++kk) e = max(e, int(eb[step * 16 + kk][index - T::BM]));
+        cb[step][index - T::BM] = short(e);
+      }
     }
     __syncthreads();
-#pragma unroll
-    for (int step = 0; step < T; step += 16)
-#pragma unroll
-      for (int i = 0; i < 2; ++i)
-#pragma unroll
-        for (int j = 0; j < 2; ++j)
-#if LFM_GEMM_TENSOR_CORE_MODEL == 2
-          acc[i][j] = lfm::tcm::mma_step_reference(acc[i][j], &sa[2 * ty + i][step], &ea[2 * ty + i][step],
-                                                   &sb[2 * tx + j][step], &eb[2 * tx + j][step], 1, 1);
-#else
-          acc[i][j] = lfm::tcm::mma_step(acc[i][j], &sa[2 * ty + i][step], &ea[2 * ty + i][step],
-                                         &sb[2 * tx + j][step], &eb[2 * tx + j][step], 1, 1);
 #endif
+    for (int step = 0; step < kWideK; step += 16) {
+#if LFM_GEMM_TENSOR_CORE_MODEL == 2
+      bool fast = false;
+#else
+      // The window of every output of the patch: the largest exponent among its accumulator and 16 products.
+      // Where the accumulator's exponent is at least the bound on the products', it is the window, and the pass
+      // over the 16 exponent sums is not needed (the usual case once a sum is under way).
+      int emax[RM][RN];
+      bool bounded = true;
+#pragma unroll
+      for (int i = 0; i < RM; ++i)
+#pragma unroll
+        for (int j = 0; j < RN; ++j) {
+          emax[i][j] = tcm::exponent_of_float(acc[i][j]);
+          bounded = bounded && emax[i][j] >= int(ra[step / 16][ty * RM + i]) + int(cb[step / 16][tx * RN + j]);
+        }
+      if (!bounded)
+#pragma unroll
+      for (int kk = 0; kk < 16; ++kk) {
+        int xe[RM], ye[RN];
+#pragma unroll
+        for (int i = 0; i < RM; ++i) xe[i] = ea[step + kk][ty * RM + i];
+#pragma unroll
+        for (int j = 0; j < RN; ++j) ye[j] = eb[step + kk][tx * RN + j];
+#pragma unroll
+        for (int i = 0; i < RM; ++i)
+#pragma unroll
+          for (int j = 0; j < RN; ++j) emax[i][j] = max(emax[i][j], xe[i] + ye[j]);
+      }
+      // All terms zero (padding): any window gives zero. Otherwise the float form needs the window in range.
+      bool fast = true;
+#pragma unroll
+      for (int i = 0; i < RM; ++i)
+#pragma unroll
+        for (int j = 0; j < RN; ++j) {
+          if (emax[i][j] < tcm::kNoExponent / 2) emax[i][j] = 0;
+          fast = fast && emax[i][j] >= -90 && emax[i][j] <= 90;
+        }
+      if (fast) {
+        // In units of q = 2^(emax - 25): 16 products, each below 2^27 in magnitude and their sum below 2^31.
+        int sum[RM][RN];
+        float inverse[RM][RN];
+#pragma unroll
+        for (int i = 0; i < RM; ++i)
+#pragma unroll
+          for (int j = 0; j < RN; ++j) { sum[i][j] = 0; inverse[i][j] = __uint_as_float(unsigned(25 - emax[i][j] + 127) << 23); }
+#pragma unroll
+        for (int kk = 0; kk < 16; ++kk) {
+          float a[RM], b[RN];
+#pragma unroll
+          for (int i = 0; i < RM; ++i) a[i] = sa[step + kk][ty * RM + i];
+#pragma unroll
+          for (int j = 0; j < RN; ++j) b[j] = sb[step + kk][tx * RN + j];
+#pragma unroll
+          for (int i = 0; i < RM; ++i)
+#pragma unroll
+            for (int j = 0; j < RN; ++j) sum[i][j] += __float2int_rz(__fmul_rn(__fmul_rn(a[i], b[j]), inverse[i][j]));
+        }
+#pragma unroll
+        for (int i = 0; i < RM; ++i)
+#pragma unroll
+          for (int j = 0; j < RN; ++j) {
+            const long long total = (long long)sum[i][j] + __float2int_rz(__fmul_rn(acc[i][j], inverse[i][j]));
+            acc[i][j] = __fmul_rn(__ll2float_rz(total), __uint_as_float(unsigned(emax[i][j] - 25 + 127) << 23));
+          }
+      }
+#endif
+      if (!fast) {
+#pragma unroll
+        for (int i = 0; i < RM; ++i)
+#pragma unroll
+          for (int j = 0; j < RN; ++j)
+            acc[i][j] = tcm::mma_step_reference(acc[i][j], &sa[step][ty * RM + i], &ea[step][ty * RM + i],
+                                                &sb[step][tx * RN + j], &eb[step][tx * RN + j], T::BM, T::BN);
+      }
+    }
     __syncthreads();
   }
 #pragma unroll
-  for (int i = 0; i < 2; ++i)
+  for (int i = 0; i < RM; ++i)
 #pragma unroll
-    for (int j = 0; j < 2; ++j) {
-      const long long row = m0 + 2 * ty + i, col = n0 + 2 * tx + j;
+    for (int j = 0; j < RN; ++j) {
+      const long long row = m0 + ty * RM + i, col = n0 + tx * RN + j;
       if (row < p.m && col < p.n) put(p, c0 + row * p.ldc + col, acc[i][j]);
     }
 }
 #endif
 
+// The prefill tile. Plain kernel: 8 x 4 outputs per thread. Exact kernel: 2 x 2 (measured on the GTX 1080: it is
+// bound by its arithmetic, not its loads, and larger patches run slower). The block's height follows the row count
+// so that a short prefill does not compute rows of padding. LFM_GEMM_WIDE_RM / _RN override the patch, for
+// measurement.
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+#ifndef LFM_GEMM_WIDE_RM
+#define LFM_GEMM_WIDE_RM 2
+#endif
+#ifndef LFM_GEMM_WIDE_RN
+#define LFM_GEMM_WIDE_RN 2
+#endif
+inline constexpr int kWideOperandBytes = 6;  // an FP32 value and a 16-bit exponent
+#else
+#ifndef LFM_GEMM_WIDE_RM
+#define LFM_GEMM_WIDE_RM 8
+#endif
+#ifndef LFM_GEMM_WIDE_RN
+#define LFM_GEMM_WIDE_RN 4
+#endif
+inline constexpr int kWideOperandBytes = 4;
+#endif
+template <int TY>
+inline constexpr bool kWideFits =
+    kWideK * (WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>::BM + WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>::BN) *
+        kWideOperandBytes + 2048 <= 48 * 1024;  // sm_61: 48 KiB of shared memory per block
+template <int TY, bool KC>
+inline void launch_wide_tile(const Problem& p, cudaStream_t stream) {
+  using T = WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>;
+  const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+  wide_model_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
+#else
+  wide_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
+#endif
+}
 template <bool KC>
 inline void launch_wide(const Problem& p, cudaStream_t stream) {
-  constexpr int T = kWideTile;
-#ifdef LFM_GEMM_TENSOR_CORE_MODEL
-  wide_model_kernel<KC><<<dim3((p.n + T - 1) / T, (p.m + T - 1) / T, p.batch), 256, 0, stream>>>(p);
-#else
-  wide_kernel<KC><<<dim3((p.n + T - 1) / T, (p.m + T - 1) / T, p.batch), 256, 0, stream>>>(p);
-#endif
+  static_assert(kWideFits<4>, "the smallest prefill tile must fit shared memory");
+  const int rows = (p.m + LFM_GEMM_WIDE_RM - 1) / LFM_GEMM_WIDE_RM;  // patches needed
+  if constexpr (kWideFits<32>) { if (rows > 16) return launch_wide_tile<32, KC>(p, stream); }
+  if constexpr (kWideFits<16>) { if (rows > 8) return launch_wide_tile<16, KC>(p, stream); }
+  if constexpr (kWideFits<8>) { if (rows > 4) return launch_wide_tile<8, KC>(p, stream); }
+  launch_wide_tile<4, KC>(p, stream);
 }
 
 }  // namespace detail
