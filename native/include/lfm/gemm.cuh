@@ -19,6 +19,8 @@
 #endif
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
+#include <type_traits>
 #include <stdexcept>
 #include <string>
 
@@ -47,7 +49,11 @@ struct Problem {
   // Use the prefill kernel whatever m is: for a block of rows of a larger prefill, whose last block may have
   // 8 rows or fewer. Every output then has the arithmetic it has when the prefill is one call.
   bool wide = false;
+  // Which part of the model this product belongs to (kSite*), for experiments that give parts of the model different
+  // prefill arithmetic (validation/prefill-arithmetic-v1). It never changes what the default builds compute.
+  int site = 0;
 };
+inline constexpr int kSiteHead = 1, kSiteMlp = 2, kSiteConv = 4, kSiteAttentionProjection = 8, kSiteAttention = 16, kSiteOther = 32;
 
 // Keys per split of the decode P·V path, and the scratch it needs.
 inline constexpr int kSplitKeys = 256;
@@ -76,6 +82,22 @@ __device__ __forceinline__ void put(const Problem& p, long long index, float v) 
 // patches) read 4 addresses RM apart and 8 addresses RN apart: with RM = 8 and RN = 4, all in different banks.
 // (The first Pascal kernel stored [column][k] with 32 k per row: every thread of a warp hit the same bank.)
 inline constexpr int kWideK = 32, kWideTX = 8;
+// The plain kernel's multiply-add. Experiments only (validation/prefill-arithmetic-v1): -DLFM_GEMM_PLAIN_ROUND=1
+// rounds every multiply-add toward zero, =2 away from zero; the default (nearest) is the engine's.
+#ifndef LFM_GEMM_PLAIN_ROUND
+#define LFM_GEMM_PLAIN_ROUND 0
+#endif
+__device__ __forceinline__ float fma_away(float a, float b, float c) {
+  const float nearest = fmaf(a, b, c);
+  return nearest < 0.f ? __fmaf_rd(a, b, c) : __fmaf_ru(a, b, c);
+}
+#if LFM_GEMM_PLAIN_ROUND == 1
+#define LFM_GEMM_PLAIN_FMA(a, b, c) __fmaf_rz((a), (b), (c))
+#elif LFM_GEMM_PLAIN_ROUND == 2
+#define LFM_GEMM_PLAIN_FMA(a, b, c) fma_away((a), (b), (c))
+#else
+#define LFM_GEMM_PLAIN_FMA(a, b, c) fmaf((a), (b), (c))
+#endif
 template <int TY, int RM, int RN>
 struct WideTile {
   static constexpr int THREADS = kWideTX * TY, BM = TY * RM, BN = kWideTX * RN;
@@ -138,7 +160,7 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_kernel(Problem p) {
 #pragma unroll
       for (int i = 0; i < RM; ++i)
 #pragma unroll
-        for (int j = 0; j < RN; ++j) acc[i][j] = fmaf(a[i], b[j], acc[i][j]);
+        for (int j = 0; j < RN; ++j) acc[i][j] = LFM_GEMM_PLAIN_FMA(a[i], b[j], acc[i][j]);
     }
     __syncthreads();
   }
@@ -469,49 +491,68 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
 }
 #endif
 
-// The prefill tile. Plain kernel: 8 x 4 outputs per thread. Exact kernel: 2 x 2 (measured on the GTX 1080: it is
+// The prefill tiles. Plain kernel: 8 x 4 outputs per thread. Exact kernel: 2 x 2 (measured on the GTX 1080: it is
 // bound by its arithmetic, not its loads, and larger patches run slower). The block's height follows the row count
-// so that a short prefill does not compute rows of padding. LFM_GEMM_WIDE_RM / _RN override the patch, for
-// measurement.
-#ifdef LFM_GEMM_TENSOR_CORE_MODEL
-#ifndef LFM_GEMM_WIDE_RM
-#define LFM_GEMM_WIDE_RM 2
-#endif
-#ifndef LFM_GEMM_WIDE_RN
-#define LFM_GEMM_WIDE_RN 2
-#endif
-inline constexpr int kWideOperandBytes = 6;  // an FP32 value and a 16-bit exponent
-#else
+// so that a short prefill does not compute rows of padding. LFM_GEMM_WIDE_RM / _RN override the plain patch and
+// LFM_GEMM_MODEL_RM / _RN the exact one, for measurement.
 #ifndef LFM_GEMM_WIDE_RM
 #define LFM_GEMM_WIDE_RM 8
 #endif
 #ifndef LFM_GEMM_WIDE_RN
 #define LFM_GEMM_WIDE_RN 4
 #endif
-inline constexpr int kWideOperandBytes = 4;
+#ifndef LFM_GEMM_MODEL_RM
+#define LFM_GEMM_MODEL_RM 2
 #endif
-template <int TY>
-inline constexpr bool kWideFits =
-    kWideK * (WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>::BM + WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>::BN) *
-        kWideOperandBytes + 2048 <= 48 * 1024;  // sm_61: 48 KiB of shared memory per block
-template <int TY, bool KC>
-inline void launch_wide_tile(const Problem& p, cudaStream_t stream) {
-  using T = WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>;
-  const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
-#ifdef LFM_GEMM_TENSOR_CORE_MODEL
-  wide_model_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
-#else
-  wide_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
+#ifndef LFM_GEMM_MODEL_RN
+#define LFM_GEMM_MODEL_RN 2
 #endif
+// sm_61: 48 KiB of shared memory per block; `bytes` per operand held in it.
+template <int TY, int RM, int RN, int BYTES>
+inline constexpr bool kWideFits = kWideK * (WideTile<TY, RM, RN>::BM + WideTile<TY, RM, RN>::BN) * BYTES + 2048 <= 48 * 1024;
+template <int RM, int RN, int BYTES, class Launch>
+inline void for_wide_tile(int m, Launch launch) {
+  static_assert((kWideFits<4, RM, RN, BYTES>), "the smallest prefill tile must fit shared memory");
+  const int rows = (m + RM - 1) / RM;  // patches needed
+  if constexpr (kWideFits<32, RM, RN, BYTES>) { if (rows > 16) return launch(std::integral_constant<int, 32>{}); }
+  if constexpr (kWideFits<16, RM, RN, BYTES>) { if (rows > 8) return launch(std::integral_constant<int, 16>{}); }
+  if constexpr (kWideFits<8, RM, RN, BYTES>) { if (rows > 4) return launch(std::integral_constant<int, 8>{}); }
+  launch(std::integral_constant<int, 4>{});
 }
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+// Which sites take the tensor-core arithmetic in the validation build: all of them, unless LFM_TCM_SITES (a sum of
+// kSite* values) narrows it for an experiment; the others then take the plain kernel.
+inline int model_sites() {
+  static const int mask = [] {
+    const char* v = std::getenv("LFM_TCM_SITES");
+    if (!v) return -1;
+    char* end = nullptr;
+    const long n = std::strtol(v, &end, 10);
+    if (end == v || *end != '\0' || n < 0 || n > 63) throw std::runtime_error("LFM_TCM_SITES must be 0..63");
+    return int(n);
+  }();
+  return mask;
+}
+#endif
 template <bool KC>
 inline void launch_wide(const Problem& p, cudaStream_t stream) {
-  static_assert(kWideFits<4>, "the smallest prefill tile must fit shared memory");
-  const int rows = (p.m + LFM_GEMM_WIDE_RM - 1) / LFM_GEMM_WIDE_RM;  // patches needed
-  if constexpr (kWideFits<32>) { if (rows > 16) return launch_wide_tile<32, KC>(p, stream); }
-  if constexpr (kWideFits<16>) { if (rows > 8) return launch_wide_tile<16, KC>(p, stream); }
-  if constexpr (kWideFits<8>) { if (rows > 4) return launch_wide_tile<8, KC>(p, stream); }
-  launch_wide_tile<4, KC>(p, stream);
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+  if (model_sites() & (p.site ? p.site : kSiteOther)) {
+    for_wide_tile<LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, 6>(p.m, [&](auto ty) {  // an FP32 value and a 16-bit exponent
+      constexpr int TY = decltype(ty)::value;
+      using T = WideTile<TY, LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN>;
+      const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
+      wide_model_kernel<TY, LFM_GEMM_MODEL_RM, LFM_GEMM_MODEL_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
+    });
+    return;
+  }
+#endif
+  for_wide_tile<LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, 4>(p.m, [&](auto ty) {
+    constexpr int TY = decltype(ty)::value;
+    using T = WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>;
+    const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
+    wide_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
+  });
 }
 
 }  // namespace detail

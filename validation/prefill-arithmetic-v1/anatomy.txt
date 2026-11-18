@@ -1,0 +1,49 @@
+1. Each engine's mean NLL minus the FP32 model's, 256 against 257 (same corpus, windows one token longer)
+   256: sdpa -1.92e-05  thor -1.73e-04  pascal +4.98e-05  eager -5.10e-05
+   257: sdpa -1.53e-04  thor -6.97e-05  pascal +7.41e-05  eager -7.40e-05
+   change from 256 to 257: sdpa -1.34e-04  thor +1.03e-04  pascal +2.43e-05  eager -2.30e-05
+
+2. Length 257 by position in the window (position p is predicted from p tokens of context; mean over 1,155 windows)
+   positions      pascal-sdpa   pascal-fp32   sdpa-fp32     thor-fp32     eager-fp32    pascal-thor
+     1- 16 ( 16)  +8.76e-04     -1.57e-03     -2.44e-03     -2.03e-03     -2.10e-03     +4.59e-04   
+    17- 64 ( 48)  +6.02e-04     +1.13e-04     -4.89e-04     -3.82e-04     -6.12e-04     +4.96e-04   
+    65-128 ( 64)  +1.51e-04     +7.02e-05     -8.11e-05     -1.66e-06     +3.90e-05     +7.19e-05   
+   129-192 ( 64)  -7.16e-05     +1.63e-04     +2.35e-04     +2.47e-04     +1.30e-04     -8.37e-05   
+   193-240 ( 48)  +1.22e-04     +2.84e-04     +1.62e-04     +2.59e-04     +5.17e-04     +2.54e-05   
+   241-255 ( 15)  +2.28e-04     +6.13e-04     +3.85e-04     +3.37e-04     +5.78e-04     +2.77e-04   
+   256-256 (  1)  +8.55e-04     +8.05e-04     -4.96e-05     -2.60e-04     -2.68e-04     +1.07e-03   
+   share of the total pascal-sdpa difference from position 256 alone: 1.5% (it is 1/256 = 0.4% of the tokens)
+   pascal-sdpa without position 256: +2.25e-04; position 256 alone: +8.55e-04
+   pascal-sdpa on positions 1-255 only: CI [+9.69e-05, +3.55e-04]
+   for comparison, length 256, all 255 positions: +6.89e-05
+
+3. Is it a few tokens or all of them? pascal minus X at 257
+   vs sdpa : mean +2.27e-04, median +3.64e-07, tokens higher 50.07% lower 49.93% equal 0.00%, rms 3.42e-02; trimmed mean (drop top and bottom 1%) +1.96e-04
+   vs thor : mean +1.44e-04, median +0.00e+00, tokens higher 49.87% lower 49.82% equal 0.31%, rms 3.18e-02; trimmed mean (drop top and bottom 1%) +1.23e-04
+   vs fp32 : mean +7.41e-05, median -1.43e-06, tokens higher 49.69% lower 50.31% equal 0.00%, rms 2.71e-02; trimmed mean (drop top and bottom 1%) +5.51e-05
+
+4. Does the difference depend on how confident the model is? Tokens binned by the FP32 model's NLL (length 257 and 256)
+   256: FP32 NLL range      tokens   pascal-fp32   thor-fp32     sdpa-fp32     pascal-thor
+         0.000- 0.357    73950   +6.73e-07   +4.86e-05   +5.22e-05   -4.79e-05
+         0.357- 2.024    73950   -2.82e-04   -1.61e-04   +1.78e-05   -1.21e-04
+         2.024- 5.065    73950   +1.22e-04   -1.13e-04   +2.35e-04   +2.35e-04
+         5.065- 8.541    44370   +5.62e-04   -8.91e-05   +2.63e-04   +6.51e-04
+         8.541-15.152    26622   +7.94e-04   +7.65e-06   -1.68e-04   +7.86e-04
+        15.152-27.566     2958   -6.61e-03   -1.04e-02   -1.20e-02   +3.77e-03
+        pascal-thor: slope against FP32 NLL +1.231e-04 per nat (intercept -1.81e-04), correlation +0.0142
+        pascal-sdpa: slope against FP32 NLL +1.472e-04 per nat (intercept -4.14e-04), correlation +0.0157
+        thor-fp32: slope against FP32 NLL -1.220e-04 per nat (intercept +2.27e-04), correlation -0.0164
+        pascal-fp32: slope against FP32 NLL +1.164e-06 per nat (intercept +4.60e-05), correlation +0.0002
+        sdpa-fp32: slope against FP32 NLL -1.461e-04 per nat (intercept +4.60e-04), correlation -0.0178
+   257: FP32 NLL range      tokens   pascal-fp32   thor-fp32     sdpa-fp32     pascal-thor
+         0.000- 0.356    73920   -1.09e-05   -1.66e-05   +3.43e-05   +5.62e-06
+         0.356- 2.025    73920   -1.49e-04   -1.06e-04   -8.01e-05   -4.24e-05
+         2.025- 5.052    73920   +1.01e-04   -1.04e-04   -2.28e-04   +2.05e-04
+         5.052- 8.522    44352   +6.85e-04   +3.82e-04   +4.98e-04   +3.03e-04
+         8.522-15.141    26611   +4.18e-04   +2.68e-04   -5.72e-04   +1.51e-04
+        15.141-27.092     2957   -5.16e-03   -9.45e-03   -1.08e-02   +4.29e-03
+        pascal-thor: slope against FP32 NLL +7.196e-05 per nat (intercept -9.20e-05), correlation +0.0082
+        pascal-sdpa: slope against FP32 NLL +1.369e-04 per nat (intercept -2.21e-04), correlation +0.0145
+        thor-fp32: slope against FP32 NLL -8.200e-05 per nat (intercept +1.99e-04), correlation -0.0110
+        pascal-fp32: slope against FP32 NLL -1.005e-05 per nat (intercept +1.07e-04), correlation -0.0014
+        sdpa-fp32: slope against FP32 NLL -1.469e-04 per nat (intercept +3.28e-04), correlation -0.0177

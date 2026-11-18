@@ -290,6 +290,7 @@ inline void head_scores(const lfm::RuntimeShape& s,int context,const bf16* queri
   p.lda=s.hidden; p.ldb=s.head_dim; p.ldc=key_pitch(end);
   p.stride_a=s.head_dim; p.stride_b=(long long)context*s.head_dim; p.stride_c=(long long)rows*key_pitch(end);
   p.batch=heads?heads:s.query_heads; p.group=s.query_heads/s.kv_heads;
+  p.site=lfm::gemm::kSiteAttention;
   lfm::gemm::run(p);
 }
 // out_h (rows x head_dim, row stride hidden) = P_h (rows x pitch) · V_{h/group}[key_start, key_start+end).
@@ -302,6 +303,7 @@ inline void head_values(const lfm::RuntimeShape& s,int context,const bf16* probs
   p.stride_a=(long long)rows*key_pitch(end); p.stride_b=(long long)context*s.head_dim; p.stride_c=s.head_dim;
   p.batch=heads?heads:s.query_heads; p.group=s.query_heads/s.kv_heads;
   p.workspace=static_cast<float*>(workspace); p.workspace_size=workspace_size;
+  p.site=lfm::gemm::kSiteAttention;
   lfm::gemm::run(p);
 }
 #endif
@@ -497,7 +499,7 @@ class Runner {
   // lm_head with the FP32 accumulator stored unrounded.
   void lm_head(const bf16* x, float* out, int rows) {
     auto p=lfm::gemm::linear(x,w("embed_tokens.weight"),nullptr,rows,s.hidden,s.vocabulary);
-    p.c_f32=out; lfm::gemm::run(p);
+    p.c_f32=out; p.site=lfm::gemm::kSiteHead; lfm::gemm::run(p);
   }
   // Logits traces: STEP.logits.f32 holds the exact FP32 values the engine returns (and samples from);
   // STEP.logits.bf16 keeps the established format, rounded, for comparisons against BF16 references.
@@ -513,13 +515,22 @@ class Runner {
   // (lfm::gemm::Problem::wide).
   void linear_block(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output) {
     auto problem=lfm::gemm::linear(x,w(name),out,rows,input,output);
-    problem.wide=true;
+    problem.wide=true; problem.site=site_of(name);
     lfm::gemm::run(problem);
+  }
+  // The part of the model a projection belongs to (lfm::gemm::Problem::site).
+  static int site_of(const std::string& name) {
+    if(name.find("feed_forward")!=std::string::npos) return lfm::gemm::kSiteMlp;
+    if(name.find("conv.")!=std::string::npos) return lfm::gemm::kSiteConv;
+    if(name.find("self_attn")!=std::string::npos) return lfm::gemm::kSiteAttentionProjection;
+    return lfm::gemm::kSiteOther;
   }
 #endif
   void linear(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output) {
 #ifdef LFM3_NATIVE_GEMM
-    lfm::gemm::run(lfm::gemm::linear(x,w(name),out,rows,input,output));
+    auto problem=lfm::gemm::linear(x,w(name),out,rows,input,output);
+    problem.site=site_of(name);
+    lfm::gemm::run(problem);
 #else
     float alpha=1, beta=0;
     // Row-major X W^T = column-major W X^T, with W stored row-major.
