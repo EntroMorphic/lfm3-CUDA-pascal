@@ -493,6 +493,101 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
 }
 #endif
 
+#ifdef LFM_GEMM_ROUND_ONCE
+// Experiment build only (validation/round-once-v1): the prefill kernel with every output rounded once. No floating
+// point is used for the sum. A BF16 value is an integer of at most 8 bits times a power of two; a product of two is
+// an integer of at most 16 bits times 2^e, e in [-266, 240]. Each output has a fixed-point accumulator wide enough to
+// hold every such product exactly (kOnceLimbs digits of 32 bits, digit i weighing 2^(32 i - 266)), so the sum is the
+// exact dot product whatever the order. It is rounded a single time, to nearest even, to the stored format: BF16, or
+// FP32 for c_f32. Operands must be finite; a result outside the normal range of the format is not handled.
+inline constexpr int kOnceLimbs = 18, kOnceBias = 266;
+struct OnceSum {
+  long long limb[kOnceLimbs];  // digits of 32 bits with room for deferred carries; the top one carries the sign
+};
+__device__ __forceinline__ void once_add(OnceSum& s, unsigned a, unsigned b) {  // BF16 bit patterns
+  const int ea = (a >> 7) & 0xFF, eb = (b >> 7) & 0xFF;
+  const long long product = (long long)((ea ? 128 : 0) + (a & 0x7F)) * (long long)((eb ? 128 : 0) + (b & 0x7F));
+  const int position = (ea ? ea : 1) + (eb ? eb : 1) - 2 * 134 + kOnceBias;  // >= 0
+  const long long term = product << (position & 31);                         // below 2^47
+  s.limb[position >> 5] += ((a ^ b) & 0x8000) ? -term : term;
+}
+__device__ __forceinline__ void once_carry(OnceSum& s) {
+  for (int i = 0; i + 1 < kOnceLimbs; ++i) {
+    const long long carry = s.limb[i] >> 32;  // arithmetic shift: floor
+    s.limb[i] &= 0xFFFFFFFFll;
+    s.limb[i + 1] += carry;
+  }
+}
+__device__ __forceinline__ int once_bit(const OnceSum& s, int index) {
+  return index < 0 ? 0 : int((s.limb[index >> 5] >> (index & 31)) & 1);
+}
+// The sum rounded to nearest even at `precision` significant bits.
+__device__ __noinline__ float once_round(OnceSum s, int precision) {
+  once_carry(s);
+  const bool negative = s.limb[kOnceLimbs - 1] < 0;
+  if (negative) {  // negate: the magnitude, digit by digit
+    long long borrow = 0;
+    for (int i = 0; i < kOnceLimbs; ++i) {
+      long long v = -s.limb[i] - borrow;
+      if (i + 1 < kOnceLimbs) { borrow = v < 0 ? 1 : 0; v &= 0xFFFFFFFFll; }
+      s.limb[i] = v;
+    }
+  }
+  int top = -1;
+  for (int i = kOnceLimbs - 1; i >= 0 && top < 0; --i)
+    if (s.limb[i]) top = i * 32 + 63 - __clzll(s.limb[i]);
+  if (top < 0) return 0.f;
+  unsigned q = 0;
+  for (int bit = top; bit > top - precision; --bit) q = (q << 1) | unsigned(once_bit(s, bit));
+  const int below = top - precision;  // the first bit dropped
+  if (below >= 0 && once_bit(s, below)) {
+    bool sticky = false;
+    for (int i = 0; i < (below >> 5); ++i) sticky = sticky || s.limb[i] != 0;
+    sticky = sticky || (s.limb[below >> 5] & ((1ll << (below & 31)) - 1)) != 0;
+    if (sticky || (q & 1)) ++q;
+  }
+  const float value = scalbnf(float(q), top - precision + 1 - kOnceBias);  // q has at most 25 bits and is exact here
+  return negative ? -value : value;
+}
+template <int TY, int RM, int RN, bool BK_CONTIGUOUS>
+__global__ void __launch_bounds__(kWideTX * TY) wide_once_kernel(Problem p) {
+  using T = WideTile<TY, RM, RN>;
+  __shared__ unsigned short sa[kWideK][T::BM];
+  __shared__ unsigned short sb[kWideK][T::BN];
+  const int z = blockIdx.z;
+  const bf16* A = p.a + z * p.stride_a;
+  const bf16* B = p.b + (z / p.group) * p.stride_b;
+  const long long c0 = z * p.stride_c;
+  const int n0 = blockIdx.x * T::BN, m0 = blockIdx.y * T::BM;
+  const int ty = threadIdx.x / kWideTX, tx = threadIdx.x % kWideTX;
+  OnceSum sum[RM][RN];
+  for (int i = 0; i < RM; ++i)
+    for (int j = 0; j < RN; ++j)
+      for (int l = 0; l < kOnceLimbs; ++l) sum[i][j].limb[l] = 0;
+  for (int k0 = 0; k0 < p.k; k0 += kWideK) {
+    wide_load<T::THREADS, T::BM, T::BN, BK_CONTIGUOUS>(p, A, B, m0, n0, k0, [&](bool is_b, int kk, int index, bf16 v) {
+      const unsigned short bits = *reinterpret_cast<const unsigned short*>(&v);
+      if (is_b) sb[kk][index] = bits; else sa[kk][index] = bits;
+    });
+    __syncthreads();
+    for (int i = 0; i < RM; ++i)
+      for (int j = 0; j < RN; ++j) {
+        for (int kk = 0; kk < kWideK; ++kk) once_add(sum[i][j], sa[kk][ty * RM + i], sb[kk][tx * RN + j]);
+        once_carry(sum[i][j]);  // 32 terms below 2^47 each on digits below 2^32: no overflow
+      }
+    __syncthreads();
+  }
+  for (int i = 0; i < RM; ++i)
+    for (int j = 0; j < RN; ++j) {
+      const long long row = m0 + ty * RM + i, col = n0 + tx * RN + j;
+      if (!(row < p.m && col < p.n)) continue;
+      const long long index = c0 + row * p.ldc + col;
+      if (p.c_f32) p.c_f32[index] = once_round(sum[i][j], 24);
+      else p.c[index] = __float2bfloat16_rn(once_round(sum[i][j], 8));
+    }
+}
+#endif
+
 // The prefill tiles. Plain kernel: 8 x 4 outputs per thread. Exact kernel: 2 x 2 (measured on the GTX 1080: it is
 // bound by its arithmetic, not its loads, and larger patches run slower). The block's height follows the row count
 // so that a short prefill does not compute rows of padding. LFM_GEMM_WIDE_RM / _RN override the plain patch and
@@ -571,8 +666,32 @@ inline void launch_wide_model(const Problem& p, cudaStream_t stream) {
   });
 }
 #endif
+#ifdef LFM_GEMM_ROUND_ONCE
+// LFM_ONCE_ROWS=N: prompt positions below N are computed again by the round-once kernel (they overwrite), at every
+// site. Unset or 0: the build computes what the plain build does.
+inline int once_rows() {
+  static const int rows = [] {
+    const char* v = std::getenv("LFM_ONCE_ROWS");
+    if (!v) return 0;
+    char* end = nullptr;
+    const long n = std::strtol(v, &end, 10);
+    if (end == v || *end != '\0' || n < 0 || n > 1000000) throw std::runtime_error("LFM_ONCE_ROWS out of range");
+    return int(n);
+  }();
+  return rows;
+}
 template <bool KC>
-inline void launch_wide(const Problem& p, cudaStream_t stream) {
+inline void launch_wide_once(const Problem& p, cudaStream_t stream) {
+  for_wide_tile<2, 2, 2>(p.m, [&](auto ty) {
+    constexpr int TY = decltype(ty)::value;
+    using T = WideTile<TY, 2, 2>;
+    const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
+    wide_once_kernel<TY, 2, 2, KC><<<grid, T::THREADS, 0, stream>>>(p);
+  });
+}
+#endif
+template <bool KC>
+inline void launch_wide_base(const Problem& p, cudaStream_t stream) {
 #ifdef LFM_GEMM_TENSOR_CORE_MODEL
   if (const int rule = model_rows()) {
     // The whole product with one arithmetic, then the first rows again with the other (they overwrite).
@@ -588,6 +707,18 @@ inline void launch_wide(const Problem& p, cudaStream_t stream) {
   if (model_sites() & (p.site ? p.site : kSiteOther)) return launch_wide_model<KC>(p, stream);
 #endif
   launch_wide_plain<KC>(p, stream);
+}
+template <bool KC>
+inline void launch_wide(const Problem& p, cudaStream_t stream) {
+  launch_wide_base<KC>(p, stream);
+#ifdef LFM_GEMM_ROUND_ONCE
+  const int first = std::min(p.m, once_rows() - p.row0);
+  if (first > 0) {
+    Problem head = p;
+    head.m = first;
+    launch_wide_once<KC>(head, stream);
+  }
+#endif
 }
 
 }  // namespace detail

@@ -30,6 +30,11 @@ for v in $want; do
     bos256) LFM_TCM_ROWS=1 WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-exact "$out/bos256" 256 ;;
     thor257) WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-exact "$out/thor257" 257 ;;
     thor256) WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-exact "$out/thor256" 256 ;;
+    # validation/round-once-v1: the [BOS] row summed exactly and rounded once, the plain kernel for every other row
+    once65) EXTRA_FLAGS=-DLFM_GEMM_ROUND_ONCE "$repo/tools/pascal/build_text.sh" ar-once | grep -v links
+            LFM_ONCE_ROWS=1 WINDOWS_DIR=/workspace/data/ppl-windows-65 "$repo/tools/pascal/score.sh" ar-once "$out/once65" 65 ;;
+    once256|once257) EXTRA_FLAGS=-DLFM_GEMM_ROUND_ONCE "$repo/tools/pascal/build_text.sh" ar-once | grep -v links
+            LFM_ONCE_ROWS=1 WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-once "$out/$v" "${v#once}" ;;
     *) echo "unknown variant $v"; exit 2 ;;
   esac
 done
