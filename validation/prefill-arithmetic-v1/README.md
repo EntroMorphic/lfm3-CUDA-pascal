@@ -163,4 +163,35 @@ comes from the arithmetic of the other 64 rows.
 Prediction 1 holds. Giving the tensor-core arithmetic to the [BOS] row alone, one row in 65, reproduces the whole
 difference between the two arithmetics; the arithmetic of the other 64 rows adds nothing detectable.
 
-`bosplain`: running.
+**Result for `bosplain` (`LFM_TCM_ROWS=-1`):** minus `plain` on positions 2-64, −1.00e-04 [−2.27e-04, +2.6e-05];
+at position 1 equal to `plain` value for value. Prediction 2 holds: the interval includes zero. Against `exact` it
+differs by +3.25e-04 [+2.05e-04, +4.43e-04].
+
+The four cells, positions 2-64, minus `plain`:
+
+| | Other 64 rows plain | Other 64 rows tensor-core |
+|---|---:|---:|
+| **[BOS] row plain** | 0 | −1.00e-04 (interval includes zero) |
+| **[BOS] row tensor-core** | −4.47e-04 | −4.25e-04 |
+
+Changing the arithmetic of 64 rows changes 98.3% of the tokens' NLL values (rms 0.033 per token) and leaves the
+mean where it was. Changing it in the one shared row moves the mean by −4e-04.
+
+## Conclusion
+
+The difference that fails the perplexity bar at 257 tokens is made in the [BOS] row. That row is the same in every
+window; each arithmetic rounds it once, differently; every later position attends to it. The result is one fixed
+perturbation carried by all windows and all tokens, largest where attention to the first token is largest: the first
+positions of a window. It is not a property of how the two arithmetics treat prompts in general: with the [BOS] row
+held fixed, the arithmetic of the other rows makes no detectable difference to the mean.
+
+The bar's interval is a bootstrap over windows, which takes windows as independent. For this effect there is one
+observation, not 1,155. The interval's exclusion of zero says the two [BOS] rows differ, which they do; it does not
+say one arithmetic gives better perplexity than the other.
+
+Which way the draw falls relative to the FP32 model: in positions 1-64 every BF16 engine is below FP32, and this
+engine's plain kernel is the nearest to it.
+
+Not established: why the particular rounding of that row moves the mean the way it does (which elements, at which
+layer); and whether the same shared-row effect explains the differences *between* the HF configurations and the
+FP32 model (SDPA's own shift at 257 relative to 256), which the data here are consistent with but do not test.

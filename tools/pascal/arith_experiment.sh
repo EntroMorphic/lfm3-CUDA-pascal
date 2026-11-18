@@ -26,6 +26,8 @@ for v in $want; do
     attnproj) run attnproj ar-exact 8 ;; attn) run attn ar-exact 16 ;;
     bosexact) run bosexact ar-exact "" 1 ;; bosplain) run bosplain ar-exact "" -1 ;;
     first8exact) run first8exact ar-exact "" 8 ;;
+    bos257) LFM_TCM_ROWS=1 WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-exact "$out/bos257" 257 ;;
+    bos256) LFM_TCM_ROWS=1 WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-exact "$out/bos256" 256 ;;
     thor257) WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-exact "$out/thor257" 257 ;;
     thor256) WINDOWS_DIR=/workspace/data/ppl-windows "$repo/tools/pascal/score.sh" ar-exact "$out/thor256" 256 ;;
     *) echo "unknown variant $v"; exit 2 ;;
