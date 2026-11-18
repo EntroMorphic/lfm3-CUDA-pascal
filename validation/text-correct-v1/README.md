@@ -161,7 +161,9 @@ core's.
   and whether the rule's statistics should change are the owner's decisions and are not made.
 - Rule 3 fails at 257 with the plain prefill kernel. The exact kernel
   ([tensor-core-model-v1](../tensor-core-model-v1/)) reproduces the Thor engine's arithmetic, and the Thor engine
-  passes rule 3 at every length; whether the exact build's NLL files equal Thor's byte for byte has not been run.
+  passes rule 3 at every length; the exact build's NLL file at 257 tokens equals Thor's byte for byte
+  ([tensor-core-model-v1](../tensor-core-model-v1/)), so at that length the exact build has the Thor engine's
+  verdict, "equal", by identity. The other lengths have not been run with it.
 - Regenerated with the re-tiled kernels (`ppl-v2`, build `text-v5`, `lfm3-score` `cf0f6b3d…`, after the host's reboot):
   all four NLL files byte-identical to the ones compared above (`95979e15…`, `ec238637…`, `2886713b…`, `25df36d8…`).
   Wall time 737, 1,005, 785 and 917 s (256, 257, 4,096, 32,768): 57 minutes for the set, against about 2.3 hours

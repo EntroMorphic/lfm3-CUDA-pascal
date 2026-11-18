@@ -190,6 +190,17 @@ Prefill time on the card, no tracing, one run each (process start to the first l
 At 257 rows the fast exact kernel takes 2.7 times the plain kernel's time and the reference 6.3 times. All three use
 the same simple tiling (32 x 32 block, 2 x 2 outputs per thread); none is tuned.
 
+## The scorer at 257 tokens: the Thor engine's NLL file, byte for byte (2026-11-18)
+
+The validation build's scorer (`lfm3-score` `454dcc1b…`, tensor-core arithmetic at every site) on all 1,155 windows
+of 257 tokens: its output, 295,680 per-token NLL values, is byte-identical to the Thor engine's
+`nll-native-gemm-257.f32` (SHA-256 `6b14e7f8fb7fbed5d5235a896416e550dcdb76abeee19c9ee7fa5e94b596737d`, the hash
+recorded in the Thor repository; also compared with `cmp` against the file copied from Thor). 3,849 s, against
+1,005 s for the plain kernel.
+
+This goes beyond the pins: 1,155 different prompts, the scorer's path (the output head for all 256 rows through the
+prefill kernel, the device log-softmax), and the MLP in two row blocks. Not run: 256, 4,096 and 32,768 tokens.
+
 ## What it is for
 
 If the remaining kernels also agree, a build of the Pascal engine whose prefill GEMM uses this arithmetic would have
