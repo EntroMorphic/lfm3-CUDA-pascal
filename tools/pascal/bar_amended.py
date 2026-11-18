@@ -18,10 +18,13 @@ Without an FP32 run at a length, A alone decides, as before.
 Reported and not judged: the FP32 model against SDPA; engine minus SDPA and minus FP32 at position 1 (no interval:
 one distribution) and over positions 1-64.
 
-Every file is loaded through ppl_compare's checks. Exit 0 PASS, 1 FAIL, 2 invalid input.
+Every file is loaded through ppl_compare's loader, and the checks ppl_compare makes on the engine's file outside its
+loader are repeated here (not an HF configuration, a recorded scorer hash, not a byte copy of an HF reference), so
+this tool's verdict does not depend on ppl_compare having been run. The anchor must be an HF run recorded as
+float32 and must not be a byte copy of the engine's file. Exit 0 PASS, 1 FAIL, 2 invalid input.
 Usage: bar_amended.py --results DIR --anchor DIR [--engine pascal] [--anchor-engine hf-eager_blocked-fp32] [--output OUT.json]
 """
-import argparse, json, sys
+import argparse, hashlib, json, sys
 from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -34,7 +37,15 @@ def judge(x, reference):
     return dict(delta=float(d.mean()), ci95=None if ci is None else [float(ci[0]), float(ci[1])], verdict=verdict(float(d.mean()), ci))
 
 
+def sha256(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def run(a):
+    if a.engine.startswith("hf-"):
+        raise InputError(f"--engine {a.engine!r} is an HF configuration, not an engine under test")
+    if not a.anchor_engine.startswith("hf-"):
+        raise InputError(f"--anchor-engine {a.anchor_engine!r} is not an HF configuration")
     summary = json.loads((a.results / "summary.json").read_text())
     rows = []
     lengths = sorted(int(k) for k in summary.get("windows", {}))
@@ -44,6 +55,12 @@ def run(a):
         windows, sha = load_windows(a.results, summary, length)
         count = windows.shape[0]
         engine, engine_sha = load_nll(a.results, a.engine, length, sha, count, True)
+        engine_meta = json.loads((a.results / f"nll-{a.engine}-{length}.meta.json").read_text())
+        if not (isinstance(engine_meta.get("scorer_sha256"), str) and len(engine_meta["scorer_sha256"]) == 64):
+            raise InputError(f"nll-{a.engine}-{length}.meta.json records no scorer_sha256")
+        for reference in sorted(a.results.glob(f"nll-hf-*-{length}.f32")):
+            if sha256(reference) == engine_sha:
+                raise InputError(f"nll-{a.engine}-{length}.f32 is byte-identical to {reference.name}: a copy, not a measurement")
         sdpa, _ = load_nll(a.results, "hf-sdpa", length, sha, count, True)
         row = dict(length=length, windows=int(count), engine_nll_sha256=engine_sha, against_sdpa=judge(engine, sdpa))
         anchor = None
@@ -51,7 +68,9 @@ def run(a):
             anchor_summary = json.loads((a.anchor / "summary.json").read_text())
             if load_windows(a.anchor, anchor_summary, length)[1] != sha:
                 raise InputError(f"the FP32 run's windows-{length}.i32 differ")
-            anchor, _ = load_nll(a.anchor, a.anchor_engine, length, sha, count, True)
+            anchor, anchor_sha = load_nll(a.anchor, a.anchor_engine, length, sha, count, True)
+            if anchor_sha == engine_sha:
+                raise InputError(f"the anchor at {length} is byte-identical to the engine's file")
             meta = json.loads((a.anchor / f"nll-{a.anchor_engine}-{length}.meta.json").read_text())
             if meta.get("dtype") != "float32":
                 raise InputError(f"the anchor at {length} is not recorded as float32")

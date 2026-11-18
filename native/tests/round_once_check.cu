@@ -31,6 +31,10 @@ int main(int argc, char** argv) {
   check(cudaMemcpy(dw, w.data(), w.size() * 2, cudaMemcpyHostToDevice));
   lfm::gemm::Problem p;
   p.a = dx; p.b = dw; p.m = rows; p.n = n; p.k = k; p.lda = k; p.ldc = n; p.wide = true;
+  // Rows as prompt positions from 0 when the round-once kernel is on (it goes by position); with LFM_ONCE_ROWS=0,
+  // not a prompt at all, so that the output is the plain kernel's in every row.
+  const char* once = std::getenv("LFM_ONCE_ROWS");
+  p.row0 = once && std::atoi(once) > 0 ? 0 : -1;
   if (kc) p.ldb = k; else { p.ldb = n; p.b_k_contiguous = false; p.b_rows = k; }
   if (f32) p.c_f32 = static_cast<float*>(dy); else p.c = static_cast<lfm::gemm::bf16*>(dy);
   lfm::gemm::run(p); check(cudaDeviceSynchronize());

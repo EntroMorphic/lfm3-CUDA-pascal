@@ -110,7 +110,7 @@ int main(int argc, char** argv) try {
     for (int r0 = 0; r0 < length - 1; r0 += tile) {
       const int rows = std::min(tile, length - 1 - r0);
 #ifdef LFM3_NATIVE_GEMM
-      runner.lm_head(runner.normalized.p + size_t(r0) * hidden, tile_logits.p, rows, r0);
+      runner.lm_head(runner.normalized.p + size_t(r0) * hidden, tile_logits.p, rows, r0, length > 8);
 #else
       runner.linear("embed_tokens.weight", runner.normalized.p + size_t(r0) * hidden, tile_logits.p, rows, hidden, vocab);
 #endif

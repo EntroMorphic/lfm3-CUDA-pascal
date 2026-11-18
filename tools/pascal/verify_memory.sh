@@ -4,6 +4,10 @@
 # fast: rules 3, 4 and the subsets of rule 5 (minutes). slow: every window at 256, 257 and 4,096, then 32,768 (hours).
 set -uo pipefail
 old=${1:?}; new=${2:?}; oldppl=${3:?}; part=${4:-all}
+[ "$old" != "$new" ] && [ "$oldppl" != "$new-ppl" ] && [ "$oldppl" != "$new-subset-old" ] && [ "$oldppl" != "$new-subset-new" ] ||
+  { echo "verify_memory.sh: OLD and NEW (and their result directories) must differ, or a file is compared with itself"; exit 2; }
+case $part in fast|slow|all) ;; *) echo "verify_memory.sh: part must be fast, slow or all"; exit 2 ;; esac
+unset LFM3_COMPACT_WINDOWS  # the "unset" legs must not inherit the caller's
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd); B=/workspace/build; M=/workspace/models/LFM3-Omni-2B
 fail=0; say(){ echo "== $*"; }
 say "binaries"; sha256sum $B/$old/liquid-lfm3 $B/$old/lfm3-score $B/$new/liquid-lfm3 $B/$new/lfm3-score
@@ -60,4 +64,4 @@ for L in 256 257 4096; do cmp "$B/$oldppl/nll-pascal-$L.f32" "$B/$new-ppl/nll-pa
 say "rule 7: 32,768"
 "$repo/tools/pascal/score.sh" "$new" "$new-ppl" 32768; echo "32768 rc=$?"
 fi
-say "VERIFY $([ $fail = 0 ] && echo PASS || echo FAIL)"; exit $fail
+say "VERIFY ($part) $([ $fail = 0 ] && echo PASS || echo FAIL)"; exit $fail

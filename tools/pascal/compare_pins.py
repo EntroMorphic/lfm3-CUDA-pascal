@@ -30,7 +30,10 @@ def main():
     pins = json.loads((REPO / "validation/g4-gates-v2/pins/forward.json").read_text())
     ids = json.loads((REPO / "validation/tensor-core-model-v1/input_ids.json").read_text())
     print(f"binary {hashlib.sha256(binary.read_bytes()).hexdigest()}  Thor pins from binary {pins['_provenance']['binary_sha256'][:16]}")
-    ok = True
+    ok, total = True, 0
+    unknown = [c for c in cases if c not in TOKENS]
+    if unknown:
+        sys.exit(f"unknown fixture(s) {unknown}; the fixtures are {list(TOKENS)}")
     for case in cases:
         out = Path("/workspace/build") / tag / "pins" / case
         shutil.rmtree(out, ignore_errors=True); out.mkdir(parents=True)
@@ -52,6 +55,7 @@ def main():
         (out / "result.json").write_text(json.dumps(dict(equal=len(equal), total=len(names), differ=differ,
                                                          teacher_argmax=native["teacher_argmax"]), indent=1))
         argmax = native["teacher_argmax"] == expected
+        total += len(equal)
         ok &= not differ and argmax and set(got) == set(want)
         print(f"{case}: {len(equal)} of {len(names)} trace files equal to the Thor pins; argmax ids {'equal' if argmax else 'DIFFER'}; "
               f"files traced here {len(got)}; prefill {native['prefill_seconds']:.2f} s")
@@ -61,7 +65,10 @@ def main():
             for n in differ:
                 kinds.setdefault(re.sub(r"^\d+\.(layers\.\d+\.)?", "", n), []).append(n)
             print("  different, by kind: " + ", ".join(f"{k} {len(v)}" for k, v in sorted(kinds.items(), key=lambda kv: -len(kv[1]))))
-    print("PINS", "EQUAL" if ok else "DIFFER")
+    whole = sorted(cases) == sorted(TOKENS)
+    ok &= total > 0
+    print(f"PINS {'EQUAL' if ok else 'DIFFER'}: {total} files equal"
+          + ("" if whole else f" (fixtures {cases} only: not the parity gate, which is all of {list(TOKENS)})"))
     sys.exit(0 if ok else 1)
 
 

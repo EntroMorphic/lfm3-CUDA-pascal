@@ -1,6 +1,9 @@
 #pragma once
-// The arithmetic of Blackwell's mma.sync.aligned.m16n8k16 (BF16 in, FP32 accumulate), for the validation build
-// (-DLFM_GEMM_TENSOR_CORE_MODEL) and for a host check of the same code (validation/tensor-core-model-v1).
+// The arithmetic of Blackwell's mma.sync.aligned.m16n8k16 (BF16 in, FP32 accumulate), for the engine's prompt
+// position 0 and the validation build (lfm/gemm.cuh), and for a host check of the two functions below
+// (native/tests/tensor_core_model_check.cpp). The GPU kernel's fast step is its own inlined variant of mma_step
+// (it adds per-row and per-column exponent bounds); what checks that one is the parity gate, on the card, against
+// the Thor engine's pins, and the =2 build, which uses mma_step_reference for every step.
 //
 // The published model (MMA-Sim's T-FDPA; L = 16, F = 25, round toward zero), one step of 16 k:
 //   the accumulator and the 16 exact products are aligned to the largest exponent among them (a product's exponent

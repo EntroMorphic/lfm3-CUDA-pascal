@@ -12,24 +12,37 @@
 // (prefill). This is the Pascal (sm_61) engine: `wide` is a plain FP32 shared-memory kernel, where the
 // Thor engine it was imported from uses tensor cores (mma.sync, cp.async, ldmatrix).
 //
-// Prompt position 0 (PLAN decision 5): in a prefill, the row of position 0 is computed with the arithmetic of
-// Blackwell's tensor cores (lfm/tensor_core_model.hpp), as the Thor engine computes it, and every other row
-// with the plain kernel. That row is the same for every prompt that starts with the same token, and every later
-// position attends to it (validation/prefill-arithmetic-v1). -DLFM_GEMM_TENSOR_CORE_MODEL (the validation build
-// of the parity gate) gives every row that arithmetic; -DLFM_GEMM_FIRST_ROW=0 gives none (the engine as it was
-// before decision 5, for reproducing earlier records).
+// Prompt position 0 (PLAN decision 5): in a prefill of more than 8 rows, the row of position 0 is computed with
+// the arithmetic of Blackwell's tensor cores (lfm/tensor_core_model.hpp), as the Thor engine computes it, and every
+// other row with the plain kernel. That row is the same for every such prompt that starts with the same token, and
+// every later position attends to it (validation/prefill-arithmetic-v1). Only a caller that says its row 0 is
+// prompt position 0 (Problem::row0 = 0) gets this; the text runner does, nothing else. A prefill of 8 rows or
+// fewer takes the decode kernels for every row, as in the Thor engine. The tensor-core model does not cover
+// infinities and NaN: where the plain kernel's result for position 0 is not finite, it is kept.
+// -DLFM_GEMM_TENSOR_CORE_MODEL (the validation build of the parity gate) gives every row that arithmetic;
+// -DLFM_GEMM_FIRST_ROW=0 gives none (the engine as it was before decision 5, for reproducing earlier records).
 // Quality bar (journal §9): perplexity equal or better than the standard stack within the 95% CI.
 // No reproduction of cuBLAS's kernel selection or reduction order is attempted or claimed.
 #include <cuda_bf16.h>
 #include <lfm/tensor_core_model.hpp>
 // Which statement of the tensor-core step the model kernel uses: 1 the fast one, 2 the integer reference.
+// The build switches are on when defined (-DNAME or -DNAME=1); a value that means nothing is an error, not a default.
 #ifdef LFM_GEMM_TENSOR_CORE_MODEL
-#define LFM_GEMM_MODEL_STEP (LFM_GEMM_TENSOR_CORE_MODEL + 0 == 2 ? 2 : 1)
+#if LFM_GEMM_TENSOR_CORE_MODEL != 1 && LFM_GEMM_TENSOR_CORE_MODEL != 2
+#error "LFM_GEMM_TENSOR_CORE_MODEL must be 1 (or bare) or 2; leave it undefined for the shipping build"
+#endif
+#define LFM_GEMM_MODEL_STEP LFM_GEMM_TENSOR_CORE_MODEL
 #else
 #define LFM_GEMM_MODEL_STEP 1
 #endif
 #ifndef LFM_GEMM_FIRST_ROW
 #define LFM_GEMM_FIRST_ROW 1
+#endif
+#if LFM_GEMM_FIRST_ROW != 0 && LFM_GEMM_FIRST_ROW != 1
+#error "LFM_GEMM_FIRST_ROW must be 0 or 1"
+#endif
+#if defined(LFM_GEMM_ROUND_ONCE) && LFM_GEMM_ROUND_ONCE != 1
+#error "LFM_GEMM_ROUND_ONCE must be 1 (or bare); leave it undefined otherwise"
 #endif
 #include <algorithm>
 #include <cstdint>
@@ -66,9 +79,13 @@ struct Problem {
   // Which part of the model this product belongs to (kSite*), for experiments that give parts of the model different
   // prefill arithmetic (validation/prefill-arithmetic-v1). It never changes what the default builds compute.
   int site = 0;
-  // The prompt position of row 0 (rows are positions in every prefill product). The prefill kernel gives position 0
-  // the tensor-core arithmetic (see the top of this file); a caller that passes a block of a prompt's rows sets it.
-  int row0 = 0;
+  // The prompt position of row 0, for a product whose rows are the positions of a text prompt; -1 for any other
+  // product (the default). The prefill kernel gives position 0 the tensor-core arithmetic (see the top of this
+  // file), so only the text runner's prefill sets this; a block of a prompt's rows carries its first position.
+  int row0 = -1;
+  // Set by this file only, on the launch that recomputes position 0 over the plain kernel's result: an output the
+  // plain kernel left non-finite is kept (the tensor-core model does not cover infinities and NaN).
+  bool keep_nonfinite = false;
 };
 inline constexpr int kSiteHead = 1, kSiteMlp = 2, kSiteConv = 4, kSiteAttentionProjection = 8, kSiteAttention = 16, kSiteOther = 32;
 
@@ -104,9 +121,12 @@ inline constexpr int kWideK = 32, kWideTX = 8;
 #ifndef LFM_GEMM_PLAIN_ROUND
 #define LFM_GEMM_PLAIN_ROUND 0
 #endif
+#if LFM_GEMM_PLAIN_ROUND < 0 || LFM_GEMM_PLAIN_ROUND > 2
+#error "LFM_GEMM_PLAIN_ROUND must be 0, 1 or 2"
+#endif
 __device__ __forceinline__ float fma_away(float a, float b, float c) {
   const float nearest = fmaf(a, b, c);
-  return nearest < 0.f ? __fmaf_rd(a, b, c) : __fmaf_ru(a, b, c);
+  return signbit(nearest) ? __fmaf_rd(a, b, c) : __fmaf_ru(a, b, c);  // signbit: a negative result that rounds to -0
 }
 #if LFM_GEMM_PLAIN_ROUND == 1
 #define LFM_GEMM_PLAIN_FMA(a, b, c) __fmaf_rz((a), (b), (c))
@@ -502,7 +522,10 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
 #pragma unroll
     for (int j = 0; j < RN; ++j) {
       const long long row = m0 + ty * RM + i, col = n0 + tx * RN + j;
-      if (row < p.m && col < p.n) put(p, c0 + row * p.ldc + col, acc[i][j]);
+      if (row >= p.m || col >= p.n) continue;
+      const long long index = c0 + row * p.ldc + col;
+      if (p.keep_nonfinite && !isfinite(p.c_f32 ? p.c_f32[index] : __bfloat162float(p.c[index]))) continue;
+      put(p, index, acc[i][j]);
     }
 }
 
@@ -603,8 +626,9 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_once_kernel(Problem p) {
 
 // The prefill tiles. Plain kernel: 8 x 4 outputs per thread. Exact kernel: 2 x 2 (measured on the GTX 1080: it is
 // bound by its arithmetic, not its loads, and larger patches run slower). The block's height follows the row count
-// so that a short prefill does not compute rows of padding. LFM_GEMM_WIDE_RM / _RN override the plain patch and
-// LFM_GEMM_MODEL_RM / _RN the exact one, for measurement.
+// so that a short prefill computes fewer rows of padding; the smallest block is 4 patches high, so the launch that
+// recomputes position 0 alone computes 8 rows for one (its cost is PLAN's first item for phase 2).
+// LFM_GEMM_WIDE_RM / _RN override the plain patch and LFM_GEMM_MODEL_RM / _RN the exact one, for measurement.
 #ifndef LFM_GEMM_WIDE_RM
 #define LFM_GEMM_WIDE_RM 8
 #endif
@@ -706,7 +730,7 @@ inline void launch_wide_base(const Problem& p, cudaStream_t stream) {
 #ifdef LFM_GEMM_TENSOR_CORE_MODEL
   if (const int rule = model_rows()) {
     // The whole product with one arithmetic, then the first rows again with the other (they overwrite).
-    const int first = std::max(0, std::min(p.m, (rule > 0 ? rule : -rule) - p.row0));
+    const int first = p.row0 < 0 ? 0 : std::max(0, std::min(p.m, (rule > 0 ? rule : -rule) - p.row0));
     if (rule > 0) launch_wide_plain<KC>(p, stream); else launch_wide_model<KC>(p, stream);
     if (first > 0) {
       Problem head = p;
@@ -723,6 +747,7 @@ inline void launch_wide_base(const Problem& p, cudaStream_t stream) {
   if (p.row0 == 0) {  // position 0 again, with the tensor-core arithmetic (it overwrites)
     Problem first = p;
     first.m = 1;
+    first.keep_nonfinite = true;
     launch_wide_model<KC>(first, stream);
   }
 #endif
@@ -732,7 +757,7 @@ template <bool KC>
 inline void launch_wide(const Problem& p, cudaStream_t stream) {
   launch_wide_base<KC>(p, stream);
 #ifdef LFM_GEMM_ROUND_ONCE
-  const int first = std::min(p.m, once_rows() - p.row0);
+  const int first = p.row0 < 0 ? 0 : std::min(p.m, once_rows() - p.row0);
   if (first > 0) {
     Problem head = p;
     head.m = first;

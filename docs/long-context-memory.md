@@ -1,11 +1,12 @@
 # Memory per token, and how far context can go in 8 GB
 
-Status: **an idea recorded for later** (2026-11-17). The per-token table is computed from the engine's allocation
-code and checked against two measured peaks. Everything under "Changes" and "LFM3-1.7B at 262,144 tokens" is
-calculation; none of it is built or measured. Tracked in [PLAN.md](../PLAN.md): the two changes are queued for the
-32,768-token bar of phase 1; the 262,144-token question is on the parking list.
+Status (2026-11-18): the two changes under "Changes that keep the arithmetic" **are built and measured**
+([memory-v1](../validation/memory-v1/), [long-decode-v1](../validation/long-decode-v1/)); the compact window
+buffers are on by default above 4,096 tokens of capacity. The first table and "At 32,768 tokens" describe the
+engine **before** those changes, as written on 2026-11-17. "LFM3-1.7B at 262,144 tokens" is still calculation only,
+and is on the parking list in [PLAN.md](../PLAN.md).
 
-## What the engine reserves today
+## What the engine reserved before the changes
 
 `Runner` (`native/src/lfm3_main.cu`) allocates every buffer once, for the requested capacity. Per token of
 capacity, for the LFM3 backbone (hidden 2,048, MLP 7,680, 16 query heads, 4 key-value heads × 128, 11 attention

@@ -13,6 +13,11 @@ W=/workspace/data/ppl-windows
 test ! -e "$out" || { echo "exists: $out"; exit 2; }
 mkdir -p "$out"
 echo "binary $(sha256sum "$bin")"; sha256sum "$W/windows-4096.i32" "$W/windows-32768.i32"
+binary_sha=$(sha256sum "$bin" | cut -c1-64)
+unset LFM3_COMPACT_WINDOWS LFM3_PREFILL_HEADS  # nothing inherited from the caller
+# The peaks are the whole card's memory in use, and rule 2 compares them: the card must be otherwise idle.
+idle=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | sort -n | tail -1)
+[ "${idle:-9999}" -le 64 ] || { echo "the card is not idle: ${idle:-?} MiB in use before the first run"; exit 2; }
 
 run() {  # CASE RUN COMPACT(unset|0) CAPACITY LENGTH WINDOW PROMPT TEACHER NEW
   local case=$1 run=$2 compact=$3 d=$out/$1.$2; mkdir -p "$d"
@@ -21,7 +26,7 @@ import json, sys
 from array import array
 path, length, window, prompt, teacher, new, capacity, d = sys.argv[1], *map(int, sys.argv[2:8]), sys.argv[8]
 a = array("i"); a.frombytes(open(path, "rb").read()); w = a[window * length:(window + 1) * length]
-assert len(w) == length and prompt + teacher < length or teacher == 0
+assert len(w) == length and 0 < prompt <= length and (teacher == 0 or prompt + teacher < length)
 r = {"input_ids": list(w[:prompt]), "capacity": capacity, "trace_directory": d + "/trace", "trace_logits_only": True}
 if capacity > 4096: r["experimental_long_context"] = True
 if teacher: r["teacher_ids"] = list(w[prompt:prompt + teacher])
@@ -35,10 +40,11 @@ PY
   "$bin" --experimental $M "$d/request.json" "$d/native.json" > "$d/log" 2>&1; local rc=$?
   kill $sampler 2>/dev/null; wait $sampler 2>/dev/null; unset LFM3_COMPACT_WINDOWS
   if [ $rc != 0 ]; then echo "$case.$run: exit $rc: $(tail -c 300 "$d/log")"; rm -rf "$d/trace"; return 1; fi
-  python3 - "$d" "$out/$case.$run.json" "$case" "$run" "$compact" "$4" "$5" "$6" "$7" <<'PY'
+  python3 - "$d" "$out/$case.$run.json" "$case" "$run" "$compact" "$4" "$5" "$6" "$7" "$binary_sha" "$W/windows-$5.i32" <<'PY'
 import hashlib, json, math, os, sys
 from array import array
 d, dest, case, run, compact = sys.argv[1:6]; capacity, length, window, prompt = map(int, sys.argv[6:10])
+binary_sha, windows_sha = sys.argv[10], hashlib.sha256(open(sys.argv[11], "rb").read()).hexdigest()
 native = json.load(open(d + "/native.json")); targets = json.load(open(d + "/targets.json"))
 steps = sorted(int(f.split(".")[0]) for f in os.listdir(d + "/trace") if f.endswith(".logits.f32"))
 assert steps == list(range(len(steps))), "trace steps are not 0..n-1"
@@ -51,6 +57,7 @@ for k in steps:
 peak = max(int(v) for v in open(d + "/memory.txt").read().split())
 json.dump({"case": case, "run": run, "compact_windows_env": compact, "capacity": capacity, "window_length": length,
            "window": window, "prompt_tokens": prompt, "steps": len(steps),
+           "binary_sha256": binary_sha, "windows_sha256": windows_sha,
            "teacher_argmax": native["teacher_argmax"], "generated_ids": native["generated_ids"],
            "logits_sha256": shas, "logits_digest": hashlib.sha256("".join(shas).encode()).hexdigest(),
            "first_position": prompt, "nll": nll, "prefill_seconds": native["prefill_seconds"],

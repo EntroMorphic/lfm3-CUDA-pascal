@@ -16,9 +16,13 @@ for request in "$fx"/*.request.json; do
     echo $? > "$out/$name.$run.rc"
   done
 done
-python3 - "$fx/expected.json" "$out" "$runs" <<'PY'
+python3 - "$fx/expected.json" "$out" "$runs" "$fx" "${1:-}" <<'PY'
 import json, sys, pathlib
 expected = json.load(open(sys.argv[1]))["generated_ids"]; out = pathlib.Path(sys.argv[2]); runs = int(sys.argv[3]); ok = True
+requests = sorted(p.name[:-len(".request.json")] for p in pathlib.Path(sys.argv[4]).glob("*.request.json"))
+if not expected or requests != sorted(expected):  # every request has an expectation and every expectation a request
+    print(f"fixtures {requests} do not match expected.json's {sorted(expected)}"); ok = False
+sanitizer = "compute-sanitizer" in sys.argv[5]
 for name, want in expected.items():
     got = []
     for run in range(1, runs + 1):
@@ -26,10 +30,13 @@ for name, want in expected.items():
         if rc != 0:
             print(f"{name} run {run}: exit {rc}: {(out / f'{name}.{run}.log').read_text()[-400:].strip()}"); ok = False; got.append(None); continue
         got.append(json.load(open(out / f"{name}.{run}.json")))
+        # compute-sanitizer returns the program's status unless told otherwise: its own summary decides.
+        if sanitizer and "ERROR SUMMARY: 0 errors" not in (out / f"{name}.{run}.log").read_text():
+            print(f"{name} run {run}: the sanitizer's log has no 'ERROR SUMMARY: 0 errors'"); ok = False
     if None in got: continue
     ids = [g["generated_ids"] for g in got]
     same = all(i == ids[0] for i in ids); match = ids[0] == want; ok &= same and match and all(g["reset_exact_logits_ok"] for g in got)
-    print(f"{name}: ids {'MATCH' if match else 'DIFFER'} ({len(want)}), runs {'identical' if same else 'DIFFER'}, "
+    print(f"{name}: ids {'MATCH' if match else 'DIFFER'} ({len(want)}), runs {'one run' if runs == 1 else 'identical' if same else 'DIFFER'}, "
           f"reset {'ok' if all(g['reset_exact_logits_ok'] for g in got) else 'FAIL'}, input {len(got[0]['input_ids'])} tokens, "
           f"prefill {got[0]['prefill_seconds']:.3f} s, decode {got[0]['decode_seconds']:.3f} s / {got[0]['decode_forward_calls']} calls")
     if not match: print("  expected", want, "\n  got     ", ids[0])

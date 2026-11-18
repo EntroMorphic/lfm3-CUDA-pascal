@@ -20,8 +20,11 @@ repo=$(cd "$here/../.." && pwd)
 name=${PASCAL_TREE:-lfm3-CUDA-pascal}
 name_repo=$name
 ssh_opts=(-o BatchMode=yes -o ServerAliveInterval=30 -o ConnectTimeout=15)
-# What is not part of the synced tree. The same list drives rsync and both tree hashes.
-excludes=(.git reference build __pycache__ .pytest_cache '*.pyc' target.env)
+# What is not part of the synced tree: these paths at the top of the repository, and these names at any depth. The
+# same lists drive rsync and both tree hashes. The hash covers the contents of regular files (the tree has no
+# symbolic links); it is of the working tree, so the line printed after a sync also says which commit that is.
+excludes_top=(.git reference build tools/pascal/target.env)
+excludes_any=(__pycache__ .pytest_cache '*.pyc')
 
 on_host() {  # runs "$1" in a shell on the GPU host, stdin passed through
   ssh "${ssh_opts[@]}" -p "$PASCAL_JUMP_PORT" "$PASCAL_JUMP" \
@@ -31,14 +34,18 @@ on_host() {  # runs "$1" in a shell on the GPU host, stdin passed through
 # One sha256 over the sorted list of (sha256, path) of every file in the tree.
 tree_hash_cmd() {
   local prune=() e
-  for e in "${excludes[@]}"; do prune+=(-name "$(printf '%q' "$e")" -o); done
+  for e in "${excludes_top[@]}"; do prune+=(-path "$(printf '%q' "./$e")" -o); done
+  for e in "${excludes_any[@]}"; do prune+=(-name "$(printf '%q' "$e")" -o); done
   unset 'prune[${#prune[@]}-1]'
   echo "find . \\( ${prune[*]} \\) -prune -o -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1"
 }
 
 sync() {
-  local rs=() e cmd local_hash remote_hash mode
-  for e in "${excludes[@]}"; do rs+=(--exclude "$e"); done
+  local rs=() e cmd local_hash remote_hash mode commit
+  for e in "${excludes_top[@]}"; do rs+=(--exclude "/$e"); done
+  for e in "${excludes_any[@]}"; do rs+=(--exclude "$e"); done
+  commit=$(cd "$repo" && git rev-parse --short HEAD 2>/dev/null || echo "no commit")
+  [ -z "$(cd "$repo" && git status --porcelain 2>/dev/null)" ] || commit="$commit plus uncommitted changes"
   cmd=$(tree_hash_cmd)
   # First by size and time; if the hashes then differ (a remote file changed with neither), once more by content.
   for mode in -a -ac; do
@@ -48,7 +55,7 @@ sync() {
     local_hash=$(cd "$repo" && eval "$cmd")
     remote_hash=$(on_host "mkdir -p $PASCAL_HOST_WORKSPACE/build && cd $PASCAL_HOST_WORKSPACE/$name && $cmd" </dev/null)
     if [ "$local_hash" = "$remote_hash" ] && [ ${#local_hash} -eq 64 ]; then
-      echo "remote.sh: synced, tree sha256 $local_hash (both ends)" >&2; return 0
+      echo "remote.sh: synced, tree sha256 $local_hash (both ends); $commit" >&2; return 0
     fi
     echo "remote.sh: tree differs after rsync $mode (local=$local_hash remote=$remote_hash)" >&2
   done

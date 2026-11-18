@@ -20,10 +20,13 @@ def step_of(t, lo=[0]):
     return lo[0]
 per_step_kernel = collections.defaultdict(float); per_step_count = collections.Counter()
 by_kind = collections.defaultdict(list)  # steady state: (name, shape) -> durations
-for s, e, name, gx, gy, bx in kernels:
-    i = step_of(s); per_step_kernel[i] += e - s; per_step_count[i] += 1
-    if i >= steady_from: by_kind[(name, gx, gy, bx)].append(e - s)
 wall = [bounds[i + 1] - bounds[i] for i in range(len(bounds) - 1)]
+if not 1 <= steady_from < len(wall): sys.exit(f"STEADY_FROM_STEP must be 1..{len(wall) - 1}: the profile has {len(wall)} forward calls")
+for s, e, name, gx, gy, bx in kernels:
+    i = step_of(s)
+    if i >= len(wall): continue  # after the last logits copy: teardown, not a step
+    per_step_kernel[i] += e - s; per_step_count[i] += 1
+    if i >= steady_from: by_kind[(name, gx, gy, bx)].append(e - s)
 print(f"{len(logits)} forward calls; prefill wall {wall[0] / 1e6:.1f} ms, {per_step_count[0]} kernels, kernel time {per_step_kernel[0] / 1e6:.1f} ms")
 print("\ncold start: decode steps after the prefill (wall ms, GPU kernel ms, the rest)")
 for i in list(range(1, 13)) + [16, 24, 32, 48, 64, 96, 128, 200, 300, 500, len(wall) - 1]:
@@ -50,11 +53,9 @@ if d64:
     print(f"\n  2048-column projections split by duration: {len(small) / n:.1f} calls per step at {statistics.mean(small) / 1e3:.1f} us, {len(large) / n:.1f} at {statistics.mean(large) / 1e3:.1f} us")
 print("\nCUDA API calls in steady state (ms per step):")
 acc = collections.defaultdict(float); cnt = collections.Counter()
-for s, e, name in api:
-    i = step_of(s, [0]) if False else None
 lo = 0
 for s, e, name in api:
     while lo + 1 < len(bounds) and s >= bounds[lo + 1]: lo += 1
-    if lo >= steady_from: acc[name] += e - s; cnt[name] += 1
+    if steady_from <= lo < len(wall): acc[name] += e - s; cnt[name] += 1  # lo == len(wall): teardown
 for name, t in sorted(acc.items(), key=lambda kv: -kv[1])[:8]:
     print(f"  {t / n / 1e6:7.3f} ms  {cnt[name] / n:6.1f} calls  {name}")

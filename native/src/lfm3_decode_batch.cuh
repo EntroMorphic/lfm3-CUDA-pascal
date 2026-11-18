@@ -14,6 +14,7 @@ inline void validate(const std::vector<Runner*>& lanes, const std::vector<int>& 
        c.attention.size()!=size_t(s.layers) || c.layer_specs.size()!=size_t(s.layers))
       throw std::invalid_argument("unsupported decode owner or tracing enabled");
     lfm::text::scratch_rows(s.context);
+    r.require_full_length_caches("decode batch");
     if(r.cursor<=0 || r.cursor>=s.context || r.step==std::numeric_limits<int>::max() ||
        ids[i]<0 || ids[i]>=s.vocabulary)
       throw std::invalid_argument("decode token/position/capacity invalid");
