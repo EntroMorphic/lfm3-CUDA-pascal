@@ -1,0 +1,72 @@
++ date
+Wed Nov 18 12:40:28 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ sha256sum /workspace/build/text-v6/lfm3-score /workspace/build/text-v6/liquid-lfm3
+a27d18ec343d4ce459d3fe5c7246a28a922ac3d03bfc1e859720631a070df487  /workspace/build/text-v6/lfm3-score
+7464f580b1f5ec7eb610e3167abc26b687a490a27d120e25fd230744e1eb45a0  /workspace/build/text-v6/liquid-lfm3
++ tools/pascal/gate_pins.sh parity-v6
+liquid-lfm3: warnings 0, sha256 63dfd52ffc18ddea86f1650ba5a82e430d37efeb642c45fb4064ddee5717166f, 3476024 bytes
+lfm3-score: warnings 0, sha256 c6ab7a704e3b2f2e12f5d9007ae16000d05be4866022c8cc0f558a6962b0a085, 3335736 bytes
+binary 63dfd52ffc18ddea86f1650ba5a82e430d37efeb642c45fb4064ddee5717166f  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 0.77 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.45 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.35 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.03 s
+PINS EQUAL
+gate rc=0
++ echo 'gate rc=0'
++ EXTRA_FLAGS=-DLFM_GEMM_FIRST_ROW=0
++ tools/pascal/build_text.sh text-v6-plain
+liquid-lfm3: warnings 0, sha256 4abfb5e70488859ebddedc0ecf47fd2467fd2731e3a490589f27807426ddd38e, 2888760 bytes
+lfm3-score: warnings 0, sha256 8677e85be158b48a10a79ee9a57612d6de5d04194201fdadd60344b297b89a03, 2744328 bytes
++ tools/pascal/run_text_fixtures.sh text-v6-plain 2
+binary 4abfb5e70488859ebddedc0ecf47fd2467fd2731e3a490589f27807426ddd38e  tree f5b79339dcbc8479 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.236 s, decode 0.232 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.263 s, decode 0.016 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.763 s, decode 0.047 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.047 s / 3 calls
+FIXTURES PASS
++ echo 'plain fixtures rc=0'
++ tools/pascal/run_text_fixtures.sh text-v6 2
+plain fixtures rc=0
+binary 7464f580b1f5ec7eb610e3167abc26b687a490a27d120e25fd230744e1eb45a0  tree f5b79339dcbc8479 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.394 s, decode 0.233 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.423 s, decode 0.016 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.915 s, decode 0.048 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.047 s / 3 calls
+FIXTURES PASS
++ echo 'fixtures rc=0'
+fixtures rc=0
++ tools/pascal/run_text_fixtures.sh text-v6 1 /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+binary 7464f580b1f5ec7eb610e3167abc26b687a490a27d120e25fd230744e1eb45a0  tree f5b79339dcbc8479 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 10.365 s, decode 3.313 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 10.933 s, decode 0.222 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 20.615 s, decode 0.711 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.220 s, decode 0.643 s / 3 calls
+FIXTURES PASS
++ echo 'memcheck rc=0'
+memcheck rc=0
++ grep -h 'ERROR SUMMARY' /workspace/build/text-v6/fixtures-wrapped/arithmetic.1.log /workspace/build/text-v6/fixtures-wrapped/baseline.1.log /workspace/build/text-v6/fixtures-wrapped/single.1.log /workspace/build/text-v6/fixtures-wrapped/window257.1.log
+========= ERROR SUMMARY: 0 errors
+========= ERROR SUMMARY: 0 errors
+========= ERROR SUMMARY: 0 errors
+========= ERROR SUMMARY: 0 errors
++ tools/pascal/score.sh text-v6 ppl-v6 256 257 4096 32768
+length 256: {"engine": "native", "length": 256, "windows": 1160, "scored_tokens": 295800, "mean_nll": 3.280150656, "perplexity": 26.579777, "seconds": 930.949}
+  peak device memory 4409 MiB, wall 931.7 s, nll sha256 c47912b0a4379aab
+length 257: {"engine": "native", "length": 257, "windows": 1155, "scored_tokens": 295680, "mean_nll": 3.277352868, "perplexity": 26.505516, "seconds": 1189.897}
+  peak device memory 4415 MiB, wall 1190.7 s, nll sha256 75430bb635b30684
+length 4096: {"engine": "native", "length": 4096, "windows": 72, "scored_tokens": 294840, "mean_nll": 2.569422345, "perplexity": 13.058279, "seconds": 790.515}
+  peak device memory 5029 MiB, wall 791.3 s, nll sha256 3a00cb321a584c24
+length 32768: {"engine": "native", "length": 32768, "windows": 9, "scored_tokens": 294903, "mean_nll": 2.531826883, "perplexity": 12.576461, "seconds": 906.189}
+  peak device memory 6577 MiB, wall 907.0 s, nll sha256 86582837b337699c
++ echo 'score rc=0'
++ date
+score rc=0
+Wed Nov 18 13:48:17 MST 2026

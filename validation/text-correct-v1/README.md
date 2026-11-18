@@ -169,4 +169,4 @@ core's.
   Wall time 737, 1,005, 785 and 917 s (256, 257, 4,096, 32,768): 57 minutes for the set, against about 2.3 hours
   with the first kernel; peaks 4,409, 4,415, 5,029 and 6,577 MiB.
 
-Phase 1 is not passed.
+Phase 1 is not passed in this round. It passed on 2026-11-18 with position 0 on the tensor-core arithmetic: [text-correct-v2](../text-correct-v2/).

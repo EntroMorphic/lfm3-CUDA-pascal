@@ -1,0 +1,165 @@
+{
+  "status": "complete",
+  "rule": "PLAN.md decision 6",
+  "engine": "pascal",
+  "anchor_engine": "hf-eager_blocked-fp32",
+  "rows": [
+    {
+      "length": 256,
+      "windows": 1160,
+      "engine_nll_sha256": "c47912b0a4379aabc3296ae8cc40cc1652fbb1dbff7b6a6420b19c4f978bc7ce",
+      "against_sdpa": {
+        "delta": -8.681658721606643e-05,
+        "ci95": [
+          -0.00021407820497364394,
+          4.168155379072797e-05
+        ],
+        "verdict": "equal"
+      },
+      "against_fp32": {
+        "delta": -0.00010597578428020851,
+        "ci95": [
+          -0.00020765501350203378,
+          -7.766971869866115e-07
+        ],
+        "verdict": "equal"
+      },
+      "fp32_against_sdpa": {
+        "delta": 1.9159197064142074e-05,
+        "ci95": [
+          -9.596581199159383e-05,
+          0.00013126900486439195
+        ],
+        "verdict": "equal"
+      },
+      "position_1": {
+        "engine_minus_sdpa": 0.005667674130406873,
+        "engine_minus_fp32": -0.025723102174956224
+      },
+      "positions_1_64": {
+        "engine_minus_sdpa": 0.00015961216713897755,
+        "engine_minus_fp32": -0.0006683470925864544
+      },
+      "fails": false,
+      "reading": "pass"
+    },
+    {
+      "length": 257,
+      "windows": 1155,
+      "engine_nll_sha256": "75430bb635b3068488c6f848a6818670b8930aba4d732e5a95c30dbf1c649173",
+      "against_sdpa": {
+        "delta": 3.867248054959743e-05,
+        "ci95": [
+          -9.088554684574719e-05,
+          0.00016684500260318545
+        ],
+        "verdict": "equal"
+      },
+      "against_fp32": {
+        "delta": -0.00011444648068376743,
+        "ci95": [
+          -0.00022024563000517915,
+          -7.275670473636976e-06
+        ],
+        "verdict": "equal"
+      },
+      "fp32_against_sdpa": {
+        "delta": 0.00015311896123336487,
+        "ci95": [
+          4.077546293548075e-05,
+          0.0002637724751634995
+        ],
+        "verdict": "worse"
+      },
+      "position_1": {
+        "engine_minus_sdpa": 0.0056340667592498644,
+        "engine_minus_fp32": -0.026051593962169828
+      },
+      "positions_1_64": {
+        "engine_minus_sdpa": 5.090017164102524e-05,
+        "engine_minus_fp32": -0.00092628516757404
+      },
+      "fails": false,
+      "reading": "pass"
+    },
+    {
+      "length": 4096,
+      "windows": 72,
+      "engine_nll_sha256": "3a00cb321a584c24399c509e60d38af795aa6a4967f17e07d40cac9ef7a70f64",
+      "against_sdpa": {
+        "delta": -0.00010489795046644213,
+        "ci95": [
+          -0.00024868394213327166,
+          3.773574379544615e-05
+        ],
+        "verdict": "equal"
+      },
+      "against_fp32": {
+        "delta": 0.00019759380023262068,
+        "ci95": [
+          8.848718341379546e-05,
+          0.00030118287682623547
+        ],
+        "verdict": "worse"
+      },
+      "fp32_against_sdpa": {
+        "delta": -0.0003024917506990628,
+        "ci95": [
+          -0.00042136493437100735,
+          -0.00017951205569580932
+        ],
+        "verdict": "better"
+      },
+      "position_1": {
+        "engine_minus_sdpa": 0.004748847749498155,
+        "engine_minus_fp32": -0.03026413917541504
+      },
+      "positions_1_64": {
+        "engine_minus_sdpa": -0.0002224606723426861,
+        "engine_minus_fp32": -0.000619015896083239
+      },
+      "fails": false,
+      "reading": "pass"
+    },
+    {
+      "length": 32768,
+      "windows": 9,
+      "engine_nll_sha256": "86582837b337699c3eed4f69237033dc30ba3484444ce76ebcbf5a5ccb5b0b8f",
+      "against_sdpa": {
+        "delta": -5.047492071129861e-05,
+        "ci95": [
+          -0.0002510554528329613,
+          0.00016058427428422271
+        ],
+        "verdict": "equal"
+      },
+      "against_fp32": {
+        "delta": 0.000372226390969939,
+        "ci95": [
+          0.00019889667745703093,
+          0.0005783526770596492
+        ],
+        "verdict": "worse"
+      },
+      "fp32_against_sdpa": {
+        "delta": -0.00042270131168123756,
+        "ci95": [
+          -0.0005616511468743212,
+          -0.00028057038160985993
+        ],
+        "verdict": "better"
+      },
+      "position_1": {
+        "engine_minus_sdpa": 0.007043308681911892,
+        "engine_minus_fp32": -0.025704065958658855
+      },
+      "positions_1_64": {
+        "engine_minus_sdpa": -0.0005152974470535002,
+        "engine_minus_fp32": -0.0008562533068041173
+      },
+      "fails": false,
+      "reading": "pass"
+    }
+  ],
+  "passes": true
+}
