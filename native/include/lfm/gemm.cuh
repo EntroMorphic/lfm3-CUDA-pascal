@@ -440,6 +440,59 @@ __global__ void __launch_bounds__(128) split_kn_partial(Problem p, int splits) {
     for (int r = 0; r < R; ++r) { out[r * p.n] = acc[g][r][0]; out[r * p.n + 1] = acc[g][r][1]; }
   }
 }
+// One row (decode), several splits per block: each thread owns 8 adjacent columns of one split and reads them with one
+// 16-byte load per key; 16 threads cover 128 columns. Each output's partial is the same chain over the split's keys
+// in ascending order as split_kn_partial's, written to the same place (phase 2, validation/speed-v1).
+#ifndef LFM_GEMM_WIDE_AHEAD
+#define LFM_GEMM_WIDE_AHEAD 4
+#endif
+#ifndef LFM_GEMM_WIDE_SPLITS
+#define LFM_GEMM_WIDE_SPLITS 4
+#endif
+inline constexpr int kWideSplitsPerBlock = LFM_GEMM_WIDE_SPLITS, kWideAhead = LFM_GEMM_WIDE_AHEAD;
+#ifndef LFM_GEMM_K128_BLOCKS
+#define LFM_GEMM_K128_BLOCKS 256
+#endif
+template <int G>
+__global__ void __launch_bounds__(16 * kWideSplitsPerBlock) split_kn_partial_wide(Problem p, int splits) {
+  const int split = blockIdx.x * kWideSplitsPerBlock + threadIdx.x / 16, z0 = blockIdx.y * G;
+  const int col = blockIdx.z * 128 + (threadIdx.x % 16) * 8;
+  if (split >= splits || col >= p.n) return;
+  const bf16* B = p.b + (z0 / p.group) * p.stride_b;
+  const int k0 = split * kSplitKeys, k1 = min(k0 + kSplitKeys, p.b_rows);
+  float acc[G][8];
+#pragma unroll
+  for (int g = 0; g < G; ++g)
+#pragma unroll
+    for (int j = 0; j < 8; ++j) acc[g][j] = 0.f;
+  // kWideAhead keys are loaded before any is used; the sums still run over the keys in ascending order.
+  for (int kb = k0; kb < k1; kb += kWideAhead) {
+    int4 raw[kWideAhead];
+#pragma unroll
+    for (int u = 0; u < kWideAhead; ++u)
+      raw[u] = kb + u < k1 ? __ldg(reinterpret_cast<const int4*>(B + (long long)(kb + u) * p.ldb + col)) : make_int4(0, 0, 0, 0);
+#pragma unroll
+    for (int u = 0; u < kWideAhead; ++u) {
+      if (kb + u >= k1) break;
+      const __nv_bfloat162* v2 = reinterpret_cast<const __nv_bfloat162*>(&raw[u]);
+      float v[8];
+#pragma unroll
+      for (int e = 0; e < 4; ++e) { const float2 f = __bfloat1622float2(v2[e]); v[2 * e] = f.x; v[2 * e + 1] = f.y; }
+#pragma unroll
+      for (int g = 0; g < G; ++g) {
+        const float a = __bfloat162float(p.a[(z0 + g) * p.stride_a + kb + u]);
+#pragma unroll
+        for (int j = 0; j < 8; ++j) acc[g][j] = fmaf(a, v[j], acc[g][j]);
+      }
+    }
+  }
+#pragma unroll
+  for (int g = 0; g < G; ++g) {
+    float* out = p.workspace + (size_t(z0 + g) * splits + split) * p.n + col;
+#pragma unroll
+    for (int j = 0; j < 8; ++j) out[j] = acc[g][j];
+  }
+}
 template <int R>
 __global__ void split_kn_finish(Problem p, int splits) {
   const size_t i = size_t(blockIdx.x) * blockDim.x + threadIdx.x;
@@ -458,8 +511,15 @@ inline void launch_split_kn(const Problem& p, cudaStream_t stream) {
   if (!p.workspace || p.workspace_size < workspace_bytes(R, p.n, p.k, p.batch))
     throw std::runtime_error("gemm: split-K workspace too small");
   const int threads = 64, column_blocks = (p.n / 2 + threads - 1) / threads;
-  // Paired heads halve the blocks: worth it only once the keys fill enough splits to keep the card busy.
-  if (R <= 2 && p.group % 2 == 0 && splits >= kPairedSplits) split_kn_partial<R, 2><<<dim3(splits, p.batch / 2, column_blocks), threads, 0, stream>>>(p, splits);
+  if (R == 1 && p.n % 8 == 0 && splits >= kPairedSplits) {  // decode over long caches: 16-byte loads, heads together
+    const dim3 grid((splits + kWideSplitsPerBlock - 1) / kWideSplitsPerBlock, 0, (p.n + 127) / 128);
+    if (p.group % 4 == 0) split_kn_partial_wide<4><<<dim3(grid.x, p.batch / 4, grid.z), 16 * kWideSplitsPerBlock, 0, stream>>>(p, splits);
+    else if (p.group % 2 == 0) split_kn_partial_wide<2><<<dim3(grid.x, p.batch / 2, grid.z), 16 * kWideSplitsPerBlock, 0, stream>>>(p, splits);
+    else split_kn_partial_wide<1><<<dim3(grid.x, p.batch, grid.z), 16 * kWideSplitsPerBlock, 0, stream>>>(p, splits);
+  }
+  // Grouped heads divide the blocks: worth it only once the keys fill enough splits to keep the card busy.
+  else if (R == 1 && p.group % 4 == 0 && splits >= kPairedSplits) split_kn_partial<R, 4><<<dim3(splits, p.batch / 4, column_blocks), threads, 0, stream>>>(p, splits);
+  else if (R <= 2 && p.group % 2 == 0 && splits >= kPairedSplits) split_kn_partial<R, 2><<<dim3(splits, p.batch / 2, column_blocks), threads, 0, stream>>>(p, splits);
   else split_kn_partial<R, 1><<<dim3(splits, p.batch, column_blocks), threads, 0, stream>>>(p, splits);
   const size_t outputs = size_t(R) * p.n * p.batch;
   split_kn_finish<R><<<unsigned((outputs + 255) / 256), 256, 0, stream>>>(p, splits);
@@ -467,7 +527,7 @@ inline void launch_split_kn(const Problem& p, cudaStream_t stream) {
 
 // M <= 8 rows, K = 128 (attention Q·Kᵀ in decode): eight lanes per B row, each lane 16 consecutive
 // elements (two 16-byte loads), four rows per warp step; a fixed three-step butterfly per output.
-// G batch items that share one B (query heads of one key/value head) take one read of each key; each output's
+// G (1, 2 or 4) batch items that share one B (query heads of one key/value head) take one read of each key; each output's
 // arithmetic is the same whatever G is (phase 2, validation/speed-v1).
 template <int R, int G>
 __global__ void __launch_bounds__(256) thin_k128_kernel(Problem p) {
@@ -492,16 +552,26 @@ __global__ void __launch_bounds__(256) thin_k128_kernel(Problem p) {
       q[g][r][2 * e] = a.x; q[g][r][2 * e + 1] = a.y; q[g][r][8 + 2 * e] = b.x; q[g][r][8 + 2 * e + 1] = b.y;
     }
   }
+  // The next rows' keys are loaded before this rows' are used (a warp loops when the rows outnumber its grid).
+  const int4 zero = make_int4(0, 0, 0, 0);
+  int4 lo = zero, hi = zero;
+  if (warp * 4 + slot < p.n) {
+    lo = __ldg(reinterpret_cast<const int4*>(B + (warp * 4 + slot) * p.ldb + sub * 16));
+    hi = __ldg(reinterpret_cast<const int4*>(B + (warp * 4 + slot) * p.ldb + sub * 16 + 8));
+  }
   for (int row0 = warp * 4; row0 < p.n; row0 += warps * 4) {
-    const int row = row0 + slot;
+    const int row = row0 + slot, next = row + warps * 4;
+    int4 next_lo = zero, next_hi = zero;
+    if (next < p.n) {
+      next_lo = __ldg(reinterpret_cast<const int4*>(B + next * p.ldb + sub * 16));
+      next_hi = __ldg(reinterpret_cast<const int4*>(B + next * p.ldb + sub * 16 + 8));
+    }
     float acc[G][R];
 #pragma unroll
     for (int g = 0; g < G; ++g)
 #pragma unroll
       for (int r = 0; r < R; ++r) acc[g][r] = 0.f;
     if (row < p.n) {
-      const int4 lo = __ldg(reinterpret_cast<const int4*>(B + row * p.ldb + sub * 16));
-      const int4 hi = __ldg(reinterpret_cast<const int4*>(B + row * p.ldb + sub * 16 + 8));
       const __nv_bfloat162* l2 = reinterpret_cast<const __nv_bfloat162*>(&lo);
       const __nv_bfloat162* h2 = reinterpret_cast<const __nv_bfloat162*>(&hi);
       float k[16];
@@ -527,13 +597,15 @@ __global__ void __launch_bounds__(256) thin_k128_kernel(Problem p) {
         v += __shfl_xor_sync(0xffffffffu, v, 1);
         if (sub == r && row < p.n) put(p, (z0 + g) * p.stride_c + r * p.ldc + row, v);
       }
+    lo = next_lo; hi = next_hi;
   }
 }
 template <int R>
 inline void launch_thin_k128(const Problem& p, cudaStream_t stream) {
   static_assert(R <= 8, "one lane of the eight stores each row");
-  const int blocks = std::min((p.n + 31) / 32, 1024);
-  if (R <= 2 && p.group % 2 == 0) thin_k128_kernel<R, 2><<<dim3(blocks, p.batch / 2), 256, 0, stream>>>(p);
+  const int blocks = std::min((p.n + 31) / 32, LFM_GEMM_K128_BLOCKS);
+  if (R == 1 && p.group % 4 == 0) thin_k128_kernel<R, 4><<<dim3(blocks, p.batch / 4), 256, 0, stream>>>(p);
+  else if (R <= 2 && p.group % 2 == 0) thin_k128_kernel<R, 2><<<dim3(blocks, p.batch / 2), 256, 0, stream>>>(p);
   else thin_k128_kernel<R, 1><<<dim3(blocks, p.batch), 256, 0, stream>>>(p);
 }
 
@@ -784,7 +856,8 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_once_kernel(Problem p) {
 // bound by its arithmetic, not its loads, and larger patches run slower). The block's height follows the row count
 // so that a short prefill computes fewer rows of padding; the smallest block is 4 patches high, so the launch that
 // recomputes position 0 alone computes 8 rows for one (its cost is PLAN's first item for phase 2).
-// LFM_GEMM_WIDE_RM / _RN override the plain patch and LFM_GEMM_MODEL_RM / _RN the exact one, for measurement.
+// LFM_GEMM_WIDE_RM / _RN override the old plain kernel's patch (used only with -DLFM_GEMM_WIDE2=0) and LFM_GEMM_MODEL_RM / _RN the exact
+// kernel's, for measurement.
 #ifndef LFM_GEMM_WIDE_RM
 #define LFM_GEMM_WIDE_RM 8
 #endif
@@ -874,6 +947,7 @@ inline void launch_wide_plain(const Problem& p, cudaStream_t stream) {
 #ifndef LFM_GEMM_FIRST_TX
 #define LFM_GEMM_FIRST_TX 32
 #endif
+static_assert(LFM_GEMM_FIRST_TX >= 1, "LFM_GEMM_FIRST_TX must be a positive number of threads");
 template <bool KC>
 inline void launch_first_row_model(const Problem& p, cudaStream_t stream) {
   using T = WideTile<1, 1, 1, LFM_GEMM_FIRST_TX>;

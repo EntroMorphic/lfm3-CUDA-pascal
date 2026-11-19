@@ -6,7 +6,8 @@ phase 2 is judged by, and the card's own ceilings. Measurement only; no rules. R
 
 ## The engine
 
-`tools/pascal/speed.sh`, warm (one warm-up run), no tracing, median of 3 runs (the spread was under 1% everywhere).
+`tools/pascal/speed.sh`, warm (one warm-up run), no tracing, median of 3 runs (the spread was under 1% everywhere but
+prefill-32768, 1.2%).
 Prompts are the first tokens of window 0 of the 32,768-token perplexity windows; decode cases teacher-force.
 
 | Case | Capacity | Prompt | Steps | Median | Peak device memory |
@@ -29,7 +30,7 @@ engine refused it.
 
 | | Measured |
 |---|---:|
-| FP32 multiply-add (2 FLOP each) | 9.4 to 9.7 TFLOPS in three runs (8.8 once, after the engine runs) |
+| FP32 multiply-add (2 FLOP each) | 9.7 and 9.4 TFLOPS in two runs; 8.8 in a third, after the engine runs |
 | Reading device memory, 16-byte loads | 248 to 251 GB/s |
 
 The read figure is not a ceiling: the engine's own decode kernel read weights at 258 GB/s under the profiler

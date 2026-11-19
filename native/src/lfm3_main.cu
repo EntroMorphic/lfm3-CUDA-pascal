@@ -13,6 +13,7 @@
 // perplexity bar instead of bitwise identity with the cuBLAS build.
 #include <lfm/allocation_metrics.hpp>
 #include <lfm/gemm.cuh>
+#include <lfm/greedy_pick.cuh>
 #else
 #include <cublas_v2.h>
 #endif
@@ -144,30 +145,7 @@ __global__ void scatter(const bf16* k, const bf16* v, bf16* kc, bf16* vc,
 #define LFM3_LOGIT bf16
 #define LFM3_LOGIT_FLOAT(x) __bfloat162float(x)
 #endif
-// The greedy choice on the card (phase 2, validation/speed-v1), for a greedy request with no tracing: the id the
-// host's greedy pick would give, the highest logit among ids below `live` not blocked, the lowest id on equal
-// values; and whether any logit of the whole output layer is not finite (the host then refuses the step, as it
-// does when it reads the logits itself). One block; out[0] the id (-1 if every id is blocked), out[1] the flag.
-__global__ void __launch_bounds__(1024) greedy_pick(const LFM3_LOGIT* logits,int vocabulary,const unsigned char* blocked,
-                                                    int live,int* out) {
-  float best=0.f; int at=-1, bad=0;
-  for(int i=threadIdx.x;i<vocabulary;i+=blockDim.x) {
-    const float v=LFM3_LOGIT_FLOAT(logits[i]);
-    bad|=!isfinite(v);
-    if(i<live && !blocked[i] && (at<0 || v>best)) { best=v; at=i; }  // ascending ids, strict '>': the lowest id of a tie
-  }
-  __shared__ float values[1024]; __shared__ int ids[1024], flags[1024];
-  values[threadIdx.x]=best; ids[threadIdx.x]=at; flags[threadIdx.x]=bad;
-  for(int half=blockDim.x/2;half>0;half/=2) {
-    __syncthreads();
-    if(threadIdx.x<half) {
-      const float v=values[threadIdx.x+half]; const int i=ids[threadIdx.x+half];
-      if(i>=0 && (at<0 || v>best || (v==best && i<at))) { best=v; at=i; values[threadIdx.x]=v; ids[threadIdx.x]=i; }
-      bad|=flags[threadIdx.x+half]; flags[threadIdx.x]=bad;
-    }
-  }
-  if(threadIdx.x==0) { out[0]=at; out[1]=bad; }
-}
+using lfm::greedy::GreedyPart; using lfm::greedy::kGreedyBlocks; using lfm::greedy::kGreedyThreads; using lfm::greedy::greedy_pick; using lfm::greedy::greedy_finish;
 __global__ void probabilities(const LFM3_SCORE* scores,bf16* probs,int rows,int end,int start,int window,int dim,int key_start LFM3_PITCH_PARAMETER) {
   const int row=blockIdx.x%rows,tid=threadIdx.x;
   const size_t base=size_t(blockIdx.x)*LFM3_ROW_STRIDE;
@@ -689,6 +667,7 @@ class Runner {
   const unsigned char* greedy_blocked=nullptr;
   int greedy_live=0, greedy_choice=-1;
   std::unique_ptr<Buffer<int>> choice;
+  std::unique_ptr<Buffer<GreedyPart>> greedy_parts;
   // Several placeholders (audio and image input together): the rows holding any of them, in prompt order, take the
   // rows of `injected` in that order; the media's features stacked as the prompt orders them (HF scatters each
   // modality's features into its own placeholders; with each modality's features in prompt order, the same rows).
@@ -782,8 +761,9 @@ class Runner {
 #endif
     cuda_check(cudaGetLastError());
     if(greedy_blocked) {  // forward_greedy: the choice, not the logits
-      if(!choice) choice=std::make_unique<Buffer<int>>(2);
-      greedy_pick<<<1,1024>>>(logits.p,s.vocabulary,greedy_blocked,greedy_live,choice->p);
+      if(!choice) choice=std::make_unique<Buffer<int>>(2), greedy_parts=std::make_unique<Buffer<GreedyPart>>(kGreedyBlocks);
+      greedy_pick<<<kGreedyBlocks,kGreedyThreads>>>(logits.p,s.vocabulary,greedy_blocked,greedy_live,greedy_parts->p);
+      greedy_finish<<<1,kGreedyThreads>>>(greedy_parts->p,kGreedyBlocks,choice->p);
       int got[2];
       cuda_check(cudaMemcpy(got,choice->p,sizeof got,cudaMemcpyDeviceToHost));
       if(got[1]) throw std::runtime_error("nonfinite logits");

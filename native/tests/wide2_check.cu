@@ -37,22 +37,26 @@ void launch_old(const Problem& p) {
 template <bool KC>
 void launch_new(const Problem& p) { lfm::gemm::detail::launch_wide2<KC>(p, 0); }
 
+int write_past = 0;
 std::vector<unsigned char> run(Problem p, size_t a_elems, size_t b_elems, size_t c_elems, bool f32,
                                const std::vector<u16>& a, const std::vector<u16>& b, bool use_new) {
   lfm::gemm::bf16 *da, *db; void* dc;
-  const size_t bytes = c_elems * (f32 ? 4 : 2);
-  check(cudaMalloc(&da, a_elems * 2)); check(cudaMalloc(&db, b_elems * 2)); check(cudaMalloc(&dc, bytes));
+  // 64 KiB of guard after C: a write past the end shows as a difference from the pattern (both kernels are checked).
+  const size_t bytes = c_elems * (f32 ? 4 : 2), guard = 65536;
+  check(cudaMalloc(&da, a_elems * 2)); check(cudaMalloc(&db, b_elems * 2)); check(cudaMalloc(&dc, bytes + guard));
   check(cudaMemcpy(da, a.data(), a_elems * 2, cudaMemcpyHostToDevice));
   check(cudaMemcpy(db, b.data(), b_elems * 2, cudaMemcpyHostToDevice));
-  check(cudaMemset(dc, 0x5a, bytes));
+  check(cudaMemset(dc, 0x5a, bytes + guard));
   p.a = da; p.b = db;
   if (f32) p.c_f32 = static_cast<float*>(dc); else p.c = static_cast<lfm::gemm::bf16*>(dc);
   lfm::gemm::check(p);
   if (use_new) { if (p.b_k_contiguous) launch_new<true>(p); else launch_new<false>(p); }
   else { if (p.b_k_contiguous) launch_old<true>(p); else launch_old<false>(p); }
   check(cudaGetLastError()); check(cudaDeviceSynchronize());
-  std::vector<unsigned char> out(bytes);
-  check(cudaMemcpy(out.data(), dc, bytes, cudaMemcpyDeviceToHost));
+  std::vector<unsigned char> out(bytes + guard);
+  check(cudaMemcpy(out.data(), dc, bytes + guard, cudaMemcpyDeviceToHost));
+  for (size_t i = bytes; i < bytes + guard; ++i)
+    if (out[i] != 0x5a) { std::printf("FAIL: %s kernel wrote past the end of C\n", use_new ? "new" : "old"); ++write_past; break; }
   check(cudaFree(da)); check(cudaFree(db)); check(cudaFree(dc));
   return out;
 }
@@ -61,7 +65,7 @@ int cases = 0, failures = 0;
 // A plain product m x n x k; B N x K (kc) or K x N with b_rows rows; optional NaN/inf poison.
 void plain(int m, int n, int k, bool kc, bool f32, int b_rows = -1, int poison = 0) {
   Problem p;
-  p.m = m; p.n = n; p.k = k; p.lda = k; p.ldc = n + (f32 ? 0 : 8); p.wide = true;
+  p.m = m; p.n = n; p.k = k; p.lda = k; p.ldc = n + 8; p.wide = true;  // 8 columns of each row never written
   if (kc) p.ldb = k; else { p.ldb = n; p.b_k_contiguous = false; p.b_rows = b_rows < 0 ? k : b_rows; }
   std::vector<u16> a(size_t(m) * k), b(size_t(n) * k);
   for (auto& v : a) v = random_bf16();
@@ -147,6 +151,7 @@ int main() {
   attention(1, 4097, 4104, 16, 2);
   attention(8, 520, 520, 16, 2);
   attention(20, 36, 40, 4, 2);
+  failures += write_past;
   std::printf("wide2_check: %d cases, %d failed: %s\n", cases, failures, failures ? "FAIL" : "PASS");
   return failures ? 1 : 0;
 }

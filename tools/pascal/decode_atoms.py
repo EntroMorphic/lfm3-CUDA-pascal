@@ -1,6 +1,6 @@
 """Runs in the container: what a decode step costs, from an Nsight Systems profile exported to SQLite
 (nsys profile -t cuda ... ; nsys export -t sqlite). Steps are delimited by the 512,000-byte device-to-host copy
-of the logits. Prints the cold-start timeline, then the steady-state step broken down by kernel and, for the
+of the logits, or where there is none (the greedy choice on the card) by the greedy_finish kernel. Prints the cold-start timeline, then the steady-state step broken down by kernel and, for the
 projection kernel, by weight shape with the bytes of weights each call reads.
     python3 tools/pascal/decode_atoms.py PROFILE.sqlite [STEADY_FROM_STEP=300]
 """
@@ -9,6 +9,9 @@ import sqlite3, sys, collections, statistics
 db = sqlite3.connect(sys.argv[1]); steady_from = int(sys.argv[2]) if len(sys.argv) > 2 else 300
 names = dict(db.execute("select id, value from StringIds"))
 logits = [r for r in db.execute("select start, end from CUPTI_ACTIVITY_KIND_MEMCPY where bytes = 512000 order by start")]
+if not logits:  # the greedy choice on the card (speed-v1): a step ends with greedy_finish, no logits copy
+    logits = [r for r in db.execute("select k.start, k.end from CUPTI_ACTIVITY_KIND_KERNEL k join StringIds s on k.shortName = s.id "
+                                    "where s.value = 'greedy_finish' order by k.start")]
 kernels = [(s, e, names[n], gx, gy, bx) for s, e, n, gx, gy, bx in db.execute(
     "select start, end, shortName, gridX, gridY, blockX from CUPTI_ACTIVITY_KIND_KERNEL order by start")]
 api = [(s, e, names[n]) for s, e, n in db.execute("select start, end, nameId from CUPTI_ACTIVITY_KIND_RUNTIME order by start")]

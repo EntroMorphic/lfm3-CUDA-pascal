@@ -56,7 +56,7 @@ record = {"case": case, "capacity": capacity, "prompt_tokens": prompt, "teacher_
           "binary_sha256": sys.argv[7], "prefill_seconds": native["prefill_seconds"],
           "decode_seconds": native["decode_seconds"], "teacher_argmax": native["teacher_argmax"],
           "generated_ids": native["generated_ids"],
-          "peak_device_mib": max(int(r[0]) for r in rows) if rows else None,
+          "peak_device_mib": max(int(r[0]) for r in rows) if rows else None,  # None fails the summary below
           "sm_mhz": sorted({int(r[1]) for r in busy}), "mem_mhz": sorted({int(r[2]) for r in busy})}
 if teacher: record["ms_per_step"] = native["decode_seconds"] / teacher * 1e3
 json.dump(record, open(dest, "w"))
@@ -81,7 +81,7 @@ for case in names:
     same = all(r["teacher_argmax"] == runs[0]["teacher_argmax"] and r["generated_ids"] == runs[0]["generated_ids"] for r in runs)
     summary[case] = {"metric": key, "median": statistics.median(values), "min": min(values), "max": max(values),
                      "prefill_seconds_median": statistics.median(r["prefill_seconds"] for r in runs),
-                     "peak_device_mib": max(r["peak_device_mib"] or 0 for r in runs),
+                     "peak_device_mib": max(r["peak_device_mib"] for r in runs),  # TypeError if a run has none: no summary
                      "sm_mhz": sorted({m for r in runs for m in r["sm_mhz"]}), "mem_mhz": sorted({m for r in runs for m in r["mem_mhz"]}),
                      "runs_same_ids": same}
     s = summary[case]
@@ -90,4 +90,5 @@ for case in names:
           f"sm {s['sm_mhz'][0] if s['sm_mhz'] else '?'}-{s['sm_mhz'][-1] if s['sm_mhz'] else '?'} MHz, mem {s['mem_mhz']}; ids {'same' if same else 'DIFFER'}")
 json.dump(summary, open(out + "/summary.json", "w"), indent=1)
 PY
+[ "${PIPESTATUS[0]}" = 0 ] || { echo "speed.sh: the summary failed"; fail=1; }
 exit $fail
