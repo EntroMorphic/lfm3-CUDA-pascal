@@ -12,7 +12,8 @@ BARS = {  # rule: (case, the bar as a function of the baseline median, descripti
     10: ("prefill-32", lambda b: 0.30, "<= 0.30 s"),
     # Rules 11 and 12 as amended by the owner (2026-11-18): the bytes a step must read at 245 GB/s, plus 1.5 ms.
     11: ("decode-1k", lambda b: 15.61, "<= 15.61 ms per step (amended)"),
-    12: ("decode-32k", lambda b: 18.72, "<= 18.72 ms per step (amended)"),
+    # Rule 12's figure corrected 2026-11-19: 4 key/value heads, 380.9 MB of keys and values (was 18.72, from 8 heads).
+    12: ("decode-32k", lambda b: 17.16, "<= 17.16 ms per step (amended, corrected)"),
 }
 NO_SLOWER = ("decode-8k", "prefill-1024")
 

@@ -1,7 +1,9 @@
 # speed-v1: phase 2's bar
 
-Status: **passed** (2026-11-19), on the second rule run (`job2.sh`, builds `text-v19` `3312933c…` and `parity-v19`
-`3126b0ba…`, tree `2fa785e`). The bar was committed before any engine run of a phase 2 change; rules 11 and 12 were
+Status: **not passed** (2026-11-19). The second rule run (`job2.sh`, builds `text-v19` `3312933c…` and `parity-v19`
+`3126b0ba…`, tree `2fa785e`) passes every rule but 12. Rule 12's figure was computed wrong when the amendment was
+written (keys and values counted for 8 key/value heads; the model has 4): by the owner's formula the bar is 17.16 ms,
+not 18.72, and 18.60 ms fails it. Found by phase 2's red-team review; see the correction below. The bar was committed before any engine run of a phase 2 change; rules 11 and 12 were
 amended by the owner during the first rule run, before its speed results (below). Records: [records/](records/)
 (`SHA256SUMS` verified after the copy). Phase 2's red-team round follows.
 
@@ -48,7 +50,12 @@ figures used (decode-atoms-v1: 1.01 + 0.48 ms).
 | # | Case | Must read per step | At 245 GB/s | Bar (was) |
 |---|---|---:|---:|---:|
 | 11 | decode-1k | weights, 3,456.8 MB | 14.11 ms | ≤ 15.61 ms (15.0) |
-| 12 | decode-32k | weights and the 6 full-attention layers' keys and values at 31,000 positions, 761.9 MB | 17.22 ms | ≤ 18.72 ms (18.5) |
+| 12 | decode-32k | weights and the 6 full-attention layers' keys and values at 31,000 positions, 380.9 MB | 15.66 ms | ≤ 17.16 ms (18.5) |
+
+Corrected 2026-11-19 (phase 2's red-team review): this row first said 761.9 MB, 17.22 ms and ≤ 18.72 ms, counting
+keys and values for 8 key/value heads. The model has 4 (`num_key_value_heads`; 31,000 × 4 × 128 × 2 bytes × 2 × 6
+layers = 380.9 MB). The owner's formula is unchanged; only the arithmetic was wrong. The rule runs' report script
+used 18.72.
 
 The windowed layers' caches (256 positions, 5 MB) and the cache's growth over the 700 steps are left out. Known when
 the amendment was made: single development runs of the phase 2 build gave 15.69 and 18.78 ms (both over these bars).
@@ -86,7 +93,7 @@ Speed, medians of 3, `text-v10` measured in the same job:
 | 9 | prefill-257 | 0.932 s | 0.347 s | 0.37 | ≤ 0.60 s | **pass** |
 | 10 | prefill-32 | 0.430 s | 0.215 s | 0.50 | ≤ 0.30 s | **pass** |
 | 11 | decode-1k | 15.69 ms | 15.52 ms | 0.99 | ≤ 15.61 ms (amended) | **pass** |
-| 12 | decode-32k | 20.58 ms | 18.60 ms | 0.90 | ≤ 18.72 ms (amended) | **pass** |
+| 12 | decode-32k | 20.58 ms | 18.60 ms | 0.90 | ≤ 17.16 ms (amended, corrected) | **FAIL** (the run's report said pass against the miscomputed 18.72) |
 | 13 | decode-8k; prefill-1024 | 16.25 ms; 2.31 s | 16.05 ms; 0.697 s | 0.99; 0.30 | no slower | **pass** |
 | 14 | peak memory, every case | | unchanged in every case | | ≤ +16 MiB | **pass** |
 
@@ -99,8 +106,9 @@ Scoring the four bar lengths took 23 minutes of wall time against 64 in red-team
   multiply-add rate.
 - **Position 0** in one-row blocks: from 8 rows computed for one to one. It still costs about 150 ms per prefill: one
   row is a few thousand serial chains of up to 480 steps each, too few to fill the card. Carried.
-- **Decode attention**: the two query heads of each key/value head read the keys (and, from 16 splits up, the values)
-  once: 3.2 ms to 1.7 ms per step at 31,000 keys, now at the read rate.
+- **Decode attention**: pairs of query heads read the keys (and, from 16 splits up, the values) once per pair: 3.2 ms
+  to 1.7 ms per step at 31,000 keys (development profiles, not in the records). Each key/value head serves four query
+  heads, so every key is still read twice.
 - **The greedy choice on the card**: 0.17 ms per step.
 - Tried and dropped: fusing adjacent norms (0.05 ms; each norm's time is its own reduction, not the launch).
 
