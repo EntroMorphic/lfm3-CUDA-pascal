@@ -116,7 +116,7 @@ template <int R, int G, bool WIDE = false> void values(const Problem& p) {
   using namespace lfm::gemm; using namespace lfm::gemm::detail;
   const int splits = (p.k + kSplitKeys - 1) / kSplitKeys, threads = 64, column_blocks = (p.n / 2 + threads - 1) / threads;
   if constexpr (G == 0) old_split_kn_partial<R><<<dim3(splits, p.batch, column_blocks), threads>>>(p, splits);
-  else if constexpr (WIDE) split_kn_partial_wide<G><<<dim3((splits + kWideSplitsPerBlock - 1) / kWideSplitsPerBlock, p.batch / G, (p.n + 127) / 128), 16 * kWideSplitsPerBlock>>>(p, splits);
+  else if constexpr (WIDE) split_kn_partial_wide<G><<<dim3((splits + kWideSplitsPerBlock - 1) / kWideSplitsPerBlock, p.batch / G, (p.n + 127) / 128), kWideThreadsPerSplit * kWideSplitsPerBlock>>>(p, splits);
   else split_kn_partial<R, G><<<dim3(splits, p.batch / G, column_blocks), threads>>>(p, splits);
   const size_t outputs = size_t(R) * p.n * p.batch;
   split_kn_finish<R><<<unsigned((outputs + 255) / 256), 256>>>(p, splits);

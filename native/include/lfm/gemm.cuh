@@ -453,36 +453,53 @@ inline constexpr int kWideSplitsPerBlock = LFM_GEMM_WIDE_SPLITS, kWideAhead = LF
 #ifndef LFM_GEMM_K128_BLOCKS
 #define LFM_GEMM_K128_BLOCKS 256
 #endif
+#ifndef LFM_GEMM_WIDE_COLS
+#define LFM_GEMM_WIDE_COLS 8
+#endif
+inline constexpr int kWideCols = LFM_GEMM_WIDE_COLS, kWideThreadsPerSplit = 128 / kWideCols;
+static_assert(kWideCols == 4 || kWideCols == 8, "LFM_GEMM_WIDE_COLS must be 4 or 8");
 template <int G>
-__global__ void __launch_bounds__(16 * kWideSplitsPerBlock) split_kn_partial_wide(Problem p, int splits) {
-  const int split = blockIdx.x * kWideSplitsPerBlock + threadIdx.x / 16, z0 = blockIdx.y * G;
-  const int col = blockIdx.z * 128 + (threadIdx.x % 16) * 8;
+__global__ void __launch_bounds__(kWideThreadsPerSplit * kWideSplitsPerBlock) split_kn_partial_wide(Problem p, int splits) {
+  constexpr int C = kWideCols;
+  using Load = std::conditional_t<C == 8, int4, int2>;
+  const int split = blockIdx.x * kWideSplitsPerBlock + threadIdx.x / kWideThreadsPerSplit, z0 = blockIdx.y * G;
+  const int col = blockIdx.z * 128 + (threadIdx.x % kWideThreadsPerSplit) * C;
   if (split >= splits || col >= p.n) return;
   const bf16* B = p.b + (z0 / p.group) * p.stride_b;
   const int k0 = split * kSplitKeys, k1 = min(k0 + kSplitKeys, p.b_rows);
-  float acc[G][8];
+  float acc[G][C];
 #pragma unroll
   for (int g = 0; g < G; ++g)
 #pragma unroll
-    for (int j = 0; j < 8; ++j) acc[g][j] = 0.f;
+    for (int j = 0; j < C; ++j) acc[g][j] = 0.f;
   // kWideAhead keys are loaded before any is used; the sums still run over the keys in ascending order.
   for (int kb = k0; kb < k1; kb += kWideAhead) {
-    int4 raw[kWideAhead];
+    Load raw[kWideAhead];
 #pragma unroll
     for (int u = 0; u < kWideAhead; ++u)
-      raw[u] = kb + u < k1 ? __ldg(reinterpret_cast<const int4*>(B + (long long)(kb + u) * p.ldb + col)) : make_int4(0, 0, 0, 0);
+      raw[u] = kb + u < k1 ? __ldg(reinterpret_cast<const Load*>(B + (long long)(kb + u) * p.ldb + col)) : Load{};
+    // The probabilities of these keys, four per 8-byte load (kb is a multiple of 4; rows are 8-element aligned).
+    static_assert(kWideAhead == 4, "four probabilities per load");
+    float a4[G][4];
+#pragma unroll
+    for (int g = 0; g < G; ++g) {
+      const int2 w = __ldg(reinterpret_cast<const int2*>(p.a + (z0 + g) * p.stride_a + kb));
+      const __nv_bfloat162* w2 = reinterpret_cast<const __nv_bfloat162*>(&w);
+      const float2 lo = __bfloat1622float2(w2[0]), hi = __bfloat1622float2(w2[1]);
+      a4[g][0] = lo.x; a4[g][1] = lo.y; a4[g][2] = hi.x; a4[g][3] = hi.y;
+    }
 #pragma unroll
     for (int u = 0; u < kWideAhead; ++u) {
       if (kb + u >= k1) break;
       const __nv_bfloat162* v2 = reinterpret_cast<const __nv_bfloat162*>(&raw[u]);
-      float v[8];
+      float v[C];
 #pragma unroll
-      for (int e = 0; e < 4; ++e) { const float2 f = __bfloat1622float2(v2[e]); v[2 * e] = f.x; v[2 * e + 1] = f.y; }
+      for (int e = 0; e < C / 2; ++e) { const float2 f = __bfloat1622float2(v2[e]); v[2 * e] = f.x; v[2 * e + 1] = f.y; }
 #pragma unroll
       for (int g = 0; g < G; ++g) {
-        const float a = __bfloat162float(p.a[(z0 + g) * p.stride_a + kb + u]);
+        const float a = a4[g][u];
 #pragma unroll
-        for (int j = 0; j < 8; ++j) acc[g][j] = fmaf(a, v[j], acc[g][j]);
+        for (int j = 0; j < C; ++j) acc[g][j] = fmaf(a, v[j], acc[g][j]);
       }
     }
   }
@@ -490,7 +507,7 @@ __global__ void __launch_bounds__(16 * kWideSplitsPerBlock) split_kn_partial_wid
   for (int g = 0; g < G; ++g) {
     float* out = p.workspace + (size_t(z0 + g) * splits + split) * p.n + col;
 #pragma unroll
-    for (int j = 0; j < 8; ++j) out[j] = acc[g][j];
+    for (int j = 0; j < C; ++j) out[j] = acc[g][j];
   }
 }
 template <int R>
@@ -513,9 +530,9 @@ inline void launch_split_kn(const Problem& p, cudaStream_t stream) {
   const int threads = 64, column_blocks = (p.n / 2 + threads - 1) / threads;
   if (R == 1 && p.n % 8 == 0 && splits >= kPairedSplits) {  // decode over long caches: 16-byte loads, heads together
     const dim3 grid((splits + kWideSplitsPerBlock - 1) / kWideSplitsPerBlock, 0, (p.n + 127) / 128);
-    if (p.group % 4 == 0) split_kn_partial_wide<4><<<dim3(grid.x, p.batch / 4, grid.z), 16 * kWideSplitsPerBlock, 0, stream>>>(p, splits);
-    else if (p.group % 2 == 0) split_kn_partial_wide<2><<<dim3(grid.x, p.batch / 2, grid.z), 16 * kWideSplitsPerBlock, 0, stream>>>(p, splits);
-    else split_kn_partial_wide<1><<<dim3(grid.x, p.batch, grid.z), 16 * kWideSplitsPerBlock, 0, stream>>>(p, splits);
+    if (p.group % 4 == 0) split_kn_partial_wide<4><<<dim3(grid.x, p.batch / 4, grid.z), kWideThreadsPerSplit * kWideSplitsPerBlock, 0, stream>>>(p, splits);
+    else if (p.group % 2 == 0) split_kn_partial_wide<2><<<dim3(grid.x, p.batch / 2, grid.z), kWideThreadsPerSplit * kWideSplitsPerBlock, 0, stream>>>(p, splits);
+    else split_kn_partial_wide<1><<<dim3(grid.x, p.batch, grid.z), kWideThreadsPerSplit * kWideSplitsPerBlock, 0, stream>>>(p, splits);
   }
   // Grouped heads divide the blocks: worth it only once the keys fill enough splits to keep the card busy.
   else if (R == 1 && p.group % 4 == 0 && splits >= kPairedSplits) split_kn_partial<R, 4><<<dim3(splits, p.batch / 4, column_blocks), threads, 0, stream>>>(p, splits);
