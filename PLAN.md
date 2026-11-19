@@ -85,7 +85,7 @@ with red-team, remediate, verify, commit.
 | 0 | passed 2026-11-17 ([phase0-foundations-v1](validation/phase0-foundations-v1/)) |
 | 1 | passed 2026-11-18 ([text-correct-v2](validation/text-correct-v2/)): the original bar and the amended one at all four lengths, with position 0 on the tensor-core arithmetic (decision 5). The plain kernel alone did not pass the original bar at 257 ([text-correct-v1](validation/text-correct-v1/)). Decode above 4,096 tokens of capacity, where the compact window buffers are the default: identical to the full-length layout and consistent with prefill ([long-decode-v1](validation/long-decode-v1/)) |
 | Red team | passed 2026-11-18 ([red-team-1](validation/red-team-1/)): two rounds of independent review of everything written since the import; every finding fixed; recorded results unchanged byte for byte |
-| 2 | not passed yet ([speed-v1](validation/speed-v1/)): every rule but 12 holds on the second rule run (prefill 3.4 times faster at 4,096 and 32,768 tokens; outputs unchanged; no more memory). Rule 12 (decode at 31,000 tokens) fails its corrected figure, 17.16 ms against 18.60 measured. Carried: position 0 still costs about 150 ms per prefill |
+| 2 | closed 2026-11-19 by the owner with rule 12 failed ([speed-v1](validation/speed-v1/)): 13 of 14 rules pass. Prefill 3.4 times faster at 4,096 and 32,768 tokens, 2.7 at 257, 2 at 32; decode 1% faster at 1,000 tokens (at the 245 GB/s bar, decision 7) and 16% at 31,000, where it misses its bar by 0.18 ms; outputs unchanged; no more memory. Carried: position 0 still costs about 150 ms per prefill |
 
 ## Parking list
 
@@ -108,6 +108,9 @@ with red-team, remediate, verify, commit.
   against the pins already in its repository; and a `tcgen05` kernel's arithmetic can be tested the same way (the
   published model has a separate row for it). That work belongs to the Thor repository, which is read-only from here:
   it is a proposal to bring to that team, not something to do in this one.
+- **Long-context decode attention** (speed-v1 rule 12, failed by 0.18 ms). At 31,000 keys the key and value products
+  read at 205 to 220 GB/s of the 245, and the softmax over the cache costs 0.18 ms. Next lever: one fused kernel for
+  scores, softmax and values with each output's arithmetic unchanged.
 - **The card's clocks** ([decode-atoms-v1](validation/decode-atoms-v1/)). Decode is 90% weight reads at the memory's
   rate. The cold-start slowdown was the driver re-initializing the card when nothing held it open; the host's
   persistence daemon now runs in persistence mode, permanently, by a systemd drop-in (2026-11-18, at the owner's

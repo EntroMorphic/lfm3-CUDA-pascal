@@ -1,11 +1,9 @@
 # speed-v1: phase 2's bar
 
-Status: **not passed** (2026-11-19). The second rule run (`job2.sh`, builds `text-v19` `3312933c…` and `parity-v19`
-`3126b0ba…`, tree `2fa785e`) passes every rule but 12. Rule 12's figure was computed wrong when the amendment was
-written (keys and values counted for 8 key/value heads; the model has 4): by the owner's formula the bar is 17.16 ms,
-not 18.72, and 18.60 ms fails it. Found by phase 2's red-team review; see the correction below. The bar was committed before any engine run of a phase 2 change; rules 11 and 12 were
-amended by the owner during the first rule run, before its speed results (below). Records: [records/](records/)
-(`SHA256SUMS` verified after the copy). Phase 2's red-team round follows.
+Status: **closed by the owner with rule 12 failed** (2026-11-19). On the final rule run (`job3.sh`, builds `text-v30`
+and `parity-v30`, tree `e6d9782`) 13 of 14 rules pass; rule 12, decode at 31,000 tokens, measures 17.34 ms against
+17.16 ms. The owner chose to close the phase there after the engineering below. Records: [records/](records/) and
+[records/final/](records/final/) (each `SHA256SUMS` verified after the copy).
 
 Phase 2's exit gate (PLAN): "a speed bar set before measuring; phase 1 outputs unchanged". The bar is set from
 [speed-baseline-v1](../speed-baseline-v1/): today's figures for the shipping engine and the card's measured ceilings.
@@ -69,32 +67,38 @@ The owner chose this form over two others offered with those figures.
 
 ## Results
 
-Two rule runs. The first (`job.sh`, `text-v17`, tree `2c97d68`) passed every rule but 11 and 12: decode-1k 15.69 ms and
-decode-32k 18.79 ms against the amended 15.61 and 18.72. The engine then took the greedy choice on the card for
-greedy requests with no tracing (`greedy_pick` in `lfm3_main.cu`: same tie rule as the host, same refusal of
-non-finite logits), which removes the 512 KB logits copy and the host's scan from every step; the second run
-(`job2.sh`) repeated every rule on that build.
+Three rule runs.
 
-| # | Rule | Second run |
+1. `job.sh` (`text-v17`, tree `2c97d68`): every rule but 11 and 12.
+2. `job2.sh` (`text-v19`, tree `2fa785e`), after the greedy choice moved to the card: every rule but 12 as corrected.
+   Its report said rule 12 passed, against the miscomputed 18.72 ms; phase 2's red-team review found the error.
+3. `job3.sh` (`text-v30`, tree `e6d9782`), after the red-team round and the long-context work below: the final.
+
+The last review's fixes (`11a9897`: the greedy header included in both builds; the attention test closer to the
+engine) left the native engine's device code unchanged, all 101 and 102 functions instruction for instruction
+(`sass_compare.py`); the rebuilt engine (`text-v31`) gave `text-v30`'s ids in every speed case and passed the
+fixtures (`job4.sh`, `records/final/speed-v1d.log`, `speed-v1e.log`).
+
+| # | Rule | Final run |
 |---|---|---|
 | 1 | Parity gate | **Pass,** 7,826 of 7,826 |
 | 2 | Fixtures, compact off and on; sanitizer | **Pass;** 0 errors on the fixtures and on the 257- and 513-token compact sweep |
 | 3 | NLL files at 256, 257, 4,096, 32,768 | **Pass,** all four byte-identical to text-correct-v2's |
 | 4 | Long decode; boundary sweep | **Pass,** all five cases identical to long-decode-v1; 33 of 33 pairs |
-| 5 | `first_row_check`, `wide2_check`, `decode_attention_check`, `round_once_check`; host suite | **Pass:** 210 checks, 143 cases, 54 cases, pass; host suite as recorded (2,397 passed, 5 skipped, 1 needing Transformers 5.x) |
-| 6 | Same ids as `text-v10` in every speed run | **Pass;** and a 600-token free generation without tracing (the path the greedy choice on the card takes) gives long-decode-v1's ids |
+| 5 | On-card checks; host suite | **Pass:** `first_row_check` 210, `wide2_check` 143 (and 0 errors under the sanitizer), `decode_attention_check` 234 (352 after the last review's additions), `greedy_pick_check` 400, `round_once_check`; host suite as recorded (2,397 passed, 5 skipped, 1 needing Transformers 5.x) |
+| 6 | Same ids as `text-v10` in every speed run | **Pass;** and a 600-token free generation without tracing gives long-decode-v1's ids |
 
 Speed, medians of 3, `text-v10` measured in the same job:
 
 | # | Case | Baseline | Phase 2 | Ratio | Bar | |
 |---|---|---:|---:|---:|---:|---|
-| 7 | prefill-4096 | 9.47 s | 2.79 s | 0.29 | ≤ 4.6 s | **pass** |
-| 8 | prefill-32768 | 89.0 s | 28.8 s | 0.32 | ≤ 44.7 s | **pass** |
-| 9 | prefill-257 | 0.932 s | 0.347 s | 0.37 | ≤ 0.60 s | **pass** |
+| 7 | prefill-4096 | 9.55 s | 2.80 s | 0.29 | ≤ 4.6 s | **pass** |
+| 8 | prefill-32768 | 89.9 s | 28.9 s | 0.32 | ≤ 44.7 s | **pass** |
+| 9 | prefill-257 | 0.932 s | 0.348 s | 0.37 | ≤ 0.60 s | **pass** |
 | 10 | prefill-32 | 0.430 s | 0.215 s | 0.50 | ≤ 0.30 s | **pass** |
-| 11 | decode-1k | 15.69 ms | 15.52 ms | 0.99 | ≤ 15.61 ms (amended) | **pass** |
-| 12 | decode-32k | 20.58 ms | 18.60 ms | 0.90 | ≤ 17.16 ms (amended, corrected) | **FAIL** (the run's report said pass against the miscomputed 18.72) |
-| 13 | decode-8k; prefill-1024 | 16.25 ms; 2.31 s | 16.05 ms; 0.697 s | 0.99; 0.30 | no slower | **pass** |
+| 11 | decode-1k | 15.69 ms | 15.51 ms | 0.99 | ≤ 15.61 ms (amended) | **pass** |
+| 12 | decode-32k | 20.58 ms | 17.34 ms | 0.84 | ≤ 17.16 ms (amended, corrected) | **FAIL** by 0.18 ms |
+| 13 | decode-8k; prefill-1024 | 16.25 ms; 2.33 s | 15.95 ms; 0.713 s | 0.98; 0.31 | no slower | **pass** |
 | 14 | peak memory, every case | | unchanged in every case | | ≤ +16 MiB | **pass** |
 
 Scoring the four bar lengths took 23 minutes of wall time against 64 in red-team-1.
@@ -106,14 +110,46 @@ Scoring the four bar lengths took 23 minutes of wall time against 64 in red-team
   multiply-add rate.
 - **Position 0** in one-row blocks: from 8 rows computed for one to one. It still costs about 150 ms per prefill: one
   row is a few thousand serial chains of up to 480 steps each, too few to fill the card. Carried.
-- **Decode attention**: pairs of query heads read the keys (and, from 16 splits up, the values) once per pair: 3.2 ms
-  to 1.7 ms per step at 31,000 keys (development profiles, not in the records). Each key/value head serves four query
-  heads, so every key is still read twice.
-- **The greedy choice on the card**: 0.17 ms per step.
-- Tried and dropped: fusing adjacent norms (0.05 ms; each norm's time is its own reduction, not the launch).
+- **Decode attention**: the four query heads of each key/value head read its keys once (`thin_k128_kernel`, G = 4,
+  the grid capped at 256 blocks with the next rows loaded ahead) and its values once (`split_kn_partial_wide`: 16-byte
+  loads, four probabilities per load, from 16 splits up): per layer at 31,000 keys, 537 µs to 148 µs for the keys and
+  274 µs to 154 µs for the values (development profiles), 205 to 220 GB/s of the 245.
+- **The greedy choice on the card**, in two stages (`lfm/greedy_pick.cuh`): 0.17 ms per step.
+
+### Tried and dropped (development jobs `dev*.sh`)
+
+Fusing adjacent norms (0.05 ms); a one-warp norm with the same arithmetic (identical, but 20 µs per norm against
+3.8); keeping the softmax's scores in registers (no change: its time is its reductions); the values' probabilities in
+shared memory, 4 columns per thread, 8 keys ahead, 2 to 16 splits per block (none better than 4 ahead, 8 columns, 4
+splits).
+
+### Where rule 12's 0.18 ms is
+
+At 31,000 keys a step spends about 1.85 ms on attention against the 1.55 ms its keys and values take at 245 GB/s: the
+two products at 205 to 220 GB/s and a 0.18 ms softmax over 31,000 scores, whose reduction order is fixed. The 1.5 ms
+allowance was measured at 1,000 tokens and does not include the softmax over a long cache. A fused long-context
+attention kernel (scores, softmax and values in one, with the same arithmetic per output) is the next lever; parked.
+
+### The red-team round
+
+Four independent reviews: kernels, runner and tools, and the fixes twice.
+
+| Finding | Fix |
+|---|---|
+| Rule 12's figure counted keys and values for 8 key/value heads; the model has 4 | Corrected (above); rule 12 fails |
+| `decode_attention_check` compared the rewritten kernels with themselves | Compared with the kernels before phase 2, copied from `a5bcd4a`; with the engine's grid cap, a cleared workspace and `lfm::gemm::run` |
+| `wide2_check` could not see a write past the end of C, and its FP32 cases had no padding columns | A guard area and padded rows; also run under the sanitizer |
+| `speed.sh` turned a run with no memory sample into 0 MiB (a rule 14 pass) and ignored a failed summary | Both fail |
+| The cuBLAS build had stopped compiling (the greedy header was included in the native build only) | Included in both |
+| `LFM_GEMM_FIRST_TX` accepted 0; `LFM_GEMM_WIDE_RM`/`_RN`'s comment described the replaced kernel | Checked; comment corrected |
+| Figures in the two READMEs without a record (the read rates, a TFLOPS range, the spread) | Records added (`records/final/read-rate/`) or the figures corrected |
+
+No review found a defect in what the engine computes: a host simulation of `wide2_kernel` matched the old kernel in
+10.2 million outputs (and caught the −0 case when the pad FMA was removed), and one of the greedy choice matched the
+host in 2,895 trials.
 
 ### Predictions against the measurements
 
 - Rules 1 to 6 held.
-- prefill-4096 2.79 s (predicted about 3.5), prefill-32768 28.8 s (about 30), prefill-257 0.35 s (about 0.45).
-- Rule 11 was the hardest, as predicted: it failed the first run by 0.08 ms.
+- prefill-4096 2.80 s (predicted about 3.5), prefill-32768 28.9 s (about 30), prefill-257 0.35 s (about 0.45).
+- Rule 11 was the hardest of the first figures, as predicted; rule 12, once corrected, was harder.

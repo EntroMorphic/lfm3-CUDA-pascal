@@ -1,0 +1,8 @@
+decode-1k         15.690 ms per step (min 15.690, max 15.691); peak 4421 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+decode-8k         16.250 ms per step (min 16.249, max 16.250); peak 4813 MiB; sm 1847-1949 MHz, mem [4513, 5005]; ids same
+decode-32k        20.585 ms per step (min 20.584, max 20.586); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-32         0.430 s prefill (min 0.430, max 0.430); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-257        0.932 s prefill (min 0.932, max 0.932); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-1024       2.327 s prefill (min 2.320, max 2.329); peak 4903 MiB; sm 1898-1949 MHz, mem [4513, 5005]; ids same
+prefill-4096       9.551 s prefill (min 9.534, max 9.563); peak 4903 MiB; sm 1860-1949 MHz, mem [4513, 5005]; ids same
+prefill-32768     89.846 s prefill (min 89.677, max 89.920); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same

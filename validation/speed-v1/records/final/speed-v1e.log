@@ -1,0 +1,50 @@
++ source /tmp/job4b.sh
+++ for f in liquid-lfm3 lfm3-score
+++ for v in 30 31
+++ cuobjdump -sass /workspace/build/text-v30/liquid-lfm3
+++ for v in 30 31
+++ cuobjdump -sass /workspace/build/text-v31/liquid-lfm3
++++ python3 validation/speed-v1/sass_compare.py /workspace/build/sv4-matrix/liquid-lfm3.30.sass /workspace/build/sv4-matrix/liquid-lfm3.31.sass
+++ echo 'liquid-lfm3 device code: 101 and 101 functions; only in one: 0; same name, different code: 0'
+++ for f in liquid-lfm3 lfm3-score
+++ for v in 30 31
+++ cuobjdump -sass /workspace/build/text-v30/lfm3-score
+liquid-lfm3 device code: 101 and 101 functions; only in one: 0; same name, different code: 0
+++ for v in 30 31
+++ cuobjdump -sass /workspace/build/text-v31/lfm3-score
++++ python3 validation/speed-v1/sass_compare.py /workspace/build/sv4-matrix/lfm3-score.30.sass /workspace/build/sv4-matrix/lfm3-score.31.sass
+++ echo 'lfm3-score device code: 102 and 102 functions; only in one: 0; same name, different code: 0'
+++ tools/pascal/run_text_fixtures.sh text-v31 2
+lfm3-score device code: 102 and 102 functions; only in one: 0; same name, different code: 0
+binary e0501d4df6b56019f09f5868658bd14d5892a904f4259cf342d69277679174e0  tree 053d42e0aed3119e (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.217 s, decode 0.240 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.213 s, decode 0.017 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.340 s, decode 0.049 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.048 s / 3 calls
+FIXTURES PASS
+++ echo 'fixtures rc=0'
+++ tools/pascal/speed.sh text-v31 sv4-speed 1
+fixtures rc=0
+binary e0501d4df6b56019f09f5868658bd14d5892a904f4259cf342d69277679174e0  /workspace/build/text-v31/liquid-lfm3
+decode-1k         15.510 ms per step (min 15.510, max 15.510); peak 4421 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+decode-8k         15.946 ms per step (min 15.946, max 15.946); peak 4813 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+decode-32k        17.340 ms per step (min 17.340, max 17.340); peak 6451 MiB; sm 1721-1961 MHz, mem [4513, 5005]; ids same
+prefill-32         0.213 s prefill (min 0.213, max 0.213); peak 4903 MiB; sm 1961-1974 MHz, mem [4513, 5005]; ids same
+prefill-257        0.344 s prefill (min 0.344, max 0.344); peak 4903 MiB; sm 1974-1974 MHz, mem [4513, 5005]; ids same
+prefill-1024       0.682 s prefill (min 0.682, max 0.682); peak 4903 MiB; sm 1949-1974 MHz, mem [4513, 5005]; ids same
+prefill-4096       2.591 s prefill (min 2.591, max 2.591); peak 4903 MiB; sm 1911-1961 MHz, mem [4513, 5005]; ids same
+prefill-32768     27.732 s prefill (min 27.732, max 27.732); peak 6451 MiB; sm 1721-1974 MHz, mem [4513, 5005]; ids same
+++ echo 'speed rc=0'
+++ python3 -
+speed rc=0
+decode-1k.1.json: ids same as text-v30
+decode-32k.1.json: ids same as text-v30
+decode-8k.1.json: ids same as text-v30
+prefill-1024.1.json: ids same as text-v30
+prefill-257.1.json: ids same as text-v30
+prefill-32.1.json: ids same as text-v30
+prefill-32768.1.json: ids same as text-v30
+prefill-4096.1.json: ids same as text-v30
+TEXT-V31 IDS PASS

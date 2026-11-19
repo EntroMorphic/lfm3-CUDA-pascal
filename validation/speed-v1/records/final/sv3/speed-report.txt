@@ -1,0 +1,19 @@
+rule 6 (same ids as the baseline in every run): PASS
+rule 7 prefill-4096: baseline 9.551, now 2.798 (0.29x), bar <= 4.6 s: PASS
+rule 8 prefill-32768: baseline 89.85, now 28.89 (0.32x), bar <= 44.7 s: PASS
+rule 9 prefill-257: baseline 0.9323, now 0.3476 (0.37x), bar <= 0.60 s: PASS
+rule 10 prefill-32: baseline 0.4295, now 0.2146 (0.50x), bar <= 0.30 s: PASS
+rule 11 decode-1k: baseline 15.69, now 15.51 (0.99x), bar <= 15.61 ms per step (amended): PASS
+rule 12 decode-32k: baseline 20.58, now 17.34 (0.84x), bar <= 17.16 ms per step (amended, corrected): FAIL
+rule 13 decode-8k: baseline 16.25, now 15.95 (0.98x), bar no slower (+1%): PASS
+rule 13 prefill-1024: baseline 2.327, now 0.7128 (0.31x), bar no slower (+1%): PASS
+  memory decode-1k: baseline 4421 MiB, now 4421 MiB
+  memory decode-32k: baseline 6451 MiB, now 6451 MiB
+  memory decode-8k: baseline 4813 MiB, now 4813 MiB
+  memory prefill-1024: baseline 4903 MiB, now 4903 MiB
+  memory prefill-257: baseline 4903 MiB, now 4903 MiB
+  memory prefill-32: baseline 4903 MiB, now 4903 MiB
+  memory prefill-32768: baseline 6451 MiB, now 6451 MiB
+  memory prefill-4096: baseline 4903 MiB, now 4903 MiB
+rule 14 (peak memory no higher, +16 MiB): PASS
+SPEED RULES FAIL

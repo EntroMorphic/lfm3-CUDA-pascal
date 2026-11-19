@@ -1,0 +1,293 @@
++ date
+Thu Nov 19 08:00:10 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ M=/workspace/build/sv3-matrix
++ mkdir -p /workspace/build/sv3-matrix
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include'
++ tools/pascal/build_text.sh text-v30
+liquid-lfm3: warnings 0, sha256 a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf, 4241288 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 57caa0feca30a54088c2bbd8c1a73222ca281793f591011d344eea0d4e19e9f1, 4105696 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+build rc=0
++ echo 'build rc=0'
++ tools/pascal/gate_pins.sh parity-v30
+liquid-lfm3: warnings 0, sha256 84e25441a20962935449d3859562c9630dab0a87eb454880868338e51714b60d, 4762576 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 20df135f215b2b845546877d8e52e303ab3856ca9f929e273d40c681d91149b5, 4623336 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+binary 84e25441a20962935449d3859562c9630dab0a87eb454880868338e51714b60d  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 0.76 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.42 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.36 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.07 s
+PINS EQUAL: 7826 files equal
++ echo 'rule 1 gate rc=0'
++ tools/pascal/run_text_fixtures.sh text-v30 2
+rule 1 gate rc=0
+binary a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf  tree 053d42e0aed3119e (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.217 s, decode 0.240 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.213 s, decode 0.017 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.340 s, decode 0.049 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.049 s / 3 calls
+FIXTURES PASS
+rule 2 fixtures rc=0
++ echo 'rule 2 fixtures rc=0'
++ LFM3_COMPACT_WINDOWS=1
++ tools/pascal/run_text_fixtures.sh text-v30 2
+binary a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf  tree 053d42e0aed3119e (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.216 s, decode 0.239 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.213 s, decode 0.017 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.340 s, decode 0.049 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.048 s / 3 calls
+FIXTURES PASS
++ echo 'rule 2 fixtures compact rc=0'
++ tools/pascal/run_text_fixtures.sh text-v30 1 /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+rule 2 fixtures compact rc=0
+binary a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf  tree 053d42e0aed3119e (gemm.cuh)
+baseline: ids MATCH (16), runs one run, reset ok, input 34 tokens, prefill 6.922 s, decode 3.326 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs one run, reset ok, input 31 tokens, prefill 6.872 s, decode 0.223 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs one run, reset ok, input 257 tokens, prefill 10.600 s, decode 0.712 s / 3 calls
+single: ids MATCH (4), runs one run, reset ok, input 1 tokens, prefill 0.222 s, decode 0.646 s / 3 calls
+FIXTURES PASS
+rule 2 memcheck fixtures rc=0
++ echo 'rule 2 memcheck fixtures rc=0'
++ STEPS=24
++ PROMPTS='257 513'
++ XPROMPTS=
++ tools/pascal/boundary_sweep.sh text-v30 sv3-memcheck-sweep /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+binary a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf  /workspace/build/text-v30/liquid-lfm3
+c4097-p257: 25 steps; IDENTICAL ok
+c4096-p257: 25 steps; IDENTICAL ok
+c4097-p513: 25 steps; IDENTICAL ok
+c4096-p513: 25 steps; IDENTICAL ok
+pairs run 4, ok 4
+BOUNDARY SWEEP PASS
++ echo 'rule 2 memcheck sweep rc=0'
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
++ extra=
++ '[' first_row_check = first_row_check ']'
++ extra=native/tests/first_row_model.cpp
+rule 2 memcheck sweep rc=0
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/sv3-matrix/first_row_check native/tests/first_row_check.cu native/tests/first_row_model.cpp
+++ grep -c 'warning #' /workspace/build/sv3-matrix/first_row_check.log
+build first_row_check rc=0 warnings=0
++ echo 'build first_row_check rc=0 warnings=0'
++ /workspace/build/sv3-matrix/first_row_check
+++ tail -1 /workspace/build/sv3-matrix/first_row_check.txt
+rule 5 first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS
++ echo 'rule 5 first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS'
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
++ extra=
++ '[' wide2_check = first_row_check ']'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/sv3-matrix/wide2_check native/tests/wide2_check.cu
+++ grep -c 'warning #' /workspace/build/sv3-matrix/wide2_check.log
+build wide2_check rc=0 warnings=0
++ echo 'build wide2_check rc=0 warnings=0'
++ /workspace/build/sv3-matrix/wide2_check
+++ tail -1 /workspace/build/sv3-matrix/wide2_check.txt
++ echo 'rule 5 wide2_check rc=0 wide2_check: 143 cases, 0 failed: PASS'
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
+rule 5 wide2_check rc=0 wide2_check: 143 cases, 0 failed: PASS
++ extra=
++ '[' decode_attention_check = first_row_check ']'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/sv3-matrix/decode_attention_check native/tests/decode_attention_check.cu
+++ grep -c 'warning #' /workspace/build/sv3-matrix/decode_attention_check.log
++ echo 'build decode_attention_check rc=0 warnings=0'
++ /workspace/build/sv3-matrix/decode_attention_check
+build decode_attention_check rc=0 warnings=0
+++ tail -1 /workspace/build/sv3-matrix/decode_attention_check.txt
+rule 5 decode_attention_check rc=0 decode_attention_check: 234 cases, 0 failed: PASS
++ echo 'rule 5 decode_attention_check rc=0 decode_attention_check: 234 cases, 0 failed: PASS'
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
++ extra=
++ '[' greedy_pick_check = first_row_check ']'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/sv3-matrix/greedy_pick_check native/tests/greedy_pick_check.cu
+++ grep -c 'warning #' /workspace/build/sv3-matrix/greedy_pick_check.log
++ echo 'build greedy_pick_check rc=0 warnings=0'
++ /workspace/build/sv3-matrix/greedy_pick_check
+build greedy_pick_check rc=0 warnings=0
+++ tail -1 /workspace/build/sv3-matrix/greedy_pick_check.txt
+rule 5 greedy_pick_check rc=0 greedy_pick_check: 400 cases, 0 failed: PASS
++ echo 'rule 5 greedy_pick_check rc=0 greedy_pick_check: 400 cases, 0 failed: PASS'
++ /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9 /workspace/build/sv3-matrix/wide2_check
+++ grep 'ERROR SUMMARY' /workspace/build/sv3-matrix/wide2_check.memcheck.txt
+rule 5 wide2_check under memcheck rc=0 ========= ERROR SUMMARY: 0 errors
++ echo 'rule 5 wide2_check under memcheck rc=0 ========= ERROR SUMMARY: 0 errors'
++ python3 tools/pascal/round_once_check.py /workspace/build/sv3-round-once
+++ tail -1 /workspace/build/sv3-matrix/round_once_check.txt
++ echo 'rule 5 round_once_check rc=0 round_once_check: PASS'
+rule 5 round_once_check rc=0 round_once_check: PASS
++ tools/pascal/boundary_sweep.sh text-v30 sv3-sweep
+binary a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf  /workspace/build/text-v30/liquid-lfm3
+c4097-p1: 601 steps; IDENTICAL ok
+c4096-p1: 601 steps; IDENTICAL ok
+c4097-p2: 601 steps; IDENTICAL ok
+c4096-p2: 601 steps; IDENTICAL ok
+c4097-p8: 601 steps; IDENTICAL ok
+c4096-p8: 601 steps; IDENTICAL ok
+c4097-p9: 601 steps; IDENTICAL ok
+c4096-p9: 601 steps; IDENTICAL ok
+c4097-p255: 601 steps; IDENTICAL ok
+c4096-p255: 601 steps; IDENTICAL ok
+c4097-p256: 601 steps; IDENTICAL ok
+c4096-p256: 601 steps; IDENTICAL ok
+c4097-p257: 601 steps; IDENTICAL ok
+c4096-p257: 601 steps; IDENTICAL ok
+c4097-p258: 601 steps; IDENTICAL ok
+c4096-p258: 601 steps; IDENTICAL ok
+c4097-p511: 601 steps; IDENTICAL ok
+c4096-p511: 601 steps; IDENTICAL ok
+c4097-p512: 601 steps; IDENTICAL ok
+c4096-p512: 601 steps; IDENTICAL ok
+c4097-p513: 601 steps; IDENTICAL ok
+c4096-p513: 601 steps; IDENTICAL ok
+c4097-p767: 601 steps; IDENTICAL ok
+c4096-p767: 601 steps; IDENTICAL ok
+c4097-p768: 601 steps; IDENTICAL ok
+c4096-p768: 601 steps; IDENTICAL ok
+c4097-p769: 601 steps; IDENTICAL ok
+c4096-p769: 601 steps; IDENTICAL ok
+c4097-p1025: 601 steps; IDENTICAL ok
+c4096-p1025: 601 steps; IDENTICAL ok
+x4097-4096-p9: 601 steps; IDENTICAL (information)
+x4097-4096-p129: 601 steps; IDENTICAL (information)
+x4097-4096-p136: 601 steps; IDENTICAL (information)
+x4097-4096-p137: 601 steps; IDENTICAL (information)
+x4097-4096-p257: 601 steps; IDENTICAL (information)
+x4097-4096-p300: 601 steps; IDENTICAL (information)
+x4097-4096-p513: 601 steps; IDENTICAL (information)
+x4097-4096-p1025: 601 steps; IDENTICAL (information)
+x4097-4096-p2049: 601 steps; IDENTICAL (information)
+x4097-4096-p3329: 601 steps; IDENTICAL (information)
+fill-teacher: 601 steps; IDENTICAL ok
+fill-generate: 600 steps; IDENTICAL ok
+fill-prompt: 1 steps; IDENTICAL ok
+pairs run 33, ok 33
+BOUNDARY SWEEP PASS
++ echo 'rule 4 sweep rc=0'
++ tools/pascal/long_decode.sh text-v30 sv3-long-decode
+rule 4 sweep rc=0
+binary a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf  /workspace/build/text-v30/liquid-lfm3
+c8a4407fb67b4b1dd49cb6608eb6bc601833a4023096457772c4f09ee2a55eee  /workspace/data/ppl-windows/windows-4096.i32
+54df38e05bddde9717b61c75d018c5023d546e3e352151f807b715c2d2d638fc  /workspace/data/ppl-windows/windows-32768.i32
+control.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.4 s, decode 18.4 s, peak 4903 MiB
+short.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.3 s, decode 18.5 s, peak 6451 MiB
+short.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.4 s, decode 18.5 s, peak 6703 MiB
+short.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.3 s, decode 18.4 s, peak 6451 MiB
+middle.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 2.7 s, decode 18.8 s, peak 6451 MiB
+middle.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 2.7 s, decode 18.7 s, peak 6703 MiB
+middle.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 2.7 s, decode 18.8 s, peak 6451 MiB
+end.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 26.8 s, decode 20.5 s, peak 6451 MiB
+end.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 26.8 s, decode 20.5 s, peak 6703 MiB
+end.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 26.8 s, decode 20.5 s, peak 6451 MiB
+free.default (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 3.5 s, decode 10.5 s, peak 6451 MiB
+free: window 1 generated 600 tokens
+free.full (LFM3_COMPACT_WINDOWS 0): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 3.6 s, decode 10.5 s, peak 6703 MiB
+free.again (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 3.6 s, decode 10.5 s, peak 6451 MiB
+short: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.5 s compact, 18.5 s full
+middle: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.8 s compact, 18.7 s full
+end: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 20.5 s compact, 20.5 s full
+free: 600 steps (want 600); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 10.5 s compact, 10.5 s full
+control (capacity 4,096): 1101 steps; its logits equal the short case's at capacity 32,768 (information)
+LONG DECODE (rules 2 and 3) PASS
+long decode rc=0
++ echo 'long decode rc=0'
++ python3 -
+long decode control: IDENTICAL to long-decode-v1
+long decode short: IDENTICAL to long-decode-v1
+long decode middle: IDENTICAL to long-decode-v1
+long decode end: IDENTICAL to long-decode-v1
+long decode free: IDENTICAL to long-decode-v1
+rule 4 LONG DECODE UNCHANGED PASS
++ tools/pascal/score.sh text-v30 ppl-v30 256 257 4096 32768
+length 256: {"engine": "native", "length": 256, "windows": 1160, "scored_tokens": 295800, "mean_nll": 3.280150656, "perplexity": 26.579777, "seconds": 398.099}
+  peak device memory 4409 MiB, wall 398.9 s, nll sha256 c47912b0a4379aab
+length 257: {"engine": "native", "length": 257, "windows": 1155, "scored_tokens": 295680, "mean_nll": 3.277352868, "perplexity": 26.505516, "seconds": 457.596}
+  peak device memory 4415 MiB, wall 458.4 s, nll sha256 75430bb635b30684
+length 4096: {"engine": "native", "length": 4096, "windows": 72, "scored_tokens": 294840, "mean_nll": 2.569422345, "perplexity": 13.058279, "seconds": 229.499}
+  peak device memory 5029 MiB, wall 230.3 s, nll sha256 3a00cb321a584c24
+length 32768: {"engine": "native", "length": 32768, "windows": 9, "scored_tokens": 294903, "mean_nll": 2.531826883, "perplexity": 12.576461, "seconds": 285.789}
+  peak device memory 6577 MiB, wall 286.7 s, nll sha256 86582837b337699c
+score rc=0
++ echo 'score rc=0'
++ for L in 256 257 4096 32768
++ cmp /workspace/build/ppl-v6/nll-pascal-256.f32 /workspace/build/ppl-v30/nll-pascal-256.f32
+rule 3 nll 256: IDENTICAL to text-correct-v2
++ echo 'rule 3 nll 256: IDENTICAL to text-correct-v2'
++ for L in 256 257 4096 32768
++ cmp /workspace/build/ppl-v6/nll-pascal-257.f32 /workspace/build/ppl-v30/nll-pascal-257.f32
+rule 3 nll 257: IDENTICAL to text-correct-v2
++ echo 'rule 3 nll 257: IDENTICAL to text-correct-v2'
++ for L in 256 257 4096 32768
++ cmp /workspace/build/ppl-v6/nll-pascal-4096.f32 /workspace/build/ppl-v30/nll-pascal-4096.f32
++ echo 'rule 3 nll 4096: IDENTICAL to text-correct-v2'
+rule 3 nll 4096: IDENTICAL to text-correct-v2
++ for L in 256 257 4096 32768
++ cmp /workspace/build/ppl-v6/nll-pascal-32768.f32 /workspace/build/ppl-v30/nll-pascal-32768.f32
+rule 3 nll 32768: IDENTICAL to text-correct-v2
++ echo 'rule 3 nll 32768: IDENTICAL to text-correct-v2'
++ tools/pascal/speed.sh text-v10 sv3-speed-baseline 3
+binary a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e  /workspace/build/text-v10/liquid-lfm3
+decode-1k         15.690 ms per step (min 15.690, max 15.691); peak 4421 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+decode-8k         16.250 ms per step (min 16.249, max 16.250); peak 4813 MiB; sm 1847-1949 MHz, mem [4513, 5005]; ids same
+decode-32k        20.585 ms per step (min 20.584, max 20.586); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-32         0.430 s prefill (min 0.430, max 0.430); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-257        0.932 s prefill (min 0.932, max 0.932); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-1024       2.327 s prefill (min 2.320, max 2.329); peak 4903 MiB; sm 1898-1949 MHz, mem [4513, 5005]; ids same
+prefill-4096       9.551 s prefill (min 9.534, max 9.563); peak 4903 MiB; sm 1860-1949 MHz, mem [4513, 5005]; ids same
+prefill-32768     89.846 s prefill (min 89.677, max 89.920); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
++ echo 'speed baseline rc=0'
+speed baseline rc=0
++ tools/pascal/speed.sh text-v30 sv3-speed 3
+binary a4af4663c14768fd43648df636d136454f7267189422181004b2d9f7cb9f20cf  /workspace/build/text-v30/liquid-lfm3
+decode-1k         15.513 ms per step (min 15.512, max 15.519); peak 4421 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+decode-8k         15.950 ms per step (min 15.948, max 15.952); peak 4813 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+decode-32k        17.342 ms per step (min 17.341, max 17.346); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-32         0.215 s prefill (min 0.214, max 0.215); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-257        0.348 s prefill (min 0.347, max 0.348); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-1024       0.713 s prefill (min 0.706, max 0.714); peak 4903 MiB; sm 1759-1949 MHz, mem [4513, 5005]; ids same
+prefill-4096       2.798 s prefill (min 2.778, max 2.802); peak 4903 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-32768     28.888 s prefill (min 28.758, max 28.939); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
++ echo 'speed rc=0'
++ python3 tools/pascal/analysis/speed_report.py /workspace/build/sv3-speed-baseline /workspace/build/sv3-speed --output /workspace/build/sv3-speed/report.txt
+speed rc=0
+rule 6 (same ids as the baseline in every run): PASS
+rule 7 prefill-4096: baseline 9.551, now 2.798 (0.29x), bar <= 4.6 s: PASS
+rule 8 prefill-32768: baseline 89.85, now 28.89 (0.32x), bar <= 44.7 s: PASS
+rule 9 prefill-257: baseline 0.9323, now 0.3476 (0.37x), bar <= 0.60 s: PASS
+rule 10 prefill-32: baseline 0.4295, now 0.2146 (0.50x), bar <= 0.30 s: PASS
+rule 11 decode-1k: baseline 15.69, now 15.51 (0.99x), bar <= 15.61 ms per step (amended): PASS
+rule 12 decode-32k: baseline 20.58, now 17.34 (0.84x), bar <= 17.16 ms per step (amended, corrected): FAIL
+rule 13 decode-8k: baseline 16.25, now 15.95 (0.98x), bar no slower (+1%): PASS
+rule 13 prefill-1024: baseline 2.327, now 0.7128 (0.31x), bar no slower (+1%): PASS
+  memory decode-1k: baseline 4421 MiB, now 4421 MiB
+  memory decode-32k: baseline 6451 MiB, now 6451 MiB
+  memory decode-8k: baseline 4813 MiB, now 4813 MiB
+  memory prefill-1024: baseline 4903 MiB, now 4903 MiB
+  memory prefill-257: baseline 4903 MiB, now 4903 MiB
+  memory prefill-32: baseline 4903 MiB, now 4903 MiB
+  memory prefill-32768: baseline 6451 MiB, now 6451 MiB
+  memory prefill-4096: baseline 4903 MiB, now 4903 MiB
+rule 14 (peak memory no higher, +16 MiB): PASS
+SPEED RULES FAIL
+speed rules rc=1
++ echo 'speed rules rc=1'
++ date
+Thu Nov 19 09:15:00 MST 2026
++ python3 - /workspace/build/sv3-matrix
++ /workspace/build/text-v30/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/sv3-matrix/free.json /workspace/build/sv3-matrix/free.out
++ echo 'free rc=0'
+free rc=0
++ python3 -c 'import json; n=json.load(open('\''/workspace/build/sv3-matrix/free.out'\'')); o=json.load(open('\''/workspace/build/long-decode-v1/free.default.json'\'')); print('\''rule 6 free generation (no tracing):'\'', '\''IDENTICAL ids to long-decode-v1'\'' if n['\''generated_ids'\'']==o['\''generated_ids'\''] else '\''DIFFERENT ids'\'', len(n['\''generated_ids'\'']))'
+rule 6 free generation (no tracing): IDENTICAL ids to long-decode-v1 600
++ date
+Thu Nov 19 09:15:14 MST 2026

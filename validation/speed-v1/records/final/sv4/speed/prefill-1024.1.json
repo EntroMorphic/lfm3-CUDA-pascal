@@ -1,0 +1,1 @@
+{"case": "prefill-1024", "capacity": 4096, "prompt_tokens": 1024, "teacher_steps": 0, "binary_sha256": "e0501d4df6b56019f09f5868658bd14d5892a904f4259cf342d69277679174e0", "prefill_seconds": 0.682394, "decode_seconds": 4.31e-07, "teacher_argmax": [1200], "generated_ids": [], "peak_device_mib": 4903, "sm_mhz": [1949, 1961, 1974], "mem_mhz": [4513, 5005]}

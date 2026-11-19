@@ -1,0 +1,36 @@
+chunk  31.46 MB, 160 blocks, 4 loads in flight, ldcs: 245.4 GB/s
+chunk  31.46 MB, 160 blocks, 8 loads in flight, ldcs: 245.2 GB/s
+chunk  31.46 MB, 160 blocks, 8 loads in flight, ldg : 245.9 GB/s
+chunk  31.46 MB, 320 blocks, 4 loads in flight, ldcs: 245.7 GB/s
+chunk  31.46 MB, 320 blocks, 8 loads in flight, ldcs: 244.7 GB/s
+chunk  31.46 MB, 320 blocks, 8 loads in flight, ldg : 244.6 GB/s
+chunk  31.46 MB, 640 blocks, 4 loads in flight, ldcs: 244.7 GB/s
+chunk  31.46 MB, 640 blocks, 8 loads in flight, ldcs: 244.6 GB/s
+chunk  31.46 MB, 640 blocks, 8 loads in flight, ldg : 244.7 GB/s
+chunk  31.46 MB, 1280 blocks, 4 loads in flight, ldcs: 244.8 GB/s
+chunk  31.46 MB, 1280 blocks, 8 loads in flight, ldcs: 244.9 GB/s
+chunk  31.46 MB, 1280 blocks, 8 loads in flight, ldg : 244.9 GB/s
+chunk   8.39 MB, 160 blocks, 4 loads in flight, ldcs: 234.8 GB/s
+chunk   8.39 MB, 160 blocks, 8 loads in flight, ldcs: 235.1 GB/s
+chunk   8.39 MB, 160 blocks, 8 loads in flight, ldg : 235.2 GB/s
+chunk   8.39 MB, 320 blocks, 4 loads in flight, ldcs: 235.4 GB/s
+chunk   8.39 MB, 320 blocks, 8 loads in flight, ldcs: 235.8 GB/s
+chunk   8.39 MB, 320 blocks, 8 loads in flight, ldg : 235.7 GB/s
+chunk   8.39 MB, 640 blocks, 4 loads in flight, ldcs: 235.7 GB/s
+chunk   8.39 MB, 640 blocks, 8 loads in flight, ldcs: 234.9 GB/s
+chunk   8.39 MB, 640 blocks, 8 loads in flight, ldg : 234.9 GB/s
+chunk   8.39 MB, 1280 blocks, 4 loads in flight, ldcs: 236.4 GB/s
+chunk   8.39 MB, 1280 blocks, 8 loads in flight, ldcs: 233.9 GB/s
+chunk   8.39 MB, 1280 blocks, 8 loads in flight, ldg : 233.8 GB/s
+chunk 524.29 MB, 160 blocks, 4 loads in flight, ldcs: 248.1 GB/s
+chunk 524.29 MB, 160 blocks, 8 loads in flight, ldcs: 248.2 GB/s
+chunk 524.29 MB, 160 blocks, 8 loads in flight, ldg : 248.1 GB/s
+chunk 524.29 MB, 320 blocks, 4 loads in flight, ldcs: 248.1 GB/s
+chunk 524.29 MB, 320 blocks, 8 loads in flight, ldcs: 248.2 GB/s
+chunk 524.29 MB, 320 blocks, 8 loads in flight, ldg : 248.1 GB/s
+chunk 524.29 MB, 640 blocks, 4 loads in flight, ldcs: 248.1 GB/s
+chunk 524.29 MB, 640 blocks, 8 loads in flight, ldcs: 248.1 GB/s
+chunk 524.29 MB, 640 blocks, 8 loads in flight, ldg : 248.1 GB/s
+chunk 524.29 MB, 1280 blocks, 4 loads in flight, ldcs: 248.1 GB/s
+chunk 524.29 MB, 1280 blocks, 8 loads in flight, ldcs: 248.1 GB/s
+chunk 524.29 MB, 1280 blocks, 8 loads in flight, ldg : 248.2 GB/s

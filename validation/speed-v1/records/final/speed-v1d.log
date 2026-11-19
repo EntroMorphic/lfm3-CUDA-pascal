@@ -1,0 +1,44 @@
++ date
+Thu Nov 19 09:15:45 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ M=/workspace/build/sv4-matrix
++ mkdir -p /workspace/build/sv4-matrix/strip
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include'
++ tools/pascal/build_text.sh text-v31
+liquid-lfm3: warnings 0, sha256 e0501d4df6b56019f09f5868658bd14d5892a904f4259cf342d69277679174e0, 4241288 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 980c958efe4ab88aee918073ea9bde44c1e6f6abc8c79ac0a250d404dd0125e9, 4105696 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
++ echo 'build rc=0'
+build rc=0
++ for f in liquid-lfm3 lfm3-score
++ strip -o /workspace/build/sv4-matrix/strip/a /workspace/build/text-v30/liquid-lfm3
++ strip -o /workspace/build/sv4-matrix/strip/b /workspace/build/text-v31/liquid-lfm3
++ cmp -s /workspace/build/sv4-matrix/strip/a /workspace/build/sv4-matrix/strip/b
++ echo 'liquid-lfm3: DIFFERS from text-v30'
++ for f in liquid-lfm3 lfm3-score
++ strip -o /workspace/build/sv4-matrix/strip/a /workspace/build/text-v30/lfm3-score
+liquid-lfm3: DIFFERS from text-v30
++ strip -o /workspace/build/sv4-matrix/strip/b /workspace/build/text-v31/lfm3-score
++ cmp -s /workspace/build/sv4-matrix/strip/a /workspace/build/sv4-matrix/strip/b
++ echo 'lfm3-score: DIFFERS from text-v30'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -o /workspace/build/sv4-matrix/cublas native/src/lfm3_main.cu native/src/safetensors.cpp -lcublas
+lfm3-score: DIFFERS from text-v30
+++ grep -c ' error' /workspace/build/sv4-matrix/cublas.log
+++ grep -c 'warning #' /workspace/build/sv4-matrix/cublas.log
++ echo 'cuBLAS build rc=0 errors=0 warnings=0'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -o /workspace/build/sv4-matrix/decode_attention_check native/tests/decode_attention_check.cu
+cuBLAS build rc=0 errors=0 warnings=0
+++ grep -c 'warning #' /workspace/build/sv4-matrix/d.log
++ echo 'build rc=0 warnings=0'
+build rc=0 warnings=0
++ /workspace/build/sv4-matrix/decode_attention_check
+++ tail -1 /workspace/build/sv4-matrix/decode_attention_check.txt
++ echo 'decode_attention_check rc=0 decode_attention_check: 352 cases, 0 failed: PASS'
+decode_attention_check rc=0 decode_attention_check: 352 cases, 0 failed: PASS
++ grep FAIL /workspace/build/sv4-matrix/decode_attention_check.txt
++ head
++ date
+Thu Nov 19 09:17:19 MST 2026
