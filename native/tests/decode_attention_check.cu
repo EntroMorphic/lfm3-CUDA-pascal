@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 #include <vector>
 
 namespace lfm::gemm::detail {
@@ -107,9 +108,8 @@ template <class T> std::vector<T> download(const T* d, size_t n) { std::vector<T
 // G = 0: the kernels before phase 2.
 template <int R, int G> void scores(const Problem& p) {
   using namespace lfm::gemm::detail;
-  const int blocks = std::min((p.n + 31) / 32, 1024);
-  if constexpr (G == 0) old_thin_k128_kernel<R><<<dim3(blocks, p.batch), 256>>>(p);
-  else thin_k128_kernel<R, G><<<dim3(blocks, p.batch / G), 256>>>(p);
+  if constexpr (G == 0) old_thin_k128_kernel<R><<<dim3(std::min((p.n + 31) / 32, 1024), p.batch), 256>>>(p);  // as it was
+  else thin_k128_kernel<R, G><<<dim3(std::min((p.n + 31) / 32, LFM_GEMM_K128_BLOCKS), p.batch / G), 256>>>(p);  // as the engine launches it
 }
 // WIDE: split_kn_partial_wide (one row only).
 template <int R, int G, bool WIDE = false> void values(const Problem& p) {
@@ -145,10 +145,12 @@ template <int R> void one(int keys, int heads, int group) {
   v.lda = pitch; v.ldb = head_dim; v.ldc = heads * head_dim; v.stride_a = (long long)R * pitch; v.stride_b = (long long)context * head_dim;
   v.stride_c = head_dim; v.batch = heads; v.group = group; v.workspace = dw; v.workspace_size = ws;
   std::vector<float> s0; std::vector<bf16> v0;
-  for (int g : {0, 1, 2, 4, 11, 12, 14}) {  // 11, 12, 14: split_kn_partial_wide with 1, 2, 4 heads (one row only)
-    if (g % 10 > 1 && group % (g % 10)) continue;
-    if (g > 10 && R != 1) continue;
+  // 11, 12, 14: split_kn_partial_wide with 1, 2, 4 heads (one row only); 99: lfm::gemm::run, the engine's own choice.
+  for (int g : {0, 1, 2, 4, 11, 12, 14, 99}) {
+    if (g != 99 && g % 10 > 1 && group % (g % 10)) continue;
+    if (g > 10 && g != 99 && R != 1) continue;
     check(cudaMemset(ds, 0x5a, (s_elems + guard) * 4)); check(cudaMemset(dout, 0x5a, (v_elems + guard) * 2));
+    check(cudaMemset(dw, 0xff, ws));  // NaN in every partial slot: one a kernel leaves unwritten shows in the values
     switch (g) {
       case 0: scores<R, 0>(s); values<R, 0>(v); break;
       case 1: scores<R, 1>(s); values<R, 1>(v); break;
@@ -156,22 +158,23 @@ template <int R> void one(int keys, int heads, int group) {
       case 4: scores<R, 4>(s); values<R, 4>(v); break;
       case 11: scores<R, 1>(s); values<R, 1, true>(v); break;
       case 12: scores<R, 2>(s); values<R, 2, true>(v); break;
-      default: scores<R, 4>(s); values<R, 4, true>(v); break;
+      case 14: scores<R, 4>(s); values<R, 4, true>(v); break;
+      default: lfm::gemm::run(s); lfm::gemm::run(v); break;
     }
     check(cudaGetLastError()); check(cudaDeviceSynchronize());
     const auto s1 = download(ds, s_elems + guard); const auto v1 = download(dout, v_elems + guard);
     if (g == 0) { s0 = s1; v0 = v1; continue; }
     const bool same_s = std::memcmp(s0.data(), s1.data(), s1.size() * 4) == 0, same_v = std::memcmp(v0.data(), v1.data(), v1.size() * 2) == 0;
     cases += 2; failures += !same_s + !same_v;
-    std::printf("%s rows %d keys %5d heads %d group %d, %d heads per read%s: scores %s, values %s\n", same_s && same_v ? "ok  " : "FAIL",
-                R, keys, heads, group, g % 10, g > 10 ? " (16-byte values)" : "", same_s ? "identical" : "DIFFER", same_v ? "identical" : "DIFFER");
+    std::printf("%s rows %d keys %5d heads %d group %d, %s: scores %s, values %s\n", same_s && same_v ? "ok  " : "FAIL",
+                R, keys, heads, group, g == 99 ? "lfm::gemm::run" : (std::to_string(g % 10) + " heads per read" + (g > 10 ? " (16-byte values)" : "")).c_str(), same_s ? "identical" : "DIFFER", same_v ? "identical" : "DIFFER");
   }
   check(cudaFree(dq)); check(cudaFree(dk)); check(cudaFree(dp)); check(cudaFree(ds)); check(cudaFree(dout)); check(cudaFree(dw));
 }
 }  // namespace
 
 int main() {
-  for (int keys : {1, 5, 8, 255, 256, 257, 1000, 4097, 31000}) {
+  for (int keys : {1, 5, 8, 255, 256, 257, 1000, 4097, 8193, 20000, 31000}) {
     one<1>(keys, 16, 4);
     one<2>(keys, 16, 4);
     one<1>(keys, 16, 2);

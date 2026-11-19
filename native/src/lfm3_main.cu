@@ -8,12 +8,12 @@
 #include <lfm/text_sampling.hpp>
 #include <lfm/handle_setup.hpp>
 #include <lfm/lfm3_text_request.hpp>
+#include <lfm/greedy_pick.cuh>  // both builds compile it; only the native build's CLI uses it
 #ifdef LFM3_NATIVE_GEMM
 // G4: the engine's GEMMs are lfm::gemm (no cuBLAS). The forward pass is held to journal §9's
 // perplexity bar instead of bitwise identity with the cuBLAS build.
 #include <lfm/allocation_metrics.hpp>
 #include <lfm/gemm.cuh>
-#include <lfm/greedy_pick.cuh>
 #else
 #include <cublas_v2.h>
 #endif
