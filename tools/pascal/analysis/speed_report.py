@@ -10,8 +10,9 @@ BARS = {  # rule: (case, the bar as a function of the baseline median, descripti
     8: ("prefill-32768", lambda b: 44.7, "<= 44.7 s"),
     9: ("prefill-257", lambda b: 0.60, "<= 0.60 s"),
     10: ("prefill-32", lambda b: 0.30, "<= 0.30 s"),
-    11: ("decode-1k", lambda b: 15.0, "<= 15.0 ms per step"),
-    12: ("decode-32k", lambda b: 18.5, "<= 18.5 ms per step"),
+    # Rules 11 and 12 as amended by the owner (2026-11-18): the bytes a step must read at 245 GB/s, plus 1.5 ms.
+    11: ("decode-1k", lambda b: 15.61, "<= 15.61 ms per step (amended)"),
+    12: ("decode-32k", lambda b: 18.72, "<= 18.72 ms per step (amended)"),
 }
 NO_SLOWER = ("decode-8k", "prefill-1024")
 
