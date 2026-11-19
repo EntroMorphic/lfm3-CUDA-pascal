@@ -216,6 +216,120 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_kernel(Problem p) {
     }
 }
 
+// The plain prefill kernel, phase 2 (validation/speed-v1): every output is the same chain of FMAs in k order as in
+// wide_kernel, so the two give identical bits; only the data movement differs. A block of 256 threads computes a
+// 128 x 128 tile of C, each thread 8 x 8 outputs (rows ty*4 + {0..3} and 64 + ty*4 + {0..3}, columns likewise with tx),
+// read from shared memory as float4. K advances 16 at a time; each thread fetches one 16-byte vector (8 BF16) of A and
+// one of B per stage into registers while the stage before is computed, then stores it converted to FP32 into the
+// other of two shared-memory buffers: one barrier per stage.
+// wide_kernel pads K with zeros to a multiple of 32, and an FMA of zeros turns an accumulator of -0 into +0; this
+// kernel pads to a multiple of 16, so where the two differ (K mod 32 = 16) it adds that one FMA at the end.
+inline constexpr int kW2M = 128, kW2N = 128, kW2K = 16, kW2Threads = 256;
+template <bool BK_CONTIGUOUS>
+__device__ __forceinline__ void wide2_fetch(const Problem& p, const bf16* A, const bf16* B, int m0, int n0, int k0,
+                                            int4& va, int4& vb) {
+  const int t = threadIdx.x;
+  const int4 zero = make_int4(0, 0, 0, 0);
+  {  // A: row t % 128, k half t / 128
+    const int r = t % kW2M, kk = (t / kW2M) * 8;
+    const long long gm = m0 + r, gk = k0 + kk;
+    va = gm < p.m && gk < p.k ? *reinterpret_cast<const int4*>(A + gm * p.lda + gk) : zero;
+  }
+  if constexpr (BK_CONTIGUOUS) {  // B stored N x K: column t % 128, k half t / 128
+    const int c = t % kW2N, kk = (t / kW2N) * 8;
+    const long long gn = n0 + c, gk = k0 + kk;
+    vb = gn < p.n && gk < p.k ? *reinterpret_cast<const int4*>(B + gn * p.ldb + gk) : zero;
+  } else {  // B stored K x N: k t / 16, columns (t % 16) * 8 .. + 8 (N is a multiple of 8)
+    const int kk = t / 16, c = (t % 16) * 8;
+    const long long gn = n0 + c, gk = k0 + kk;
+    vb = gn < p.n && gk < p.b_rows && gk < p.k ? *reinterpret_cast<const int4*>(B + gk * p.ldb + gn) : zero;
+  }
+}
+template <bool BK_CONTIGUOUS>
+__device__ __forceinline__ void wide2_store(float (*sa)[kW2M], float (*sb)[kW2N], const int4& va, const int4& vb) {
+  const int t = threadIdx.x;
+  const __nv_bfloat162* a2 = reinterpret_cast<const __nv_bfloat162*>(&va);
+  const __nv_bfloat162* b2 = reinterpret_cast<const __nv_bfloat162*>(&vb);
+  {
+    const int r = t % kW2M, kk = (t / kW2M) * 8;
+#pragma unroll
+    for (int e = 0; e < 4; ++e) {
+      const float2 f = __bfloat1622float2(a2[e]);
+      sa[kk + 2 * e][r] = f.x; sa[kk + 2 * e + 1][r] = f.y;
+    }
+  }
+  if constexpr (BK_CONTIGUOUS) {
+    const int c = t % kW2N, kk = (t / kW2N) * 8;
+#pragma unroll
+    for (int e = 0; e < 4; ++e) {
+      const float2 f = __bfloat1622float2(b2[e]);
+      sb[kk + 2 * e][c] = f.x; sb[kk + 2 * e + 1][c] = f.y;
+    }
+  } else {
+    const int kk = t / 16, c = (t % 16) * 8;
+    float4 lo, hi;
+    float2 f = __bfloat1622float2(b2[0]); lo.x = f.x; lo.y = f.y;
+    f = __bfloat1622float2(b2[1]); lo.z = f.x; lo.w = f.y;
+    f = __bfloat1622float2(b2[2]); hi.x = f.x; hi.y = f.y;
+    f = __bfloat1622float2(b2[3]); hi.z = f.x; hi.w = f.y;
+    *reinterpret_cast<float4*>(&sb[kk][c]) = lo;
+    *reinterpret_cast<float4*>(&sb[kk][c + 4]) = hi;
+  }
+}
+template <bool BK_CONTIGUOUS>
+__global__ void __launch_bounds__(kW2Threads, 2) wide2_kernel(Problem p) {
+  __shared__ __align__(16) float sa[2][kW2K][kW2M];
+  __shared__ __align__(16) float sb[2][kW2K][kW2N];
+  const int z = blockIdx.z;
+  const bf16* A = p.a + z * p.stride_a;
+  const bf16* B = p.b + (z / p.group) * p.stride_b;
+  const long long c0 = z * p.stride_c;
+  const int n0 = blockIdx.x * kW2N, m0 = blockIdx.y * kW2M;
+  const int tx = threadIdx.x % 16, ty = threadIdx.x / 16;
+  float acc[8][8];
+#pragma unroll
+  for (int i = 0; i < 8; ++i)
+#pragma unroll
+    for (int j = 0; j < 8; ++j) acc[i][j] = 0.f;
+  int4 va, vb;
+  wide2_fetch<BK_CONTIGUOUS>(p, A, B, m0, n0, 0, va, vb);
+  wide2_store<BK_CONTIGUOUS>(sa[0], sb[0], va, vb);
+  __syncthreads();
+  int stage = 0;
+  for (int k0 = 0; k0 < p.k; k0 += kW2K) {
+    const bool more = k0 + kW2K < p.k;
+    if (more) wide2_fetch<BK_CONTIGUOUS>(p, A, B, m0, n0, k0 + kW2K, va, vb);
+#pragma unroll
+    for (int kk = 0; kk < kW2K; ++kk) {
+      const float4 a0 = *reinterpret_cast<const float4*>(&sa[stage][kk][ty * 4]);
+      const float4 a1 = *reinterpret_cast<const float4*>(&sa[stage][kk][64 + ty * 4]);
+      const float4 b0 = *reinterpret_cast<const float4*>(&sb[stage][kk][tx * 4]);
+      const float4 b1 = *reinterpret_cast<const float4*>(&sb[stage][kk][64 + tx * 4]);
+      const float a[8] = {a0.x, a0.y, a0.z, a0.w, a1.x, a1.y, a1.z, a1.w};
+      const float b[8] = {b0.x, b0.y, b0.z, b0.w, b1.x, b1.y, b1.z, b1.w};
+#pragma unroll
+      for (int i = 0; i < 8; ++i)
+#pragma unroll
+        for (int j = 0; j < 8; ++j) acc[i][j] = LFM_GEMM_PLAIN_FMA(a[i], b[j], acc[i][j]);
+    }
+    if (more) {
+      wide2_store<BK_CONTIGUOUS>(sa[stage ^ 1], sb[stage ^ 1], va, vb);
+      __syncthreads();
+      stage ^= 1;
+    }
+  }
+  const bool pad_more = p.k % kWideK != 0 && p.k % kW2K == 0;  // wide_kernel's zero padding, see above
+#pragma unroll
+  for (int i = 0; i < 8; ++i)
+#pragma unroll
+    for (int j = 0; j < 8; ++j) {
+      const long long row = m0 + (i < 4 ? ty * 4 + i : 64 + ty * 4 + i - 4);
+      const long long col = n0 + (j < 4 ? tx * 4 + j : 64 + tx * 4 + j - 4);
+      const float v = pad_more ? LFM_GEMM_PLAIN_FMA(0.f, 0.f, acc[i][j]) : acc[i][j];
+      if (row < p.m && col < p.n) put(p, c0 + row * p.ldc + col, v);
+    }
+}
+
 // M <= 8 rows: each warp produces COLS outputs for all rows, streaming B rows with 16-byte loads.
 // The reduction order is fixed: per-lane strided partial sums, then a butterfly over the warp.
 template <int R>
@@ -689,8 +803,18 @@ inline int model_rows() {
   return rows;
 }
 #endif
+// The 128 x 128 kernel for products of more than LFM_GEMM_WIDE2_ROWS rows (0: never), wide_kernel below that. Both
+// give identical bits; the threshold is a matter of speed only.
+#ifndef LFM_GEMM_WIDE2_ROWS
+#define LFM_GEMM_WIDE2_ROWS 64
+#endif
 template <bool KC>
 inline void launch_wide_plain(const Problem& p, cudaStream_t stream) {
+  if (LFM_GEMM_WIDE2_ROWS > 0 && p.m > LFM_GEMM_WIDE2_ROWS) {
+    const dim3 grid((p.n + kW2N - 1) / kW2N, (p.m + kW2M - 1) / kW2M, p.batch);
+    wide2_kernel<KC><<<grid, kW2Threads, 0, stream>>>(p);
+    return;
+  }
   for_wide_tile<LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, 4>(p.m, [&](auto ty) {
     constexpr int TY = decltype(ty)::value;
     using T = WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>;
