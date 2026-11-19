@@ -1,14 +1,17 @@
 # red-team-1: the code this project wrote, end to end
 
-Status: **fixes written, rules and predictions below, nothing built or run** (2026-11-18).
+Status: **passed** (2026-11-18). Rules and predictions committed at `862daec` before the first run. Every finding of
+two rounds of review is fixed. The engine's code for the text path computes what phase 1 recorded: the NLL files at
+all four lengths are byte-identical to text-correct-v2's. Records: [records/](records/) (`SHA256SUMS` verified after the copy).
 
 ## Scope and method
 
 Everything written or changed since the import (`git diff fc130a3`): the GEMM and the tensor-core model
 (`native/include/lfm/gemm.cuh`, `tensor_core_model.hpp`), the runner and scorer changes (`native/src/lfm3_main.cu`,
 `window_slots.hpp`, `native/apps/lfm3_score.cu`), and the validation tooling (`tools/pascal/`). Three independent
-reviews by reading, one per area, each told to find defects and given none of the project's conclusions; and, on
-the card, a sweep of the compact window buffers against the full-length layout at every boundary prompt length.
+reviews by reading, one per area, each told to find defects and given none of the project's conclusions; on the
+card, a sweep of the compact window buffers against the full-length layout at every boundary prompt length; then a
+second independent review of the fixes themselves.
 The imported serving, speech and vision code was read only where the new code touches it.
 
 ## Findings and what was done
@@ -39,6 +42,15 @@ should not, or a number other than the one its header names.
 | T11 | `remote.sh` excluded `reference`, `build` and `target.env` by name at any depth, and did not say which commit a tree was | Anchored to the top; the sync line names the commit and whether there are uncommitted changes |
 | T12 | `compare_pins.py` printed `PINS EQUAL` for a subset of the fixtures | Says so; unknown fixture names are an error |
 
+Found by the second review, in the fixes above:
+
+| # | Finding | Fix |
+|---|---|---|
+| R1 | F6 was incomplete: the preprocessor reads an unknown word as 0, so `-DLFM_GEMM_FIRST_ROW=on` turned position 0's arithmetic off and `-DLFM_GEMM_PLAIN_ROUND=away` meant nearest | A value must be one of the listed digits |
+| R2 | `boundary_sweep.sh` printed PASS when no pair under its rule had run | Says NOT RUN and exits 2 |
+| R3 | The sweep's generation case accepted any number of steps, so an early stop token passed, and its header claimed it fills the capacity (the last generated token is never fed back: it reaches 4,096 of 4,097 positions) | Exactly `STEPS` steps required; the header says what the case reaches |
+| R4 | `first_row_check` never tested attention's products: several heads per call, and a P·V whose values stop short of K. A launch of position 0 that reached only the first head would have passed | Rule 4 of the check, both products, every head. A deliberately broken kernel (position 0 for the first two of four heads) now fails it |
+
 Not changed, by decision:
 
 - The launch that recomputes position 0 computes 8 rows for one (the 0.155 s per prefill). Phase 2's first item.
@@ -47,31 +59,42 @@ Not changed, by decision:
 - `tests/test_window_slots.py` skips without `g++`; `arith_report.py` and `nll_tests.py` share one random stream
   across variants (information only).
 
-## Verification (`job.sh`)
+## Verification
 
-New builds: `text-v7` (shipping) and `parity-v7` (the gate's).
+Five jobs, in order: `job.sh` (tree `862daec`, stopped by hand during its last step, scoring, because `job2.sh` repeats
+it), `job2.sh` (the full list on the fixes of the first review), `job3.sh`, `job4.sh` and `job5.sh` (the second review's
+fixes). After `job2.sh` only preprocessor checks changed in the engine: with symbols stripped, the final `liquid-lfm3`
+and `lfm3-score` are byte-identical to the builds `job2.sh` verified, in both the shipping and the parity configuration.
+The unstripped files differ in 5 bytes, the temporary file name `nvcc` leaves in the symbol table.
 
-1. **The findings reproduce on the old binary** (`text-v6`): the same request at capacity 4,097 and 4,096 gives
-   different logits for prompts of 129, 136, 257, 513 and 1,025 tokens, and the scorer's rows 256–258 differ
-   between 260-token and 520-token windows of the same tokens (`tail_tile_check.sh` fails).
-2. **And not on the new one:** those five prompts identical across the two capacities; `tail_tile_check.sh` passes.
-3. **`first_row_check`** (new, on the card): position 0 equals the tensor-core model computed on the host, bit
-   for bit; every other row, and every row of a product that is not a prompt, equals the plain kernel; non-finite
-   plain results at position 0 are kept.
-4. **Switches:** the five valid ones compile; the five invalid values stop at an `#error`.
-5. **Parity gate** 7,826 of 7,826; **fixtures** with compact windows off and on; **sanitizer** 0 errors on the
-   fixtures and on a compact-window decode from 257-token and 513-token prompts (a last attention tile of one row).
-6. **Boundary sweep:** 33 pairs, compact against full, identical (as on the old binary before the fixes: 33 of 33).
-7. **Nothing recorded changes:** NLL files at 256, 257, 4,096 and 32,768 byte-identical to text-correct-v2's;
-   every long-decode-v1 case's ids and logits identical to its record.
-8. **Round-once check** still 3,168 of 3,168, and its "plain kernel" column is now the plain kernel alone.
-9. **Host suite** as recorded: 2,397 passed, 5 skipped.
+| # | Rule | Result |
+|---|---|---|
+| 1 | The findings reproduce on the old binary | **Yes.** Across capacities 4,097 and 4,096, prompts of 136, 257, 513, 1,025, 2,049 and 3,329 tokens differ. Scorer rows 256–258 differ in 18 of 24 values between 260- and 520-token windows |
+| 2 | And not on the new one | **Pass.** All 10 prompt lengths identical across the two capacities at all 601 steps; rows 256–258 differ in 0 of 24 values |
+| 3 | `first_row_check` | **Pass,** 210 checks, 0 failed. The broken kernel fails 8 of them |
+| 4 | Switches | **Pass.** 9 valid forms compile with 0 warnings; 9 invalid values stop the build |
+| 5 | Parity gate, fixtures, sanitizer | **Pass.** 7,826 of 7,826 pins; fixtures with compact windows off and on; the sanitizer reports 0 errors on the fixtures and on the compact-window decode from 257- and 513-token prompts |
+| 6 | Boundary sweep | **Pass,** 33 of 33 pairs, on the final build |
+| 7 | Nothing recorded changes | **Pass.** NLL files at 256, 257, 4,096 and 32,768 byte-identical to text-correct-v2's (mean NLL 3.280151, 3.277353, 2.569422, 2.531827); all five long-decode-v1 cases identical in ids and logits |
+| 8 | Round-once check | **Pass,** 3,168 of 3,168 |
+| 9 | Host suite | **As recorded:** 2,397 passed, 5 skipped, 1 failed. The failure is `test_every_validation_prompt_matches_hf_ids`, which needs Transformers 5.x (4.57.6 is installed here) and fails the same way without these changes |
 
-## Predictions (before any run)
+## Predictions against the measurements
 
-- Rule 1: as stated; also different at 2,049 and 3,329 (both end in a tile of one row); identical at 9, 137 and 300.
-- Rule 2: identical from 9 to 1,025 tokens. At 2,049 and 3,329 not known: above 4,096 of capacity the softmax runs
-  over each tile's keys, and which of its two kernels a row gets then depends on the tile. If they still differ,
-  that is the mechanism behind long-decode-v1's "seen, not explained", and it predates the import.
-- Rule 3: row 0 differs from the plain kernel in most outputs of the 2,048-wide shapes.
-- Rules 4 to 9: pass. The fixes touch no arithmetic that a recorded result used.
+- Rule 1: **one miss.** Prompt 129 was predicted to differ across capacities and did not. The others held: 136, 257,
+  513, 1,025, 2,049 and 3,329 differ; 9, 137 and 300 are identical. 257 differs at only 7 of 601 steps.
+- Rule 2: held from 9 to 1,025 tokens. The open case resolved: 2,049 and 3,329 are identical as well, so the softmax's
+  choice of kernel by tile is not a source of difference between these capacities.
+- Rule 3: **held in FP32 only.** Row 0 differs from the plain kernel in nearly every FP32 output of the 2,048-wide shapes
+  (for example 96 of 96), and in none of their BF16 outputs.
+- Rules 4 to 9: held.
+
+## Limits
+
+- The batch, tree and worker programs do not compile for sm_61: `lfm3_batch.cuh` needs the Thor engine's GEMM tile type
+  and `gemm_lossless.cuh`. So the guard of F5 in `lfm3_batch.cuh` and `lfm3_tree.cuh` has not been compiled to completion
+  (no compiler error names it); the same guard compiles and links through the decode-batch probe. `job2.sh`'s comment
+  says the errors are all in `gemm_lossless.cuh`; 17 to 19 of them are in `lfm3_batch.cuh` and `vision_encoder.cuh`.
+- Speech, vision and serving code was reviewed only where the new code touches it.
+- "No defects remain" is not something a review can show. What is shown: the second review's four findings are fixed,
+  and neither review found a defect in what the engine computes on the text path.

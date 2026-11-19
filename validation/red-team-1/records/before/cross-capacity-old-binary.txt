@@ -1,0 +1,11 @@
+x4097-4096-p9: 601 steps; IDENTICAL (information)
+x4097-4096-p129: 601 steps; IDENTICAL (information)
+x4097-4096-p136: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p137: 601 steps; IDENTICAL (information)
+x4097-4096-p257: 601 steps; DIFFER at 7 steps, first at step 0 (information)
+x4097-4096-p300: 601 steps; IDENTICAL (information)
+x4097-4096-p513: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p1025: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p2049: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p3329: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+pairs run 0, ok 0

@@ -4,11 +4,13 @@
 # For each prompt length around the window (256), the buffer (512) and their multiples, teacher-forces STEPS tokens
 # with the compact buffers and without, at capacity 4,097 (the smallest where compact is the default; side A unset,
 # side B LFM3_COMPACT_WINDOWS=0) and at 4,096 (side A =1, side B unset). Also: a request that fills the capacity
-# exactly, by teacher forcing and by generation, and a prompt of the whole capacity. Every pair must give the same
-# ids and byte-identical FP32 logits at every step, with the expected number of steps. Exit 0 only if all do.
-# Then, for information (never a failure): the same request at capacity 4,097 and at 4,096, both as shipped, for the
-# prompt lengths in XPROMPTS. Above 4,096 prefill attention runs in tiles of 128 rows, so this shows where the
-# capacity changes the bits.
+# exactly by teacher forcing, a generation of STEPS tokens up to the end of the capacity (the last generated token is
+# never fed back, so it reaches position 4,096 of 4,097), and a prompt of the whole capacity. Every pair must give the
+# same ids and byte-identical FP32 logits at every step, with the expected number of steps. Exit 0 only if all do;
+# exit 2 if no pair under this rule ran.
+# Then, for information (a difference is never a failure, a run that fails is): the same request at capacity 4,097 and
+# at 4,096, both as shipped, for the prompt lengths in XPROMPTS. Above 4,096 prefill attention runs in tiles of 128
+# rows, so this shows where the capacity changes the bits.
 # WRAPPER (e.g. compute-sanitizer --tool memcheck --error-exitcode 9) wraps the engine; STEPS, PROMPTS and XPROMPTS
 # via env (PROMPTS="" or XPROMPTS="" skips that part).
 set -uo pipefail
@@ -82,12 +84,13 @@ for p in $xprompts; do
   pair "x4097-4096-p$p" 4097 4096 "$p" "$steps" 0 $((steps + 1)) unset unset info "$@"
 done
 if [ -z "${PROMPTS+set}" ]; then
-  # Filling the capacity exactly: prompt + teacher tokens = capacity; prompt + generated tokens = capacity; prompt alone.
+  # To the end of the capacity: prompt + teacher tokens = capacity; prompt + generated tokens = capacity; prompt alone.
   pair fill-teacher 4097 4097 $((4097 - steps)) "$steps" 0 $((steps + 1)) unset 0 rule "$@"
-  pair fill-generate 4097 4097 $((4097 - steps)) 0 "$steps" 0 unset 0 rule "$@"
+  pair fill-generate 4097 4097 $((4097 - steps)) 0 "$steps" "$steps" unset 0 rule "$@"
   pair fill-prompt 4097 4097 4097 0 0 1 unset 0 rule "$@"
 fi
 done_pairs=$(grep -c ' ok$' "$out/sweep.txt" 2>/dev/null || true)
 echo "pairs run $pairs, ok ${done_pairs:-0}" | tee -a "$out/sweep.txt"
 [ "${done_pairs:-0}" = "$pairs" ] || fail=1
+if [ "$pairs" = 0 ]; then echo "BOUNDARY SWEEP NOT RUN: no pair under the rule"; exit 2; fi
 echo "BOUNDARY SWEEP $([ $fail = 0 ] && echo PASS || echo FAIL)"; exit $fail

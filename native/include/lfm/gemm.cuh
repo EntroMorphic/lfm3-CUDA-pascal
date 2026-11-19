@@ -38,7 +38,13 @@
 #ifndef LFM_GEMM_FIRST_ROW
 #define LFM_GEMM_FIRST_ROW 1
 #endif
-#if LFM_GEMM_FIRST_ROW != 0 && LFM_GEMM_FIRST_ROW != 1
+// The preprocessor reads an unknown word as 0, so a comparison alone would take =on for 0: a value must also be one of these.
+#define LFM_GEMM_PASTE_(a, b) a##b
+#define LFM_GEMM_PASTE(a, b) LFM_GEMM_PASTE_(a, b)
+#define LFM_GEMM_DIGIT_0 1
+#define LFM_GEMM_DIGIT_1 1
+#define LFM_GEMM_DIGIT_2 1
+#if !LFM_GEMM_PASTE(LFM_GEMM_DIGIT_, LFM_GEMM_FIRST_ROW) || (LFM_GEMM_FIRST_ROW != 0 && LFM_GEMM_FIRST_ROW != 1)
 #error "LFM_GEMM_FIRST_ROW must be 0 or 1"
 #endif
 #if defined(LFM_GEMM_ROUND_ONCE) && LFM_GEMM_ROUND_ONCE != 1
@@ -121,7 +127,7 @@ inline constexpr int kWideK = 32, kWideTX = 8;
 #ifndef LFM_GEMM_PLAIN_ROUND
 #define LFM_GEMM_PLAIN_ROUND 0
 #endif
-#if LFM_GEMM_PLAIN_ROUND < 0 || LFM_GEMM_PLAIN_ROUND > 2
+#if !LFM_GEMM_PASTE(LFM_GEMM_DIGIT_, LFM_GEMM_PLAIN_ROUND)
 #error "LFM_GEMM_PLAIN_ROUND must be 0, 1 or 2"
 #endif
 __device__ __forceinline__ float fma_away(float a, float b, float c) {

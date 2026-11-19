@@ -1,0 +1,49 @@
+16 x 2048 x 96 kc bf16       row 0 = model in 96/96, differs from plain in 0; other rows = plain
+16 x 2048 x 96 kc f32        row 0 = model in 96/96, differs from plain in 96; other rows = plain
+16 x 2048 x 96 kn bf16       row 0 = model in 96/96, differs from plain in 0; other rows = plain
+16 x 2048 x 96 kn f32        row 0 = model in 96/96, differs from plain in 96; other rows = plain
+9 x 7680 x 40 kc bf16        row 0 = model in 40/40, differs from plain in 0; other rows = plain
+9 x 7680 x 40 kc f32         row 0 = model in 40/40, differs from plain in 40; other rows = plain
+9 x 7680 x 40 kn bf16        row 0 = model in 40/40, differs from plain in 0; other rows = plain
+9 x 7680 x 40 kn f32         row 0 = model in 40/40, differs from plain in 40; other rows = plain
+1 x 2048 x 32 kc bf16        row 0 = model in 32/32, differs from plain in 0; other rows = plain
+1 x 2048 x 32 kc f32         row 0 = model in 32/32, differs from plain in 32; other rows = plain
+1 x 2048 x 32 kn bf16        row 0 = model in 32/32, differs from plain in 0; other rows = plain
+1 x 2048 x 32 kn f32         row 0 = model in 32/32, differs from plain in 31; other rows = plain
+8 x 2048 x 64 kc bf16        row 0 = model in 64/64, differs from plain in 0; other rows = plain
+8 x 2048 x 64 kc f32         row 0 = model in 64/64, differs from plain in 64; other rows = plain
+8 x 2048 x 64 kn bf16        row 0 = model in 64/64, differs from plain in 0; other rows = plain
+8 x 2048 x 64 kn f32         row 0 = model in 64/64, differs from plain in 63; other rows = plain
+129 x 128 x 200 kc bf16      row 0 = model in 200/200, differs from plain in 0; other rows = plain
+129 x 128 x 200 kc f32       row 0 = model in 200/200, differs from plain in 173; other rows = plain
+129 x 128 x 200 kn bf16      row 0 = model in 200/200, differs from plain in 1; other rows = plain
+129 x 128 x 200 kn f32       row 0 = model in 200/200, differs from plain in 174; other rows = plain
+33 x 2040 x 16 kc bf16       row 0 = model in 16/16, differs from plain in 0; other rows = plain
+33 x 2040 x 16 kc f32        row 0 = model in 16/16, differs from plain in 15; other rows = plain
+33 x 2040 x 16 kn bf16       row 0 = model in 16/16, differs from plain in 1; other rows = plain
+33 x 2040 x 16 kn f32        row 0 = model in 16/16, differs from plain in 16; other rows = plain
+40 x 24 x 8 kc bf16          row 0 = model in 8/8, differs from plain in 0; other rows = plain
+40 x 24 x 8 kc f32           row 0 = model in 8/8, differs from plain in 5; other rows = plain
+40 x 24 x 8 kn bf16          row 0 = model in 8/8, differs from plain in 0; other rows = plain
+40 x 24 x 8 kn f32           row 0 = model in 8/8, differs from plain in 3; other rows = plain
+attention scores, head 0     row 0 = model in 36/36, differs from plain in 30; other rows = plain
+attention scores, head 1     row 0 = model in 36/36, differs from plain in 28; other rows = plain
+  FAIL: attention scores, head 2: row 0 differs from the tensor-core model in 33 outputs
+  FAIL: attention scores, head 2: row 0 never differs from the plain kernel (did the model run?)
+attention scores, head 2     row 0 = model in 3/36, differs from plain in 0; other rows = plain
+  FAIL: attention scores, head 3: row 0 differs from the tensor-core model in 31 outputs
+  FAIL: attention scores, head 3: row 0 never differs from the plain kernel (did the model run?)
+attention scores, head 3     row 0 = model in 5/36, differs from plain in 0; other rows = plain
+attention P x V bf16, head 0 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V bf16, head 1 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V bf16, head 2 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V bf16, head 3 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V f32, head 0  row 0 = model in 128/128, differs from plain in 91; other rows = plain
+attention P x V f32, head 1  row 0 = model in 128/128, differs from plain in 94; other rows = plain
+  FAIL: attention P x V f32, head 2: row 0 differs from the tensor-core model in 96 outputs
+  FAIL: attention P x V f32, head 2: row 0 never differs from the plain kernel (did the model run?)
+attention P x V f32, head 2  row 0 = model in 32/128, differs from plain in 0; other rows = plain
+  FAIL: attention P x V f32, head 3: row 0 differs from the tensor-core model in 86 outputs
+  FAIL: attention P x V f32, head 3: row 0 never differs from the plain kernel (did the model run?)
+attention P x V f32, head 3  row 0 = model in 42/128, differs from plain in 0; other rows = plain
+first_row_check: 210 checks, 8 failed: FAIL

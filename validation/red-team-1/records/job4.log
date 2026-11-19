@@ -1,0 +1,224 @@
++ date
+Wed Nov 18 19:36:27 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ M=/workspace/build/rt4-matrix
++ mkdir -p /workspace/build/rt4-matrix/strip
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include'
++ tools/pascal/build_text.sh text-v10
+liquid-lfm3: warnings 0, sha256 a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e, 3475440 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 97e389a5252dffc17900d11cd3d88843e04742d53f519d65ede58c11bfd44a5a, 3335104 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+build rc=0
++ echo 'build rc=0'
++ tools/pascal/gate_pins.sh parity-v10
+liquid-lfm3: warnings 0, sha256 cfa0c9b007bb14e68d4c641d42e2b46853485e45770db67696c4cedcc254bb5c, 3484216 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 04683024ab6fc42df90a5d0b796b8f86b891651d74ee09ed964eaf3f2d19f4ae, 3343928 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+binary cfa0c9b007bb14e68d4c641d42e2b46853485e45770db67696c4cedcc254bb5c  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 0.76 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.43 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.34 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.03 s
+PINS EQUAL: 7826 files equal
++ echo 'gate rc=0'
++ for t in "text-v8 text-v10 liquid-lfm3" "text-v8 text-v10 lfm3-score" "parity-v8 parity-v10 liquid-lfm3" "parity-v8 parity-v10 lfm3-score"
++ set -- text-v8 text-v10 liquid-lfm3
++ strip -o /workspace/build/rt4-matrix/strip/a /workspace/build/text-v8/liquid-lfm3
+gate rc=0
++ strip -o /workspace/build/rt4-matrix/strip/b /workspace/build/text-v10/liquid-lfm3
++ cmp /workspace/build/rt4-matrix/strip/a /workspace/build/rt4-matrix/strip/b
++ echo 'text-v10/liquid-lfm3: code IDENTICAL to text-v8 (symbols stripped)'
++ for t in "text-v8 text-v10 liquid-lfm3" "text-v8 text-v10 lfm3-score" "parity-v8 parity-v10 liquid-lfm3" "parity-v8 parity-v10 lfm3-score"
++ set -- text-v8 text-v10 lfm3-score
++ strip -o /workspace/build/rt4-matrix/strip/a /workspace/build/text-v8/lfm3-score
+text-v10/liquid-lfm3: code IDENTICAL to text-v8 (symbols stripped)
++ strip -o /workspace/build/rt4-matrix/strip/b /workspace/build/text-v10/lfm3-score
++ cmp /workspace/build/rt4-matrix/strip/a /workspace/build/rt4-matrix/strip/b
++ echo 'text-v10/lfm3-score: code IDENTICAL to text-v8 (symbols stripped)'
++ for t in "text-v8 text-v10 liquid-lfm3" "text-v8 text-v10 lfm3-score" "parity-v8 parity-v10 liquid-lfm3" "parity-v8 parity-v10 lfm3-score"
++ set -- parity-v8 parity-v10 liquid-lfm3
++ strip -o /workspace/build/rt4-matrix/strip/a /workspace/build/parity-v8/liquid-lfm3
+text-v10/lfm3-score: code IDENTICAL to text-v8 (symbols stripped)
++ strip -o /workspace/build/rt4-matrix/strip/b /workspace/build/parity-v10/liquid-lfm3
++ cmp /workspace/build/rt4-matrix/strip/a /workspace/build/rt4-matrix/strip/b
++ echo 'parity-v10/liquid-lfm3: code IDENTICAL to parity-v8 (symbols stripped)'
++ for t in "text-v8 text-v10 liquid-lfm3" "text-v8 text-v10 lfm3-score" "parity-v8 parity-v10 liquid-lfm3" "parity-v8 parity-v10 lfm3-score"
++ set -- parity-v8 parity-v10 lfm3-score
++ strip -o /workspace/build/rt4-matrix/strip/a /workspace/build/parity-v8/lfm3-score
+parity-v10/liquid-lfm3: code IDENTICAL to parity-v8 (symbols stripped)
++ strip -o /workspace/build/rt4-matrix/strip/b /workspace/build/parity-v10/lfm3-score
++ cmp /workspace/build/rt4-matrix/strip/a /workspace/build/rt4-matrix/strip/b
++ echo 'parity-v10/lfm3-score: code IDENTICAL to parity-v8 (symbols stripped)'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
+parity-v10/lfm3-score: code IDENTICAL to parity-v8 (symbols stripped)
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW=0 -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_FIRST_ROW=0.log
+compile -DLFM_GEMM_FIRST_ROW=0 rc=0 warnings=0
++ echo 'compile -DLFM_GEMM_FIRST_ROW=0 rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW=1 -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_FIRST_ROW=1.log
+compile -DLFM_GEMM_FIRST_ROW=1 rc=0 warnings=0
++ echo 'compile -DLFM_GEMM_FIRST_ROW=1 rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_FIRST_ROW.log
++ echo 'compile -DLFM_GEMM_FIRST_ROW rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_TENSOR_CORE_MODEL -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_FIRST_ROW rc=0 warnings=0
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_TENSOR_CORE_MODEL.log
+compile -DLFM_GEMM_TENSOR_CORE_MODEL rc=0 warnings=0
++ echo 'compile -DLFM_GEMM_TENSOR_CORE_MODEL rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_TENSOR_CORE_MODEL=2 -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_TENSOR_CORE_MODEL=2.log
+compile -DLFM_GEMM_TENSOR_CORE_MODEL=2 rc=0 warnings=0
++ echo 'compile -DLFM_GEMM_TENSOR_CORE_MODEL=2 rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_ROUND_ONCE -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_ROUND_ONCE.log
++ echo 'compile -DLFM_GEMM_ROUND_ONCE rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=0 -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_ROUND_ONCE rc=0 warnings=0
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_PLAIN_ROUND=0.log
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=0 rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
+compile -DLFM_GEMM_PLAIN_ROUND=0 rc=0 warnings=0
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=1 -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_PLAIN_ROUND=1.log
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=1 rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_FIRST_ROW=1 LFM_GEMM_FIRST_ROW LFM_GEMM_TENSOR_CORE_MODEL LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=0 LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=2 -o /workspace/build/rt4-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_PLAIN_ROUND=1 rc=0 warnings=0
+++ grep -c 'warning #' /workspace/build/rt4-matrix/LFM_GEMM_PLAIN_ROUND=2.log
+compile -DLFM_GEMM_PLAIN_ROUND=2 rc=0 warnings=0
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=2 rc=0 warnings=0'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW=on -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
+compile -DLFM_GEMM_FIRST_ROW=on (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_FIRST_ROW=on (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW=yes -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
+compile -DLFM_GEMM_FIRST_ROW=yes (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_FIRST_ROW=yes (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW=2 -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
++ echo 'compile -DLFM_GEMM_FIRST_ROW=2 (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW= -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_FIRST_ROW=2 (must fail) rc=1 2 #error line(s)
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
+compile -DLFM_GEMM_FIRST_ROW= (must fail) rc=1 0 #error line(s)
++ echo 'compile -DLFM_GEMM_FIRST_ROW= (must fail) rc=1 0 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=away -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
+compile -DLFM_GEMM_PLAIN_ROUND=away (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=away (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=3 -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=3 (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND= -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_PLAIN_ROUND=3 (must fail) rc=1 2 #error line(s)
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND= (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_TENSOR_CORE_MODEL=on -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_PLAIN_ROUND= (must fail) rc=1 2 #error line(s)
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
+compile -DLFM_GEMM_TENSOR_CORE_MODEL=on (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_TENSOR_CORE_MODEL=on (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_FIRST_ROW=on LFM_GEMM_FIRST_ROW=yes LFM_GEMM_FIRST_ROW=2 LFM_GEMM_FIRST_ROW= LFM_GEMM_PLAIN_ROUND=away LFM_GEMM_PLAIN_ROUND=3 LFM_GEMM_PLAIN_ROUND= LFM_GEMM_TENSOR_CORE_MODEL=on LFM_GEMM_ROUND_ONCE=on
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_ROUND_ONCE=on -o /workspace/build/rt4-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt4-matrix/bad.log
++ echo 'compile -DLFM_GEMM_ROUND_ONCE=on (must fail) rc=1 2 #error line(s)'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/rt4-matrix/first_row_check native/tests/first_row_check.cu native/tests/first_row_model.cpp
+compile -DLFM_GEMM_ROUND_ONCE=on (must fail) rc=1 2 #error line(s)
+++ grep -c 'warning #' /workspace/build/rt4-matrix/first_row_check.log
+build first_row_check rc=0 warnings=0
++ echo 'build first_row_check rc=0 warnings=0'
++ /workspace/build/rt4-matrix/first_row_check
+++ tail -1 /workspace/build/rt4-matrix/first_row_check.txt
++ echo 'first_row_check rc=0 first_row_check: 198 checks, 0 failed: PASS'
+first_row_check rc=0 first_row_check: 198 checks, 0 failed: PASS
++ mkdir -p /workspace/build/rt4-matrix/mutant
++ cp -r native/include /workspace/build/rt4-matrix/mutant/
++ sed -i 's/^    first\.keep_nonfinite = true;$/    first.keep_nonfinite = true; first.batch = first.group;/' /workspace/build/rt4-matrix/mutant/include/lfm/gemm.cuh
++ cmp -s native/include/lfm/gemm.cuh /workspace/build/rt4-matrix/mutant/include/lfm/gemm.cuh
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I /workspace/build/rt4-matrix/mutant/include -o /workspace/build/rt4-matrix/first_row_mutant native/tests/first_row_check.cu native/tests/first_row_model.cpp
+build mutant rc=0
++ echo 'build mutant rc=0'
++ /workspace/build/rt4-matrix/first_row_mutant
+++ tail -1 /workspace/build/rt4-matrix/first_row_mutant.txt
++ echo 'mutant first_row_check rc=1 (must be 1) first_row_check: 198 checks, 4 failed: FAIL'
+mutant first_row_check rc=1 (must be 1) first_row_check: 198 checks, 4 failed: FAIL
++ PROMPTS=
++ XPROMPTS=
++ tools/pascal/boundary_sweep.sh text-v10 rt4-sweep-empty
+binary a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e  /workspace/build/text-v10/liquid-lfm3
+pairs run 0, ok 0
+BOUNDARY SWEEP NOT RUN: no pair under the rule
++ echo 'empty sweep rc=2 (must be 2)'
+empty sweep rc=2 (must be 2)
++ tools/pascal/boundary_sweep.sh text-v10 rt4-sweep
+binary a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e  /workspace/build/text-v10/liquid-lfm3
+c4097-p1: 601 steps; IDENTICAL ok
+c4096-p1: 601 steps; IDENTICAL ok
+c4097-p2: 601 steps; IDENTICAL ok
+c4096-p2: 601 steps; IDENTICAL ok
+c4097-p8: 601 steps; IDENTICAL ok
+c4096-p8: 601 steps; IDENTICAL ok
+c4097-p9: 601 steps; IDENTICAL ok
+c4096-p9: 601 steps; IDENTICAL ok
+c4097-p255: 601 steps; IDENTICAL ok
+c4096-p255: 601 steps; IDENTICAL ok
+c4097-p256: 601 steps; IDENTICAL ok
+c4096-p256: 601 steps; IDENTICAL ok
+c4097-p257: 601 steps; IDENTICAL ok
+c4096-p257: 601 steps; IDENTICAL ok
+c4097-p258: 601 steps; IDENTICAL ok
+c4096-p258: 601 steps; IDENTICAL ok
+c4097-p511: 601 steps; IDENTICAL ok
+c4096-p511: 601 steps; IDENTICAL ok
+c4097-p512: 601 steps; IDENTICAL ok
+c4096-p512: 601 steps; IDENTICAL ok
+c4097-p513: 601 steps; IDENTICAL ok
+c4096-p513: 601 steps; IDENTICAL ok
+c4097-p767: 601 steps; IDENTICAL ok
+c4096-p767: 601 steps; IDENTICAL ok
+c4097-p768: 601 steps; IDENTICAL ok
+c4096-p768: 601 steps; IDENTICAL ok
+c4097-p769: 601 steps; IDENTICAL ok
+c4096-p769: 601 steps; IDENTICAL ok
+c4097-p1025: 601 steps; IDENTICAL ok
+c4096-p1025: 601 steps; IDENTICAL ok
+x4097-4096-p9: 601 steps; IDENTICAL (information)
+x4097-4096-p129: 601 steps; IDENTICAL (information)
+x4097-4096-p136: 601 steps; IDENTICAL (information)
+x4097-4096-p137: 601 steps; IDENTICAL (information)
+x4097-4096-p257: 601 steps; IDENTICAL (information)
+x4097-4096-p300: 601 steps; IDENTICAL (information)
+x4097-4096-p513: 601 steps; IDENTICAL (information)
+x4097-4096-p1025: 601 steps; IDENTICAL (information)
+x4097-4096-p2049: 601 steps; IDENTICAL (information)
+x4097-4096-p3329: 601 steps; IDENTICAL (information)
+fill-teacher: 601 steps; IDENTICAL ok
+fill-generate: 600 steps; IDENTICAL ok
+fill-prompt: 1 steps; IDENTICAL ok
+pairs run 33, ok 33
+BOUNDARY SWEEP PASS
+sweep rc=0
++ echo 'sweep rc=0'
++ date
+Wed Nov 18 20:02:14 MST 2026

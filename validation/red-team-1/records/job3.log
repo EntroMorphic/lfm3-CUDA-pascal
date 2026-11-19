@@ -1,0 +1,35 @@
++ date
+Wed Nov 18 19:27:15 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ M=/workspace/build/rt3-matrix
++ mkdir -p /workspace/build/rt3-matrix
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include'
++ tools/pascal/build_text.sh text-v9
+liquid-lfm3: warnings 0, sha256 13ead6d97b85a69ea780344f858c8d0eb3d26bccfe9c5251dcba4d9a6bd55cff, 3475440 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 4dca0ea6b506cc3137f2ca89826c6d584907e25f5e2d4ea7fcf506b2322ee73f, 3335104 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
++ echo 'build rc=0'
++ for f in liquid-lfm3 lfm3-score
++ cmp /workspace/build/text-v8/liquid-lfm3 /workspace/build/text-v9/liquid-lfm3
+build rc=0
+/workspace/build/text-v8/liquid-lfm3 /workspace/build/text-v9/liquid-lfm3 differ: byte 3235550, line 17224
++ echo 'liquid-lfm3: DIFFERS from text-v8'
++ for f in liquid-lfm3 lfm3-score
++ cmp /workspace/build/text-v8/lfm3-score /workspace/build/text-v9/lfm3-score
+liquid-lfm3: DIFFERS from text-v8
+/workspace/build/text-v8/lfm3-score /workspace/build/text-v9/lfm3-score differ: byte 3105718, line 16741
++ echo 'lfm3-score: DIFFERS from text-v8'
+lfm3-score: DIFFERS from text-v8
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/rt3-matrix/first_row_check native/tests/first_row_check.cu native/tests/first_row_model.cpp
+++ grep -c 'warning #' /workspace/build/rt3-matrix/first_row_check.log
++ echo 'build first_row_check rc=0 warnings=0'
++ /workspace/build/rt3-matrix/first_row_check
+build first_row_check rc=0 warnings=0
+++ tail -1 /workspace/build/rt3-matrix/first_row_check.txt
++ echo 'first_row_check rc=0 first_row_check: 178 checks, 0 failed: PASS'
++ date
+first_row_check rc=0 first_row_check: 178 checks, 0 failed: PASS
+Wed Nov 18 19:28:24 MST 2026

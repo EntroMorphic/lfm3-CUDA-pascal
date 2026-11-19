@@ -5,6 +5,7 @@
 //   2. row0 = -1 (not a prompt) and row0 = 5 (a later block of a prompt): the plain kernel's result in every row.
 //   3. A NaN or an infinity among row 0's operands: the plain kernel's non-finite results are kept, and every finite
 //      output of row 0 still equals the model. Non-finite operands elsewhere do not touch row 0.
+//   4. The two products of attention, several heads per call (batch, group, a padded K x N B): rule 1 for every head.
 // The output buffer is filled with NaN before every run, so a kernel that read stale output would fail 1.
 //   first_row_check        exit 0 if every check holds
 // Build: nvcc [the engine's flags] first_row_check.cu first_row_model.cpp (the host half of the comparison).
@@ -38,9 +39,10 @@ const u16 kNaN = 0x7fc0, kInf = 0x7f80;
 struct Shape { int m, k, n; };
 struct Run { std::vector<unsigned> bits; };  // one value per output: BF16 bits or FP32 bits
 
-Run run(const Shape& s, bool kc, bool f32, const std::vector<u16>& a, const std::vector<u16>& b, int row0) {
+// One product on the card; `p` carries the geometry, `outputs` is the size of C in elements.
+Run run_problem(lfm::gemm::Problem p, size_t outputs, bool f32, const std::vector<u16>& a, const std::vector<u16>& b, int row0) {
   lfm::gemm::bf16 *da, *db; void* dc;
-  const size_t outputs = size_t(s.m) * s.n, bytes = outputs * (f32 ? 4 : 2);
+  const size_t bytes = outputs * (f32 ? 4 : 2);
   check(cudaMalloc(&da, a.size() * 2)); check(cudaMalloc(&db, b.size() * 2)); check(cudaMalloc(&dc, bytes));
   check(cudaMemcpy(da, a.data(), a.size() * 2, cudaMemcpyHostToDevice));
   check(cudaMemcpy(db, b.data(), b.size() * 2, cudaMemcpyHostToDevice));
@@ -49,9 +51,7 @@ Run run(const Shape& s, bool kc, bool f32, const std::vector<u16>& a, const std:
     if (f32) { const unsigned q = 0x7fc00000u; std::memcpy(&fill[i * 4], &q, 4); } else std::memcpy(&fill[i * 2], &kNaN, 2);
   }
   check(cudaMemcpy(dc, fill.data(), bytes, cudaMemcpyHostToDevice));
-  lfm::gemm::Problem p;
-  p.a = da; p.b = db; p.m = s.m; p.n = s.n; p.k = s.k; p.lda = s.k; p.ldc = s.n; p.wide = true; p.row0 = row0;
-  if (kc) p.ldb = s.k; else { p.ldb = s.n; p.b_k_contiguous = false; p.b_rows = s.k; }
+  p.a = da; p.b = db; p.wide = true; p.row0 = row0;
   if (f32) p.c_f32 = static_cast<float*>(dc); else p.c = static_cast<lfm::gemm::bf16*>(dc);
   lfm::gemm::run(p); check(cudaDeviceSynchronize());
   std::vector<unsigned char> raw(bytes);
@@ -62,6 +62,12 @@ Run run(const Shape& s, bool kc, bool f32, const std::vector<u16>& a, const std:
   }
   check(cudaFree(da)); check(cudaFree(db)); check(cudaFree(dc));
   return r;
+}
+Run run(const Shape& s, bool kc, bool f32, const std::vector<u16>& a, const std::vector<u16>& b, int row0) {
+  lfm::gemm::Problem p;
+  p.m = s.m; p.n = s.n; p.k = s.k; p.lda = s.k; p.ldc = s.n;
+  if (kc) p.ldb = s.k; else { p.ldb = s.n; p.b_k_contiguous = false; p.b_rows = s.k; }
+  return run_problem(p, size_t(s.m) * s.n, f32, a, b, row0);
 }
 
 // Row 0, column c, by the tensor-core model on the host.
@@ -74,6 +80,66 @@ int failures = 0, checks = 0;
 void expect(bool ok, const std::string& what) {
   ++checks;
   if (!ok) { ++failures; std::printf("  FAIL: %s\n", what.c_str()); }
+}
+
+// Rule 4, with the geometry of the runner's head_scores and head_values: 4 query heads over 2 key/value heads.
+void attention_products() {
+  const int heads = 4, group = 2, head_dim = 128, hidden = heads * head_dim, rows = 16, context = 64, end = 36, pitch = 40;
+  std::vector<u16> keys(size_t(heads / group) * context * head_dim);
+  for (auto& v : keys) v = random_bf16();
+  {  // scores: FP32, one output row per query row; C keeps `pitch` columns per row, of which `end` are written
+    std::vector<u16> queries(size_t(rows) * hidden);
+    for (auto& v : queries) v = random_bf16();
+    lfm::gemm::Problem p;
+    p.m = rows; p.n = end; p.k = head_dim; p.lda = hidden; p.ldb = head_dim; p.ldc = pitch;
+    p.stride_a = head_dim; p.stride_b = (long long)context * head_dim; p.stride_c = (long long)rows * pitch;
+    p.batch = heads; p.group = group;
+    const size_t outputs = size_t(heads) * rows * pitch;
+    const Run plain = run_problem(p, outputs, true, queries, keys, -1), first = run_problem(p, outputs, true, queries, keys, 0);
+    for (int z = 0; z < heads; ++z) {
+      size_t model_wrong = 0, rest_wrong = 0, differs = 0;
+      const size_t base = size_t(z) * rows * pitch;
+      for (int c = 0; c < end; ++c) {
+        model_wrong += first.bits[base + c] != first_row_model(&queries[size_t(z) * head_dim], &keys[size_t(z / group) * context * head_dim], head_dim, end, c, true, true);
+        differs += first.bits[base + c] != plain.bits[base + c];
+        for (int r = 1; r < rows; ++r) rest_wrong += first.bits[base + size_t(r) * pitch + c] != plain.bits[base + size_t(r) * pitch + c];
+      }
+      const std::string name = "attention scores, head " + std::to_string(z);
+      expect(model_wrong == 0, name + ": row 0 differs from the tensor-core model in " + std::to_string(model_wrong) + " outputs");
+      expect(rest_wrong == 0, name + ": rows after 0 differ from the plain kernel in " + std::to_string(rest_wrong) + " outputs");
+      expect(differs > 0, name + ": row 0 never differs from the plain kernel (did the model run?)");
+      std::printf("%-28s row 0 = model in %d/%d, differs from plain in %zu; other rows = plain\n", name.c_str(), int(end - model_wrong), end, differs);
+    }
+  }
+  // P x V: the probability rows are `pitch` wide, the values exist for the first `end` of them. The engine stores BF16,
+  // which seldom shows the difference between the two arithmetics in so short a sum; FP32 shows it.
+  for (int f32 = 0; f32 <= 1; ++f32) {
+    std::vector<u16> probabilities(size_t(heads) * rows * pitch);
+    for (auto& v : probabilities) v = random_bf16();
+    lfm::gemm::Problem p;
+    p.m = rows; p.n = head_dim; p.k = pitch; p.b_rows = end; p.b_k_contiguous = false;
+    p.lda = pitch; p.ldb = head_dim; p.ldc = hidden;
+    p.stride_a = (long long)rows * pitch; p.stride_b = (long long)context * head_dim; p.stride_c = head_dim;
+    p.batch = heads; p.group = group;
+    const size_t outputs = size_t(rows) * hidden;
+    const Run plain = run_problem(p, outputs, f32, probabilities, keys, -1), first = run_problem(p, outputs, f32, probabilities, keys, 0);
+    for (int z = 0; z < heads; ++z) {
+      std::vector<u16> padded(size_t(pitch) * head_dim, 0);  // the K x N B the kernel must read: zero from row `end`
+      std::memcpy(padded.data(), &keys[size_t(z / group) * context * head_dim], size_t(end) * head_dim * 2);
+      size_t model_wrong = 0, rest_wrong = 0, differs = 0;
+      for (int c = 0; c < head_dim; ++c) {
+        const size_t out = size_t(z) * head_dim + c;
+        model_wrong += first.bits[out] != first_row_model(&probabilities[size_t(z) * rows * pitch], padded.data(), pitch, head_dim, c, false, f32);
+        differs += first.bits[out] != plain.bits[out];
+        for (int r = 1; r < rows; ++r) rest_wrong += first.bits[size_t(r) * hidden + out] != plain.bits[size_t(r) * hidden + out];
+      }
+      const std::string name = std::string("attention P x V ") + (f32 ? "f32" : "bf16") + ", head " + std::to_string(z);
+      expect(model_wrong == 0, name + ": row 0 differs from the tensor-core model in " + std::to_string(model_wrong) + " outputs");
+      expect(rest_wrong == 0, name + ": rows after 0 differ from the plain kernel in " + std::to_string(rest_wrong) + " outputs");
+      if (f32) expect(differs > 0, name + ": row 0 never differs from the plain kernel (did the model run?)");
+      std::printf("%-28s row 0 = model in %d/%d, differs from plain in %zu; other rows = plain\n", name.c_str(), int(head_dim - model_wrong), head_dim, differs);
+    }
+  }
 }
 }  // namespace
 
@@ -128,6 +194,7 @@ int main() {
           expect(others == 0, name + ", " + q.what + ": other rows differ from the plain kernel");
         }
       }
+  attention_products();
   std::printf("first_row_check: %d checks, %d failed: %s\n", checks, failures, failures ? "FAIL" : "PASS");
   return failures ? 1 : 0;
 }

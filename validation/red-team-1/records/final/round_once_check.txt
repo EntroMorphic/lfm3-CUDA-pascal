@@ -1,0 +1,29 @@
+model    5 x 40 x 2048 kc bf16: round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+model    5 x 40 x 2048 kc f32 : round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 191
+model    5 x 40 x 2048 kn bf16: round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+model    5 x 40 x 2048 kn f32 : round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 191
+model    3 x 24 x 7680 kc bf16: round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+model    3 x 24 x 7680 kc f32 : round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 71
+model    3 x 24 x 7680 kn bf16: round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+model    3 x 24 x 7680 kn f32 : round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 71
+spread   5 x 40 x 2048 kc bf16: round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+spread   5 x 40 x 2048 kc f32 : round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 148
+spread   5 x 40 x 2048 kn bf16: round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+spread   5 x 40 x 2048 kn f32 : round-once 200/200 correctly rounded (PASS); plain kernel differs from the correct rounding in 148
+spread   9 x 16 x  512 kc bf16: round-once 144/144 correctly rounded (PASS); plain kernel differs from the correct rounding in 1
+spread   9 x 16 x  512 kc f32 : round-once 144/144 correctly rounded (PASS); plain kernel differs from the correct rounding in 88
+spread   9 x 16 x  512 kn bf16: round-once 144/144 correctly rounded (PASS); plain kernel differs from the correct rounding in 1
+spread   9 x 16 x  512 kn f32 : round-once 144/144 correctly rounded (PASS); plain kernel differs from the correct rounding in 88
+tiny     5 x 16 x  512 kc bf16: round-once 80/80 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+tiny     5 x 16 x  512 kc f32 : round-once 80/80 correctly rounded (PASS); plain kernel differs from the correct rounding in 49
+tiny     5 x 16 x  512 kn bf16: round-once 80/80 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+tiny     5 x 16 x  512 kn f32 : round-once 80/80 correctly rounded (PASS); plain kernel differs from the correct rounding in 49
+boundary 9 x 8 x  576 kc bf16: round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 72
+boundary 9 x 8 x  576 kc f32 : round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 72
+boundary 9 x 8 x  576 kn bf16: round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 72
+boundary 9 x 8 x  576 kn f32 : round-once 72/72 correctly rounded (PASS); plain kernel differs from the correct rounding in 72
+spread   3 x 8 x 32768 kc bf16: round-once 24/24 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+spread   3 x 8 x 32768 kc f32 : round-once 24/24 correctly rounded (PASS); plain kernel differs from the correct rounding in 23
+spread   3 x 8 x 32768 kn bf16: round-once 24/24 correctly rounded (PASS); plain kernel differs from the correct rounding in 0
+spread   3 x 8 x 32768 kn f32 : round-once 24/24 correctly rounded (PASS); plain kernel differs from the correct rounding in 23
+round_once_check: PASS

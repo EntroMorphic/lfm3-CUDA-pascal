@@ -1,0 +1,46 @@
++ date
+Wed Nov 18 20:03:31 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ M=/workspace/build/rt5-matrix
++ mkdir -p /workspace/build/rt5-matrix
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/rt5-matrix/first_row_check native/tests/first_row_check.cu native/tests/first_row_model.cpp
+++ grep -c 'warning #' /workspace/build/rt5-matrix/first_row_check.log
++ echo 'build first_row_check rc=0 warnings=0'
++ /workspace/build/rt5-matrix/first_row_check
+build first_row_check rc=0 warnings=0
+++ tail -1 /workspace/build/rt5-matrix/first_row_check.txt
+first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS
++ echo 'first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS'
++ mkdir -p /workspace/build/rt5-matrix/mutant
++ cp -r native/include /workspace/build/rt5-matrix/mutant/
++ sed -i 's/^    first\.keep_nonfinite = true;$/    first.keep_nonfinite = true; first.batch = first.group;/' /workspace/build/rt5-matrix/mutant/include/lfm/gemm.cuh
++ cmp -s native/include/lfm/gemm.cuh /workspace/build/rt5-matrix/mutant/include/lfm/gemm.cuh
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I /workspace/build/rt5-matrix/mutant/include -o /workspace/build/rt5-matrix/first_row_mutant native/tests/first_row_check.cu native/tests/first_row_model.cpp
++ echo 'build mutant rc=0'
+build mutant rc=0
++ /workspace/build/rt5-matrix/first_row_mutant
+++ tail -1 /workspace/build/rt5-matrix/first_row_mutant.txt
++ echo 'mutant first_row_check rc=1 (must be 1) first_row_check: 210 checks, 8 failed: FAIL'
++ grep -c 'FAIL: attention scores' /workspace/build/rt5-matrix/first_row_mutant.txt
+mutant first_row_check rc=1 (must be 1) first_row_check: 210 checks, 8 failed: FAIL
+4
++ grep -c 'FAIL: attention P x V f32' /workspace/build/rt5-matrix/first_row_mutant.txt
+4
++ grep attention /workspace/build/rt5-matrix/first_row_check.txt
+attention scores, head 0     row 0 = model in 36/36, differs from plain in 30; other rows = plain
+attention scores, head 1     row 0 = model in 36/36, differs from plain in 28; other rows = plain
+attention scores, head 2     row 0 = model in 36/36, differs from plain in 33; other rows = plain
+attention scores, head 3     row 0 = model in 36/36, differs from plain in 31; other rows = plain
+attention P x V bf16, head 0 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V bf16, head 1 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V bf16, head 2 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V bf16, head 3 row 0 = model in 128/128, differs from plain in 0; other rows = plain
+attention P x V f32, head 0  row 0 = model in 128/128, differs from plain in 91; other rows = plain
+attention P x V f32, head 1  row 0 = model in 128/128, differs from plain in 94; other rows = plain
+attention P x V f32, head 2  row 0 = model in 128/128, differs from plain in 96; other rows = plain
+attention P x V f32, head 3  row 0 = model in 128/128, differs from plain in 86; other rows = plain
++ date
+Wed Nov 18 20:04:00 MST 2026

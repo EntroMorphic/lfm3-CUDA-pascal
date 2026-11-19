@@ -1,0 +1,251 @@
++ date
+Wed Nov 18 16:32:16 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include'
++ XPROMPTS='9 129 136 137 257 300 513 1025 2049 3329'
++ PROMPTS=
++ tools/pascal/boundary_sweep.sh text-v6 rt1-before-xcap
+binary 7464f580b1f5ec7eb610e3167abc26b687a490a27d120e25fd230744e1eb45a0  /workspace/build/text-v6/liquid-lfm3
+x4097-4096-p9: 601 steps; IDENTICAL (information)
+x4097-4096-p129: 601 steps; IDENTICAL (information)
+x4097-4096-p136: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p137: 601 steps; IDENTICAL (information)
+x4097-4096-p257: 601 steps; DIFFER at 7 steps, first at step 0 (information)
+x4097-4096-p300: 601 steps; IDENTICAL (information)
+x4097-4096-p513: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p1025: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p2049: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+x4097-4096-p3329: 601 steps; DIFFER at 601 steps, first at step 0 (information)
+pairs run 0, ok 0
+BOUNDARY SWEEP PASS
++ echo 'before xcap rc=0'
++ tools/pascal/tail_tile_check.sh text-v6 rt1-before-tail
+before xcap rc=0
+length 260: {"engine": "native", "length": 260, "windows": 8, "scored_tokens": 2072, "mean_nll": 3.230391103, "perplexity": 25.289546, "seconds": 8.247}
+  peak device memory 4415 MiB, wall 9.0 s, nll sha256 088cb274c5d4bf15
+length 520: {"engine": "native", "length": 520, "windows": 8, "scored_tokens": 4152, "mean_nll": 2.880799761, "perplexity": 17.828526, "seconds": 13.176}
+  peak device memory 4467 MiB, wall 14.0 s, nll sha256 8259d9e52b6e6aaa
+8 windows: rows 0-255 differ in 0 of 2048 values; rows 256-258 (the 260-token windows' last tile) in 18 of 24
+TAIL TILE FAIL
+before tail rc=1
++ echo 'before tail rc=1'
++ tools/pascal/build_text.sh text-v7
+liquid-lfm3: warnings 2, sha256 b4b1bb6f0cc8dd36e1ab95312cb57fc19c5d9cb7e70e4e9193af38489bde5022, 3475440 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 becbca0dd8079c301b8b669feeee62ca7f029d850089dba7ba5dff423a82b374, 3335104 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+build rc=0
++ echo 'build rc=0'
++ mkdir -p /workspace/build/rt1-matrix
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW=0 -o /workspace/build/rt1-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
++ echo 'compile -DLFM_GEMM_FIRST_ROW=0 rc=0'
+compile -DLFM_GEMM_FIRST_ROW=0 rc=0
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_TENSOR_CORE_MODEL=2 -o /workspace/build/rt1-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_TENSOR_CORE_MODEL=2 rc=0
++ echo 'compile -DLFM_GEMM_TENSOR_CORE_MODEL=2 rc=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_ROUND_ONCE -o /workspace/build/rt1-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_ROUND_ONCE rc=0
++ echo 'compile -DLFM_GEMM_ROUND_ONCE rc=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=1 -o /workspace/build/rt1-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=1 rc=0'
++ for d in LFM_GEMM_FIRST_ROW=0 LFM_GEMM_TENSOR_CORE_MODEL=2 LFM_GEMM_ROUND_ONCE LFM_GEMM_PLAIN_ROUND=1 LFM_GEMM_PLAIN_ROUND=2
+compile -DLFM_GEMM_PLAIN_ROUND=1 rc=0
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=2 -o /workspace/build/rt1-matrix/ok native/src/lfm3_main.cu native/src/safetensors.cpp
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=2 rc=0'
++ for d in LFM_GEMM_TENSOR_CORE_MODEL=3 LFM_GEMM_TENSOR_CORE_MODEL=0 LFM_GEMM_FIRST_ROW=2 LFM_GEMM_ROUND_ONCE=0 LFM_GEMM_PLAIN_ROUND=3
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_TENSOR_CORE_MODEL=3 -o /workspace/build/rt1-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+compile -DLFM_GEMM_PLAIN_ROUND=2 rc=0
+++ grep -c '#error' /workspace/build/rt1-matrix/LFM_GEMM_TENSOR_CORE_MODEL=3.log
+compile -DLFM_GEMM_TENSOR_CORE_MODEL=3 (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_TENSOR_CORE_MODEL=3 (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_TENSOR_CORE_MODEL=3 LFM_GEMM_TENSOR_CORE_MODEL=0 LFM_GEMM_FIRST_ROW=2 LFM_GEMM_ROUND_ONCE=0 LFM_GEMM_PLAIN_ROUND=3
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_TENSOR_CORE_MODEL=0 -o /workspace/build/rt1-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt1-matrix/LFM_GEMM_TENSOR_CORE_MODEL=0.log
+compile -DLFM_GEMM_TENSOR_CORE_MODEL=0 (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_TENSOR_CORE_MODEL=0 (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_TENSOR_CORE_MODEL=3 LFM_GEMM_TENSOR_CORE_MODEL=0 LFM_GEMM_FIRST_ROW=2 LFM_GEMM_ROUND_ONCE=0 LFM_GEMM_PLAIN_ROUND=3
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_FIRST_ROW=2 -o /workspace/build/rt1-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt1-matrix/LFM_GEMM_FIRST_ROW=2.log
+compile -DLFM_GEMM_FIRST_ROW=2 (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_FIRST_ROW=2 (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_TENSOR_CORE_MODEL=3 LFM_GEMM_TENSOR_CORE_MODEL=0 LFM_GEMM_FIRST_ROW=2 LFM_GEMM_ROUND_ONCE=0 LFM_GEMM_PLAIN_ROUND=3
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_ROUND_ONCE=0 -o /workspace/build/rt1-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt1-matrix/LFM_GEMM_ROUND_ONCE=0.log
++ echo 'compile -DLFM_GEMM_ROUND_ONCE=0 (must fail) rc=1 2 #error line(s)'
++ for d in LFM_GEMM_TENSOR_CORE_MODEL=3 LFM_GEMM_TENSOR_CORE_MODEL=0 LFM_GEMM_FIRST_ROW=2 LFM_GEMM_ROUND_ONCE=0 LFM_GEMM_PLAIN_ROUND=3
+compile -DLFM_GEMM_ROUND_ONCE=0 (must fail) rc=1 2 #error line(s)
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM_GEMM_PLAIN_ROUND=3 -o /workspace/build/rt1-matrix/bad native/src/lfm3_main.cu native/src/safetensors.cpp
+++ grep -c '#error' /workspace/build/rt1-matrix/LFM_GEMM_PLAIN_ROUND=3.log
+compile -DLFM_GEMM_PLAIN_ROUND=3 (must fail) rc=1 2 #error line(s)
++ echo 'compile -DLFM_GEMM_PLAIN_ROUND=3 (must fail) rc=1 2 #error line(s)'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/rt1-matrix/first_row_check native/tests/first_row_check.cu
++ echo 'build first_row_check rc=2'
++ /workspace/build/rt1-matrix/first_row_check
+build first_row_check rc=2
+validation/red-team-1/job.sh: line 18: /workspace/build/rt1-matrix/first_row_check: No such file or directory
+first_row_check rc=127
++ echo 'first_row_check rc=127'
++ tools/pascal/gate_pins.sh parity-v7
+liquid-lfm3: warnings 2, sha256 40ce2b4b1396eb42ceb9d181635427132f1636e060ad3a1a324b777d2443f465, 3484216 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 ed2173a57519f84761b8c3d6413317462845434030a297df50bc423bb468415e, 3343928 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+binary 40ce2b4b1396eb42ceb9d181635427132f1636e060ad3a1a324b777d2443f465  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 0.76 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.45 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.39 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.03 s
+PINS EQUAL: 7826 files equal
+gate rc=0
++ echo 'gate rc=0'
++ tools/pascal/run_text_fixtures.sh text-v7 2
+binary b4b1bb6f0cc8dd36e1ab95312cb57fc19c5d9cb7e70e4e9193af38489bde5022  tree c7d7db8dd9283590 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.391 s, decode 0.233 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.421 s, decode 0.016 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.916 s, decode 0.047 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.047 s / 3 calls
+FIXTURES PASS
++ echo 'fixtures rc=0'
+fixtures rc=0
++ LFM3_COMPACT_WINDOWS=1
++ tools/pascal/run_text_fixtures.sh text-v7 2
+binary b4b1bb6f0cc8dd36e1ab95312cb57fc19c5d9cb7e70e4e9193af38489bde5022  tree c7d7db8dd9283590 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.393 s, decode 0.233 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.422 s, decode 0.016 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.920 s, decode 0.048 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.047 s / 3 calls
+FIXTURES PASS
++ echo 'fixtures compact rc=0'
+fixtures compact rc=0
++ tools/pascal/run_text_fixtures.sh text-v7 1 /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+binary b4b1bb6f0cc8dd36e1ab95312cb57fc19c5d9cb7e70e4e9193af38489bde5022  tree c7d7db8dd9283590 (gemm.cuh)
+baseline: ids MATCH (16), runs one run, reset ok, input 34 tokens, prefill 10.557 s, decode 3.313 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs one run, reset ok, input 31 tokens, prefill 11.103 s, decode 0.223 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs one run, reset ok, input 257 tokens, prefill 20.848 s, decode 0.712 s / 3 calls
+single: ids MATCH (4), runs one run, reset ok, input 1 tokens, prefill 0.219 s, decode 0.643 s / 3 calls
+FIXTURES PASS
++ echo 'memcheck fixtures rc=0'
++ STEPS=24
++ PROMPTS='257 513'
++ XPROMPTS=
++ tools/pascal/boundary_sweep.sh text-v7 rt1-memcheck-sweep /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+memcheck fixtures rc=0
+binary b4b1bb6f0cc8dd36e1ab95312cb57fc19c5d9cb7e70e4e9193af38489bde5022  /workspace/build/text-v7/liquid-lfm3
+c4097-p257: 25 steps; IDENTICAL ok
+c4096-p257: 25 steps; IDENTICAL ok
+c4097-p513: 25 steps; IDENTICAL ok
+c4096-p513: 25 steps; IDENTICAL ok
+pairs run 4, ok 4
+BOUNDARY SWEEP PASS
+memcheck sweep rc=0
++ echo 'memcheck sweep rc=0'
++ python3 tools/pascal/round_once_check.py /workspace/build/rt1-round-once
+++ tail -1 /workspace/build/rt1-matrix/round_once_check.txt
+round_once_check rc=0 round_once_check: PASS
++ echo 'round_once_check rc=0 round_once_check: PASS'
++ tools/pascal/boundary_sweep.sh text-v7 rt1-sweep
+binary b4b1bb6f0cc8dd36e1ab95312cb57fc19c5d9cb7e70e4e9193af38489bde5022  /workspace/build/text-v7/liquid-lfm3
+c4097-p1: 601 steps; IDENTICAL ok
+c4096-p1: 601 steps; IDENTICAL ok
+c4097-p2: 601 steps; IDENTICAL ok
+c4096-p2: 601 steps; IDENTICAL ok
+c4097-p8: 601 steps; IDENTICAL ok
+c4096-p8: 601 steps; IDENTICAL ok
+c4097-p9: 601 steps; IDENTICAL ok
+c4096-p9: 601 steps; IDENTICAL ok
+c4097-p255: 601 steps; IDENTICAL ok
+c4096-p255: 601 steps; IDENTICAL ok
+c4097-p256: 601 steps; IDENTICAL ok
+c4096-p256: 601 steps; IDENTICAL ok
+c4097-p257: 601 steps; IDENTICAL ok
+c4096-p257: 601 steps; IDENTICAL ok
+c4097-p258: 601 steps; IDENTICAL ok
+c4096-p258: 601 steps; IDENTICAL ok
+c4097-p511: 601 steps; IDENTICAL ok
+c4096-p511: 601 steps; IDENTICAL ok
+c4097-p512: 601 steps; IDENTICAL ok
+c4096-p512: 601 steps; IDENTICAL ok
+c4097-p513: 601 steps; IDENTICAL ok
+c4096-p513: 601 steps; IDENTICAL ok
+c4097-p767: 601 steps; IDENTICAL ok
+c4096-p767: 601 steps; IDENTICAL ok
+c4097-p768: 601 steps; IDENTICAL ok
+c4096-p768: 601 steps; IDENTICAL ok
+c4097-p769: 601 steps; IDENTICAL ok
+c4096-p769: 601 steps; IDENTICAL ok
+c4097-p1025: 601 steps; IDENTICAL ok
+c4096-p1025: 601 steps; IDENTICAL ok
+x4097-4096-p9: 601 steps; IDENTICAL (information)
+x4097-4096-p129: 601 steps; IDENTICAL (information)
+x4097-4096-p136: 601 steps; IDENTICAL (information)
+x4097-4096-p137: 601 steps; IDENTICAL (information)
+x4097-4096-p257: 601 steps; IDENTICAL (information)
+x4097-4096-p300: 601 steps; IDENTICAL (information)
+x4097-4096-p513: 601 steps; IDENTICAL (information)
+x4097-4096-p1025: 601 steps; IDENTICAL (information)
+x4097-4096-p2049: 601 steps; IDENTICAL (information)
+x4097-4096-p3329: 601 steps; IDENTICAL (information)
+fill-teacher: 601 steps; IDENTICAL ok
+fill-generate: 600 steps; IDENTICAL ok
+fill-prompt: 1 steps; IDENTICAL ok
+pairs run 33, ok 33
+BOUNDARY SWEEP PASS
++ echo 'sweep rc=0'
++ tools/pascal/tail_tile_check.sh text-v7 rt1-tail
+sweep rc=0
+length 260: {"engine": "native", "length": 260, "windows": 8, "scored_tokens": 2072, "mean_nll": 3.230391113, "perplexity": 25.289546, "seconds": 8.402}
+  peak device memory 4415 MiB, wall 9.2 s, nll sha256 fb5f48f02eaa928d
+length 520: {"engine": "native", "length": 520, "windows": 8, "scored_tokens": 4152, "mean_nll": 2.880799757, "perplexity": 17.828526, "seconds": 13.406}
+  peak device memory 4467 MiB, wall 14.2 s, nll sha256 aba9ddbe66af47b2
+8 windows: rows 0-255 differ in 0 of 2048 values; rows 256-258 (the 260-token windows' last tile) in 0 of 24
+TAIL TILE PASS
+tail rc=0
++ echo 'tail rc=0'
++ tools/pascal/long_decode.sh text-v7 rt1-long-decode
+binary b4b1bb6f0cc8dd36e1ab95312cb57fc19c5d9cb7e70e4e9193af38489bde5022  /workspace/build/text-v7/liquid-lfm3
+c8a4407fb67b4b1dd49cb6608eb6bc601833a4023096457772c4f09ee2a55eee  /workspace/data/ppl-windows/windows-4096.i32
+54df38e05bddde9717b61c75d018c5023d546e3e352151f807b715c2d2d638fc  /workspace/data/ppl-windows/windows-32768.i32
+control.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 4903 MiB
+short.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 6451 MiB
+short.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 6703 MiB
+short.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 1.0 s, decode 18.4 s, peak 6451 MiB
+middle.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 9.5 s, decode 18.7 s, peak 6451 MiB
+middle.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 9.5 s, decode 18.7 s, peak 6703 MiB
+middle.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 9.5 s, decode 18.7 s, peak 6451 MiB
+end.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 85.2 s, decode 24.0 s, peak 6451 MiB
+end.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 85.3 s, decode 24.0 s, peak 6703 MiB
+end.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 85.3 s, decode 24.0 s, peak 6451 MiB
+free.default (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 13.0 s, decode 10.3 s, peak 6451 MiB
+free: window 1 generated 600 tokens
+free.full (LFM3_COMPACT_WINDOWS 0): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 13.0 s, decode 10.3 s, peak 6703 MiB
+free.again (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 13.0 s, decode 10.4 s, peak 6451 MiB
+short: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.4 s compact, 18.4 s full
+middle: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.7 s compact, 18.7 s full
+end: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 24.0 s compact, 24.0 s full
+free: 600 steps (want 600); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 10.3 s compact, 10.3 s full
+control (capacity 4,096): 1101 steps; its logits equal the short case's at capacity 32,768 (information)
+LONG DECODE (rules 2 and 3) PASS
+long decode rc=0
++ echo 'long decode rc=0'
++ python3 -
+long decode control: IDENTICAL to long-decode-v1
+long decode short: IDENTICAL to long-decode-v1
+long decode middle: IDENTICAL to long-decode-v1
+long decode end: IDENTICAL to long-decode-v1
+long decode free: IDENTICAL to long-decode-v1
+LONG DECODE UNCHANGED PASS
++ tools/pascal/score.sh text-v7 ppl-v7 256 257 4096 32768
+length 256: {"engine": "native", "length": 256, "windows": 1160, "scored_tokens": 295800, "mean_nll": 3.280150656, "perplexity": 26.579777, "seconds": 933.841}
+  peak device memory 4409 MiB, wall 934.6 s, nll sha256 c47912b0a4379aab
