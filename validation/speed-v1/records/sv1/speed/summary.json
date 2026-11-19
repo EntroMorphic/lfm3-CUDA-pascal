@@ -1,0 +1,191 @@
+{
+ "decode-1k": {
+  "metric": "ms_per_step",
+  "median": 15.693142857142856,
+  "min": 15.691428571428572,
+  "max": 15.701142857142859,
+  "prefill_seconds_median": 0.345651,
+  "peak_device_mib": 4421,
+  "sm_mhz": [
+   1873,
+   1898,
+   1911,
+   1936,
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ },
+ "decode-8k": {
+  "metric": "ms_per_step",
+  "median": 16.2437,
+  "min": 16.2413,
+  "max": 16.2472,
+  "prefill_seconds_median": 4.2729,
+  "peak_device_mib": 4813,
+  "sm_mhz": [
+   1721,
+   1759,
+   1771,
+   1797,
+   1847,
+   1885,
+   1898,
+   1911,
+   1936,
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ },
+ "decode-32k": {
+  "metric": "ms_per_step",
+  "median": 18.792142857142856,
+  "min": 18.787285714285716,
+  "max": 18.793285714285712,
+  "prefill_seconds_median": 26.706,
+  "peak_device_mib": 6451,
+  "sm_mhz": [
+   1721,
+   1733,
+   1746,
+   1759,
+   1771,
+   1784,
+   1797,
+   1809,
+   1822,
+   1835,
+   1847,
+   1860,
+   1873,
+   1885,
+   1898,
+   1911,
+   1936,
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ },
+ "prefill-32": {
+  "metric": "prefill_seconds",
+  "median": 0.215052,
+  "min": 0.214973,
+  "max": 0.215074,
+  "prefill_seconds_median": 0.215052,
+  "peak_device_mib": 4903,
+  "sm_mhz": [
+   1936,
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ },
+ "prefill-257": {
+  "metric": "prefill_seconds",
+  "median": 0.347643,
+  "min": 0.347221,
+  "max": 0.34775,
+  "prefill_seconds_median": 0.347643,
+  "peak_device_mib": 4903,
+  "sm_mhz": [
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ },
+ "prefill-1024": {
+  "metric": "prefill_seconds",
+  "median": 0.707985,
+  "min": 0.692018,
+  "max": 0.712662,
+  "prefill_seconds_median": 0.707985,
+  "peak_device_mib": 4903,
+  "sm_mhz": [
+   1721,
+   1809,
+   1873,
+   1898,
+   1936,
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ },
+ "prefill-4096": {
+  "metric": "prefill_seconds",
+  "median": 2.80053,
+  "min": 2.74418,
+  "max": 2.80142,
+  "prefill_seconds_median": 2.80053,
+  "peak_device_mib": 4903,
+  "sm_mhz": [
+   1721,
+   1733,
+   1746,
+   1771,
+   1822,
+   1873,
+   1898,
+   1923,
+   1936,
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ },
+ "prefill-32768": {
+  "metric": "prefill_seconds",
+  "median": 28.8532,
+  "min": 28.7532,
+  "max": 28.8965,
+  "prefill_seconds_median": 28.8532,
+  "peak_device_mib": 6451,
+  "sm_mhz": [
+   1721,
+   1733,
+   1746,
+   1759,
+   1771,
+   1784,
+   1797,
+   1809,
+   1822,
+   1835,
+   1847,
+   1860,
+   1873,
+   1885,
+   1898,
+   1923,
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ }
+}

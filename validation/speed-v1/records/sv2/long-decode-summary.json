@@ -1,0 +1,81 @@
+{
+ "short": {
+  "steps": 1101,
+  "steps_expected": 1101,
+  "compact_equals_full": true,
+  "steps_differing": 0,
+  "default_repeat_identical": true,
+  "peak_default_mib": 6451,
+  "peak_full_mib": 6703,
+  "default_peak_below_full": true,
+  "decode_seconds": {
+   "default": 18.3864,
+   "full": 18.3605
+  },
+  "prefill_seconds": {
+   "default": 0.347666,
+   "full": 0.34974
+  }
+ },
+ "middle": {
+  "steps": 1101,
+  "steps_expected": 1101,
+  "compact_equals_full": true,
+  "steps_differing": 0,
+  "default_repeat_identical": true,
+  "peak_default_mib": 6451,
+  "peak_full_mib": 6703,
+  "default_peak_below_full": true,
+  "decode_seconds": {
+   "default": 18.7607,
+   "full": 18.7663
+  },
+  "prefill_seconds": {
+   "default": 2.72389,
+   "full": 2.69131
+  }
+ },
+ "end": {
+  "steps": 1101,
+  "steps_expected": 1101,
+  "compact_equals_full": true,
+  "steps_differing": 0,
+  "default_repeat_identical": true,
+  "peak_default_mib": 6451,
+  "peak_full_mib": 6703,
+  "default_peak_below_full": true,
+  "decode_seconds": {
+   "default": 21.9186,
+   "full": 21.8917
+  },
+  "prefill_seconds": {
+   "default": 26.6979,
+   "full": 26.8143
+  }
+ },
+ "free": {
+  "steps": 600,
+  "steps_expected": 600,
+  "compact_equals_full": true,
+  "steps_differing": 0,
+  "default_repeat_identical": true,
+  "peak_default_mib": 6451,
+  "peak_full_mib": 6703,
+  "default_peak_below_full": true,
+  "decode_seconds": {
+   "default": 10.4875,
+   "full": 10.4724
+  },
+  "prefill_seconds": {
+   "default": 3.48218,
+   "full": 3.52899
+  }
+ },
+ "control": {
+  "steps": 1101,
+  "peak_mib": 4903,
+  "decode_seconds": 18.4082,
+  "same_tokens_as_short": true,
+  "logits_equal_short": true
+ }
+}

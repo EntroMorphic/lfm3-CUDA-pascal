@@ -1,7 +1,9 @@
 # speed-v1: phase 2's bar
 
-Status: **bar set, rules 11 and 12 amended by the owner** (2026-11-18), while the rule run was in progress and before
-its speed results. Committed before any engine run of a phase 2 change; the amendment is below.
+Status: **passed** (2026-11-19), on the second rule run (`job2.sh`, builds `text-v19` `3312933c…` and `parity-v19`
+`3126b0ba…`, tree `2fa785e`). The bar was committed before any engine run of a phase 2 change; rules 11 and 12 were
+amended by the owner during the first rule run, before its speed results (below). Records: [records/](records/)
+(`SHA256SUMS` verified after the copy). Phase 2's red-team round follows.
 
 Phase 2's exit gate (PLAN): "a speed bar set before measuring; phase 1 outputs unchanged". The bar is set from
 [speed-baseline-v1](../speed-baseline-v1/): today's figures for the shipping engine and the card's measured ceilings.
@@ -57,3 +59,53 @@ The owner chose this form over two others offered with those figures.
 - Rules 1 to 6 hold: the phase 2 kernels give every output the same chain of operations as the kernels they replace.
 - prefill-4096 about 3.5 s, prefill-32768 about 30 s, prefill-257 about 0.45 s.
 - Rule 11 is the hardest to meet; rule 12 needs a faster decode attention over long caches.
+
+## Results
+
+Two rule runs. The first (`job.sh`, `text-v17`, tree `2c97d68`) passed every rule but 11 and 12: decode-1k 15.69 ms and
+decode-32k 18.79 ms against the amended 15.61 and 18.72. The engine then took the greedy choice on the card for
+greedy requests with no tracing (`greedy_pick` in `lfm3_main.cu`: same tie rule as the host, same refusal of
+non-finite logits), which removes the 512 KB logits copy and the host's scan from every step; the second run
+(`job2.sh`) repeated every rule on that build.
+
+| # | Rule | Second run |
+|---|---|---|
+| 1 | Parity gate | **Pass,** 7,826 of 7,826 |
+| 2 | Fixtures, compact off and on; sanitizer | **Pass;** 0 errors on the fixtures and on the 257- and 513-token compact sweep |
+| 3 | NLL files at 256, 257, 4,096, 32,768 | **Pass,** all four byte-identical to text-correct-v2's |
+| 4 | Long decode; boundary sweep | **Pass,** all five cases identical to long-decode-v1; 33 of 33 pairs |
+| 5 | `first_row_check`, `wide2_check`, `decode_attention_check`, `round_once_check`; host suite | **Pass:** 210 checks, 143 cases, 54 cases, pass; host suite as recorded (2,397 passed, 5 skipped, 1 needing Transformers 5.x) |
+| 6 | Same ids as `text-v10` in every speed run | **Pass;** and a 600-token free generation without tracing (the path the greedy choice on the card takes) gives long-decode-v1's ids |
+
+Speed, medians of 3, `text-v10` measured in the same job:
+
+| # | Case | Baseline | Phase 2 | Ratio | Bar | |
+|---|---|---:|---:|---:|---:|---|
+| 7 | prefill-4096 | 9.47 s | 2.79 s | 0.29 | ≤ 4.6 s | **pass** |
+| 8 | prefill-32768 | 89.0 s | 28.8 s | 0.32 | ≤ 44.7 s | **pass** |
+| 9 | prefill-257 | 0.932 s | 0.347 s | 0.37 | ≤ 0.60 s | **pass** |
+| 10 | prefill-32 | 0.430 s | 0.215 s | 0.50 | ≤ 0.30 s | **pass** |
+| 11 | decode-1k | 15.69 ms | 15.52 ms | 0.99 | ≤ 15.61 ms (amended) | **pass** |
+| 12 | decode-32k | 20.58 ms | 18.60 ms | 0.90 | ≤ 18.72 ms (amended) | **pass** |
+| 13 | decode-8k; prefill-1024 | 16.25 ms; 2.31 s | 16.05 ms; 0.697 s | 0.99; 0.30 | no slower | **pass** |
+| 14 | peak memory, every case | | unchanged in every case | | ≤ +16 MiB | **pass** |
+
+Scoring the four bar lengths took 23 minutes of wall time against 64 in red-team-1.
+
+### What made the difference
+
+- **Prefill GEMM** (`wide2_kernel`): 128-column tiles with 16 to 128 rows per block, 8 outputs per thread per row,
+  16-byte loads, two shared buffers: 7.2 TFLOPS on the 4,096-row shapes against 1.6, about 75% of the card's measured
+  multiply-add rate.
+- **Position 0** in one-row blocks: from 8 rows computed for one to one. It still costs about 150 ms per prefill: one
+  row is a few thousand serial chains of up to 480 steps each, too few to fill the card. Carried.
+- **Decode attention**: the two query heads of each key/value head read the keys (and, from 16 splits up, the values)
+  once: 3.2 ms to 1.7 ms per step at 31,000 keys, now at the read rate.
+- **The greedy choice on the card**: 0.17 ms per step.
+- Tried and dropped: fusing adjacent norms (0.05 ms; each norm's time is its own reduction, not the launch).
+
+### Predictions against the measurements
+
+- Rules 1 to 6 held.
+- prefill-4096 2.79 s (predicted about 3.5), prefill-32768 28.8 s (about 30), prefill-257 0.35 s (about 0.45).
+- Rule 11 was the hardest, as predicted: it failed the first run by 0.08 ms.

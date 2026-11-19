@@ -1,0 +1,270 @@
++ date
+Wed Nov 18 21:43:58 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ M=/workspace/build/sv1-matrix
++ mkdir -p /workspace/build/sv1-matrix
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include'
++ tools/pascal/build_text.sh text-v17
+liquid-lfm3: warnings 0, sha256 e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c, 3698000 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 b358c0603d767683500de154a009fea483d55a271632819a1db08d4534c4289e, 3558728 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
++ echo 'build rc=0'
++ tools/pascal/gate_pins.sh parity-v17
+build rc=0
+liquid-lfm3: warnings 0, sha256 168f29b7304de94f6abb08fe40081689f7d2ac69fd09c00b0795ae22a3751cf9, 4215192 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 474ce01e6813cd8dd55898533c690b690e20279bd55070f86ed189682d3254f5, 4080336 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+binary 168f29b7304de94f6abb08fe40081689f7d2ac69fd09c00b0795ae22a3751cf9  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 0.76 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.44 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.36 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.03 s
+PINS EQUAL: 7826 files equal
++ echo 'rule 1 gate rc=0'
++ tools/pascal/run_text_fixtures.sh text-v17 2
+rule 1 gate rc=0
+binary e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c  tree 696753141b924703 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.217 s, decode 0.233 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.213 s, decode 0.016 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.340 s, decode 0.048 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.047 s / 3 calls
+FIXTURES PASS
+rule 2 fixtures rc=0
++ echo 'rule 2 fixtures rc=0'
++ LFM3_COMPACT_WINDOWS=1
++ tools/pascal/run_text_fixtures.sh text-v17 2
+binary e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c  tree 696753141b924703 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.217 s, decode 0.233 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.213 s, decode 0.016 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.340 s, decode 0.048 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.047 s / 3 calls
+FIXTURES PASS
++ echo 'rule 2 fixtures compact rc=0'
++ tools/pascal/run_text_fixtures.sh text-v17 1 /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+rule 2 fixtures compact rc=0
+binary e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c  tree 696753141b924703 (gemm.cuh)
+baseline: ids MATCH (16), runs one run, reset ok, input 34 tokens, prefill 6.876 s, decode 3.310 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs one run, reset ok, input 31 tokens, prefill 6.895 s, decode 0.222 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs one run, reset ok, input 257 tokens, prefill 10.599 s, decode 0.709 s / 3 calls
+single: ids MATCH (4), runs one run, reset ok, input 1 tokens, prefill 0.220 s, decode 0.643 s / 3 calls
+FIXTURES PASS
+rule 2 memcheck fixtures rc=0
++ echo 'rule 2 memcheck fixtures rc=0'
++ STEPS=24
++ PROMPTS='257 513'
++ XPROMPTS=
++ tools/pascal/boundary_sweep.sh text-v17 sv1-memcheck-sweep /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+binary e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c  /workspace/build/text-v17/liquid-lfm3
+c4097-p257: 25 steps; IDENTICAL ok
+c4096-p257: 25 steps; IDENTICAL ok
+c4097-p513: 25 steps; IDENTICAL ok
+c4096-p513: 25 steps; IDENTICAL ok
+pairs run 4, ok 4
+BOUNDARY SWEEP PASS
+rule 2 memcheck sweep rc=0
++ echo 'rule 2 memcheck sweep rc=0'
++ for t in first_row_check wide2_check decode_attention_check
++ extra=
++ '[' first_row_check = first_row_check ']'
++ extra=native/tests/first_row_model.cpp
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/sv1-matrix/first_row_check native/tests/first_row_check.cu native/tests/first_row_model.cpp
+++ grep -c 'warning #' /workspace/build/sv1-matrix/first_row_check.log
++ echo 'build first_row_check rc=0 warnings=0'
++ /workspace/build/sv1-matrix/first_row_check
+build first_row_check rc=0 warnings=0
+++ tail -1 /workspace/build/sv1-matrix/first_row_check.txt
++ echo 'rule 5 first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS'
+rule 5 first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS
++ for t in first_row_check wide2_check decode_attention_check
++ extra=
++ '[' wide2_check = first_row_check ']'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/sv1-matrix/wide2_check native/tests/wide2_check.cu
+++ grep -c 'warning #' /workspace/build/sv1-matrix/wide2_check.log
+build wide2_check rc=0 warnings=0
++ echo 'build wide2_check rc=0 warnings=0'
++ /workspace/build/sv1-matrix/wide2_check
+++ tail -1 /workspace/build/sv1-matrix/wide2_check.txt
++ echo 'rule 5 wide2_check rc=0 wide2_check: 143 cases, 0 failed: PASS'
++ for t in first_row_check wide2_check decode_attention_check
+rule 5 wide2_check rc=0 wide2_check: 143 cases, 0 failed: PASS
++ extra=
++ '[' decode_attention_check = first_row_check ']'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/sv1-matrix/decode_attention_check native/tests/decode_attention_check.cu
+++ grep -c 'warning #' /workspace/build/sv1-matrix/decode_attention_check.log
+build decode_attention_check rc=0 warnings=0
++ echo 'build decode_attention_check rc=0 warnings=0'
++ /workspace/build/sv1-matrix/decode_attention_check
+++ tail -1 /workspace/build/sv1-matrix/decode_attention_check.txt
+rule 5 decode_attention_check rc=0 decode_attention_check: 54 cases, 0 failed: PASS
++ echo 'rule 5 decode_attention_check rc=0 decode_attention_check: 54 cases, 0 failed: PASS'
++ python3 tools/pascal/round_once_check.py /workspace/build/sv1-round-once
+++ tail -1 /workspace/build/sv1-matrix/round_once_check.txt
++ echo 'rule 5 round_once_check rc=0 round_once_check: PASS'
++ tools/pascal/boundary_sweep.sh text-v17 sv1-sweep
+rule 5 round_once_check rc=0 round_once_check: PASS
+binary e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c  /workspace/build/text-v17/liquid-lfm3
+c4097-p1: 601 steps; IDENTICAL ok
+c4096-p1: 601 steps; IDENTICAL ok
+c4097-p2: 601 steps; IDENTICAL ok
+c4096-p2: 601 steps; IDENTICAL ok
+c4097-p8: 601 steps; IDENTICAL ok
+c4096-p8: 601 steps; IDENTICAL ok
+c4097-p9: 601 steps; IDENTICAL ok
+c4096-p9: 601 steps; IDENTICAL ok
+c4097-p255: 601 steps; IDENTICAL ok
+c4096-p255: 601 steps; IDENTICAL ok
+c4097-p256: 601 steps; IDENTICAL ok
+c4096-p256: 601 steps; IDENTICAL ok
+c4097-p257: 601 steps; IDENTICAL ok
+c4096-p257: 601 steps; IDENTICAL ok
+c4097-p258: 601 steps; IDENTICAL ok
+c4096-p258: 601 steps; IDENTICAL ok
+c4097-p511: 601 steps; IDENTICAL ok
+c4096-p511: 601 steps; IDENTICAL ok
+c4097-p512: 601 steps; IDENTICAL ok
+c4096-p512: 601 steps; IDENTICAL ok
+c4097-p513: 601 steps; IDENTICAL ok
+c4096-p513: 601 steps; IDENTICAL ok
+c4097-p767: 601 steps; IDENTICAL ok
+c4096-p767: 601 steps; IDENTICAL ok
+c4097-p768: 601 steps; IDENTICAL ok
+c4096-p768: 601 steps; IDENTICAL ok
+c4097-p769: 601 steps; IDENTICAL ok
+c4096-p769: 601 steps; IDENTICAL ok
+c4097-p1025: 601 steps; IDENTICAL ok
+c4096-p1025: 601 steps; IDENTICAL ok
+x4097-4096-p9: 601 steps; IDENTICAL (information)
+x4097-4096-p129: 601 steps; IDENTICAL (information)
+x4097-4096-p136: 601 steps; IDENTICAL (information)
+x4097-4096-p137: 601 steps; IDENTICAL (information)
+x4097-4096-p257: 601 steps; IDENTICAL (information)
+x4097-4096-p300: 601 steps; IDENTICAL (information)
+x4097-4096-p513: 601 steps; IDENTICAL (information)
+x4097-4096-p1025: 601 steps; IDENTICAL (information)
+x4097-4096-p2049: 601 steps; IDENTICAL (information)
+x4097-4096-p3329: 601 steps; IDENTICAL (information)
+fill-teacher: 601 steps; IDENTICAL ok
+fill-generate: 600 steps; IDENTICAL ok
+fill-prompt: 1 steps; IDENTICAL ok
+pairs run 33, ok 33
+BOUNDARY SWEEP PASS
+rule 4 sweep rc=0
++ echo 'rule 4 sweep rc=0'
++ tools/pascal/long_decode.sh text-v17 sv1-long-decode
+binary e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c  /workspace/build/text-v17/liquid-lfm3
+c8a4407fb67b4b1dd49cb6608eb6bc601833a4023096457772c4f09ee2a55eee  /workspace/data/ppl-windows/windows-4096.i32
+54df38e05bddde9717b61c75d018c5023d546e3e352151f807b715c2d2d638fc  /workspace/data/ppl-windows/windows-32768.i32
+control.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.4 s, decode 18.4 s, peak 4903 MiB
+short.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.3 s, decode 18.4 s, peak 6451 MiB
+short.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.4 s, decode 18.4 s, peak 6703 MiB
+short.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest b80a89df2cccfe4a, prefill 0.3 s, decode 18.3 s, peak 6451 MiB
+middle.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 2.7 s, decode 18.7 s, peak 6451 MiB
+middle.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 2.7 s, decode 18.7 s, peak 6703 MiB
+middle.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest d8d08f9a9bc201e2, prefill 2.7 s, decode 18.7 s, peak 6451 MiB
+end.default (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 26.9 s, decode 21.9 s, peak 6451 MiB
+end.full (LFM3_COMPACT_WINDOWS 0): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 27.0 s, decode 21.9 s, peak 6703 MiB
+end.again (LFM3_COMPACT_WINDOWS unset): 1101 steps, 1101 argmax ids, 0 generated, digest 7e30bd9ffac50c09, prefill 27.0 s, decode 21.9 s, peak 6451 MiB
+free.default (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 3.5 s, decode 10.3 s, peak 6451 MiB
+free: window 1 generated 600 tokens
+free.full (LFM3_COMPACT_WINDOWS 0): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 3.6 s, decode 10.3 s, peak 6703 MiB
+free.again (LFM3_COMPACT_WINDOWS unset): 600 steps, 1 argmax ids, 600 generated, digest 50543c0fa40872f3, prefill 3.6 s, decode 10.3 s, peak 6451 MiB
+short: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.4 s compact, 18.4 s full
+middle: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 18.7 s compact, 18.7 s full
+end: 1101 steps (want 1101); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 21.9 s compact, 21.9 s full
+free: 600 steps (want 600); compact vs full IDENTICAL; repeat IDENTICAL; peak 6451 MiB compact, 6703 MiB full (compact lower); decode 10.3 s compact, 10.3 s full
+control (capacity 4,096): 1101 steps; its logits equal the short case's at capacity 32,768 (information)
+LONG DECODE (rules 2 and 3) PASS
+long decode rc=0
++ echo 'long decode rc=0'
++ python3 -
+long decode control: IDENTICAL to long-decode-v1
+long decode short: IDENTICAL to long-decode-v1
+long decode middle: IDENTICAL to long-decode-v1
+long decode end: IDENTICAL to long-decode-v1
+long decode free: IDENTICAL to long-decode-v1
+rule 4 LONG DECODE UNCHANGED PASS
++ tools/pascal/score.sh text-v17 ppl-v17 256 257 4096 32768
+length 256: {"engine": "native", "length": 256, "windows": 1160, "scored_tokens": 295800, "mean_nll": 3.280150656, "perplexity": 26.579777, "seconds": 399.681}
+  peak device memory 4409 MiB, wall 400.5 s, nll sha256 c47912b0a4379aab
+length 257: {"engine": "native", "length": 257, "windows": 1155, "scored_tokens": 295680, "mean_nll": 3.277352868, "perplexity": 26.505516, "seconds": 459.085}
+  peak device memory 4415 MiB, wall 459.9 s, nll sha256 75430bb635b30684
+length 4096: {"engine": "native", "length": 4096, "windows": 72, "scored_tokens": 294840, "mean_nll": 2.569422345, "perplexity": 13.058279, "seconds": 229.531}
+  peak device memory 5029 MiB, wall 230.3 s, nll sha256 3a00cb321a584c24
+length 32768: {"engine": "native", "length": 32768, "windows": 9, "scored_tokens": 294903, "mean_nll": 2.531826883, "perplexity": 12.576461, "seconds": 285.838}
+  peak device memory 6577 MiB, wall 286.7 s, nll sha256 86582837b337699c
+score rc=0
++ echo 'score rc=0'
++ for L in 256 257 4096 32768
++ cmp /workspace/build/ppl-v6/nll-pascal-256.f32 /workspace/build/ppl-v17/nll-pascal-256.f32
++ echo 'rule 3 nll 256: IDENTICAL to text-correct-v2'
++ for L in 256 257 4096 32768
+rule 3 nll 256: IDENTICAL to text-correct-v2
++ cmp /workspace/build/ppl-v6/nll-pascal-257.f32 /workspace/build/ppl-v17/nll-pascal-257.f32
++ echo 'rule 3 nll 257: IDENTICAL to text-correct-v2'
++ for L in 256 257 4096 32768
+rule 3 nll 257: IDENTICAL to text-correct-v2
++ cmp /workspace/build/ppl-v6/nll-pascal-4096.f32 /workspace/build/ppl-v17/nll-pascal-4096.f32
++ echo 'rule 3 nll 4096: IDENTICAL to text-correct-v2'
++ for L in 256 257 4096 32768
+rule 3 nll 4096: IDENTICAL to text-correct-v2
++ cmp /workspace/build/ppl-v6/nll-pascal-32768.f32 /workspace/build/ppl-v17/nll-pascal-32768.f32
+rule 3 nll 32768: IDENTICAL to text-correct-v2
++ echo 'rule 3 nll 32768: IDENTICAL to text-correct-v2'
++ tools/pascal/speed.sh text-v10 sv1-speed-baseline 3
+binary a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e  /workspace/build/text-v10/liquid-lfm3
+decode-1k         15.696 ms per step (min 15.692, max 15.696); peak 4421 MiB; sm 1936-1949 MHz, mem [4513, 5005]; ids same
+decode-8k         16.255 ms per step (min 16.251, max 16.258); peak 4813 MiB; sm 1847-1949 MHz, mem [4513, 5005]; ids same
+decode-32k        20.592 ms per step (min 20.591, max 20.592); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-32         0.430 s prefill (min 0.430, max 0.430); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-257        0.933 s prefill (min 0.932, max 0.933); peak 4903 MiB; sm 1936-1949 MHz, mem [4513, 5005]; ids same
+prefill-1024       2.327 s prefill (min 2.322, max 2.330); peak 4903 MiB; sm 1898-1949 MHz, mem [4513, 5005]; ids same
+prefill-4096       9.563 s prefill (min 9.549, max 9.570); peak 4903 MiB; sm 1835-1949 MHz, mem [4513, 5005]; ids same
+prefill-32768     89.905 s prefill (min 89.863, max 90.034); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
++ echo 'speed baseline rc=0'
++ tools/pascal/speed.sh text-v17 sv1-speed 3
+speed baseline rc=0
+binary e79b9649f74e94c5c6ef664364165ef591f19529b666636971275ccf8bc3a28c  /workspace/build/text-v17/liquid-lfm3
+decode-1k         15.693 ms per step (min 15.691, max 15.701); peak 4421 MiB; sm 1873-1949 MHz, mem [4513, 5005]; ids same
+decode-8k         16.244 ms per step (min 16.241, max 16.247); peak 4813 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+decode-32k        18.792 ms per step (min 18.787, max 18.793); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-32         0.215 s prefill (min 0.215, max 0.215); peak 4903 MiB; sm 1936-1949 MHz, mem [4513, 5005]; ids same
+prefill-257        0.348 s prefill (min 0.347, max 0.348); peak 4903 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+prefill-1024       0.708 s prefill (min 0.692, max 0.713); peak 4903 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-4096       2.801 s prefill (min 2.744, max 2.801); peak 4903 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
+prefill-32768     28.853 s prefill (min 28.753, max 28.896); peak 6451 MiB; sm 1721-1949 MHz, mem [4513, 5005]; ids same
++ echo 'speed rc=0'
+speed rc=0
++ python3 tools/pascal/analysis/speed_report.py /workspace/build/sv1-speed-baseline /workspace/build/sv1-speed --output /workspace/build/sv1-speed/report.txt
+rule 6 (same ids as the baseline in every run): PASS
+rule 7 prefill-4096: baseline 9.563, now 2.801 (0.29x), bar <= 4.6 s: PASS
+rule 8 prefill-32768: baseline 89.9, now 28.85 (0.32x), bar <= 44.7 s: PASS
+rule 9 prefill-257: baseline 0.9329, now 0.3476 (0.37x), bar <= 0.60 s: PASS
+rule 10 prefill-32: baseline 0.4296, now 0.2151 (0.50x), bar <= 0.30 s: PASS
+rule 11 decode-1k: baseline 15.7, now 15.69 (1.00x), bar <= 15.61 ms per step (amended): FAIL
+rule 12 decode-32k: baseline 20.59, now 18.79 (0.91x), bar <= 18.72 ms per step (amended): FAIL
+rule 13 decode-8k: baseline 16.25, now 16.24 (1.00x), bar no slower (+1%): PASS
+rule 13 prefill-1024: baseline 2.327, now 0.708 (0.30x), bar no slower (+1%): PASS
+  memory decode-1k: baseline 4421 MiB, now 4421 MiB
+  memory decode-32k: baseline 6451 MiB, now 6451 MiB
+  memory decode-8k: baseline 4813 MiB, now 4813 MiB
+  memory prefill-1024: baseline 4903 MiB, now 4903 MiB
+  memory prefill-257: baseline 4903 MiB, now 4903 MiB
+  memory prefill-32: baseline 4903 MiB, now 4903 MiB
+  memory prefill-32768: baseline 6451 MiB, now 6451 MiB
+  memory prefill-4096: baseline 4903 MiB, now 4903 MiB
+rule 14 (peak memory no higher, +16 MiB): PASS
+SPEED RULES FAIL
++ echo 'speed rules rc=1'
++ date
+speed rules rc=1
+Wed Nov 18 22:58:20 MST 2026
