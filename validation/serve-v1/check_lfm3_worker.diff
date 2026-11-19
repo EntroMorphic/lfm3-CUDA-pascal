@@ -1,0 +1,64 @@
+--- tools/check_lfm3_worker.py	2026-11-18 15:18:58.882307441 -0700
++++ tools/pascal/check_lfm3_worker_8gb.py	2026-11-19 15:39:06.938637552 -0700
+@@ -1,4 +1,9 @@
+-"""Resident-cache protocol gates. Explicitly not GPU batching/concurrency tests."""
++"""Pascal (8 GB) copy of tools/check_lfm3_worker.py, made by validation/serve-v1: the CLI references are computed
++before the resident worker loads the weights (both cannot be resident in 8 GB). Every call and comparison is the
++reference's; validation/serve-v1/check_lfm3_worker.diff is the whole difference.
++
++Resident-cache protocol gates. Explicitly not GPU batching/concurrency tests."""
++import sys as _sys, pathlib as _pathlib; _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parents[1]))  # tools/
+ import argparse
+ import hashlib
+ import json
+@@ -156,6 +161,20 @@
+             expected1=single_logits("continued",prompt,[7])
+             expected_b=single_logits("other",prompt+[8],[])
+             expected_mismatch=single_logits("replacement",[1,2,3],[])
++            # Pascal (8 GB, serve-v1): the CLI and the resident worker cannot both hold the weights, so every CLI
++            # reference below is computed here, before the worker's first generate loads them. Same inputs, same calls.
++            multiple=single_logits("multi-token",prompt,[],count=4)
++            continued=single_logits("after-generated",prompt,multiple["generated"]+[7])
++            b_resumed=single_logits("B-resume",prompt+[8],[9])
++            from lfm3_text_frontend import load_frontend
++            frontend=load_frontend(args.checkpoint)
++            early_prompt=frontend.encode_messages([dict(role="system",content="Respond with text."),
++                dict(role="user",content="What is 17 plus 25? Answer briefly.")],512,16)
++            early=single_logits("early-stop",early_prompt,[],count=16)
++            if args.long_request:
++                long_prompt=json.loads(args.long_request.read_text())["input_ids"]
++                if len(long_prompt)!=32767:raise ValueError("long request must contain32767 prompt tokens")
++                expected_long=single_logits("resident32k-reference",long_prompt,[],capacity=32768)
+             def generate(name,id,inputs,expected,reused,count=1):
+                 result=call(dict(op="generate",session_id=id,input_ids=inputs,max_new_tokens=count,return_logits=True))
+                 diagnostic=dict(generated_ids=result.get("generated_ids"),expected_ids=expected["generated"],
+@@ -188,19 +207,11 @@
+             inspected=call(dict(op="inspect",session_id="A"))
+             if inspected["cache_valid"] or inspected["consumed_tokens"]:raise AssertionError("reset did not clear state")
+             generate("A-reset","A",prompt,expected0,0)
+-            multiple=single_logits("multi-token",prompt,[],count=4)
+             if len(multiple["generated"])!=4:raise AssertionError("fixture must exercise multiple decode forwards")
+             generate("A-multi-token","A",prompt,multiple,0,count=4)
+             continuation=prompt+multiple["generated"]+[7]
+-            continued=single_logits("after-generated",prompt,multiple["generated"]+[7])
+             generate("A-reuse-generated-prefix","A",continuation,continued,len(prompt)+3)
+-            b_resumed=single_logits("B-resume",prompt+[8],[9])
+             generate("B-after-A-advances-and-resets","B",prompt+[8,9],b_resumed,len(prompt)+1)
+-            from lfm3_text_frontend import load_frontend
+-            frontend=load_frontend(args.checkpoint)
+-            early_prompt=frontend.encode_messages([dict(role="system",content="Respond with text."),
+-                dict(role="user",content="What is 17 plus 25? Answer briefly.")],512,16)
+-            early=single_logits("early-stop",early_prompt,[],count=16)
+             eos=text_config["eos_token_id"];stops=eos if isinstance(eos,list) else [eos]
+             if "text_end_token_id" in model_config:stops=stops+[model_config["text_end_token_id"]]
+             if not early["generated"] or len(early["generated"])>=16 or early["generated"][-1] not in stops:
+@@ -239,9 +250,6 @@
+         call(dict(op="create",session_id="large",capacity=32768))
+         call(dict(op="create",session_id="overflow",capacity=1),False)
+         if args.long_request and not args.preflight_only:
+-            long_prompt=json.loads(args.long_request.read_text())["input_ids"]
+-            if len(long_prompt)!=32767:raise ValueError("long request must contain32767 prompt tokens")
+-            expected_long=single_logits("resident32k-reference",long_prompt,[],capacity=32768)
+             long_result=generate("resident32k-final-prediction","large",long_prompt,expected_long,0)
+             before=call(dict(op="inspect",session_id="large"))
+             call(dict(op="generate",session_id="large",input_ids=long_prompt+long_result["generated_ids"],max_new_tokens=1),False)

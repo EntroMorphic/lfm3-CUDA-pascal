@@ -6,6 +6,10 @@
 #   tools/pascal/serve_gates.sh TAG OUT CONTROL
 # CONTROL=pinned: the reference's control files (validation/serve-v1/inputs, SHA-256 checked as the reference checks
 # them); the parity build. CONTROL=own: TAG's CLI output on the pinned control request, recorded first; the shipping build.
+# The checks run in /workspace/build/venv-ref (PY): the reference's front-end stack, Transformers 5.22.1, tokenizers
+# 0.23.3, Jinja2 3.1.6 (its freeze is recorded). The worker stage runs tools/pascal/check_lfm3_worker_8gb.py: the
+# reference's check with its CLI references computed before the worker loads the weights (validation/serve-v1/
+# check_lfm3_worker.diff), as the CLI and the worker cannot both hold them in 8 GB.
 # Every stage runs (KEEP_GOING); OUT/status.txt lists each stage's exit status; the exit status is 1 if any failed.
 set -uo pipefail
 tag=${1:?TAG}; name=${2:?OUT}; control=${3:?CONTROL}
@@ -28,12 +32,13 @@ case $control in
 esac
 sha256sum "$CTL_REQ" "$CTL_RES" > "$out/control.sha256"
 REQ=$I/generation-request.json; LONG=$I/decode_into32768.request.json; O=$out
+PY=${PY:-/workspace/build/venv-ref/bin/python}; "$PY" -m pip freeze > "$out/python-freeze.txt" || exit 2
 export LFM_ALLOCATION_METRICS=1
 failed=0; : > "$out/status.txt"
-run() { local s=$1; shift; local t0=$(date +%s); python3 "$@" > "$out/$s.log" 2>&1; local rc=$?
+run() { local s=$1; shift; local t0=$(date +%s); "$PY" "$@" > "$out/$s.log" 2>&1; local rc=$?
   echo "$s rc=$rc $(( $(date +%s) - t0 )) s" | tee -a "$out/status.txt"; [ $rc = 0 ] || failed=1; }
 run sampling          $T/check_lfm3_sampling.py --checkpoint $CK --binary $N/liquid-lfm3 --request $REQ --oracle $N/text-sampling-oracle --output $O/sampling
-run worker            $T/check_lfm3_worker.py --checkpoint $CK --worker $N/liquid-lfm3-worker --single $N/liquid-lfm3 --request $REQ --long-request $LONG --oracle $N/text-sampling-oracle --output $O/worker
+run worker            $T/pascal/check_lfm3_worker_8gb.py --checkpoint $CK --worker $N/liquid-lfm3-worker --single $N/liquid-lfm3 --request $REQ --long-request $LONG --oracle $N/text-sampling-oracle --output $O/worker
 run grouped-worker    $T/check_lfm3_batch_worker.py --checkpoint $CK --worker $N/liquid-lfm3-worker --request $REQ --oracle $N/text-sampling-oracle --long-request $LONG --output $O/grouped-worker
 run server            $T/check_lfm3_server.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --concurrency-rounds 3 --output $O/server
 run cancellation      $T/check_lfm3_cancellation.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-request $CTL_REQ --control-result $CTL_RES --output $O/cancellation
