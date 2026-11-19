@@ -1,0 +1,46 @@
++ date
+Wed Nov 18 20:59:26 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ out=/workspace/build/speed-baseline-v1-card
++ mkdir -p /workspace/build/speed-baseline-v1-card
++ nvcc -O3 -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -o /workspace/build/speed-baseline-v1-card/card_ceilings native/bench/card_ceilings.cu
++ echo 'build ceilings rc=0'
+build ceilings rc=0
++ /workspace/build/speed-baseline-v1-card/card_ceilings 3
++ tee /workspace/build/speed-baseline-v1-card/ceilings-1.txt
+device NVIDIA GeForce GTX 1080, 20 SMs
+read: 248.2 GB/s (2 GiB in 8.653 ms)
+fma: 9712 GFLOP/s (0.553 ms)
++ tools/pascal/speed.sh text-v10 speed-baseline-v1 3
+binary a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e  /workspace/build/text-v10/liquid-lfm3
+prefill-32768.1: exit 1: lfm3: input plus output exceeds context budget
+prefill-32768.2: exit 1: lfm3: input plus output exceeds context budget
+prefill-32768.3: exit 1: lfm3: input plus output exceeds context budget
+decode-1k         15.691 ms per step (min 15.691, max 15.697); peak 4421 MiB; sm 1949-1974 MHz, mem [4513, 5005]; ids same
+decode-8k         16.248 ms per step (min 16.248, max 16.251); peak 4813 MiB; sm 1949-1974 MHz, mem [4513, 5005]; ids same
+decode-32k        20.583 ms per step (min 20.583, max 20.584); peak 6451 MiB; sm 1746-1961 MHz, mem [4513, 5005]; ids same
+prefill-32         0.423 s prefill (min 0.423, max 0.424); peak 4903 MiB; sm 1987-1987 MHz, mem [4513, 5005]; ids same
+prefill-257        0.916 s prefill (min 0.916, max 0.916); peak 4903 MiB; sm 1987-1987 MHz, mem [4513, 5005]; ids same
+prefill-1024       2.277 s prefill (min 2.269, max 2.278); peak 4903 MiB; sm 1974-1987 MHz, mem [4513, 5005]; ids same
+prefill-4096       9.287 s prefill (min 9.284, max 9.363); peak 4903 MiB; sm 1949-1987 MHz, mem [4513, 5005]; ids same
+speed rc=1
++ echo 'speed rc=1'
++ /workspace/build/speed-baseline-v1-card/card_ceilings 3
++ tee /workspace/build/speed-baseline-v1-card/ceilings-2.txt
+device NVIDIA GeForce GTX 1080, 20 SMs
+read: 248.9 GB/s (2 GiB in 8.629 ms)
+fma: 8814 GFLOP/s (0.609 ms)
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/speed-baseline-v1-card/gemm_bench native/bench/pascal_gemm_bench.cu
++ echo 'build gemm bench rc=0'
++ /workspace/build/speed-baseline-v1-card/gemm_bench 5
+build gemm bench rc=0
++ tee /workspace/build/speed-baseline-v1-card/gemm-bench.txt
+kernel: plain
+conv.in_proj  257 rows    257 x  6144 x  2048      8.22 ms    786.4 GFLOP/s  checksum cbca28f1671f3e23
+mlp w1        256 rows    256 x  7680 x  2048      5.05 ms   1594.0 GFLOP/s  checksum 3a1a8b903b15ae52
+mlp w2        256 rows    256 x  2048 x  7680      6.20 ms   1299.2 GFLOP/s  checksum eae6f9e8180d09ea
+q_proj       4096 rows   4096 x  2048 x  2048     21.83 ms   1573.8 GFLOP/s  checksum 7fc0a6849947bdea
+mlp w1       4096 rows   4096 x  7680 x  2048     80.72 ms   1596.2 GFLOP/s  checksum d36948a3a900916f
++ date
+Wed Nov 18 21:08:17 MST 2026

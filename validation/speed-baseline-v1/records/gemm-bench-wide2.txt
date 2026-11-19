@@ -1,0 +1,6 @@
+kernel: plain
+conv.in_proj  257 rows    257 x  6144 x  2048      1.47 ms   4390.8 GFLOP/s  checksum cbca28f1671f3e23
+mlp w1        256 rows    256 x  7680 x  2048      1.14 ms   7039.8 GFLOP/s  checksum 3a1a8b903b15ae52
+mlp w2        256 rows    256 x  2048 x  7680      1.43 ms   5616.5 GFLOP/s  checksum eae6f9e8180d09ea
+q_proj       4096 rows   4096 x  2048 x  2048      4.79 ms   7175.1 GFLOP/s  checksum 7fc0a6849947bdea
+mlp w1       4096 rows   4096 x  7680 x  2048     17.86 ms   7213.9 GFLOP/s  checksum d36948a3a900916f

@@ -1,0 +1,74 @@
++ date
+Wed Nov 18 21:09:03 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ out=/workspace/build/speed-baseline-v1-card
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include'
++ nvcc -O3 -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -o /workspace/build/speed-baseline-v1-card/card_ceilings2 native/bench/card_ceilings.cu
+build ceilings rc=0
++ echo 'build ceilings rc=0'
++ /workspace/build/speed-baseline-v1-card/card_ceilings2 3
++ tee /workspace/build/speed-baseline-v1-card/ceilings-3.txt
+device NVIDIA GeForce GTX 1080, 20 SMs
+read, 8 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.569 ms)
+read, 16 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.569 ms)
+read, 32 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.570 ms)
+read, 64 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.569 ms)
+fma: 9447 GFLOP/s (0.568 ms)
++ CASES='prefill-32768 32768 32768 0'
++ tools/pascal/speed.sh text-v10 speed-baseline-v1-p32768 3
+binary a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e  /workspace/build/text-v10/liquid-lfm3
+prefill-32768     89.427 s prefill (min 88.413, max 89.497); peak 6451 MiB; sm 1733-1949 MHz, mem [4513, 5005]; ids same
++ echo 'speed rc=0'
++ for t in text-v1 text-v4 text-v6 text-v10
+speed rc=0
++ CASES='decode-1k 1024 300 700'
++ tools/pascal/speed.sh text-v1 speed-baseline-v1-text-v1 2
+binary e30023b7dba656ffa94eaf0569c84d0a4ccefb1fe7ae69b376abbfea8e7aa593  /workspace/build/text-v1/liquid-lfm3
+decode-1k         15.725 ms per step (min 15.723, max 15.726); peak 4457 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
+speed text-v1 rc=0
++ echo 'speed text-v1 rc=0'
++ for t in text-v1 text-v4 text-v6 text-v10
++ CASES='decode-1k 1024 300 700'
++ tools/pascal/speed.sh text-v4 speed-baseline-v1-text-v4 2
+binary a7037d74ddd86363d244ab5062f6eabe83d741a5e85853332ea6b4eb9450807a  /workspace/build/text-v4/liquid-lfm3
+decode-1k         15.745 ms per step (min 15.745, max 15.746); peak 4421 MiB; sm 1949-1961 MHz, mem [4513, 5005]; ids same
++ echo 'speed text-v4 rc=0'
++ for t in text-v1 text-v4 text-v6 text-v10
++ CASES='decode-1k 1024 300 700'
+speed text-v4 rc=0
++ tools/pascal/speed.sh text-v6 speed-baseline-v1-text-v6 2
+binary 7464f580b1f5ec7eb610e3167abc26b687a490a27d120e25fd230744e1eb45a0  /workspace/build/text-v6/liquid-lfm3
+decode-1k         15.710 ms per step (min 15.708, max 15.711); peak 4421 MiB; sm 1949-1961 MHz, mem [4513, 5005]; ids same
++ echo 'speed text-v6 rc=0'
++ for t in text-v1 text-v4 text-v6 text-v10
++ CASES='decode-1k 1024 300 700'
+speed text-v6 rc=0
++ tools/pascal/speed.sh text-v10 speed-baseline-v1-text-v10 2
+binary a9e3912de14f76c88af4a23bb9d5582065f34ac069b6ce7d03e7eb5c7f9af29e  /workspace/build/text-v10/liquid-lfm3
+decode-1k         15.693 ms per step (min 15.688, max 15.698); peak 4421 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
++ echo 'speed text-v10 rc=0'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/speed-baseline-v1-card/wide2_check native/tests/wide2_check.cu
+speed text-v10 rc=0
+++ grep -c 'warning #' /workspace/build/speed-baseline-v1-card/wide2_check.log
+build wide2_check rc=0 warnings=0
++ echo 'build wide2_check rc=0 warnings=0'
++ /workspace/build/speed-baseline-v1-card/wide2_check
+++ tail -1 /workspace/build/speed-baseline-v1-card/wide2_check.txt
++ echo 'wide2_check rc=0 wide2_check: 94 cases, 0 failed: PASS'
+wide2_check rc=0 wide2_check: 94 cases, 0 failed: PASS
++ grep FAIL /workspace/build/speed-baseline-v1-card/wide2_check.txt
++ head
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -o /workspace/build/speed-baseline-v1-card/gemm_bench2 native/bench/pascal_gemm_bench.cu
+build gemm bench rc=0
++ echo 'build gemm bench rc=0'
++ /workspace/build/speed-baseline-v1-card/gemm_bench2 5
++ tee /workspace/build/speed-baseline-v1-card/gemm-bench-wide2.txt
+kernel: plain
+conv.in_proj  257 rows    257 x  6144 x  2048      1.47 ms   4390.8 GFLOP/s  checksum cbca28f1671f3e23
+mlp w1        256 rows    256 x  7680 x  2048      1.14 ms   7039.8 GFLOP/s  checksum 3a1a8b903b15ae52
+mlp w2        256 rows    256 x  2048 x  7680      1.43 ms   5616.5 GFLOP/s  checksum eae6f9e8180d09ea
+q_proj       4096 rows   4096 x  2048 x  2048      4.79 ms   7175.1 GFLOP/s  checksum 7fc0a6849947bdea
+mlp w1       4096 rows   4096 x  7680 x  2048     17.86 ms   7213.9 GFLOP/s  checksum d36948a3a900916f
++ date
+Wed Nov 18 21:16:44 MST 2026

@@ -1,0 +1,95 @@
+ok   65 x 6144 x 2048 kc bf16
+ok   65 x 2048 x 7680 kc bf16
+ok   65 x 6144 x 2048 kc f32
+ok   65 x 2048 x 7680 kc f32
+ok   128 x 6144 x 2048 kc bf16
+ok   128 x 2048 x 7680 kc bf16
+ok   128 x 6144 x 2048 kc f32
+ok   128 x 2048 x 7680 kc f32
+ok   129 x 6144 x 2048 kc bf16
+ok   129 x 2048 x 7680 kc bf16
+ok   129 x 6144 x 2048 kc f32
+ok   129 x 2048 x 7680 kc f32
+ok   256 x 6144 x 2048 kc bf16
+ok   256 x 2048 x 7680 kc bf16
+ok   256 x 6144 x 2048 kc f32
+ok   256 x 2048 x 7680 kc f32
+ok   257 x 6144 x 2048 kc bf16
+ok   257 x 2048 x 7680 kc bf16
+ok   257 x 6144 x 2048 kc f32
+ok   257 x 2048 x 7680 kc f32
+ok   300 x 6144 x 2048 kc bf16
+ok   300 x 2048 x 7680 kc bf16
+ok   300 x 6144 x 2048 kc f32
+ok   300 x 2048 x 7680 kc f32
+ok   4096 x 7680 x 2048 kc bf16
+ok   4096 x 2048 x 2048 kc f32
+ok   1000 x 8000 x 2048 kc f32
+ok   97 x 200 x 8 kn f32
+ok   131 x 136 x 8 kn bf16
+ok   97 x 200 x 8 kc f32
+ok   131 x 136 x 8 kc bf16
+ok   97 x 200 x 16 kn f32
+ok   131 x 136 x 16 kn bf16
+ok   97 x 200 x 16 kc f32
+ok   131 x 136 x 16 kc bf16
+ok   97 x 200 x 24 kn f32
+ok   131 x 136 x 24 kn bf16
+ok   97 x 200 x 24 kc f32
+ok   131 x 136 x 24 kc bf16
+ok   97 x 200 x 32 kn f32
+ok   131 x 136 x 32 kn bf16
+ok   97 x 200 x 32 kc f32
+ok   131 x 136 x 32 kc bf16
+ok   97 x 200 x 40 kn f32
+ok   131 x 136 x 40 kn bf16
+ok   97 x 200 x 40 kc f32
+ok   131 x 136 x 40 kc bf16
+ok   97 x 200 x 48 kn f32
+ok   131 x 136 x 48 kn bf16
+ok   97 x 200 x 48 kc f32
+ok   131 x 136 x 48 kc bf16
+ok   97 x 200 x 56 kn f32
+ok   131 x 136 x 56 kn bf16
+ok   97 x 200 x 56 kc f32
+ok   131 x 136 x 56 kc bf16
+ok   97 x 200 x 136 kn f32
+ok   131 x 136 x 136 kn bf16
+ok   97 x 200 x 136 kc f32
+ok   131 x 136 x 136 kc bf16
+ok   97 x 200 x 2040 kn f32
+ok   131 x 136 x 2040 kn bf16
+ok   97 x 200 x 2040 kc f32
+ok   131 x 136 x 2040 kc bf16
+ok   97 x 200 x 2056 kn f32
+ok   131 x 136 x 2056 kn bf16
+ok   97 x 200 x 2056 kc f32
+ok   131 x 136 x 2056 kc bf16
+ok   70 x 8 x 64 kn f32 b_rows 40
+ok   70 x 120 x 64 kn f32 b_rows 40
+ok   70 x 128 x 64 kn f32 b_rows 40
+ok   70 x 136 x 64 kn f32 b_rows 40
+ok   70 x 264 x 64 kn f32 b_rows 40
+ok   200 x 256 x 104 kn f32 b_rows 100
+ok   200 x 256 x 104 kn bf16 b_rows 1
+ok   150 x 264 x 2048 kc f32 poison 1
+ok   150 x 264 x 2048 kc bf16 poison 1
+ok   150 x 264 x 2048 kc f32 poison 2
+ok   150 x 264 x 2048 kc bf16 poison 2
+ok   150 x 264 x 2048 kc f32 poison 4
+ok   150 x 264 x 2048 kc bf16 poison 4
+ok   150 x 264 x 2048 kc f32 poison 7
+ok   150 x 264 x 2048 kc bf16 poison 7
+ok   attention scores rows 128 end 4100 heads 4
+ok   attention P x V bf16 rows 128 end 4100 pitch 4104 heads 4
+ok   attention P x V f32 rows 128 end 4100 pitch 4104 heads 4
+ok   attention scores rows 129 end 129 heads 16
+ok   attention P x V bf16 rows 129 end 129 pitch 136 heads 16
+ok   attention P x V f32 rows 129 end 129 pitch 136 heads 16
+ok   attention scores rows 257 end 257 heads 16
+ok   attention P x V bf16 rows 257 end 257 pitch 264 heads 16
+ok   attention P x V f32 rows 257 end 257 pitch 264 heads 16
+ok   attention scores rows 65 end 300 heads 8
+ok   attention P x V bf16 rows 65 end 300 pitch 304 heads 8
+ok   attention P x V f32 rows 65 end 300 pitch 304 heads 8
+wide2_check: 94 cases, 0 failed: PASS

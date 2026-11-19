@@ -1,0 +1,18 @@
+{
+ "decode-1k": {
+  "metric": "ms_per_step",
+  "median": 15.724785714285714,
+  "min": 15.723285714285714,
+  "max": 15.726285714285714,
+  "prefill_seconds_median": 1.741085,
+  "peak_device_mib": 4457,
+  "sm_mhz": [
+   1949
+  ],
+  "mem_mhz": [
+   4513,
+   5005
+  ],
+  "runs_same_ids": true
+ }
+}

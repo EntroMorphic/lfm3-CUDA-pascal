@@ -1,0 +1,6 @@
+device NVIDIA GeForce GTX 1080, 20 SMs
+read, 8 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.569 ms)
+read, 16 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.569 ms)
+read, 32 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.570 ms)
+read, 64 blocks of 256 per SM: 250.6 GB/s (2 GiB in 8.569 ms)
+fma: 9447 GFLOP/s (0.568 ms)

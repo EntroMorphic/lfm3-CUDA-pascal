@@ -1,0 +1,1 @@
+decode-1k         15.693 ms per step (min 15.688, max 15.698); peak 4421 MiB; sm 1949-1949 MHz, mem [4513, 5005]; ids same
