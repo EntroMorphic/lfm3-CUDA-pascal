@@ -144,6 +144,30 @@ __global__ void scatter(const bf16* k, const bf16* v, bf16* kc, bf16* vc,
 #define LFM3_LOGIT bf16
 #define LFM3_LOGIT_FLOAT(x) __bfloat162float(x)
 #endif
+// The greedy choice on the card (phase 2, validation/speed-v1), for a greedy request with no tracing: the id the
+// host's greedy pick would give, the highest logit among ids below `live` not blocked, the lowest id on equal
+// values; and whether any logit of the whole output layer is not finite (the host then refuses the step, as it
+// does when it reads the logits itself). One block; out[0] the id (-1 if every id is blocked), out[1] the flag.
+__global__ void __launch_bounds__(1024) greedy_pick(const LFM3_LOGIT* logits,int vocabulary,const unsigned char* blocked,
+                                                    int live,int* out) {
+  float best=0.f; int at=-1, bad=0;
+  for(int i=threadIdx.x;i<vocabulary;i+=blockDim.x) {
+    const float v=LFM3_LOGIT_FLOAT(logits[i]);
+    bad|=!isfinite(v);
+    if(i<live && !blocked[i] && (at<0 || v>best)) { best=v; at=i; }  // ascending ids, strict '>': the lowest id of a tie
+  }
+  __shared__ float values[1024]; __shared__ int ids[1024], flags[1024];
+  values[threadIdx.x]=best; ids[threadIdx.x]=at; flags[threadIdx.x]=bad;
+  for(int half=blockDim.x/2;half>0;half/=2) {
+    __syncthreads();
+    if(threadIdx.x<half) {
+      const float v=values[threadIdx.x+half]; const int i=ids[threadIdx.x+half];
+      if(i>=0 && (at<0 || v>best || (v==best && i<at))) { best=v; at=i; values[threadIdx.x]=v; ids[threadIdx.x]=i; }
+      bad|=flags[threadIdx.x+half]; flags[threadIdx.x]=bad;
+    }
+  }
+  if(threadIdx.x==0) { out[0]=at; out[1]=bad; }
+}
 __global__ void probabilities(const LFM3_SCORE* scores,bf16* probs,int rows,int end,int start,int window,int dim,int key_start LFM3_PITCH_PARAMETER) {
   const int row=blockIdx.x%rows,tid=threadIdx.x;
   const size_t base=size_t(blockIdx.x)*LFM3_ROW_STRIDE;
@@ -653,6 +677,18 @@ class Runner {
   std::vector<float> forward(const std::vector<int>& input, const bf16* injected = nullptr, int placeholder = -1) {
     return forward(input, injected, std::vector<int>{placeholder});
   }
+  // A forward call that ends with the greedy choice made on the card (greedy_pick): the id the host's greedy pick
+  // over these logits gives. `blocked` is a device array of `live` flags. Not for traced runs (no logits leave the card).
+  int forward_greedy(const std::vector<int>& input, const unsigned char* blocked, int live) {
+    if(!trace.empty()) throw std::logic_error("forward_greedy with tracing");
+    struct Clear { const unsigned char*& p; ~Clear() { p=nullptr; } } clear{greedy_blocked};
+    greedy_blocked=blocked; greedy_live=live;
+    forward(input);
+    return greedy_choice;
+  }
+  const unsigned char* greedy_blocked=nullptr;
+  int greedy_live=0, greedy_choice=-1;
+  std::unique_ptr<Buffer<int>> choice;
   // Several placeholders (audio and image input together): the rows holding any of them, in prompt order, take the
   // rows of `injected` in that order; the media's features stacked as the prompt orders them (HF scatters each
   // modality's features into its own placeholders; with each modality's features in prompt order, the same rows).
@@ -745,6 +781,16 @@ class Runner {
     dump("logits",logits.p,s.vocabulary);
 #endif
     cuda_check(cudaGetLastError());
+    if(greedy_blocked) {  // forward_greedy: the choice, not the logits
+      if(!choice) choice=std::make_unique<Buffer<int>>(2);
+      greedy_pick<<<1,1024>>>(logits.p,s.vocabulary,greedy_blocked,greedy_live,choice->p);
+      int got[2];
+      cuda_check(cudaMemcpy(got,choice->p,sizeof got,cudaMemcpyDeviceToHost));
+      if(got[1]) throw std::runtime_error("nonfinite logits");
+      if(got[0]<0) throw std::runtime_error("cannot suppress whole vocabulary");
+      greedy_choice=got[0]; cursor+=rows; ++step;
+      return {};
+    }
     std::vector<float> result(s.vocabulary);
     if constexpr (std::is_same_v<LFM3_LOGIT,float>) {  // straight into the result (phase 2: one host copy fewer)
       cuda_check(cudaMemcpy(result.data(),logits.p,s.vocabulary*sizeof(float),cudaMemcpyDeviceToHost));
@@ -876,39 +922,58 @@ int main(int argc,char** argv) try {
   auto elapsed=[](auto a,auto b) { return std::chrono::duration<double>(b-a).count(); };
   const std::string trace_directory=runner.trace;
   runner.trace.clear();
+  // A greedy request with no tracing and no reset check takes the greedy choice on the card (Runner::forward_greedy):
+  // the same ids, without the logits crossing to the host every step (phase 2, validation/speed-v1).
+#ifdef LFM3_NATIVE_GEMM
+  const bool device_greedy=!sampling.do_sample && sampling.repetition_penalty==1.0 && !check_reset && trace_directory.empty();
+#else
+  const bool device_greedy=false;
+#endif
+  std::unique_ptr<Buffer<unsigned char>> blocked_device;
+  if(device_greedy) {
+    blocked_device=std::make_unique<Buffer<unsigned char>>(live);
+    cuda_check(cudaMemcpy(blocked_device->p,blocked.data(),size_t(live),cudaMemcpyHostToDevice));
+  }
+  std::vector<float> scores; int chosen=-1;
+  auto step_forward=[&](const std::vector<int>& in) {
+    if(device_greedy) chosen=runner.forward_greedy(in,blocked_device->p,live); else scores=runner.forward(in);
+  };
+  auto pick=[&] {
+    return device_greedy ? chosen : greedy(scores); // Teacher diagnostic never consumes stochastic RNG.
+  };
+  auto next_token=[&](lfm::TextSampler& picker,const std::vector<int>& history) {
+    return device_greedy ? chosen : sample(picker,scores,history);
+  };
   for(int run=0;run<warmups;++run) {
     lfm::TextSampler warm_sampler(sampling);
     std::vector<int> warm_history;
-    auto warm_scores=runner.forward(input);
-    for(int token:forced) warm_scores=runner.forward({token});
+    step_forward(input);
+    for(int token:forced) step_forward({token});
     // Warm precisely the same greedy workload as the timed run, not one decode.
     if(forced.empty()) for(int t=0;t<count;++t) {
-      int token=sample(warm_sampler,warm_scores,warm_history);
+      int token=next_token(warm_sampler,warm_history);
       warm_history.push_back(token);
       if(std::find(stop.begin(),stop.end(),token)!=stop.end() || t==count-1) break;
-      warm_scores=runner.forward({token});
+      step_forward({token});
     }
     runner.reset();
   }
   runner.trace=trace_directory;
-  auto begin=now(); auto scores=runner.forward(input); auto prefill_end=now();
+  auto begin=now(); step_forward(input); auto prefill_end=now();
   std::vector<std::vector<float>> checkpoints;
   if(check_reset) checkpoints.push_back(scores);
   std::vector<int> generated;
   std::vector<int> argmax;
-  auto pick=[&] {
-    return greedy(scores); // Teacher diagnostic never consumes stochastic RNG.
-  };
   argmax.push_back(pick());
   for(int token:forced) {
-    scores=runner.forward({token});
+    step_forward({token});
     if(check_reset) checkpoints.push_back(scores);
     argmax.push_back(pick());
   }
   for(int t=0;t<count;++t) {
-    int token=sample(sampler,scores,generated); generated.push_back(token);
+    int token=next_token(sampler,generated); generated.push_back(token);
     if(std::find(stop.begin(),stop.end(),token)!=stop.end() || t==count-1) break;
-    scores=runner.forward({token});
+    step_forward({token});
     if(check_reset) checkpoints.push_back(scores);
   }
   auto end=now();
