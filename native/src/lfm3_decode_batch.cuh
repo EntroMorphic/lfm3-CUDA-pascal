@@ -14,7 +14,9 @@ inline void validate(const std::vector<Runner*>& lanes, const std::vector<int>& 
        c.attention.size()!=size_t(s.layers) || c.layer_specs.size()!=size_t(s.layers))
       throw std::invalid_argument("unsupported decode owner or tracing enabled");
     lfm::text::scratch_rows(s.context);
-    require_full_length_caches(r,"decode batch");
+#ifndef LFM3_NATIVE_GEMM
+    require_full_length_caches(r,"decode batch");  // the native path below also serves the compact caches (phase 3)
+#endif
     if(r.cursor<=0 || r.cursor>=s.context || r.step==std::numeric_limits<int>::max() ||
        ids[i]<0 || ids[i]>=s.vocabulary)
       throw std::invalid_argument("decode token/position/capacity invalid");
@@ -40,10 +42,12 @@ inline void validate(const std::vector<Runner*>& lanes, const std::vector<int>& 
 }
 
 // Ragged, unpadded head GEMMs: exactly the serial decode end/key_start and lda.
+// Native build: `stride` positions per head in the owner's caches, slot 0 being absolute position `origin` (the
+// context and 0 for a full-length layer; 2 x window and the slots' base for a compact one, as Runner::store_and_attend).
 inline void attention(Runner& scratch, Runner& owner, int lane, int layer,
                       Buffer<LFM3_SCORE>& scores, Buffer<bf16>& probs
 #ifdef LFM3_NATIVE_GEMM
-                      , Buffer<unsigned char>& work, size_t work_bytes
+                      , Buffer<unsigned char>& work, size_t work_bytes, int stride, int origin
 #endif
                       ) {
   const auto& s=owner.s;const int window=owner.config.layer_specs[layer].window;
@@ -51,10 +55,10 @@ inline void attention(Runner& scratch, Runner& owner, int lane, int layer,
   const int end=owner.cursor+1-key_start;
 #ifdef LFM3_NATIVE_GEMM
   const int pitch=key_pitch(end);
-  head_scores(s,s.context,scratch.q.p+size_t(lane)*s.hidden,owner.keys[layer]->p,key_start,1,end,scores.p);
+  head_scores(s,stride,scratch.q.p+size_t(lane)*s.hidden,owner.keys[layer]->p,key_start-origin,1,end,scores.p);
   if(end<=2048) probabilities<<<s.query_heads,32>>>(scores.p,probs.p,1,end,owner.cursor,window,s.head_dim,key_start,pitch);
   else probabilities_large<<<s.query_heads,1024>>>(scores.p,probs.p,1,end,owner.cursor,window,s.head_dim,key_start,pitch);
-  head_values(s,s.context,probs.p,owner.values[layer]->p,key_start,1,end,scratch.attended.p+size_t(lane)*s.hidden,
+  head_values(s,stride,probs.p,owner.values[layer]->p,key_start-origin,1,end,scratch.attended.p+size_t(lane)*s.hidden,
               work.p,work_bytes);
 #else
   std::vector<const bf16*> ap(s.query_heads),bp(s.query_heads);
@@ -141,11 +145,25 @@ inline std::vector<std::vector<float>> forward(const std::vector<Runner*>& lanes
         a.frequencies[layer]->p,2,s.kv_heads,s.head_dim,spec.rotary_pairs);
       for(int lane=0;lane<2;++lane) {
         auto& r=*lanes[lane];
+#ifdef LFM3_NATIVE_GEMM
+        // As Runner::store_and_attend in decode: a compact windowed layer makes room in its slots, stores at the
+        // cursor's slot and attends over its own slots; a full-length layer stores at the cursor.
+        int stride=r.s.context,slot=r.cursor,origin=0;
+        if(r.compact(layer)) {
+          auto& held=r.slots[layer];stride=r.kv_stride[layer];
+          const auto room=held.make_room(r.cursor);
+          if(room.n) {
+            r.move_slots(r.keys[layer]->p,stride,room.to,r.keys[layer]->p,stride,room.from,room.n);
+            r.move_slots(r.values[layer]->p,stride,room.to,r.values[layer]->p,stride,room.from,room.n);
+          }
+          slot=held.push(r.cursor);origin=held.base;
+        }
+        scatter<<<grid(s.kv_width()),256>>>(a.k.p+size_t(lane)*s.kv_width(),a.v.p+size_t(lane)*s.kv_width(),
+          r.keys[layer]->p,r.values[layer]->p,1,s.kv_heads,s.head_dim,stride,slot);
+        attention(a,r,lane,layer,scores,probs,work,work_bytes,stride,origin);
+#else
         scatter<<<grid(s.kv_width()),256>>>(a.k.p+size_t(lane)*s.kv_width(),a.v.p+size_t(lane)*s.kv_width(),
           r.keys[layer]->p,r.values[layer]->p,1,s.kv_heads,s.head_dim,r.s.context,r.cursor);
-#ifdef LFM3_NATIVE_GEMM
-        attention(a,r,lane,layer,scores,probs,work,work_bytes);
-#else
         attention(a,r,lane,layer,scores,probs);
 #endif
       }

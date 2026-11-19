@@ -7,7 +7,22 @@
 #include <lfm/text_cancellation.hpp>
 #include <lfm/text_batch_cancellation.hpp>
 #include <lfm/lfm3_text_request.hpp>
-#ifdef LFM3_NATIVE_GEMM  // speech (#2) was validated only with the native GEMM; other builds refuse op "speech"
+// LFM3_TEXT_ONLY=1 (the Pascal build, PLAN decision 8): text only. Speech, the batch decoder and vision are left
+// out (their kernels are not ported to sm_61 yet) and op "speech" is refused, as in a build without the native GEMM.
+#ifndef LFM3_TEXT_ONLY
+#define LFM3_TEXT_ONLY 0
+#endif
+#define LFM3_WORKER_PASTE_(a, b) a##b
+#define LFM3_WORKER_PASTE(a, b) LFM3_WORKER_PASTE_(a, b)
+#define LFM3_WORKER_DIGIT_0 1
+#define LFM3_WORKER_DIGIT_1 1
+#if !LFM3_WORKER_PASTE(LFM3_WORKER_DIGIT_, LFM3_TEXT_ONLY)
+#error "LFM3_TEXT_ONLY must be 0 or 1"
+#endif
+#if defined(LFM3_NATIVE_GEMM) && !LFM3_TEXT_ONLY
+#define LFM3_WORKER_MEDIA 1
+#endif
+#ifdef LFM3_WORKER_MEDIA  // speech (#2) was validated only with the native GEMM; other builds refuse op "speech"
 #include "lfm3_batch.cuh"
 #include "lfm3_speech.cuh"
 #include "lfm/image_handoff.hpp"
@@ -291,7 +306,9 @@ class WorkerCore {
     : directory(model_directory),sampling_trace_root(trace_root),cancellation(cancellation_fd),
       cancellation_enabled(cancellation_fd>=0) {
     // validation/image-cache-v1 C3: what the engine's image cache holds, published for the in-process front end
+#ifdef LFM3_WORKER_MEDIA
     image_cache_.set_observer([](const std::string& key,bool kept) {lfm::image::shared_held_images().kept(key,kept);});
+#endif
     if(trace_root_requested && (sampling_trace_root.empty() || !std::filesystem::create_directory(sampling_trace_root)))
       throw std::runtime_error("sampling trace root must be a new directory");
     const auto model=read_json(directory+"/config.json");
@@ -313,7 +330,7 @@ class WorkerCore {
     choice_suppressed=below(suppressed,live);
     for(int id:stops) if(id>=live) throw std::runtime_error("stop token outside the tokenizer vocabulary");
     text.path=directory+"/tokenizer.json";text.live=live;
-#ifdef LFM3_NATIVE_GEMM
+#ifdef LFM3_WORKER_MEDIA
     // Speech needs an Omni checkpoint with its codec, whose special ids are the ones lfm/audio_modes.hpp fixes.
     if(cfg.architecture==lfm::ModelConfig::Architecture::Lfm3Omni &&
        std::filesystem::exists(directory+"/audio_tokenizer/model.safetensors")) {
@@ -376,7 +393,7 @@ class WorkerCore {
   int speech_rows() const {return speech_ok?speech_rows_:0;}
   void set_speech_rows(int rows) {
     if(rows<1 || rows>16) throw std::runtime_error("speech rows must be 1..16");  // validated up to 16 (speech-batch-v1)
-#ifdef LFM3_NATIVE_GEMM
+#ifdef LFM3_WORKER_MEDIA
     if(speech_batch) throw std::runtime_error("speech rows are fixed once the batch exists");
 #endif
     speech_rows_=rows;
@@ -385,7 +402,7 @@ class WorkerCore {
   // server sets its --image-cache-mb)
   void set_image_cache_mb(int mb) {
     if(mb<0 || mb>65536) throw std::runtime_error("image cache must be 0..65536 MiB");
-#ifdef LFM3_NATIVE_GEMM
+#ifdef LFM3_WORKER_MEDIA
     image_cache_.set_budget(size_t(mb)<<20);  // (its observer, set at construction, publishes what it holds: C3)
 #endif
   }
@@ -419,9 +436,11 @@ class WorkerCore {
        // Device-wide unified-memory accounting, NOT per-worker allocations or RSS.
        if(weights) out<<",\"cuda_free_bytes\":"<<free_bytes<<",\"cuda_total_bytes\":"<<total_bytes
                            <<",\"device_allocated_bytes\":"<<(total_bytes-free_bytes);
-#ifdef LFM3_NATIVE_GEMM
+#ifdef LFM3_WORKER_MEDIA
        out<<",\"image_cache_entries\":"<<image_cache_.size()<<",\"image_cache_bytes\":"<<image_cache_.bytes()
           <<",\"image_cache_budget_bytes\":"<<image_cache_.budget();
+#endif
+#ifdef LFM3_NATIVE_GEMM
        // The worker's own engine buffers (LFM_ALLOCATION_METRICS=1 only): exact, unlike the device-wide numbers.
        if(lfm::allocation_metrics::enabled()) {
          const auto m=lfm::allocation_metrics::snapshot();
@@ -635,10 +654,10 @@ class WorkerCore {
   static constexpr std::uint64_t kSpeechMaxImagePixels=64ull*1024*1024;  // lfm::http::kSpeechMaxImagePixels
   bool speech_ok=false,audio_in_ok=false,image_in_ok=false;
   int speech_rows_=8;  // rows of the concurrent speech batch (set_speech_rows, before its first use)
-#ifdef LFM3_NATIVE_GEMM
+#ifdef LFM3_WORKER_MEDIA
   lfm3_speech::ImageCache image_cache_;  // validation/image-cache-v1: engine thread only (parse_speech, the prefill)
 #endif
-#ifdef LFM3_NATIVE_GEMM
+#ifdef LFM3_WORKER_MEDIA
   std::unique_ptr<Runner> speech_runner;
   std::unique_ptr<lfm3_speech::Session> speech_session;
   std::unique_ptr<lfm3_speech::Batch> speech_batch;
@@ -658,7 +677,7 @@ class WorkerCore {
   // Streamed, the reply has no "wav_base64"; before it, in generation order, `progress` receives {"audio":"base64 of
   // 16-bit PCM"} as the codec makes samples final (all of them, in order, are the WAV's data), {"text":[slot]} for each
   // emitted slot but <|audio_out|>, and {"chunk":{"frames","slots","ended_by_eos"}} as each chunk ends.
-#ifdef LFM3_NATIVE_GEMM
+#ifdef LFM3_WORKER_MEDIA
   // A speech request read and checked (op "speech" and op "speech_admit" alike), before any engine state changes.
   struct SpeechJob {
     std::vector<std::vector<int>> prompts;
@@ -790,7 +809,7 @@ class WorkerCore {
   // 16-bit PCM"} as the codec makes samples final (all of them, in order, are the WAV's data), {"text":[slot]} for each
   // emitted slot but <|audio_out|>, and {"chunk":{"frames","slots","ended_by_eos"}} as each chunk ends.
   void speech(const lfm::Json& request,int rpc_id,std::ostream& out) {
-#ifndef LFM3_NATIVE_GEMM
+#ifndef LFM3_WORKER_MEDIA
     (void)request;(void)rpc_id;(void)out;
     throw std::runtime_error("speech requires the native GEMM build (LIQUID_LFM3_NATIVE_GEMM=ON)");
 #else
@@ -823,7 +842,7 @@ class WorkerCore {
   //   finished: {"ticket":T,"finished":{op speech's reply fields}} or {"ticket":T,"finished":{"cancelled":true}}.
   // Same chunk loop, step budget and outputs as op speech, row by row: a request's reply does not depend on the others.
   void speech_admit(const lfm::Json& request,int rpc_id,std::ostream& out) {
-#ifndef LFM3_NATIVE_GEMM
+#ifndef LFM3_WORKER_MEDIA
     (void)request;(void)rpc_id;(void)out;
     throw std::runtime_error("speech requires the native GEMM build (LIQUID_LFM3_NATIVE_GEMM=ON)");
 #else
@@ -858,7 +877,7 @@ class WorkerCore {
 #endif
   }
   void speech_step(const lfm::Json& request,int rpc_id,std::ostream& out) {
-#ifndef LFM3_NATIVE_GEMM
+#ifndef LFM3_WORKER_MEDIA
     (void)request;(void)rpc_id;(void)out;
     throw std::runtime_error("speech requires the native GEMM build (LIQUID_LFM3_NATIVE_GEMM=ON)");
 #else

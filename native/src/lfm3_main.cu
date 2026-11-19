@@ -788,8 +788,9 @@ class Runner {
 void print_ids(std::ostream& f,const std::vector<int>& x) {
   f<<"["; for(size_t i=0;i<x.size();++i) { if(i) f<<","; f<<x[i]; } f<<"]";
 }
-// The batch, tree and paired-decode code reads keys and values at their absolute positions (the full-length layout)
-// and is not ported to the compact one (phase 3): it calls this before touching a runner's caches. (A template so
+// The batch and tree code (and paired decode in the cuBLAS build) reads keys and values at their absolute positions
+// (the full-length layout) and is not ported to the compact one: it calls this before touching a runner's caches.
+// Paired decode in the native build serves both layouts (lfm3_decode_batch.cuh, phase 3). (A template so
 // that a program that never calls it, like the CLI, compiles nothing for it.)
 template <class R>
 void require_full_length_caches(const R& runner, const char* who) {
