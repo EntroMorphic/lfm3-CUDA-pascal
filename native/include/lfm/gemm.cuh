@@ -458,6 +458,9 @@ inline constexpr int kWideSplitsPerBlock = LFM_GEMM_WIDE_SPLITS, kWideAhead = LF
 #endif
 inline constexpr int kWideCols = LFM_GEMM_WIDE_COLS, kWideThreadsPerSplit = 128 / kWideCols;
 static_assert(kWideCols == 4 || kWideCols == 8, "LFM_GEMM_WIDE_COLS must be 4 or 8");
+static_assert(kWideSplitsPerBlock >= 1 && kWideThreadsPerSplit * kWideSplitsPerBlock <= 1024,
+              "LFM_GEMM_WIDE_SPLITS: 1 to 1024 / (128 / LFM_GEMM_WIDE_COLS)");
+static_assert(LFM_GEMM_K128_BLOCKS >= 1, "LFM_GEMM_K128_BLOCKS must be at least 1");
 template <int G>
 __global__ void __launch_bounds__(kWideThreadsPerSplit * kWideSplitsPerBlock) split_kn_partial_wide(Problem p, int splits) {
   constexpr int C = kWideCols;
@@ -534,9 +537,9 @@ inline void launch_split_kn(const Problem& p, cudaStream_t stream) {
     else if (p.group % 2 == 0) split_kn_partial_wide<2><<<dim3(grid.x, p.batch / 2, grid.z), kWideThreadsPerSplit * kWideSplitsPerBlock, 0, stream>>>(p, splits);
     else split_kn_partial_wide<1><<<dim3(grid.x, p.batch, grid.z), kWideThreadsPerSplit * kWideSplitsPerBlock, 0, stream>>>(p, splits);
   }
-  // Grouped heads divide the blocks: worth it only once the keys fill enough splits to keep the card busy.
-  else if (R == 1 && p.group % 4 == 0 && splits >= kPairedSplits) split_kn_partial<R, 4><<<dim3(splits, p.batch / 4, column_blocks), threads, 0, stream>>>(p, splits);
-  else if (R <= 2 && p.group % 2 == 0 && splits >= kPairedSplits) split_kn_partial<R, 2><<<dim3(splits, p.batch / 2, column_blocks), threads, 0, stream>>>(p, splits);
+  // Grouped heads divide the blocks: worth it only once the keys fill enough splits to keep the card busy. (One row
+  // never gets here at 16 splits or more: check() makes n a multiple of 8 for a K x N operand.)
+  else if (R == 2 && p.group % 2 == 0 && splits >= kPairedSplits) split_kn_partial<R, 2><<<dim3(splits, p.batch / 2, column_blocks), threads, 0, stream>>>(p, splits);
   else split_kn_partial<R, 1><<<dim3(splits, p.batch, column_blocks), threads, 0, stream>>>(p, splits);
   const size_t outputs = size_t(R) * p.n * p.batch;
   split_kn_finish<R><<<unsigned((outputs + 255) / 256), 256, 0, stream>>>(p, splits);

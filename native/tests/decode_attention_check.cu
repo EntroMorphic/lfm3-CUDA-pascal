@@ -1,7 +1,8 @@
 // Decode attention's two products against the kernels as they were before phase 2 (copied below from commit a5bcd4a,
 // unchanged but for their names), on the card: every output bit for bit, for each way the engine can launch them
-// (G = 1, 2 or 4 query heads per read of the keys and values), over cache lengths from 1 to 31,000 keys, one and two
-// rows, and 2 or 4 query heads per key/value head (the model has 4).
+// (G = 1, 2 or 4 query heads per read of the keys and values), over cache lengths from 1 to 31,000 keys, one to eight
+// rows (G = 1 and the engine's own dispatch from three rows up), and 2 or 4 query heads per key/value head (the model
+// has 4).
 //   decode_attention_check        exit 0 if every case is identical
 // Build: nvcc [the engine's flags] decode_attention_check.cu
 #include <lfm/gemm.cuh>
@@ -151,15 +152,22 @@ template <int R> void one(int keys, int heads, int group) {
     if (g > 10 && g != 99 && R != 1) continue;
     check(cudaMemset(ds, 0x5a, (s_elems + guard) * 4)); check(cudaMemset(dout, 0x5a, (v_elems + guard) * 2));
     check(cudaMemset(dw, 0xff, ws));  // NaN in every partial slot: one a kernel leaves unwritten shows in the values
+    if (R > 2 && g != 0 && g != 1 && g != 99) continue;  // 3 to 8 rows: the engine reads one head at a time
     switch (g) {
       case 0: scores<R, 0>(s); values<R, 0>(v); break;
       case 1: scores<R, 1>(s); values<R, 1>(v); break;
-      case 2: scores<R, 2>(s); values<R, 2>(v); break;
-      case 4: scores<R, 4>(s); values<R, 4>(v); break;
-      case 11: scores<R, 1>(s); values<R, 1, true>(v); break;
-      case 12: scores<R, 2>(s); values<R, 2, true>(v); break;
-      case 14: scores<R, 4>(s); values<R, 4, true>(v); break;
-      default: lfm::gemm::run(s); lfm::gemm::run(v); break;
+      case 99: lfm::gemm::run(s); lfm::gemm::run(v); break;
+      default:
+        if constexpr (R <= 2) {
+          switch (g) {
+            case 2: scores<R, 2>(s); values<R, 2>(v); break;
+            case 4: scores<R, 4>(s); values<R, 4>(v); break;
+            case 11: scores<R, 1>(s); values<R, 1, true>(v); break;
+            case 12: scores<R, 2>(s); values<R, 2, true>(v); break;
+            case 14: scores<R, 4>(s); values<R, 4, true>(v); break;
+          }
+        }
+        break;
     }
     check(cudaGetLastError()); check(cudaDeviceSynchronize());
     const auto s1 = download(ds, s_elems + guard); const auto v1 = download(dout, v_elems + guard);
@@ -178,6 +186,8 @@ int main() {
     one<1>(keys, 16, 4);
     one<2>(keys, 16, 4);
     one<1>(keys, 16, 2);
+    // 3 to 8 rows: a prompt of 3 to 8 tokens (not "wide") runs the decode kernels with that many rows.
+    one<3>(keys, 16, 4); one<4>(keys, 16, 4); one<5>(keys, 16, 4); one<6>(keys, 16, 4); one<7>(keys, 16, 4); one<8>(keys, 16, 4);
   }
   std::printf("decode_attention_check: %d cases, %d failed: %s\n", cases, failures, failures ? "FAIL" : "PASS");
   return failures ? 1 : 0;
