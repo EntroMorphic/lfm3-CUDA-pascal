@@ -24,7 +24,7 @@ void require(bool condition,const std::string& message) {
   if(!condition) throw std::runtime_error(message);
 }
 std::vector<std::uint16_t> cache_snapshot(const Runner& r) {
-  r.require_full_length_caches("cache snapshot");  // it copies kv_layer_stride() elements per layer
+  require_full_length_caches(r,"cache snapshot");  // it copies kv_layer_stride() elements per layer
   std::vector<std::uint16_t> bits;
   auto append=[&](const bf16* ptr,size_t count) {
     const size_t offset=bits.size();bits.resize(offset+count);

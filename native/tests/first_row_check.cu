@@ -7,6 +7,7 @@
 //      output of row 0 still equals the model. Non-finite operands elsewhere do not touch row 0.
 // The output buffer is filled with NaN before every run, so a kernel that read stale output would fail 1.
 //   first_row_check        exit 0 if every check holds
+// Build: nvcc [the engine's flags] first_row_check.cu first_row_model.cpp (the host half of the comparison).
 #include <lfm/gemm.cuh>
 #include <cmath>
 #include <cstdio>
@@ -19,6 +20,9 @@
 #error "first_row_check tests the shipping switches: build it without LFM_GEMM_* definitions"
 #endif
 
+// first_row_model.cpp
+unsigned first_row_model(const unsigned short* a, const unsigned short* b, int k, int n, int column, bool b_k_contiguous, bool f32);
+
 namespace {
 using u16 = unsigned short;
 void check(cudaError_t e) { if (e != cudaSuccess) { std::fprintf(stderr, "CUDA: %s\n", cudaGetErrorString(e)); std::exit(2); } }
@@ -29,8 +33,6 @@ u16 random_bf16() {  // model-like magnitudes, with some zeros
   if (r % 61 == 0) return u16((r >> 8 & 1) << 15);
   return u16((r >> 8 & 1) << 15 | (127 - 9 + (r >> 9) % 12) << 7 | (r >> 16 & 0x7f));
 }
-float value(u16 u) { return lfm::tcm::float_of(unsigned(u) << 16); }
-u16 to_bf16(float x) { const unsigned u = lfm::tcm::bits_of(x); return u16((u + 0x7fffu + ((u >> 16) & 1u)) >> 16); }
 const u16 kNaN = 0x7fc0, kInf = 0x7f80;
 
 struct Shape { int m, k, n; };
@@ -64,18 +66,7 @@ Run run(const Shape& s, bool kc, bool f32, const std::vector<u16>& a, const std:
 
 // Row 0, column c, by the tensor-core model on the host.
 unsigned model(const Shape& s, bool kc, bool f32, const std::vector<u16>& a, const std::vector<u16>& b, int c) {
-  float acc = 0.f;
-  for (int k0 = 0; k0 < s.k; k0 += 16) {
-    float x[16], w[16]; short xe[16], we[16];
-    for (int i = 0; i < 16; ++i) {
-      const int k = k0 + i;
-      const u16 xu = k < s.k ? a[k] : u16(0), wu = k < s.k ? (kc ? b[size_t(c) * s.k + k] : b[size_t(k) * s.n + c]) : u16(0);
-      x[i] = value(xu); w[i] = value(wu);
-      xe[i] = lfm::tcm::exponent_of_bf16_bits(xu); we[i] = lfm::tcm::exponent_of_bf16_bits(wu);
-    }
-    acc = lfm::tcm::mma_step_reference(acc, x, xe, w, we, 1, 1);
-  }
-  return f32 ? lfm::tcm::bits_of(acc) : unsigned(to_bf16(acc));
+  return first_row_model(a.data(), b.data(), s.k, s.n, c, kc, f32);
 }
 bool finite_bits(unsigned bits, bool f32) { return f32 ? (bits >> 23 & 0xff) != 0xff : (bits >> 7 & 0xff) != 0xff; }
 

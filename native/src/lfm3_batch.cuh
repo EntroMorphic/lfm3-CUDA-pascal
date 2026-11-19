@@ -446,7 +446,7 @@ class BatchDecoder {
   // Row `row` takes the base runner's state after its prefill: KV caches, conv states, last-position logits.
   void load(int row) {
     if (row < 0 || row >= rows || base.cursor < 1) throw std::invalid_argument("load: invalid row or empty runner");
-    base.require_full_length_caches("batch load");
+    require_full_length_caches(base, "batch load");
     ensure_logits();  // the other rows' deferred logits, from the states before this row's are replaced
     for (int i = 0; i < s.layers; ++i) {
       if (keys[i]) {

@@ -233,7 +233,7 @@ class TreeDecoder {
   // last-position logits are the caller's: the first token is picked from them (as plain decode does).
   void load(int slot) {
     if (slot < 0 || slot >= slots || base.cursor < 1) throw std::invalid_argument("tree load: invalid slot");
-    base.require_full_length_caches("tree load");
+    require_full_length_caches(base, "tree load");
     for (int i = 0; i < s.layers; ++i) {
       if (keys[i]) {
         cuda_check(cudaMemcpy(keys[i]->p + size_t(slot) * s.kv_layer_stride(), base.keys[i]->p,

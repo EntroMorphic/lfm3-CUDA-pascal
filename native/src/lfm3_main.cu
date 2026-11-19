@@ -379,13 +379,6 @@ class Runner {
   std::vector<lfm::text::WindowSlots> slots;
   std::unique_ptr<Buffer<bf16>> window_keys, window_values;
   bool compact(int layer) const { return kv_stride[layer] != s.context; }
-  // The batch, tree and paired-decode code reads keys and values at their absolute positions (the full-length
-  // layout) and is not ported to the compact one (phase 3): it calls this before touching a runner's caches.
-  void require_full_length_caches(const char* who) const {
-    for (int layer = 0; layer < s.layers; ++layer)
-      if (keys[layer] && compact(layer))
-        throw std::invalid_argument(std::string(who) + ": not supported with compact window caches (capacity above 4,096)");
-  }
   size_t kv_elements(int layer) const { return size_t(s.kv_heads) * kv_stride[layer] * s.head_dim; }
   std::vector<std::unique_ptr<Buffer<float>>> frequencies;
   std::unique_ptr<Buffer<int>> injected_rows;
@@ -765,6 +758,15 @@ class Runner {
 };
 void print_ids(std::ostream& f,const std::vector<int>& x) {
   f<<"["; for(size_t i=0;i<x.size();++i) { if(i) f<<","; f<<x[i]; } f<<"]";
+}
+// The batch, tree and paired-decode code reads keys and values at their absolute positions (the full-length layout)
+// and is not ported to the compact one (phase 3): it calls this before touching a runner's caches. (A template so
+// that a program that never calls it, like the CLI, compiles nothing for it.)
+template <class R>
+void require_full_length_caches(const R& runner, const char* who) {
+  for (int layer = 0; layer < runner.s.layers; ++layer)
+    if (runner.keys[layer] && runner.compact(layer))
+      throw std::invalid_argument(std::string(who) + ": not supported with compact window caches (capacity above 4,096)");
 }
 } // namespace
 
