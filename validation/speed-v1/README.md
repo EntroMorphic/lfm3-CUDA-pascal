@@ -132,7 +132,7 @@ attention kernel (scores, softmax and values in one, with the same arithmetic pe
 
 ### The red-team round
 
-Four independent reviews: kernels, runner and tools, and the fixes twice.
+Three independent reviews: the kernels, the runner with its tests and tools, then the fixes that followed.
 
 | Finding | Fix |
 |---|---|
