@@ -44,6 +44,21 @@ with `LFM_ALLOCATION_METRICS=1`), on both builds, every one must pass:
 Control: the parity build with the reference's pinned files (SHA-256 checked as the reference checks them); the
 shipping build with `text-vN`'s own output on the pinned request, recorded by the CLI before the checks run.
 
+*Adaptations to the card (development runs, 2026-11-19), each a copy in `tools/pascal/` with its whole diff here:*
+
+- The checks' Python front end runs the reference's pinned stack (Transformers 5.22.1, tokenizers 0.23.3, Jinja2
+  3.1.6, Python 3.12.3) in its own environment on the card (`/workspace/build/venv-ref`); the container had none.
+- `check_lfm3_worker.py` ran the CLI beside the resident worker; both cannot hold the weights in 8 GB. The copy
+  computes the same CLI references before the worker loads them (`check_lfm3_worker.diff`: reordering only).
+
+*Amendment to rules 3 to 9 (owner, 2026-11-19, after development runs).* The parity build's prefill is 15 times the
+shipping build's (429 s against 28.6 s at 32,763 tokens). On the reference's timing it failed three checks only by
+time: the worker check's 300 s limit on its 32K CLI reference, the grouped-worker check's 180 s worker deadline on its
+32K pair, and the native-server check's batch cancellations (0.05 to 0.5 s), which all landed before its prefill
+ended. It passed the other five, among them every check against Thor's pinned control. For the parity build only,
+those three run with their timing scaled: 1,800 s limits, and cancellation delays of 1, 2, 4 and 8 s after the
+reference's four (`*_parity.diff`). Every comparison is unchanged. The shipping build runs the reference's timing.
+
 **Paired decode on the compact caches:**
 
 10. Paired decode equal to serial decode in every logit bit, and the same ids, for 600 steps: a session of capacity

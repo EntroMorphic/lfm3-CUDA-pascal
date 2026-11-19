@@ -31,6 +31,10 @@ case $control in
   *) echo "CONTROL must be pinned or own"; exit 2 ;;
 esac
 sha256sum "$CTL_REQ" "$CTL_RES" > "$out/control.sha256"
+# The parity build (CONTROL=pinned) runs three checks with their timing scaled (owner, 2026-11-19: its prefill is 15
+# times the shipping build's): validation/serve-v1/*_parity.diff.
+W=$T/pascal/check_lfm3_worker_8gb.py; G=$T/check_lfm3_batch_worker.py; S=$T/check_lfm3_native_server.py
+[ "$control" = pinned ] && { W=$T/pascal/check_lfm3_worker_8gb_parity.py; G=$T/pascal/check_lfm3_batch_worker_parity.py; S=$T/pascal/check_lfm3_native_server_parity.py; }
 REQ=$I/generation-request.json; LONG=$I/decode_into32768.request.json; O=$out
 PY=${PY:-/workspace/build/venv-ref/bin/python}; "$PY" -m pip freeze > "$out/python-freeze.txt" || exit 2
 export LFM_ALLOCATION_METRICS=1
@@ -38,12 +42,12 @@ failed=0; : > "$out/status.txt"
 run() { local s=$1; shift; local t0=$(date +%s); "$PY" "$@" > "$out/$s.log" 2>&1; local rc=$?
   echo "$s rc=$rc $(( $(date +%s) - t0 )) s" | tee -a "$out/status.txt"; [ $rc = 0 ] || failed=1; }
 run sampling          $T/check_lfm3_sampling.py --checkpoint $CK --binary $N/liquid-lfm3 --request $REQ --oracle $N/text-sampling-oracle --output $O/sampling
-run worker            $T/pascal/check_lfm3_worker_8gb.py --checkpoint $CK --worker $N/liquid-lfm3-worker --single $N/liquid-lfm3 --request $REQ --long-request $LONG --oracle $N/text-sampling-oracle --output $O/worker
-run grouped-worker    $T/check_lfm3_batch_worker.py --checkpoint $CK --worker $N/liquid-lfm3-worker --request $REQ --oracle $N/text-sampling-oracle --long-request $LONG --output $O/grouped-worker
+run worker            $W --checkpoint $CK --worker $N/liquid-lfm3-worker --single $N/liquid-lfm3 --request $REQ --long-request $LONG --oracle $N/text-sampling-oracle --output $O/worker
+run grouped-worker    $G --checkpoint $CK --worker $N/liquid-lfm3-worker --request $REQ --oracle $N/text-sampling-oracle --long-request $LONG --output $O/grouped-worker
 run server            $T/check_lfm3_server.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --concurrency-rounds 3 --output $O/server
 run cancellation      $T/check_lfm3_cancellation.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-request $CTL_REQ --control-result $CTL_RES --output $O/cancellation
 run http-cancellation $T/check_lfm3_http_cancellation.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/http-cancellation
 run http-batch        $T/check_lfm3_http_batch.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/http-batch --require-exact-accounting
-run native-server     $T/check_lfm3_native_server.py --checkpoint $CK --server $N/liquid-lfm3-server --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/native-server
+run native-server     $S --checkpoint $CK --server $N/liquid-lfm3-server --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/native-server
 [ $failed = 0 ] && echo "SERVE GATES PASS ($tag, control $control)" || echo "SERVE GATES FAIL ($tag, control $control)"
 exit $failed

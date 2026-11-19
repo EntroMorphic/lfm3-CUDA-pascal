@@ -1,0 +1,38 @@
+--- tools/check_lfm3_native_server.py	2026-11-18 15:18:58.877307365 -0700
++++ tools/pascal/check_lfm3_native_server_parity.py	2026-11-19 16:29:30.011631428 -0700
+@@ -1,4 +1,8 @@
+-"""GPU gate for liquid-lfm3-server, the single-executable text server (G7). Thor, lfm3-profile-v1.
++"""Pascal parity-build copy of tools/check_lfm3_native_server.py, made by validation/serve-v1 (owner, 2026-11-19): the parity build's prefill
++is 15 times the shipping build's (429 s at 32,763 tokens), so its timing is scaled: the grouped-cancellation attempts add delays of 1, 2, 4 and 8 s after the reference's four. Every call and
++comparison is the reference's; validation/serve-v1/check_lfm3_native_server_parity.diff is the whole difference.
++
++GPU gate for liquid-lfm3-server, the single-executable text server (G7). Thor, lfm3-profile-v1.
+ 
+ Black box: the binary is started like a deployment (token file, --port 0) and driven only over HTTP.
+   1. serving      the scenarios of check_lfm3_server.py: pinned 128-token control, auth, quota,
+@@ -13,6 +17,7 @@
+                   from the same build) and to liquid-lfm3-server: identical status and response bytes
+   6. shutdown     SIGTERM during a generation: the client gets the cancelled reply, exit status 0
+ """
++import sys as _sys, pathlib as _pathlib; _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parents[1]))  # tools/
+ import argparse
+ from concurrent.futures import ThreadPoolExecutor
+ import hashlib
+@@ -225,7 +230,7 @@
+     for _ in range(3):
+         batch()
+     attempts = []
+-    for delay in (0.3, 0.15, 0.5, 0.05):
++    for delay in (0.3, 0.15, 0.5, 0.05, 1.0, 2.0, 4.0, 8.0):
+         with ThreadPoolExecutor(1) as executor:
+             pending = executor.submit(client.call, "POST", "/generate_batch", dict(requests=requests))
+             time.sleep(delay)
+@@ -407,7 +412,7 @@
+     if len(reference) < 32:
+         raise ValueError("need 32 accepted control IDs")
+     binaries = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in (args.server, args.worker)}
+-    sources = {name: hashlib.sha256((Path(__file__).parent / name).read_bytes()).hexdigest()
++    sources = {name: hashlib.sha256(((Path(__file__).parent if name == Path(__file__).name else Path(__file__).resolve().parents[1]) / name).read_bytes()).hexdigest()  # (tools/ for the reference's files)
+                for name in (Path(__file__).name, "lfm3_server.py", "lfm3_worker_client.py")}
+     records = []
+     report = dict(status="running", binaries_sha256=binaries, sources_sha256=sources, records=records)

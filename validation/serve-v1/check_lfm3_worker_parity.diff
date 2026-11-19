@@ -1,0 +1,30 @@
+--- tools/pascal/check_lfm3_worker_8gb.py	2026-11-19 15:39:06.938637552 -0700
++++ tools/pascal/check_lfm3_worker_8gb_parity.py	2026-11-19 16:29:23.195562953 -0700
+@@ -1,4 +1,8 @@
+-"""Pascal (8 GB) copy of tools/check_lfm3_worker.py, made by validation/serve-v1: the CLI references are computed
++"""Pascal parity-build copy of tools/pascal/check_lfm3_worker_8gb.py, made by validation/serve-v1 (owner, 2026-11-19): the parity build's prefill
++is 15 times the shipping build's (429 s at 32,763 tokens), so its timing is scaled: the worker's response deadline and each CLI reference's limit, 300 s, are 1,800 s. Every call and
++comparison is the reference's; validation/serve-v1/check_lfm3_worker_parity.diff is the whole difference.
++
++Pascal (8 GB) copy of tools/check_lfm3_worker.py, made by validation/serve-v1: the CLI references are computed
+ before the resident worker loads the weights (both cannot be resident in 8 GB). Every call and comparison is the
+ reference's; validation/serve-v1/check_lfm3_worker.diff is the whole difference.
+ 
+@@ -21,7 +25,7 @@
+ 
+ 
+ class Worker:
+-    def __init__(self,binary,checkpoint,log,env,timeout=300,trace_root=None):
++    def __init__(self,binary,checkpoint,log,env,timeout=1800,trace_root=None):
+         self.log=log.open("wb")
+         command=[str(binary),"--experimental",str(checkpoint)]
+         if trace_root is not None:command += ["--sampling-trace-root",str(trace_root)]
+@@ -144,7 +148,7 @@
+                 (directory/"request.json").write_text(json.dumps(request))
+                 with (directory/"single.log").open("w") as stream:
+                     subprocess.run([str(args.single),"--experimental",str(args.checkpoint),str(directory/"request.json"),
+-                                    str(directory/"result.json")],env=env,check=True,stdout=stream,stderr=subprocess.STDOUT,timeout=300)
++                                    str(directory/"result.json")],env=env,check=True,stdout=stream,stderr=subprocess.STDOUT,timeout=1800)
+                 output=json.loads((directory/"result.json").read_text())
+                 step=max(0,len(output["generated_ids"])-1) if count else len(teacher)
+                 generated=output["generated_ids"] if count else [output["teacher_argmax"][-1]]

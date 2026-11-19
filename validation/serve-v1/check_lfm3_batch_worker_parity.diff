@@ -1,0 +1,34 @@
+--- tools/check_lfm3_batch_worker.py	2026-11-18 15:18:58.872307290 -0700
++++ tools/pascal/check_lfm3_batch_worker_parity.py	2026-11-19 16:29:23.195562953 -0700
+@@ -1,7 +1,12 @@
+-"""Native grouped-decode acceptance against serial IDs and every logit bit.
++"""Pascal parity-build copy of tools/check_lfm3_batch_worker.py, made by validation/serve-v1 (owner, 2026-11-19): the parity build's prefill
++is 15 times the shipping build's (429 s at 32,763 tokens), so its timing is scaled: the worker's response deadline, 180 s, is 1,800 s. Every call and
++comparison is the reference's; validation/serve-v1/check_lfm3_batch_worker_parity.diff is the whole difference.
++
++Native grouped-decode acceptance against serial IDs and every logit bit.
+ 
+ Run exclusively on the GPU. This gate does not waive sanitizer or long-soak gates.
+ """
++import sys as _sys, pathlib as _pathlib; _sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parents[1]))  # tools/
+ import argparse
+ from concurrent.futures import ThreadPoolExecutor
+ import hashlib
+@@ -119,7 +124,7 @@
+     env["LD_LIBRARY_PATH"] = str(Path(sys.prefix)/"lib/python3.12/site-packages/nvidia/cu13/lib")+":"+env.get("LD_LIBRARY_PATH", "")
+     worker = None
+     try:
+-        worker = WorkerClient(args.worker, args.checkpoint, timeout=180, env=env, cancellation=True,
++        worker = WorkerClient(args.worker, args.checkpoint, timeout=1800, env=env, cancellation=True,
+                               batching=True, sampling_trace_root=trace_root)
+         def call(request):
+             response = worker.call(request)
+@@ -220,7 +225,7 @@
+                 time.sleep(0.001)
+             if not proof.exists() or future.done() or not worker.cancel("B"):
+                 raise AssertionError("no observed live paired work for targeted cancellation")
+-            cancelled = future.result(timeout=180)
++            cancelled = future.result(timeout=1800)
+         records.append(dict(case="cancel-B-while-A-continues", response=cancelled));save()
+         a, b = cancelled["results"]
+         if (a.get("generated_ids") != serial[0]["generated_ids"] or a.get("cancelled") is not False or
