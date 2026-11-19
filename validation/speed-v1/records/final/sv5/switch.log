@@ -1,0 +1,5 @@
+native/include/lfm/gemm.cuh(461): error: static assertion failed with "LFM_GEMM_WIDE_SPLITS: 1 to 1024 / (128 / LFM_GEMM_WIDE_COLS)"
+  static_assert(kWideSplitsPerBlock >= 1 && kWideThreadsPerSplit * kWideSplitsPerBlock <= 1024,
+  ^
+
+1 error detected in the compilation of "native/tests/decode_attention_check.cu".

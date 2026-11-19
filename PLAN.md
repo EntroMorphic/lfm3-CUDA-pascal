@@ -85,7 +85,7 @@ with red-team, remediate, verify, commit.
 | 0 | passed 2026-11-17 ([phase0-foundations-v1](validation/phase0-foundations-v1/)) |
 | 1 | passed 2026-11-18 ([text-correct-v2](validation/text-correct-v2/)): the original bar and the amended one at all four lengths, with position 0 on the tensor-core arithmetic (decision 5). The plain kernel alone did not pass the original bar at 257 ([text-correct-v1](validation/text-correct-v1/)). Decode above 4,096 tokens of capacity, where the compact window buffers are the default: identical to the full-length layout and consistent with prefill ([long-decode-v1](validation/long-decode-v1/)) |
 | Red team | passed 2026-11-18 ([red-team-1](validation/red-team-1/)): two rounds of independent review of everything written since the import; every finding fixed; recorded results unchanged byte for byte |
-| 2 | closed 2026-11-19 by the owner with rule 12 failed ([speed-v1](validation/speed-v1/)): 13 of 14 rules pass. Prefill 3.4 times faster at 4,096 and 32,768 tokens, 2.7 at 257, 2 at 32; decode 1% faster at 1,000 tokens (at the 245 GB/s bar, decision 7) and 16% at 31,000, where it misses its bar by 0.18 ms; outputs unchanged; no more memory. Carried: position 0 still costs about 150 ms per prefill |
+| 2 | closed 2026-11-19 by the owner with rule 12 failed ([speed-v1](validation/speed-v1/)): 13 of 14 rules pass. Prefill 3.4 times faster at 4,096 tokens, 3.1 at 32,768, 2.7 at 257, 2 at 32; decode 1% faster at 1,000 tokens (at the 245 GB/s bar, decision 7) and 16% at 31,000, where it misses its bar by 0.18 ms; outputs unchanged; no more memory. Carried: position 0 still costs about 150 ms per prefill |
 
 ## Parking list
 

@@ -1,0 +1,309 @@
+ok   rows 1 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys     1 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys     1 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     1 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys     1 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys     1 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys     5 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys     5 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     5 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys     5 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys     5 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys     8 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys     8 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys     8 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys     8 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys     8 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys   255 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys   255 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   255 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys   255 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys   255 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys   256 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys   256 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   256 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys   256 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys   256 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys   257 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys   257 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys   257 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys   257 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys   257 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys  1000 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys  1000 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  1000 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys  1000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys  1000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys  4097 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys  4097 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  4097 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys  4097 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys  4097 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys  8193 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys  8193 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys  8193 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys  8193 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys  8193 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys 20000 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys 20000 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 20000 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys 20000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys 20000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 4, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 4, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 4, 4 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 2 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 2 keys 31000 heads 16 group 4, 2 heads per read: scores identical, values identical
+ok   rows 2 keys 31000 heads 16 group 4, 4 heads per read: scores identical, values identical
+ok   rows 2 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 2, 1 heads per read: scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 2, 2 heads per read: scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 2, 1 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 2, 2 heads per read (16-byte values): scores identical, values identical
+ok   rows 1 keys 31000 heads 16 group 2, lfm::gemm::run: scores identical, values identical
+ok   rows 3 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 3 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 4 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 4 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 5 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 5 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 6 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 6 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 7 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 7 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+ok   rows 8 keys 31000 heads 16 group 4, 1 heads per read: scores identical, values identical
+ok   rows 8 keys 31000 heads 16 group 4, lfm::gemm::run: scores identical, values identical
+decode_attention_check: 616 cases, 0 failed: PASS

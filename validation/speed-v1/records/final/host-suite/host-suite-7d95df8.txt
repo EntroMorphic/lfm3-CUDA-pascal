@@ -1,0 +1,134 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+...............................................................s........ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 35%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+...........s..........................s................................. [ 44%]
+........................................................................ [ 47%]
+........................................................................ [ 50%]
+........................................................................ [ 53%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 62%]
+........................................................................ [ 65%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 77%]
+........................................................................ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 86%]
+.................................................................s...... [ 89%]
+.........................s..........................................F... [ 92%]
+........................................................................ [ 95%]
+........................................................................ [ 98%]
+...........................                                              [100%]
+=================================== FAILURES ===================================
+_________________ test_every_validation_prompt_matches_hf_ids __________________
+tests/test_speech_text.py:254: in test_every_validation_prompt_matches_hf_ids
+    processor = transformers.AutoProcessor.from_pretrained(CHECKPOINT, trust_remote_code=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../miniconda3/lib/python3.13/site-packages/transformers/models/auto/processing_auto.py:387: in from_pretrained
+    processor_class = get_class_from_dynamic_module(
+../../../miniconda3/lib/python3.13/site-packages/transformers/dynamic_module_utils.py:616: in get_class_from_dynamic_module
+    return get_class_in_module(class_name, final_module, force_reload=force_download)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../miniconda3/lib/python3.13/site-packages/transformers/dynamic_module_utils.py:299: in get_class_in_module
+    module_files: list[Path] = [module_file] + sorted(map(Path, get_relative_import_files(module_file)))
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../miniconda3/lib/python3.13/site-packages/transformers/dynamic_module_utils.py:166: in get_relative_import_files
+    new_imports.extend(get_relative_imports(f))
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+../../../miniconda3/lib/python3.13/site-packages/transformers/dynamic_module_utils.py:135: in get_relative_imports
+    with open(module_file, encoding="utf-8") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '~/.cache/huggingface/modules/transformers_modules/LFM3_hyphen_Omni_hyphen_2B/modeling_lfm3_vl.py'
+=============================== warnings summary ===============================
+tests/test_lfm3_http_native.py::test_listener_closes_and_second_signal_exits[plain]
+  ~/miniconda3/lib/python3.13/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-326 (<lambda>)
+  
+  Traceback (most recent call last):
+    File "~/miniconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+      self.run()
+      ~~~~~~~~^^
+    File "~/miniconda3/lib/python3.13/threading.py", line 994, in run
+      self._target(*self._args, **self._kwargs)
+      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 146, in <lambda>
+      thread = threading.Thread(target=lambda: result.setdefault("value", function(*args)))
+                                                                          ~~~~~~~~^^^^^^^
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 98, in call
+      return parse_response(response)
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 110, in parse_response
+      version, status, _ = lines[0].split(" ", 2)
+      ^^^^^^^^^^^^^^^^^^
+  ValueError: not enough values to unpack (expected 3, got 1)
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tests/test_lfm3_http_native.py::test_listener_closes_and_second_signal_exits[asan]
+  ~/miniconda3/lib/python3.13/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-334 (<lambda>)
+  
+  Traceback (most recent call last):
+    File "~/miniconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+      self.run()
+      ~~~~~~~~^^
+    File "~/miniconda3/lib/python3.13/threading.py", line 994, in run
+      self._target(*self._args, **self._kwargs)
+      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 146, in <lambda>
+      thread = threading.Thread(target=lambda: result.setdefault("value", function(*args)))
+                                                                          ~~~~~~~~^^^^^^^
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 98, in call
+      return parse_response(response)
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 110, in parse_response
+      version, status, _ = lines[0].split(" ", 2)
+      ^^^^^^^^^^^^^^^^^^
+  ValueError: not enough values to unpack (expected 3, got 1)
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tests/test_lfm3_http_native.py::test_listener_closes_and_second_signal_exits[tsan]
+  ~/miniconda3/lib/python3.13/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-342 (<lambda>)
+  
+  Traceback (most recent call last):
+    File "~/miniconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+      self.run()
+      ~~~~~~~~^^
+    File "~/miniconda3/lib/python3.13/threading.py", line 994, in run
+      self._target(*self._args, **self._kwargs)
+      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 146, in <lambda>
+      thread = threading.Thread(target=lambda: result.setdefault("value", function(*args)))
+                                                                          ~~~~~~~~^^^^^^^
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 98, in call
+      return parse_response(response)
+    File "~/Projects/000-research/lfm3-CUDA-pascal/tests/test_lfm3_http_native.py", line 110, in parse_response
+      version, status, _ = lines[0].split(" ", 2)
+      ^^^^^^^^^^^^^^^^^^
+  ValueError: not enough values to unpack (expected 3, got 1)
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_speech_text.py::test_every_validation_prompt_matches_hf_ids
+SKIPPED [1] tests/test_lfm3_config.py:106: checkpoint configs not present
+SKIPPED [2] tests/test_lfm3_http_native.py:527: memory is measured on the uninstrumented build
+SKIPPED [2] tests/test_speech_normalize.py:77: corpus data not present
+1 failed, 2397 passed, 5 skipped, 3 warnings in 2864.70s (0:47:44)

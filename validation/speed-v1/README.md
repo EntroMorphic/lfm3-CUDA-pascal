@@ -52,10 +52,21 @@ figures used (decode-atoms-v1: 1.01 + 0.48 ms).
 
 Corrected 2026-11-19 (phase 2's red-team review): this row first said 761.9 MB, 17.22 ms and ≤ 18.72 ms, counting
 keys and values for 8 key/value heads. The model has 4 (`num_key_value_heads`; 31,000 × 4 × 128 × 2 bytes × 2 × 6
-layers = 380.9 MB). The owner's formula is unchanged; only the arithmetic was wrong. The rule runs' report script
-used 18.72.
+layers = 380.9 MB). The owner's formula is unchanged; only the arithmetic was wrong. The first two rule runs' report
+used 18.72; the third used 17.16.
 
-The windowed layers' caches (256 positions, 5 MB) and the cache's growth over the 700 steps are left out. Known when
+The windowed layers' keys and values (256 positions: 2.6 MB read per step, in a 5 MB buffer) and the cache's growth
+over the 700 steps (31,001 to 31,700 keys) are left out. Counting both would put the bar at about 17.19 ms for the
+average step and 17.21 ms for the last; rule 12 fails either way. Rule 11 counts no keys or values (about 10 MB at 300
+to 1,000 positions, 0.04 ms), which makes it stricter.
+
+The 245 GB/s is the 2026-11-18 measurement (`records/final/read-rate/read_rate-2026-11-18.txt`, 244.6 to 245.9 GB/s
+for 31.46 MB). A second run of the same benchmark in development on 2026-11-19 (`read_rate.txt`, `dev7.sh`) gave
+246.7 to 247.0 GB/s, and a third in `job5.sh` 245.9 to 247.0 (`records/final/sv5/read_rate.txt`). At 247 GB/s rule
+11's bar would be 15.50 ms and the 15.51 ms measured would miss it: rule 11 passes against the bar as the owner set
+it, by less than the measurements of the card differ. The clock during that third run was sampled
+(`read_rate.clocks.txt`): every sample under load 4,513 MHz in P2; the one 5,005 MHz sample is P0 at 0% before the
+first launch. `speed.sh` counts P0 and P2 alike as busy, which is why its records list both. Known when
 the amendment was made: single development runs of the phase 2 build gave 15.69 and 18.78 ms (both over these bars).
 The owner chose this form over two others offered with those figures.
 
@@ -77,7 +88,9 @@ Three rule runs.
 The last review's fixes (`11a9897`: the greedy header included in both builds; the attention test closer to the
 engine) left the native engine's device code unchanged, all 101 and 102 functions instruction for instruction
 (`sass_compare.py`); the rebuilt engine (`text-v31`) gave `text-v30`'s ids in every speed case and passed the
-fixtures (`job4.sh`, `records/final/speed-v1d.log`, `speed-v1e.log`).
+fixtures (`job4.sh`, `records/final/speed-v1d.log`, `speed-v1e.log`). That comparison ran from a copy of the script
+outside the repository and its dumps were not kept; `job5.sh` repeats it from the committed scripts with the dumps
+kept (see the second review).
 
 | # | Rule | Final run |
 |---|---|---|
@@ -85,7 +98,7 @@ fixtures (`job4.sh`, `records/final/speed-v1d.log`, `speed-v1e.log`).
 | 2 | Fixtures, compact off and on; sanitizer | **Pass;** 0 errors on the fixtures and on the 257- and 513-token compact sweep |
 | 3 | NLL files at 256, 257, 4,096, 32,768 | **Pass,** all four byte-identical to text-correct-v2's |
 | 4 | Long decode; boundary sweep | **Pass,** all five cases identical to long-decode-v1; 33 of 33 pairs |
-| 5 | On-card checks; host suite | **Pass:** `first_row_check` 210, `wide2_check` 143 (and 0 errors under the sanitizer), `decode_attention_check` 234 (352 after the last review's additions), `greedy_pick_check` 400, `round_once_check`; host suite as recorded (2,397 passed, 5 skipped, 1 needing Transformers 5.x) |
+| 5 | On-card checks; host suite | **Pass:** `first_row_check` 210, `wide2_check` 143 (and 0 errors under the sanitizer), `decode_attention_check` 234 (352 after the last review's additions), `greedy_pick_check` 400, `round_once_check`; host suite as recorded (2,397 passed, 5 skipped, 1 needing Transformers 5.x; run on the development machine at `e6d9782`, `records/final/host-suite/`, added after the second review) |
 | 6 | Same ids as `text-v10` in every speed run | **Pass;** and a 600-token free generation without tracing gives long-decode-v1's ids |
 
 Speed, medians of 3, `text-v10` measured in the same job:
@@ -123,11 +136,14 @@ Fusing adjacent norms (0.05 ms); a one-warp norm with the same arithmetic (ident
 shared memory, 4 columns per thread, 8 keys ahead, 2 to 16 splits per block (none better than 4 ahead, 8 columns, 4
 splits).
 
-### Where rule 12's 0.18 ms is
+### Where decode-32k's time goes
 
-At 31,000 keys a step spends about 1.85 ms on attention against the 1.55 ms its keys and values take at 245 GB/s: the
-two products at 205 to 220 GB/s and a 0.18 ms softmax over 31,000 scores, whose reduction order is fixed. The 1.5 ms
-allowance was measured at 1,000 tokens and does not include the softmax over a long cache. A fused long-context
+From development profiles (not in the records): at 31,000 keys the six full-attention layers spend about 1.8 ms per
+step on the two products (148 and 154 µs per layer, 205 to 220 GB/s) and about 0.18 ms on the softmax over 31,000
+scores, whose reduction order is fixed: about 2.0 ms against the 1.55 ms their keys and values take at 245 GB/s, about
+0.45 ms over. The step misses its bar by less (0.18 ms) because the rest of it comes in under the formula's share (the
+same build runs decode-1k 0.10 ms under its bar). The 1.5 ms allowance was measured at 1,000 tokens and does not
+include the softmax over a long cache. A fused long-context
 attention kernel (scores, softmax and values in one, with the same arithmetic per output) is the next lever; parked.
 
 ### The red-team round
@@ -142,11 +158,41 @@ Three independent reviews: the kernels, the runner with its tests and tools, the
 | `speed.sh` turned a run with no memory sample into 0 MiB (a rule 14 pass) and ignored a failed summary | Both fail |
 | The cuBLAS build had stopped compiling (the greedy header was included in the native build only) | Included in both |
 | `LFM_GEMM_FIRST_TX` accepted 0; `LFM_GEMM_WIDE_RM`/`_RN`'s comment described the replaced kernel | Checked; comment corrected |
-| Figures in the two READMEs without a record (the read rates, a TFLOPS range, the spread) | Records added (`records/final/read-rate/`) or the figures corrected |
+| Figures in the two READMEs without a record (the read rates, a TFLOPS range, the spread) | Records added (`records/final/read-rate/`) or the figures corrected; some remain from development only (see the second review) |
 
 No review found a defect in what the engine computes: a host simulation of `wide2_kernel` matched the old kernel in
 10.2 million outputs (and caught the −0 case when the pad FMA was removed), and one of the greedy choice matched the
 host in 2,895 trials.
+
+### The second red-team review (after the close)
+
+Three more independent reviews of the closed phase, by reading: the engine's kernels, the tests and tools, and this
+record against its records. None found a defect in what the engine computes; every median, ratio, checksum, build
+hash and bar recomputes. Records: `records/final/sv5/` (`job5.sh`, tree `7d95df8`, builds `text-v32` and
+`parity-v32`) and `records/final/host-suite/`.
+
+| Finding | Fix |
+|---|---|
+| `decode_attention_check` ran 1 and 2 rows; the rewritten kernels serve every row count, and a prompt of 3 to 8 tokens runs them with that many rows (nothing else ran 3 to 7) | 3 to 8 rows added: 616 cases, 0 failed, and 0 errors under the sanitizer |
+| `split_kn_partial<R, 4>`'s launch could never be chosen (`check()` makes one row at 16 splits or more take `split_kn_partial_wide`) but was compiled for 8 row counts | Removed. Every other function of both binaries is instruction for instruction `text-v30`'s; the 8 removed are the only difference (`*.sass-compare-all-rows.txt`; the dumps are kept, `sass.sha256`). The first comparison expected 1 removed function and failed; the 8 are that launch's 8 row counts |
+| `LFM_GEMM_WIDE_SPLITS=0` divided by zero; `LFM_GEMM_K128_BLOCKS=0` launched an empty grid | Both stop the build, as does a block over 1,024 threads |
+| `sass_compare.py` passed two empty dumps | Fails; removed functions must be named |
+| `job4.sh`'s ids check skipped a missing case | `job5.sh` names all 8 cases; a missing one fails |
+| Rule 5's host suite cited red-team-1's result | The phase 2 runs are in the records (`e6d9782` and `7d95df8`: 2,397 passed, 5 skipped, 1 failed, as recorded) |
+| Rule 11 passes by less than the card's read-rate measurements differ | Disclosed in the amendment |
+| PLAN said 3.4 times at 32,768 tokens | 3.1 |
+| The breakdown of decode-32k's attention did not add up | Corrected; marked as from development profiles |
+| The windowed layers' cache was given as 5 MB read; the report-script remark covered all three runs | Corrected (2.6 MB read; the first two runs) |
+
+On `job5.sh`'s build: parity gate 7,826 of 7,826; fixtures pass; every speed case gives `text-v30`'s ids (all 701,
+1,001 and 701 decode argmaxes, and each prefill's); the cuBLAS build compiles with 0 warnings; `first_row_check` 210,
+`wide2_check` 143, `greedy_pick_check` 400.
+
+Not changed: these figures come from development jobs and have no record: position 0's ~150 ms, the greedy choice's
+0.17 ms per step, the norm timings and the fused norms' 0.05 ms, the host simulations (10.2 million outputs, 2,895
+trials), the development decode figures (15.69, 18.78, 17.33 ms) and the attention profile above. Peak memory is
+sampled every 0.2 s on the whole card (rule 14). Rule 6's speed cases compare one argmax per prefill and the
+teacher-forced argmaxes of decode; free generation is covered by the 600-token run and the fixtures.
 
 ### Predictions against the measurements
 

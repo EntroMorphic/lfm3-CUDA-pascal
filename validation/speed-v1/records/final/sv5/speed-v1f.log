@@ -1,0 +1,211 @@
++ date
+Thu Nov 19 13:56:24 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ N=native
++ M=/workspace/build/sv5-matrix
++ '[' -e /workspace/build/sv5-matrix ']'
++ mkdir -p /workspace/build/sv5-matrix
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include'
++ tools/pascal/build_text.sh text-v32
+liquid-lfm3: warnings 0, sha256 3becd2143ec85127f5d71b5aabeda8a98ad706365d07111e561ad9fb9f5b5456, 4142280 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 2c3dd4d5b9e5cd2dfed0ac1a0814f0b0e1280bb3f7f7544d6c02176ef6613d0c, 4010784 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+build rc=0
++ echo 'build rc=0'
++ for f in liquid-lfm3 lfm3-score
++ for v in 30 32
++ cuobjdump -sass /workspace/build/text-v30/liquid-lfm3
++ for v in 30 32
++ cuobjdump -sass /workspace/build/text-v32/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sv5-matrix/liquid-lfm3.30.sass /workspace/build/sv5-matrix/liquid-lfm3.32.sass --only-in-a split_kn_partialILi1ELi4EE
+++ head -1 /workspace/build/sv5-matrix/liquid-lfm3.sass-compare.txt
++ echo 'liquid-lfm3 device code rc=1 101 and 93 functions; removed as expected: 1; only in one otherwise: 7; same name, different code: 0'
++ grep removed: /workspace/build/sv5-matrix/liquid-lfm3.sass-compare.txt
+liquid-lfm3 device code rc=1 101 and 93 functions; removed as expected: 1; only in one otherwise: 7; same name, different code: 0
+   removed: _ZN3lfm4gemm6detail16split_kn_partialILi1ELi4EEEvNS0_7ProblemEi
++ for f in liquid-lfm3 lfm3-score
++ for v in 30 32
++ cuobjdump -sass /workspace/build/text-v30/lfm3-score
++ for v in 30 32
++ cuobjdump -sass /workspace/build/text-v32/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sv5-matrix/lfm3-score.30.sass /workspace/build/sv5-matrix/lfm3-score.32.sass --only-in-a split_kn_partialILi1ELi4EE
+++ head -1 /workspace/build/sv5-matrix/lfm3-score.sass-compare.txt
++ echo 'lfm3-score device code rc=1 102 and 94 functions; removed as expected: 1; only in one otherwise: 7; same name, different code: 0'
++ grep removed: /workspace/build/sv5-matrix/lfm3-score.sass-compare.txt
+lfm3-score device code rc=1 102 and 94 functions; removed as expected: 1; only in one otherwise: 7; same name, different code: 0
+   removed: _ZN3lfm4gemm6detail16split_kn_partialILi1ELi4EEEvNS0_7ProblemEi
++ sha256sum /workspace/build/sv5-matrix/lfm3-score.30.sass /workspace/build/sv5-matrix/lfm3-score.32.sass /workspace/build/sv5-matrix/liquid-lfm3.30.sass /workspace/build/sv5-matrix/liquid-lfm3.32.sass
++ gzip -9 /workspace/build/sv5-matrix/lfm3-score.30.sass /workspace/build/sv5-matrix/lfm3-score.32.sass /workspace/build/sv5-matrix/liquid-lfm3.30.sass /workspace/build/sv5-matrix/liquid-lfm3.32.sass
++ tools/pascal/gate_pins.sh parity-v32
+liquid-lfm3: warnings 0, sha256 86631988c9865136659f5acdc3010fe5338c8c307bee3866066504c6da9ccb17, 4667664 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 1d7c22e89173846bef2d4fb78ed7d9fe42559becbf42593bae15d18f4706d137, 4528824 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+binary 86631988c9865136659f5acdc3010fe5338c8c307bee3866066504c6da9ccb17  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 0.76 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.42 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.36 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.03 s
+PINS EQUAL: 7826 files equal
++ echo 'gate rc=0'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -o /workspace/build/sv5-matrix/cublas native/src/lfm3_main.cu native/src/safetensors.cpp -lcublas
+gate rc=0
+++ grep -c ' error' /workspace/build/sv5-matrix/cublas.log
+++ grep -c 'warning #' /workspace/build/sv5-matrix/cublas.log
+cuBLAS build rc=0 errors=0 warnings=0
++ echo 'cuBLAS build rc=0 errors=0 warnings=0'
++ for d in "" "-DLFM_GEMM_WIDE_SPLITS=8" "-DLFM_GEMM_K128_BLOCKS=1" "-DLFM_GEMM_WIDE_SPLITS=0" "-DLFM_GEMM_K128_BLOCKS=0" "-DLFM_GEMM_WIDE_SPLITS=65"
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -o /workspace/build/sv5-matrix/switch native/tests/decode_attention_check.cu
+++ grep -o 'static assertion failed[^\"]*\"[^\"]*' /workspace/build/sv5-matrix/switch.log
+++ head -1
+switch '' build rc=0 
++ echo 'switch '\'''\'' build rc=0 '
++ for d in "" "-DLFM_GEMM_WIDE_SPLITS=8" "-DLFM_GEMM_K128_BLOCKS=1" "-DLFM_GEMM_WIDE_SPLITS=0" "-DLFM_GEMM_K128_BLOCKS=0" "-DLFM_GEMM_WIDE_SPLITS=65"
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -DLFM_GEMM_WIDE_SPLITS=8 -o /workspace/build/sv5-matrix/switch native/tests/decode_attention_check.cu
+++ grep -o 'static assertion failed[^\"]*\"[^\"]*' /workspace/build/sv5-matrix/switch.log
+++ head -1
++ echo 'switch '\''-DLFM_GEMM_WIDE_SPLITS=8'\'' build rc=0 '
++ for d in "" "-DLFM_GEMM_WIDE_SPLITS=8" "-DLFM_GEMM_K128_BLOCKS=1" "-DLFM_GEMM_WIDE_SPLITS=0" "-DLFM_GEMM_K128_BLOCKS=0" "-DLFM_GEMM_WIDE_SPLITS=65"
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -DLFM_GEMM_K128_BLOCKS=1 -o /workspace/build/sv5-matrix/switch native/tests/decode_attention_check.cu
+switch '-DLFM_GEMM_WIDE_SPLITS=8' build rc=0 
+++ grep -o 'static assertion failed[^\"]*\"[^\"]*' /workspace/build/sv5-matrix/switch.log
+++ head -1
+switch '-DLFM_GEMM_K128_BLOCKS=1' build rc=0 
++ echo 'switch '\''-DLFM_GEMM_K128_BLOCKS=1'\'' build rc=0 '
++ for d in "" "-DLFM_GEMM_WIDE_SPLITS=8" "-DLFM_GEMM_K128_BLOCKS=1" "-DLFM_GEMM_WIDE_SPLITS=0" "-DLFM_GEMM_K128_BLOCKS=0" "-DLFM_GEMM_WIDE_SPLITS=65"
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -DLFM_GEMM_WIDE_SPLITS=0 -o /workspace/build/sv5-matrix/switch native/tests/decode_attention_check.cu
+++ grep -o 'static assertion failed[^\"]*\"[^\"]*' /workspace/build/sv5-matrix/switch.log
+++ head -1
++ echo 'switch '\''-DLFM_GEMM_WIDE_SPLITS=0'\'' build rc=2 static assertion failed with "LFM_GEMM_WIDE_SPLITS: 1 to 1024 / (128 / LFM_GEMM_WIDE_COLS)'
+switch '-DLFM_GEMM_WIDE_SPLITS=0' build rc=2 static assertion failed with "LFM_GEMM_WIDE_SPLITS: 1 to 1024 / (128 / LFM_GEMM_WIDE_COLS)
++ for d in "" "-DLFM_GEMM_WIDE_SPLITS=8" "-DLFM_GEMM_K128_BLOCKS=1" "-DLFM_GEMM_WIDE_SPLITS=0" "-DLFM_GEMM_K128_BLOCKS=0" "-DLFM_GEMM_WIDE_SPLITS=65"
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -DLFM_GEMM_K128_BLOCKS=0 -o /workspace/build/sv5-matrix/switch native/tests/decode_attention_check.cu
+++ grep -o 'static assertion failed[^\"]*\"[^\"]*' /workspace/build/sv5-matrix/switch.log
+++ head -1
++ echo 'switch '\''-DLFM_GEMM_K128_BLOCKS=0'\'' build rc=2 static assertion failed with "LFM_GEMM_K128_BLOCKS must be at least 1'
++ for d in "" "-DLFM_GEMM_WIDE_SPLITS=8" "-DLFM_GEMM_K128_BLOCKS=1" "-DLFM_GEMM_WIDE_SPLITS=0" "-DLFM_GEMM_K128_BLOCKS=0" "-DLFM_GEMM_WIDE_SPLITS=65"
+switch '-DLFM_GEMM_K128_BLOCKS=0' build rc=2 static assertion failed with "LFM_GEMM_K128_BLOCKS must be at least 1
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -DLFM_GEMM_WIDE_SPLITS=65 -o /workspace/build/sv5-matrix/switch native/tests/decode_attention_check.cu
+++ grep -o 'static assertion failed[^\"]*\"[^\"]*' /workspace/build/sv5-matrix/switch.log
+++ head -1
+switch '-DLFM_GEMM_WIDE_SPLITS=65' build rc=2 static assertion failed with "LFM_GEMM_WIDE_SPLITS: 1 to 1024 / (128 / LFM_GEMM_WIDE_COLS)
++ echo 'switch '\''-DLFM_GEMM_WIDE_SPLITS=65'\'' build rc=2 static assertion failed with "LFM_GEMM_WIDE_SPLITS: 1 to 1024 / (128 / LFM_GEMM_WIDE_COLS)'
++ rm -f /workspace/build/sv5-matrix/switch
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
++ extra=
++ '[' first_row_check = first_row_check ']'
++ extra=native/tests/first_row_model.cpp
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -o /workspace/build/sv5-matrix/first_row_check native/tests/first_row_check.cu native/tests/first_row_model.cpp
+++ grep -c 'warning #' /workspace/build/sv5-matrix/first_row_check.log
++ echo 'build first_row_check rc=0 warnings=0'
++ /workspace/build/sv5-matrix/first_row_check
+build first_row_check rc=0 warnings=0
+++ tail -1 /workspace/build/sv5-matrix/first_row_check.txt
+first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS
++ echo 'first_row_check rc=0 first_row_check: 210 checks, 0 failed: PASS'
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
++ extra=
++ '[' wide2_check = first_row_check ']'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -o /workspace/build/sv5-matrix/wide2_check native/tests/wide2_check.cu
+++ grep -c 'warning #' /workspace/build/sv5-matrix/wide2_check.log
+build wide2_check rc=0 warnings=0
++ echo 'build wide2_check rc=0 warnings=0'
++ /workspace/build/sv5-matrix/wide2_check
+++ tail -1 /workspace/build/sv5-matrix/wide2_check.txt
++ echo 'wide2_check rc=0 wide2_check: 143 cases, 0 failed: PASS'
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
++ extra=
++ '[' decode_attention_check = first_row_check ']'
+wide2_check rc=0 wide2_check: 143 cases, 0 failed: PASS
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -o /workspace/build/sv5-matrix/decode_attention_check native/tests/decode_attention_check.cu
+++ grep -c 'warning #' /workspace/build/sv5-matrix/decode_attention_check.log
+build decode_attention_check rc=0 warnings=0
++ echo 'build decode_attention_check rc=0 warnings=0'
++ /workspace/build/sv5-matrix/decode_attention_check
+++ tail -1 /workspace/build/sv5-matrix/decode_attention_check.txt
+decode_attention_check rc=0 decode_attention_check: 616 cases, 0 failed: PASS
++ echo 'decode_attention_check rc=0 decode_attention_check: 616 cases, 0 failed: PASS'
++ for t in first_row_check wide2_check decode_attention_check greedy_pick_check
++ extra=
++ '[' greedy_pick_check = first_row_check ']'
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -I native/include -DLFM3_NATIVE_GEMM -o /workspace/build/sv5-matrix/greedy_pick_check native/tests/greedy_pick_check.cu
+++ grep -c 'warning #' /workspace/build/sv5-matrix/greedy_pick_check.log
++ echo 'build greedy_pick_check rc=0 warnings=0'
++ /workspace/build/sv5-matrix/greedy_pick_check
+build greedy_pick_check rc=0 warnings=0
+++ tail -1 /workspace/build/sv5-matrix/greedy_pick_check.txt
++ echo 'greedy_pick_check rc=0 greedy_pick_check: 400 cases, 0 failed: PASS'
+greedy_pick_check rc=0 greedy_pick_check: 400 cases, 0 failed: PASS
++ grep -c '^ok   rows [3-8]' /workspace/build/sv5-matrix/decode_attention_check.txt
++ sed 's/^/decode_attention_check, 3 to 8 rows, lines ok: /'
+decode_attention_check, 3 to 8 rows, lines ok: 132
++ for t in wide2_check decode_attention_check
++ /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9 /workspace/build/sv5-matrix/wide2_check
+++ grep 'ERROR SUMMARY' /workspace/build/sv5-matrix/wide2_check.memcheck.txt
++ echo 'wide2_check under memcheck rc=0 ========= ERROR SUMMARY: 0 errors'
++ for t in wide2_check decode_attention_check
++ /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9 /workspace/build/sv5-matrix/decode_attention_check
+wide2_check under memcheck rc=0 ========= ERROR SUMMARY: 0 errors
+++ grep 'ERROR SUMMARY' /workspace/build/sv5-matrix/decode_attention_check.memcheck.txt
++ echo 'decode_attention_check under memcheck rc=0 ========= ERROR SUMMARY: 0 errors'
++ tools/pascal/run_text_fixtures.sh text-v32 2
+decode_attention_check under memcheck rc=0 ========= ERROR SUMMARY: 0 errors
+binary 3becd2143ec85127f5d71b5aabeda8a98ad706365d07111e561ad9fb9f5b5456  tree 03785a83cce75348 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.217 s, decode 0.239 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.214 s, decode 0.017 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.339 s, decode 0.049 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.049 s / 3 calls
+FIXTURES PASS
+fixtures rc=0
++ echo 'fixtures rc=0'
++ tools/pascal/speed.sh text-v32 sv5-speed 1
+binary 3becd2143ec85127f5d71b5aabeda8a98ad706365d07111e561ad9fb9f5b5456  /workspace/build/text-v32/liquid-lfm3
+decode-1k         15.508 ms per step (min 15.508, max 15.508); peak 4421 MiB; sm 1936-1949 MHz, mem [4513, 5005]; ids same
+decode-8k         15.944 ms per step (min 15.944, max 15.944); peak 4813 MiB; sm 1771-1961 MHz, mem [4513, 5005]; ids same
+decode-32k        17.334 ms per step (min 17.334, max 17.334); peak 6451 MiB; sm 1721-1961 MHz, mem [4513, 5005]; ids same
+prefill-32         0.213 s prefill (min 0.213, max 0.213); peak 4903 MiB; sm 1961-1974 MHz, mem [4513, 5005]; ids same
+prefill-257        0.344 s prefill (min 0.344, max 0.344); peak 4903 MiB; sm 1974-1974 MHz, mem [4513, 5005]; ids same
+prefill-1024       0.682 s prefill (min 0.682, max 0.682); peak 4903 MiB; sm 1949-1974 MHz, mem [4513, 5005]; ids same
+prefill-4096       2.582 s prefill (min 2.582, max 2.582); peak 4903 MiB; sm 1923-1974 MHz, mem [4513, 5005]; ids same
+prefill-32768     27.419 s prefill (min 27.419, max 27.419); peak 6451 MiB; sm 1721-1974 MHz, mem [4513, 5005]; ids same
++ echo 'speed rc=0'
+speed rc=0
++ python3 -
+prefill-32: ids same as text-v30 (1 argmaxes)
+prefill-257: ids same as text-v30 (1 argmaxes)
+prefill-1024: ids same as text-v30 (1 argmaxes)
+prefill-4096: ids same as text-v30 (1 argmaxes)
+prefill-32768: ids same as text-v30 (1 argmaxes)
+decode-1k: ids same as text-v30 (701 argmaxes)
+decode-8k: ids same as text-v30 (1001 argmaxes)
+decode-32k: ids same as text-v30 (701 argmaxes)
+TEXT-V32 IDS (all 8 cases) PASS
++ nvcc -O3 -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -o /workspace/build/sv5-matrix/read_rate native/bench/read_rate.cu
++ echo 'build read_rate rc=0'
+build read_rate rc=0
++ s=852910
++ /workspace/build/sv5-matrix/read_rate
++ echo 'read_rate rc=0'
++ kill 852910
++ wait 852910
+read_rate rc=0
++ grep 31.46 /workspace/build/sv5-matrix/read_rate.txt
++ awk '{print $NF" "$(NF-1)}'
++ sort -n
++ sed -n '1p;$p'
++ tr '\n' ' '
++ sed 's/^/read_rate 31.46 MB, lowest and highest: /'
+read_rate 31.46 MB, lowest and highest: GB/s 245.9 GB/s 247.0 + echo
+
++ awk '-F, ' '{print $3" "$4}' /workspace/build/sv5-matrix/read_rate.clocks.txt
++ sort
++ uniq -c
++ sed 's/^/clocks during read_rate: /'
+clocks during read_rate:      16 4513 MHz P2
+clocks during read_rate:       1 5005 MHz P0
++ date
+Thu Nov 19 14:03:38 MST 2026
