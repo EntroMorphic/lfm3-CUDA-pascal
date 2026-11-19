@@ -745,13 +745,16 @@ class Runner {
     dump("logits",logits.p,s.vocabulary);
 #endif
     cuda_check(cudaGetLastError());
-    std::vector<LFM3_LOGIT> raw(s.vocabulary);
-    cuda_check(cudaMemcpy(raw.data(),logits.p,s.vocabulary*sizeof(LFM3_LOGIT),cudaMemcpyDeviceToHost));
     std::vector<float> result(s.vocabulary);
-    for(int i=0;i<s.vocabulary;++i) {
-      result[i]=LFM3_LOGIT_FLOAT(raw[i]);
-      if(!std::isfinite(result[i])) throw std::runtime_error("nonfinite logits");
+    if constexpr (std::is_same_v<LFM3_LOGIT,float>) {  // straight into the result (phase 2: one host copy fewer)
+      cuda_check(cudaMemcpy(result.data(),logits.p,s.vocabulary*sizeof(float),cudaMemcpyDeviceToHost));
+    } else {
+      std::vector<LFM3_LOGIT> raw(s.vocabulary);
+      cuda_check(cudaMemcpy(raw.data(),logits.p,s.vocabulary*sizeof(LFM3_LOGIT),cudaMemcpyDeviceToHost));
+      for(int i=0;i<s.vocabulary;++i) result[i]=LFM3_LOGIT_FLOAT(raw[i]);
     }
+    for(int i=0;i<s.vocabulary;++i)
+      if(!std::isfinite(result[i])) throw std::runtime_error("nonfinite logits");
     cursor+=rows; ++step;
     return result;
   }

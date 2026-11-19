@@ -1,7 +1,7 @@
 // The phase 2 prefill kernel (wide2_kernel) against the one it replaces (wide_kernel), launched directly on the card:
 // every output bit for bit, over the engine's shapes and edge cases (rows, columns and K not multiples of the tiles,
 // K mod 32 = 8, 16, 24, a K x N B with fewer rows than K, several heads per call, BF16 and FP32 outputs, strided C,
-// NaN and infinity among the operands). The output buffer is filled with a pattern before each run, so outputs
+// NaN and infinity among the operands), at each of its row counts per thread (1 to 128 rows per block). The output buffer is filled with a pattern before each run, so outputs
 // either kernel leaves unwritten must also agree.
 //   wide2_check        exit 0 if every case is identical
 // Build: nvcc [the engine's flags] wide2_check.cu
@@ -35,11 +35,7 @@ void launch_old(const Problem& p) {
   });
 }
 template <bool KC>
-void launch_new(const Problem& p) {
-  using namespace lfm::gemm::detail;
-  const dim3 grid((p.n + kW2N - 1) / kW2N, (p.m + kW2M - 1) / kW2M, p.batch);
-  wide2_kernel<KC><<<grid, kW2Threads>>>(p);
-}
+void launch_new(const Problem& p) { lfm::gemm::detail::launch_wide2<KC>(p, 0); }
 
 std::vector<unsigned char> run(Problem p, size_t a_elems, size_t b_elems, size_t c_elems, bool f32,
                                const std::vector<u16>& a, const std::vector<u16>& b, bool use_new) {
@@ -125,7 +121,7 @@ void attention(int rows, int end, int pitch, int heads, int group) {
 
 int main() {
   // The engine's prefill shapes (rows x columns x K) at the bar's lengths and their edges.
-  for (int m : {65, 128, 129, 256, 257, 300})
+  for (int m : {1, 2, 8, 9, 16, 17, 31, 32, 33, 64, 65, 128, 129, 256, 257, 300})
     for (int f32 = 0; f32 <= 1; ++f32) {
       plain(m, 6144, 2048, true, f32);
       plain(m, 2048, 7680, true, f32);
@@ -148,6 +144,9 @@ int main() {
   attention(129, 129, 136, 16, 2);
   attention(257, 257, 264, 16, 2);
   attention(65, 300, 304, 8, 2);
+  attention(1, 4097, 4104, 16, 2);
+  attention(8, 520, 520, 16, 2);
+  attention(20, 36, 40, 4, 2);
   std::printf("wide2_check: %d cases, %d failed: %s\n", cases, failures, failures ? "FAIL" : "PASS");
   return failures ? 1 : 0;
 }

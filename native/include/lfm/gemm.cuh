@@ -141,9 +141,9 @@ __device__ __forceinline__ float fma_away(float a, float b, float c) {
 #else
 #define LFM_GEMM_PLAIN_FMA(a, b, c) fmaf((a), (b), (c))
 #endif
-template <int TY, int RM, int RN>
+template <int TY, int RM, int RN, int TX = kWideTX>
 struct WideTile {
-  static constexpr int THREADS = kWideTX * TY, BM = TY * RM, BN = kWideTX * RN;
+  static constexpr int THREADS = TX * TY, BM = TY * RM, BN = TX * RN;
 };
 // Loads one K stage: A rows [m0, m0 + BM) and B columns [n0, n0 + BN) for k in [k0, k0 + kWideK).
 // store(is_b, kk, index, value): where the caller keeps it.
@@ -217,21 +217,22 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_kernel(Problem p) {
 }
 
 // The plain prefill kernel, phase 2 (validation/speed-v1): every output is the same chain of FMAs in k order as in
-// wide_kernel, so the two give identical bits; only the data movement differs. A block of 256 threads computes a
-// 128 x 128 tile of C, each thread 8 x 8 outputs (rows ty*4 + {0..3} and 64 + ty*4 + {0..3}, columns likewise with tx),
-// read from shared memory as float4. K advances 16 at a time; each thread fetches one 16-byte vector (8 BF16) of A and
+// wide_kernel, so the two give identical bits; only the data movement differs. A block of 256 threads (16 x 16)
+// computes a (16 RM) x 128 tile of C, each thread RM x 8 outputs: columns tx*4 + {0..3} and 64 + tx*4 + {0..3}; rows
+// ty*RM + {0..RM-1}, or for RM = 8 ty*4 + {0..3} and 64 + ty*4 + {0..3}. RM follows the row count (1, 2, 4 or 8), so
+// a block of a few rows does not compute 128. K advances 16 at a time; each thread fetches one 16-byte vector (8 BF16) of A and
 // one of B per stage into registers while the stage before is computed, then stores it converted to FP32 into the
 // other of two shared-memory buffers: one barrier per stage.
 // wide_kernel pads K with zeros to a multiple of 32, and an FMA of zeros turns an accumulator of -0 into +0; this
 // kernel pads to a multiple of 16, so where the two differ (K mod 32 = 16) it adds that one FMA at the end.
-inline constexpr int kW2M = 128, kW2N = 128, kW2K = 16, kW2Threads = 256;
-template <bool BK_CONTIGUOUS>
+inline constexpr int kW2N = 128, kW2K = 16, kW2Threads = 256;
+template <int BM, bool BK_CONTIGUOUS>
 __device__ __forceinline__ void wide2_fetch(const Problem& p, const bf16* A, const bf16* B, int m0, int n0, int k0,
                                             int4& va, int4& vb) {
   const int t = threadIdx.x;
   const int4 zero = make_int4(0, 0, 0, 0);
-  {  // A: row t % 128, k half t / 128
-    const int r = t % kW2M, kk = (t / kW2M) * 8;
+  if (t < 2 * BM) {  // A: row t % BM, k half t / BM
+    const int r = t % BM, kk = (t / BM) * 8;
     const long long gm = m0 + r, gk = k0 + kk;
     va = gm < p.m && gk < p.k ? *reinterpret_cast<const int4*>(A + gm * p.lda + gk) : zero;
   }
@@ -245,13 +246,13 @@ __device__ __forceinline__ void wide2_fetch(const Problem& p, const bf16* A, con
     vb = gn < p.n && gk < p.b_rows && gk < p.k ? *reinterpret_cast<const int4*>(B + gk * p.ldb + gn) : zero;
   }
 }
-template <bool BK_CONTIGUOUS>
-__device__ __forceinline__ void wide2_store(float (*sa)[kW2M], float (*sb)[kW2N], const int4& va, const int4& vb) {
+template <int BM, bool BK_CONTIGUOUS>
+__device__ __forceinline__ void wide2_store(float (*sa)[BM], float (*sb)[kW2N], const int4& va, const int4& vb) {
   const int t = threadIdx.x;
   const __nv_bfloat162* a2 = reinterpret_cast<const __nv_bfloat162*>(&va);
   const __nv_bfloat162* b2 = reinterpret_cast<const __nv_bfloat162*>(&vb);
-  {
-    const int r = t % kW2M, kk = (t / kW2M) * 8;
+  if (t < 2 * BM) {
+    const int r = t % BM, kk = (t / BM) * 8;
 #pragma unroll
     for (int e = 0; e < 4; ++e) {
       const float2 f = __bfloat1622float2(a2[e]);
@@ -276,54 +277,68 @@ __device__ __forceinline__ void wide2_store(float (*sa)[kW2M], float (*sb)[kW2N]
     *reinterpret_cast<float4*>(&sb[kk][c + 4]) = hi;
   }
 }
-template <bool BK_CONTIGUOUS>
+template <int RM>
+__device__ __forceinline__ int wide2_row(int ty, int i) { return RM == 8 ? (i < 4 ? ty * 4 + i : 64 + ty * 4 + i - 4) : ty * RM + i; }
+template <int RM, bool BK_CONTIGUOUS>
 __global__ void __launch_bounds__(kW2Threads, 2) wide2_kernel(Problem p) {
-  __shared__ __align__(16) float sa[2][kW2K][kW2M];
+  constexpr int BM = 16 * RM;
+  __shared__ __align__(16) float sa[2][kW2K][BM];
   __shared__ __align__(16) float sb[2][kW2K][kW2N];
   const int z = blockIdx.z;
   const bf16* A = p.a + z * p.stride_a;
   const bf16* B = p.b + (z / p.group) * p.stride_b;
   const long long c0 = z * p.stride_c;
-  const int n0 = blockIdx.x * kW2N, m0 = blockIdx.y * kW2M;
+  const int n0 = blockIdx.x * kW2N, m0 = blockIdx.y * BM;
   const int tx = threadIdx.x % 16, ty = threadIdx.x / 16;
-  float acc[8][8];
+  float acc[RM][8];
 #pragma unroll
-  for (int i = 0; i < 8; ++i)
+  for (int i = 0; i < RM; ++i)
 #pragma unroll
     for (int j = 0; j < 8; ++j) acc[i][j] = 0.f;
   int4 va, vb;
-  wide2_fetch<BK_CONTIGUOUS>(p, A, B, m0, n0, 0, va, vb);
-  wide2_store<BK_CONTIGUOUS>(sa[0], sb[0], va, vb);
+  wide2_fetch<BM, BK_CONTIGUOUS>(p, A, B, m0, n0, 0, va, vb);
+  wide2_store<BM, BK_CONTIGUOUS>(sa[0], sb[0], va, vb);
   __syncthreads();
   int stage = 0;
   for (int k0 = 0; k0 < p.k; k0 += kW2K) {
     const bool more = k0 + kW2K < p.k;
-    if (more) wide2_fetch<BK_CONTIGUOUS>(p, A, B, m0, n0, k0 + kW2K, va, vb);
+    if (more) wide2_fetch<BM, BK_CONTIGUOUS>(p, A, B, m0, n0, k0 + kW2K, va, vb);
 #pragma unroll
     for (int kk = 0; kk < kW2K; ++kk) {
-      const float4 a0 = *reinterpret_cast<const float4*>(&sa[stage][kk][ty * 4]);
-      const float4 a1 = *reinterpret_cast<const float4*>(&sa[stage][kk][64 + ty * 4]);
+      float a[RM];
+      if constexpr (RM == 8) {
+        const float4 a0 = *reinterpret_cast<const float4*>(&sa[stage][kk][ty * 4]);
+        const float4 a1 = *reinterpret_cast<const float4*>(&sa[stage][kk][64 + ty * 4]);
+        a[0] = a0.x; a[1] = a0.y; a[2] = a0.z; a[3] = a0.w; a[4] = a1.x; a[5] = a1.y; a[6] = a1.z; a[7] = a1.w;
+      } else if constexpr (RM == 4) {
+        const float4 a0 = *reinterpret_cast<const float4*>(&sa[stage][kk][ty * 4]);
+        a[0] = a0.x; a[1] = a0.y; a[2] = a0.z; a[3] = a0.w;
+      } else if constexpr (RM == 2) {
+        const float2 a0 = *reinterpret_cast<const float2*>(&sa[stage][kk][ty * 2]);
+        a[0] = a0.x; a[1] = a0.y;
+      } else {
+        a[0] = sa[stage][kk][ty];
+      }
       const float4 b0 = *reinterpret_cast<const float4*>(&sb[stage][kk][tx * 4]);
       const float4 b1 = *reinterpret_cast<const float4*>(&sb[stage][kk][64 + tx * 4]);
-      const float a[8] = {a0.x, a0.y, a0.z, a0.w, a1.x, a1.y, a1.z, a1.w};
       const float b[8] = {b0.x, b0.y, b0.z, b0.w, b1.x, b1.y, b1.z, b1.w};
 #pragma unroll
-      for (int i = 0; i < 8; ++i)
+      for (int i = 0; i < RM; ++i)
 #pragma unroll
         for (int j = 0; j < 8; ++j) acc[i][j] = LFM_GEMM_PLAIN_FMA(a[i], b[j], acc[i][j]);
     }
     if (more) {
-      wide2_store<BK_CONTIGUOUS>(sa[stage ^ 1], sb[stage ^ 1], va, vb);
+      wide2_store<BM, BK_CONTIGUOUS>(sa[stage ^ 1], sb[stage ^ 1], va, vb);
       __syncthreads();
       stage ^= 1;
     }
   }
   const bool pad_more = p.k % kWideK != 0 && p.k % kW2K == 0;  // wide_kernel's zero padding, see above
 #pragma unroll
-  for (int i = 0; i < 8; ++i)
+  for (int i = 0; i < RM; ++i)
 #pragma unroll
     for (int j = 0; j < 8; ++j) {
-      const long long row = m0 + (i < 4 ? ty * 4 + i : 64 + ty * 4 + i - 4);
+      const long long row = m0 + wide2_row<RM>(ty, i);
       const long long col = n0 + (j < 4 ? tx * 4 + j : 64 + tx * 4 + j - 4);
       const float v = pad_more ? LFM_GEMM_PLAIN_FMA(0.f, 0.f, acc[i][j]) : acc[i][j];
       if (row < p.m && col < p.n) put(p, c0 + row * p.ldc + col, v);
@@ -393,29 +408,37 @@ __global__ void __launch_bounds__(256) thin_kernel(Problem p) {
 
 // M <= 8 rows with B stored K x N: keys split across blocks (kSplitKeys each); every thread owns two
 // adjacent columns. FP32 partials per split, then a finish that adds the splits in index order.
-template <int R>
+// G batch items that share one B (G divides group: query heads of one key/value head) are computed by the same
+// thread from one read of B; each output's arithmetic is the same whatever G is (phase 2, validation/speed-v1).
+template <int R, int G>
 __global__ void __launch_bounds__(128) split_kn_partial(Problem p, int splits) {
-  const int split = blockIdx.x, z = blockIdx.y;
-  const bf16* A = p.a + z * p.stride_a;
-  const bf16* B = p.b + (z / p.group) * p.stride_b;
+  const int split = blockIdx.x, z0 = blockIdx.y * G;
+  const bf16* B = p.b + (z0 / p.group) * p.stride_b;
   const int col = 2 * (blockIdx.z * blockDim.x + threadIdx.x);
   if (col >= p.n) return;
   const int k0 = split * kSplitKeys, k1 = min(k0 + kSplitKeys, p.b_rows);
-  float acc[R][2];
+  float acc[G][R][2];
 #pragma unroll
-  for (int r = 0; r < R; ++r) acc[r][0] = acc[r][1] = 0.f;
+  for (int g = 0; g < G; ++g)
+#pragma unroll
+    for (int r = 0; r < R; ++r) acc[g][r][0] = acc[g][r][1] = 0.f;
   for (int kk = k0; kk < k1; ++kk) {
     const float2 v = __bfloat1622float2(*reinterpret_cast<const __nv_bfloat162*>(B + kk * p.ldb + col));
 #pragma unroll
-    for (int r = 0; r < R; ++r) {
-      const float a = __bfloat162float(A[r * p.lda + kk]);
-      acc[r][0] = fmaf(a, v.x, acc[r][0]);
-      acc[r][1] = fmaf(a, v.y, acc[r][1]);
-    }
-  }
-  float* out = p.workspace + ((size_t(z) * splits + split) * R) * p.n + col;
+    for (int g = 0; g < G; ++g)
 #pragma unroll
-  for (int r = 0; r < R; ++r) { out[r * p.n] = acc[r][0]; out[r * p.n + 1] = acc[r][1]; }
+      for (int r = 0; r < R; ++r) {
+        const float a = __bfloat162float(p.a[(z0 + g) * p.stride_a + r * p.lda + kk]);
+        acc[g][r][0] = fmaf(a, v.x, acc[g][r][0]);
+        acc[g][r][1] = fmaf(a, v.y, acc[g][r][1]);
+      }
+  }
+#pragma unroll
+  for (int g = 0; g < G; ++g) {
+    float* out = p.workspace + ((size_t(z0 + g) * splits + split) * R) * p.n + col;
+#pragma unroll
+    for (int r = 0; r < R; ++r) { out[r * p.n] = acc[g][r][0]; out[r * p.n + 1] = acc[g][r][1]; }
+  }
 }
 template <int R>
 __global__ void split_kn_finish(Problem p, int splits) {
@@ -428,31 +451,37 @@ __global__ void split_kn_finish(Problem p, int splits) {
   for (int s = 0; s < splits; ++s) sum += part[size_t(s) * per];
   put(p, z * p.stride_c + r * p.ldc + col, sum);
 }
+inline constexpr int kPairedSplits = 16;
 template <int R>
 inline void launch_split_kn(const Problem& p, cudaStream_t stream) {
   const int splits = (p.k + kSplitKeys - 1) / kSplitKeys;
   if (!p.workspace || p.workspace_size < workspace_bytes(R, p.n, p.k, p.batch))
     throw std::runtime_error("gemm: split-K workspace too small");
   const int threads = 64, column_blocks = (p.n / 2 + threads - 1) / threads;
-  split_kn_partial<R><<<dim3(splits, p.batch, column_blocks), threads, 0, stream>>>(p, splits);
+  // Paired heads halve the blocks: worth it only once the keys fill enough splits to keep the card busy.
+  if (R <= 2 && p.group % 2 == 0 && splits >= kPairedSplits) split_kn_partial<R, 2><<<dim3(splits, p.batch / 2, column_blocks), threads, 0, stream>>>(p, splits);
+  else split_kn_partial<R, 1><<<dim3(splits, p.batch, column_blocks), threads, 0, stream>>>(p, splits);
   const size_t outputs = size_t(R) * p.n * p.batch;
   split_kn_finish<R><<<unsigned((outputs + 255) / 256), 256, 0, stream>>>(p, splits);
 }
 
 // M <= 8 rows, K = 128 (attention Q·Kᵀ in decode): eight lanes per B row, each lane 16 consecutive
 // elements (two 16-byte loads), four rows per warp step; a fixed three-step butterfly per output.
-template <int R>
+// G batch items that share one B (query heads of one key/value head) take one read of each key; each output's
+// arithmetic is the same whatever G is (phase 2, validation/speed-v1).
+template <int R, int G>
 __global__ void __launch_bounds__(256) thin_k128_kernel(Problem p) {
-  const int z = blockIdx.y;
-  const bf16* A = p.a + z * p.stride_a;
-  const bf16* B = p.b + (z / p.group) * p.stride_b;
-  const long long c0 = z * p.stride_c;
+  const int z0 = blockIdx.y * G;
+  const bf16* B = p.b + (z0 / p.group) * p.stride_b;
   const int lane = threadIdx.x % 32, sub = lane % 8, slot = lane / 8;
   const int warps = gridDim.x * (blockDim.x / 32);
   const int warp = blockIdx.x * (blockDim.x / 32) + threadIdx.x / 32;
-  float q[R][16];
+  float q[G][R][16];
+#pragma unroll
+  for (int g = 0; g < G; ++g)
 #pragma unroll
   for (int r = 0; r < R; ++r) {
+    const bf16* A = p.a + (z0 + g) * p.stride_a;
     const int4 lo = __ldg(reinterpret_cast<const int4*>(A + r * p.lda + sub * 16));
     const int4 hi = __ldg(reinterpret_cast<const int4*>(A + r * p.lda + sub * 16 + 8));
     const __nv_bfloat162* l2 = reinterpret_cast<const __nv_bfloat162*>(&lo);
@@ -460,14 +489,16 @@ __global__ void __launch_bounds__(256) thin_k128_kernel(Problem p) {
 #pragma unroll
     for (int e = 0; e < 4; ++e) {
       const float2 a = __bfloat1622float2(l2[e]), b = __bfloat1622float2(h2[e]);
-      q[r][2 * e] = a.x; q[r][2 * e + 1] = a.y; q[r][8 + 2 * e] = b.x; q[r][8 + 2 * e + 1] = b.y;
+      q[g][r][2 * e] = a.x; q[g][r][2 * e + 1] = a.y; q[g][r][8 + 2 * e] = b.x; q[g][r][8 + 2 * e + 1] = b.y;
     }
   }
   for (int row0 = warp * 4; row0 < p.n; row0 += warps * 4) {
     const int row = row0 + slot;
-    float acc[R];
+    float acc[G][R];
 #pragma unroll
-    for (int r = 0; r < R; ++r) acc[r] = 0.f;
+    for (int g = 0; g < G; ++g)
+#pragma unroll
+      for (int r = 0; r < R; ++r) acc[g][r] = 0.f;
     if (row < p.n) {
       const int4 lo = __ldg(reinterpret_cast<const int4*>(B + row * p.ldb + sub * 16));
       const int4 hi = __ldg(reinterpret_cast<const int4*>(B + row * p.ldb + sub * 16 + 8));
@@ -480,25 +511,30 @@ __global__ void __launch_bounds__(256) thin_k128_kernel(Problem p) {
         k[2 * e] = a.x; k[2 * e + 1] = a.y; k[8 + 2 * e] = b.x; k[8 + 2 * e + 1] = b.y;
       }
 #pragma unroll
-      for (int r = 0; r < R; ++r)
+      for (int g = 0; g < G; ++g)
 #pragma unroll
-        for (int e = 0; e < 16; ++e) acc[r] = fmaf(q[r][e], k[e], acc[r]);
+        for (int r = 0; r < R; ++r)
+#pragma unroll
+          for (int e = 0; e < 16; ++e) acc[g][r] = fmaf(q[g][r][e], k[e], acc[g][r]);
     }
 #pragma unroll
-    for (int r = 0; r < R; ++r) {
-      float v = acc[r];
-      v += __shfl_xor_sync(0xffffffffu, v, 4);
-      v += __shfl_xor_sync(0xffffffffu, v, 2);
-      v += __shfl_xor_sync(0xffffffffu, v, 1);
-      if (sub == r && row < p.n) put(p, c0 + r * p.ldc + row, v);
-    }
+    for (int g = 0; g < G; ++g)
+#pragma unroll
+      for (int r = 0; r < R; ++r) {
+        float v = acc[g][r];
+        v += __shfl_xor_sync(0xffffffffu, v, 4);
+        v += __shfl_xor_sync(0xffffffffu, v, 2);
+        v += __shfl_xor_sync(0xffffffffu, v, 1);
+        if (sub == r && row < p.n) put(p, (z0 + g) * p.stride_c + r * p.ldc + row, v);
+      }
   }
 }
 template <int R>
 inline void launch_thin_k128(const Problem& p, cudaStream_t stream) {
   static_assert(R <= 8, "one lane of the eight stores each row");
   const int blocks = std::min((p.n + 31) / 32, 1024);
-  thin_k128_kernel<R><<<dim3(blocks, p.batch), 256, 0, stream>>>(p);
+  if (R <= 2 && p.group % 2 == 0) thin_k128_kernel<R, 2><<<dim3(blocks, p.batch / 2), 256, 0, stream>>>(p);
+  else thin_k128_kernel<R, 1><<<dim3(blocks, p.batch), 256, 0, stream>>>(p);
 }
 
 template <int R>
@@ -512,9 +548,9 @@ inline void launch_thin(const Problem& p, cudaStream_t stream) {
 // prompt position 0 (PLAN decision 5); the validation build of the parity gate (decision 4) for every row. Steps of 16 k chain over k ascending from 0, as the Thor kernel's do. Same tiling as the
 // plain kernel; each operand's exponent is kept beside its value.
 // -DLFM_GEMM_TENSOR_CORE_MODEL=2 uses the integer statement of the model for every step (the reference).
-template <int TY, int RM, int RN, bool BK_CONTIGUOUS>
-__global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
-  using T = WideTile<TY, RM, RN>;
+template <int TY, int RM, int RN, bool BK_CONTIGUOUS, int TX = kWideTX>
+__global__ void __launch_bounds__(TX * TY) wide_model_kernel(Problem p) {
+  using T = WideTile<TY, RM, RN, TX>;
   namespace tcm = lfm::tcm;
   __shared__ float sa[kWideK][T::BM];
   __shared__ float sb[kWideK][T::BN];
@@ -529,7 +565,7 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_model_kernel(Problem p) {
   const bf16* B = p.b + (z / p.group) * p.stride_b;
   const long long c0 = z * p.stride_c;
   const int n0 = blockIdx.x * T::BN, m0 = blockIdx.y * T::BM;
-  const int ty = threadIdx.x / kWideTX, tx = threadIdx.x % kWideTX;
+  const int ty = threadIdx.x / TX, tx = threadIdx.x % TX;
   float acc[RM][RN];
 #pragma unroll
   for (int i = 0; i < RM; ++i)
@@ -803,24 +839,47 @@ inline int model_rows() {
   return rows;
 }
 #endif
-// The 128 x 128 kernel for products of more than LFM_GEMM_WIDE2_ROWS rows (0: never), wide_kernel below that. Both
-// give identical bits; the threshold is a matter of speed only.
-#ifndef LFM_GEMM_WIDE2_ROWS
-#define LFM_GEMM_WIDE2_ROWS 64
+// The plain prefill product: wide2_kernel, with as many rows per thread as the row count needs. -DLFM_GEMM_WIDE2=0
+// selects wide_kernel, the kernel it replaced, which gives identical bits (for measurement).
+#ifndef LFM_GEMM_WIDE2
+#define LFM_GEMM_WIDE2 1
+#endif
+#if !LFM_GEMM_PASTE(LFM_GEMM_DIGIT_, LFM_GEMM_WIDE2) || LFM_GEMM_WIDE2 > 1
+#error "LFM_GEMM_WIDE2 must be 0 or 1"
 #endif
 template <bool KC>
+inline void launch_wide2(const Problem& p, cudaStream_t stream) {
+  const auto go = [&](auto rm) {
+    constexpr int RM = decltype(rm)::value;
+    const dim3 grid((p.n + kW2N - 1) / kW2N, (p.m + 16 * RM - 1) / (16 * RM), p.batch);
+    wide2_kernel<RM, KC><<<grid, kW2Threads, 0, stream>>>(p);
+  };
+  if (p.m <= 16) go(std::integral_constant<int, 1>{});
+  else if (p.m <= 32) go(std::integral_constant<int, 2>{});
+  else if (p.m <= 64) go(std::integral_constant<int, 4>{});
+  else go(std::integral_constant<int, 8>{});
+}
+template <bool KC>
 inline void launch_wide_plain(const Problem& p, cudaStream_t stream) {
-  if (LFM_GEMM_WIDE2_ROWS > 0 && p.m > LFM_GEMM_WIDE2_ROWS) {
-    const dim3 grid((p.n + kW2N - 1) / kW2N, (p.m + kW2M - 1) / kW2M, p.batch);
-    wide2_kernel<KC><<<grid, kW2Threads, 0, stream>>>(p);
-    return;
-  }
+  if (LFM_GEMM_WIDE2) return launch_wide2<KC>(p, stream);
   for_wide_tile<LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, 4>(p.m, [&](auto ty) {
     constexpr int TY = decltype(ty)::value;
     using T = WideTile<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN>;
     const dim3 grid((p.n + T::BN - 1) / T::BN, (p.m + T::BM - 1) / T::BM, p.batch);
     wide_kernel<TY, LFM_GEMM_WIDE_RM, LFM_GEMM_WIDE_RN, KC><<<grid, T::THREADS, 0, stream>>>(p);
   });
+}
+// Position 0 alone: one row of outputs, one output per thread, LFM_GEMM_FIRST_TX threads per block (each output's
+// arithmetic is the model's whatever the block's shape; first_row_check holds it to the host model).
+#ifndef LFM_GEMM_FIRST_TX
+#define LFM_GEMM_FIRST_TX 32
+#endif
+template <bool KC>
+inline void launch_first_row_model(const Problem& p, cudaStream_t stream) {
+  using T = WideTile<1, 1, 1, LFM_GEMM_FIRST_TX>;
+  static_assert(kWideK * (T::BM + T::BN) * 6 + 2048 <= 48 * 1024, "the position-0 tile must fit shared memory");
+  const dim3 grid((p.n + T::BN - 1) / T::BN, 1, p.batch);
+  wide_model_kernel<1, 1, 1, KC, LFM_GEMM_FIRST_TX><<<grid, T::THREADS, 0, stream>>>(p);
 }
 template <bool KC>
 inline void launch_wide_model(const Problem& p, cudaStream_t stream) {
@@ -878,7 +937,7 @@ inline void launch_wide_base(const Problem& p, cudaStream_t stream) {
     Problem first = p;
     first.m = 1;
     first.keep_nonfinite = true;
-    launch_wide_model<KC>(first, stream);
+    launch_first_row_model<KC>(first, stream);
   }
 #endif
 #endif
