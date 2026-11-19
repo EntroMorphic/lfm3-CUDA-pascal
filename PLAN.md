@@ -36,6 +36,11 @@ must not change.
    `tools/ppl_compare.py` stays as imported and is still reported. A proposal for the Thor project, whose bar has
    the same property: [docs/proposal-perplexity-bar.md](docs/proposal-perplexity-bar.md).
 
+7. **The decode bar and the memory clock** (2026-11-18). The card's memory clock stays where the driver puts it
+   under compute load (4,513 MHz; the owner: "85% cap extends the life of the hardware"). The decode bar is 245 GB/s,
+   the read rate measured at that clock: a decode step may take what it must read at 245 GB/s plus 1.5 ms
+   ([speed-v1](validation/speed-v1/), rules 11 and 12, amended).
+
 ## The constraint
 
 | | MiB |
@@ -107,4 +112,4 @@ with red-team, remediate, verify, commit.
   rate. The cold-start slowdown was the driver re-initializing the card when nothing held it open; the host's
   persistence daemon now runs in persistence mode, permanently, by a systemd drop-in (2026-11-18, at the owner's
   instruction; confirmed across a reboot). Still open: the memory clock under compute load (4,513 MHz in state
-  P2 against 5,005 MHz in P0, about 10% of decode), for which no Linux switch was found.
+  P2 against 5,005 MHz in P0, about 10% of decode), for which no Linux switch was found. Closed by decision 7: the clock stays.
