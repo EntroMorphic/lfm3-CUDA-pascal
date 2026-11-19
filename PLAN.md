@@ -41,6 +41,17 @@ must not change.
    the read rate measured at that clock: a decode step may take what it must read at 245 GB/s plus 1.5 ms
    ([speed-v1](validation/speed-v1/), rules 11 and 12, amended).
 
+8. **Text serving** (2026-11-19, before phase 3's rules; [serve-v1](validation/serve-v1/)).
+   - *Control:* the reference's server checks run on both builds. The parity build is held to Thor's pinned 86-token
+     control unchanged; on the card it reproduces that control exactly, while the shipping build first differs at
+     token 58 (decision 5). The shipping build is held to its own CLI's output on the same request: the checks'
+     "accepted native control".
+   - *Build:* a text-only switch in `lfm3_worker.cu` leaves out speech, the batch decoder and vision, whose kernels
+     use Thor-only instructions. The HTTP layer and the host front ends stay as imported; phases 4 and 5 bring the
+     rest back.
+   - *Batching:* paired decode (`/generate_batch`) learns the compact window caches, so it works at the reference's
+     limits (2 sessions, 32,768 tokens in total), held to every logit bit equal to serial decode.
+
 ## The constraint
 
 | | MiB |
