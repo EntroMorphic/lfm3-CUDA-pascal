@@ -78,7 +78,8 @@ void expect(bool ok, const std::string& what) {
 }  // namespace
 
 int main() {
-  const Shape shapes[] = {{16, 2048, 96}, {9, 7680, 40}, {1, 2048, 33}, {8, 2048, 64}, {129, 128, 200}, {33, 2040, 17}, {40, 24, 9}};
+  // K and N are multiples of 8, as lfm::gemm requires; 2,040 and 24 are not multiples of the model's step of 16.
+  const Shape shapes[] = {{16, 2048, 96}, {9, 7680, 40}, {1, 2048, 32}, {8, 2048, 64}, {129, 128, 200}, {33, 2040, 16}, {40, 24, 8}};
   for (const Shape& s : shapes)
     for (int kc = 1; kc >= 0; --kc)
       for (int f32 = 0; f32 <= 1; ++f32) {
