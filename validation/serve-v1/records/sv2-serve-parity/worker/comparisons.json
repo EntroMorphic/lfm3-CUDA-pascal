@@ -1,0 +1,127 @@
+[
+  {
+    "case": "A-initial",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      12447
+    ],
+    "consumed_tokens": 34,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "ae8e2db8101c897dde1ecafedde4ba54e9b74938aa9959d3d7a151291afd619c"
+  },
+  {
+    "case": "B-isolated",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      12447
+    ],
+    "consumed_tokens": 35,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "c4d969c93203bd552364da813e6fd191f51933b1690fd132fa1e16a7cd8800b3"
+  },
+  {
+    "case": "A-after-B-and-error",
+    "bitwise_float_values": true,
+    "reused_tokens": 34,
+    "generated_ids": [
+      12447
+    ],
+    "consumed_tokens": 35,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "6155daf55f642bfc0e033626e0e4175bcd1204e78233d43e151d0ce0a9f422fe"
+  },
+  {
+    "case": "A-prefix-mismatch",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      124902
+    ],
+    "consumed_tokens": 3,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "e4adc9597e8a184cb8cf62dc7f31ff830c287e16de878cf85b969ef72fc2ff3d"
+  },
+  {
+    "case": "A-reset",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      12447
+    ],
+    "consumed_tokens": 34,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "ae8e2db8101c897dde1ecafedde4ba54e9b74938aa9959d3d7a151291afd619c"
+  },
+  {
+    "case": "A-multi-token",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      12447,
+      20,
+      43709,
+      91506
+    ],
+    "consumed_tokens": 37,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "d6cd2e9cdded45de8a3511ad6d3d2af297c0907d8d2dc1425e314a97a3767935"
+  },
+  {
+    "case": "A-reuse-generated-prefix",
+    "bitwise_float_values": true,
+    "reused_tokens": 37,
+    "generated_ids": [
+      9405
+    ],
+    "consumed_tokens": 39,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "d806aeb37d6e95a445d878ec9e55310dde9409082dc3569359bb2cfde682c956"
+  },
+  {
+    "case": "B-after-A-advances-and-resets",
+    "bitwise_float_values": true,
+    "reused_tokens": 35,
+    "generated_ids": [
+      9405
+    ],
+    "consumed_tokens": 36,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "47ecd9000b73bc1d91354885da62a88dcbfed13c0f26847bc5ea0fde76c0ab6f"
+  },
+  {
+    "case": "A-early-stop",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      3843,
+      124900
+    ],
+    "consumed_tokens": 32,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "99a9db49f8724e3cdff5c6345ba8f3538dc6f4acbca2bb8e2508c4db353a1bc2"
+  },
+  {
+    "case": "B-between-sampled-replays",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      12447
+    ],
+    "consumed_tokens": 35,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "c4d969c93203bd552364da813e6fd191f51933b1690fd132fa1e16a7cd8800b3"
+  },
+  {
+    "case": "resident32k-final-prediction",
+    "bitwise_float_values": true,
+    "reused_tokens": 0,
+    "generated_ids": [
+      229
+    ],
+    "consumed_tokens": 32767,
+    "final_prediction_unconsumed": true,
+    "logits_sha256": "06feeb47ae972103181909b5a12cb823f74d639bb583ba74a6bc9c56110a482e"
+  }
+]

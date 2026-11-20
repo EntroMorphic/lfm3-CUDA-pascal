@@ -1,0 +1,51 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+{
+  "status": "passed",
+  "worker_sha256": "d900db0effa3992375522d5fc9b17bfa0ebc3e9e8aa56f6d50191de5f0574981",
+  "bounded_admission_rounds": [
+    {
+      "round": 0,
+      "statuses": [
+        409,
+        409,
+        409,
+        409,
+        200,
+        409,
+        409,
+        200
+      ],
+      "post_contention_both_sessions_exact": true
+    },
+    {
+      "round": 1,
+      "statuses": [
+        409,
+        409,
+        200,
+        200,
+        409,
+        409,
+        409,
+        429
+      ],
+      "post_contention_both_sessions_exact": true
+    },
+    {
+      "round": 2,
+      "statuses": [
+        200,
+        409,
+        409,
+        409,
+        409,
+        200,
+        409,
+        409
+      ],
+      "post_contention_both_sessions_exact": true
+    }
+  ],
+  "listener": "temporary IPv4 loopback with random unrecorded bearer",
+  "scope": "finite native HTTP control/history/cache/auth/reset/fault and optional8-client admission fixtures; serialized inference, NOT GPU batching, cancellation or soak acceptance"
+}

@@ -1,0 +1,141 @@
+{
+  "limit_mib": 7740,
+  "configurations": [
+    {
+      "name": "one-32768",
+      "capacities": [
+        32768
+      ],
+      "prompts": [
+        32695
+      ],
+      "statuses": [
+        200
+      ],
+      "peak_mib": 6451,
+      "samples": 126,
+      "sampler_errors": 0,
+      "ok": true
+    },
+    {
+      "name": "4096+28672",
+      "capacities": [
+        4096,
+        28672
+      ],
+      "prompts": [
+        4030,
+        28628
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "peak_mib": 6833,
+      "samples": 120,
+      "sampler_errors": 0,
+      "ok": true
+    },
+    {
+      "name": "2048+30720",
+      "capacities": [
+        2048,
+        30720
+      ],
+      "prompts": [
+        1972,
+        30686
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "peak_mib": 6841,
+      "samples": 124,
+      "sampler_errors": 0,
+      "ok": true
+    },
+    {
+      "name": "16384+16384",
+      "capacities": [
+        16384,
+        16384
+      ],
+      "prompts": [
+        16329,
+        16329
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "peak_mib": 6469,
+      "samples": 103,
+      "sampler_errors": 0,
+      "ok": true
+    },
+    {
+      "name": "batch-4096+28672",
+      "capacities": [
+        4096,
+        28672
+      ],
+      "prompts": [
+        4030,
+        28628
+      ],
+      "statuses": [
+        200
+      ],
+      "gpu_batching": true,
+      "peak_mib": 6845,
+      "samples": 119,
+      "sampler_errors": 0,
+      "ok": true
+    }
+  ],
+  "refusals": [
+    {
+      "name": "third session",
+      "status": 429,
+      "error": "session_quota",
+      "control_after": true,
+      "ok": true
+    },
+    {
+      "name": "capacity over the total",
+      "status": 429,
+      "error": "session_quota",
+      "control_after": true,
+      "ok": true
+    },
+    {
+      "name": "prompt plus max_new_tokens over capacity",
+      "status": 400,
+      "error": "invalid_request",
+      "control_after": true,
+      "ok": true
+    },
+    {
+      "name": "full queue",
+      "status": 429,
+      "error": "queue_full",
+      "control_after": true,
+      "ok": true
+    }
+  ],
+  "status": "passed",
+  "before_mib": 2,
+  "calibration": {
+    "tokens_at_1": 61,
+    "tokens_at_11": 551
+  },
+  "full_queue_attempts": {
+    "pairs": 2,
+    "outcomes": {
+      "200 ok": 3,
+      "429 queue_full": 1
+    }
+  },
+  "server_exit": 0
+}

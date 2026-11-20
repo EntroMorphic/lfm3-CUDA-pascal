@@ -1,0 +1,12 @@
+native/src/lfm3_worker.cu:21:24: error: pasting "LFM3_WORKER_DIGIT_" and "-" does not give a valid preprocessing token
+   21 | #if !LFM3_WORKER_PASTE(LFM3_WORKER_DIGIT_, LFM3_TEXT_ONLY, _)
+      |                        ^~~~~~~~~~~~~~~~~~
+native/src/lfm3_worker.cu:17:37: note: in definition of macro ‘LFM3_WORKER_PASTE_’
+   17 | #define LFM3_WORKER_PASTE_(a, b, c) a##b##c
+      |                                     ^
+native/src/lfm3_worker.cu:21:6: note: in expansion of macro ‘LFM3_WORKER_PASTE’
+   21 | #if !LFM3_WORKER_PASTE(LFM3_WORKER_DIGIT_, LFM3_TEXT_ONLY, _)
+      |      ^~~~~~~~~~~~~~~~~
+native/src/lfm3_worker.cu:21:1: error: user-defined literal in preprocessor expression
+   21 | #if !LFM3_WORKER_PASTE(LFM3_WORKER_DIGIT_, LFM3_TEXT_ONLY, _)
+      | ^~

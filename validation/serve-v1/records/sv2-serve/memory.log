@@ -1,0 +1,10 @@
+rule 11 one-32768: prompts [32695] of [32768], statuses [200], peak 6451 MiB (126 samples): ok
+rule 11 4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200, 200], peak 6833 MiB (120 samples): ok
+rule 11 2048+30720: prompts [1972, 30686] of [2048, 30720], statuses [200, 200], peak 6841 MiB (124 samples): ok
+rule 11 16384+16384: prompts [16329, 16329] of [16384, 16384], statuses [200, 200], peak 6469 MiB (103 samples): ok
+rule 11 batch-4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200], peak 6845 MiB (119 samples): ok
+rule 12 third session: 429 session_quota, control after same ids: ok
+rule 12 capacity over the total: 429 session_quota, control after same ids: ok
+rule 12 prompt plus max_new_tokens over capacity: 400 invalid_request, control after same ids: ok
+rule 12 full queue: 429 queue_full, control after same ids: ok
+SERVE MEMORY (rules 11 and 12) PASS

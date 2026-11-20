@@ -1,0 +1,584 @@
+{
+  "status": "passed",
+  "worker_sha256": "a132986ecd4741329ab99e12d43d2c62cc016b01c43c7c44c573948feb71ddd4",
+  "records": [
+    {
+      "request": {
+        "op": "create",
+        "session_id": "A",
+        "capacity": 512
+      },
+      "response": {
+        "ok": true,
+        "session_id": "A"
+      }
+    },
+    {
+      "request": {
+        "op": "generate",
+        "session_id": "A",
+        "input_ids": [
+          124894,
+          124899,
+          23630,
+          207,
+          89056,
+          415,
+          2803,
+          22,
+          124900,
+          207,
+          124899,
+          5922,
+          207,
+          57892,
+          348,
+          3706,
+          1438,
+          20,
+          2223,
+          43709,
+          91506,
+          373,
+          267,
+          1446,
+          302,
+          40657,
+          39,
+          124900,
+          207,
+          124899,
+          63514,
+          207,
+          124901,
+          124902
+        ],
+        "max_new_tokens": 32
+      },
+      "response": {
+        "ok": true,
+        "session_id": "A",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "live_token_count": 125033
+      }
+    },
+    {
+      "request": {
+        "op": "create",
+        "session_id": "B",
+        "capacity": 512
+      },
+      "response": {
+        "ok": true,
+        "session_id": "B"
+      }
+    },
+    {
+      "request": {
+        "op": "generate",
+        "session_id": "B",
+        "input_ids": [
+          124894,
+          124899,
+          23630,
+          207,
+          89056,
+          415,
+          2803,
+          22,
+          124900,
+          207,
+          124899,
+          5922,
+          207,
+          57892,
+          348,
+          3706,
+          1438,
+          20,
+          2223,
+          43709,
+          91506,
+          373,
+          267,
+          1446,
+          302,
+          40657,
+          39,
+          124900,
+          207,
+          124899,
+          63514,
+          207,
+          124901,
+          124902
+        ],
+        "max_new_tokens": 32
+      },
+      "response": {
+        "ok": true,
+        "session_id": "B",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "live_token_count": 125033
+      }
+    },
+    {
+      "request": {
+        "op": "inspect",
+        "session_id": "B"
+      },
+      "response": {
+        "ok": true,
+        "capacity": 512,
+        "consumed_tokens": 65,
+        "committed_consumed_tokens": 65,
+        "transcript_tokens": 66,
+        "cache_valid": true,
+        "inflight": false
+      }
+    },
+    {
+      "request": {
+        "op": "inspect",
+        "session_id": "A"
+      },
+      "response": {
+        "ok": true,
+        "capacity": 512,
+        "consumed_tokens": 65,
+        "committed_consumed_tokens": 65,
+        "transcript_tokens": 66,
+        "cache_valid": true,
+        "inflight": false
+      }
+    },
+    {
+      "case": "running_cancel",
+      "response": {
+        "ok": true,
+        "session_id": "A",
+        "cancelled": true,
+        "cache_valid": false,
+        "consumed_tokens": 0,
+        "reused_tokens": 0,
+        "generated_ids": [
+          12447,
+          20,
+          43709
+        ],
+        "do_sample": false,
+        "seed": 0,
+        "live_token_count": 125033
+      }
+    },
+    {
+      "request": {
+        "op": "inspect",
+        "session_id": "A"
+      },
+      "response": {
+        "ok": true,
+        "capacity": 512,
+        "consumed_tokens": 0,
+        "committed_consumed_tokens": 65,
+        "transcript_tokens": 66,
+        "cache_valid": false,
+        "inflight": false
+      }
+    },
+    {
+      "request": {
+        "op": "inspect",
+        "session_id": "B"
+      },
+      "response": {
+        "ok": true,
+        "capacity": 512,
+        "consumed_tokens": 65,
+        "committed_consumed_tokens": 65,
+        "transcript_tokens": 66,
+        "cache_valid": true,
+        "inflight": false
+      }
+    },
+    {
+      "request": {
+        "op": "generate",
+        "session_id": "B",
+        "input_ids": [
+          124894,
+          124899,
+          23630,
+          207,
+          89056,
+          415,
+          2803,
+          22,
+          124900,
+          207,
+          124899,
+          5922,
+          207,
+          57892,
+          348,
+          3706,
+          1438,
+          20,
+          2223,
+          43709,
+          91506,
+          373,
+          267,
+          1446,
+          302,
+          40657,
+          39,
+          124900,
+          207,
+          124899,
+          63514,
+          207,
+          124901,
+          124902,
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "max_new_tokens": 1
+      },
+      "response": {
+        "ok": true,
+        "session_id": "B",
+        "generated_ids": [
+          923
+        ],
+        "reused_tokens": 65,
+        "consumed_tokens": 66,
+        "do_sample": false,
+        "seed": 0,
+        "live_token_count": 125033
+      }
+    },
+    {
+      "request": {
+        "op": "generate",
+        "session_id": "A",
+        "input_ids": [
+          124894,
+          124899,
+          23630,
+          207,
+          89056,
+          415,
+          2803,
+          22,
+          124900,
+          207,
+          124899,
+          5922,
+          207,
+          57892,
+          348,
+          3706,
+          1438,
+          20,
+          2223,
+          43709,
+          91506,
+          373,
+          267,
+          1446,
+          302,
+          40657,
+          39,
+          124900,
+          207,
+          124899,
+          63514,
+          207,
+          124901,
+          124902
+        ],
+        "max_new_tokens": 32
+      },
+      "response": {
+        "ok": true,
+        "session_id": "A",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "live_token_count": 125033
+      }
+    },
+    {
+      "case": "pre_dispatch_cancel",
+      "response": {
+        "ok": true,
+        "session_id": "A",
+        "cancelled": true,
+        "cache_valid": false,
+        "consumed_tokens": 0,
+        "reused_tokens": 0,
+        "generated_ids": [],
+        "do_sample": false,
+        "seed": 0,
+        "live_token_count": 125033
+      }
+    },
+    {
+      "request": {
+        "op": "generate",
+        "session_id": "A",
+        "input_ids": [
+          124894,
+          124899,
+          23630,
+          207,
+          89056,
+          415,
+          2803,
+          22,
+          124900,
+          207,
+          124899,
+          5922,
+          207,
+          57892,
+          348,
+          3706,
+          1438,
+          20,
+          2223,
+          43709,
+          91506,
+          373,
+          267,
+          1446,
+          302,
+          40657,
+          39,
+          124900,
+          207,
+          124899,
+          63514,
+          207,
+          124901,
+          124902
+        ],
+        "max_new_tokens": 32
+      },
+      "response": {
+        "ok": true,
+        "session_id": "A",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "live_token_count": 125033
+      }
+    },
+    {
+      "request": {
+        "op": "close",
+        "session_id": "A"
+      },
+      "response": {
+        "ok": true,
+        "closed": true
+      }
+    },
+    {
+      "request": {
+        "op": "close",
+        "session_id": "B"
+      },
+      "response": {
+        "ok": true,
+        "closed": true
+      }
+    },
+    {
+      "request": {
+        "op": "shutdown"
+      },
+      "response": {
+        "ok": true,
+        "shutdown": true
+      }
+    }
+  ],
+  "scope": "native completed-decode cancellation, pre-dispatch cancellation, stale IDs, cache abort, peer preservation and exact recovery; token boundaries only, no prefill/kernel preemption or latency SLA",
+  "observed_cancel_completion_seconds": 0.017389731016010046
+}
