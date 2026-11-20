@@ -1,0 +1,6 @@
+native/src/lfm3_worker.cu:20:2: error: #error "LFM3_TEXT_ONLY must be 0 or 1"
+   20 | #error "LFM3_TEXT_ONLY must be 0 or 1"
+      |  ^~~~~
+native/src/lfm3_worker.cu:22:49: error: operator '!' has no right operand
+   22 | #if defined(LFM3_NATIVE_GEMM) && !LFM3_TEXT_ONLY
+      |                                                 ^

@@ -1,0 +1,17 @@
+{
+  "generated_ids": [
+    12447,
+    20,
+    43709,
+    91506
+  ],
+  "expected_ids": [
+    12447,
+    20,
+    43709,
+    91506
+  ],
+  "reused_tokens": 0,
+  "expected_reused_tokens": 0,
+  "raw_float_logits_equal": true
+}

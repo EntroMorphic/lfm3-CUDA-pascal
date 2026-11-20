@@ -1,6 +1,10 @@
 # serve-v1: phase 3's bar
 
-Status: **rules set, not yet run** (2026-11-19).
+Status: **rule run done; 11 of 12 rules pass, rule 12 open** (2026-11-19). On the rule run (`job.sh`, tree `cdaa0ad`,
+builds `text-v33` and `parity-v33`) every rule passes but one case of rule 12: a full queue cannot be reached with
+text at the reference's two sessions, and the request it was meant to fill is refused first with 409 `session_busy`
+(the reference's answer for a busy session), not 400 or 429. The owner decides. Records: [records/](records/)
+(`SHA256SUMS` verified after the copy; the checks' logit traces are left on the card).
 
 Phase 3's exit gate (PLAN): "the reference's server checks pass; requests that would exceed memory are refused,
 never crash". Decision 8 (PLAN) sets how: both builds, a text-only server build, paired decode on the compact caches.
@@ -57,7 +61,8 @@ time: the worker check's 300 s limit on its 32K CLI reference, the grouped-worke
 32K pair, and the native-server check's batch cancellations (0.05 to 0.5 s), which all landed before its prefill
 ended. It passed the other five, among them every check against Thor's pinned control. For the parity build only,
 those three run with their timing scaled: 1,800 s limits, and cancellation delays from 1.0 to 2.0 s in steps of
-0.05 s after the reference's four (a first try with 1, 2, 4 and 8 s missed: decode ran between 1.0 and 2.0 s) (`*_parity.diff`). Every comparison is unchanged. The shipping build runs the reference's timing.
+0.05 s after the reference's four (a first try with 1, 2, 4 and 8 s missed: decode ran between 1.0 and 2.0 s) (`*_parity.diff`). Every
+comparison is unchanged. The shipping build runs the reference's timing.
 
 **Paired decode on the compact caches:**
 
@@ -84,3 +89,28 @@ CLI.
 - Rules 1 and 2 hold: the serial path is not touched.
 - The checks pass on both builds; the shipping build's control differs from the reference's from token 58.
 - The reference's limits fit: the worst configuration about 6.9 GB.
+
+## Results
+
+The rule run: `job.sh` (tree `cdaa0ad`), log `records/jobs/serve-v1.log`. The host suite on the same tree:
+`records/host-suite-cdaa0ad.txt`.
+
+| # | Rule | Result |
+|---|---|---|
+| 1 | Serial path unchanged | **Pass.** Parity gate 7,826 of 7,826. `liquid-lfm3` and `lfm3-score`: device code identical to `text-v32` in all 93 and 94 functions (`sv1-serve/*.sass-compare.txt`; `text-v32`'s NLL and long-decode results stand). Fixtures pass with the compact windows off and on; the sanitizer reports 0 errors on the fixtures and the 257- and 513-token compact sweep; boundary sweep 33 of 33. Host suite as recorded (2,397 passed, 5 skipped, 1 needing Transformers 5.x) |
+| 2 | Host side as imported | **Pass.** 21 host files (`lfm3_http.hpp`, the tokenizer, the text front ends, sessions, limits, cancellation, image front end, `lfm3_server.cu`, the Python server and front end) byte-identical to the import (`git diff fc130a3`: none). `LFM3_TEXT_ONLY=1` builds; `2`, `on`, `01` and empty stop the build |
+| 3-9 | The reference's serving checks | **Pass,** all eight on both builds (`sv1-serve-shipping/status.txt`, `sv1-serve-parity/status.txt`). The shipping build against its own control (87 tokens, differing from the pinned control from token 58, as predicted); the parity build against Thor's pinned control, with the amended timing |
+| 10 | Paired decode on the compact caches | **Pass.** Both lanes of all three pairs: 600 steps, ids and every BF16 and FP32 logit equal to serial decode |
+| 11 | Memory at the limits | **Pass,** every configuration filled (prompts within 73 tokens of capacity), no failure. Peak: 6,451 MiB (one of 32,768), 6,833 (4,096 + 28,672), 6,841 (2,048 + 30,720), 6,469 (16,384 + 16,384), 6,845 (`/generate_batch` on 4,096 + 28,672); limit 7,740 |
+| 12 | Past the limits | **Three of four.** Third session: 429 `session_quota`; capacity over the total: 429 `session_quota`; prompt plus `max_new_tokens` over capacity: 400 `invalid_request`; after each, the control gives the same ids. Full queue: not reachable. With `--queue-size 1`, while one session generated and the other waited, the only further text request is to a busy session, refused with 409 `session_busy`; the control then gave the same ids. `queue_full` (429) is covered by the host suite's server tests only |
+
+Recorded, not judged (`sv1-serve/speed.json`): the control through the CLI, 0.218 s of prefill and 15.3 ms per
+decode step (2.6 s of process wall time with the weights' load); through the server, warm, 1.58 s per request for the
+same 87 tokens (2.19 s for the first request after start).
+
+### Predictions against the measurements
+
+- Rules 1 and 2 held, and the serial path's device code did not change at all.
+- The checks pass on both builds, after the adaptations and the amendment above; the shipping build's control
+  differs from token 58, as predicted.
+- The worst configuration peaked at 6,845 MiB (predicted about 6.9 GB).

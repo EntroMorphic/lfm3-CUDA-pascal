@@ -1,0 +1,11 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+{
+  "status": "passed",
+  "worker_sha256": "52d5dd91a658ad13934c4138d8b541a4815b1d26388738a6d21334a42b93d0fe",
+  "source_sha256": {
+    "check_lfm3_http_cancellation.py": "7a42cf841d3ec28d19040b8a687d92c9cf212a1ad088b6ce35d68f51d2e1f2a2",
+    "lfm3_server.py": "0bf92f4ff61bd7c79704b3ab7f1be711b4b4c928e67dd2e5836dab9da33cec87",
+    "lfm3_worker_client.py": "dcbfd5d7de36c2dd5768f98f39d0972a652cf66bed7c05be622030ea89727f17"
+  },
+  "scope": "finite authenticated HTTP running cancellation, exact partial IDs, cache discard/history preservation, peer preservation and recovery; token-boundary only, no prefill/kernel preemption or latency guarantee"
+}

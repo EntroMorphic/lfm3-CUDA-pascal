@@ -1,0 +1,288 @@
+{
+  "status": "passed",
+  "worker_sha256": "549bf0e3b876118b912f8c0ad2077004141cd660a183c9ef152701780e9a199f",
+  "source_sha256": {
+    "check_lfm3_http_cancellation.py": "7a42cf841d3ec28d19040b8a687d92c9cf212a1ad088b6ce35d68f51d2e1f2a2",
+    "lfm3_server.py": "0bf92f4ff61bd7c79704b3ab7f1be711b4b4c928e67dd2e5836dab9da33cec87",
+    "lfm3_worker_client.py": "dcbfd5d7de36c2dd5768f98f39d0972a652cf66bed7c05be622030ea89727f17"
+  },
+  "records": [
+    {
+      "path": "/sessions",
+      "status": 200,
+      "response": {
+        "session_id": "STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe",
+        "capacity": 512,
+        "gpu_batching": false
+      }
+    },
+    {
+      "path": "/sessions",
+      "status": 200,
+      "response": {
+        "session_id": "1OStLOM-80MzQeSBVGVeGfl4PkRKw973",
+        "capacity": 512,
+        "gpu_batching": false
+      }
+    },
+    {
+      "path": "/generate",
+      "status": 200,
+      "response": {
+        "session_id": "STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe",
+        "text": "Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "gpu_batching": false,
+        "cancelled": false,
+        "cache_valid": true,
+        "finish_reason": "length"
+      }
+    },
+    {
+      "path": "/generate",
+      "status": 200,
+      "response": {
+        "session_id": "1OStLOM-80MzQeSBVGVeGfl4PkRKw973",
+        "text": "Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "gpu_batching": false,
+        "cancelled": false,
+        "cache_valid": true,
+        "finish_reason": "length"
+      }
+    },
+    {
+      "path": "/sessions/STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe/cancel",
+      "status": 401,
+      "response": {
+        "error": "unauthorized"
+      }
+    },
+    {
+      "path": "/sessions/STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe/cancel",
+      "status": 202,
+      "response": {
+        "session_id": "STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe",
+        "cancel_requested": true,
+        "gpu_batching": false
+      }
+    },
+    {
+      "path": "/generate",
+      "status": 200,
+      "response": {
+        "session_id": "STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe",
+        "text": "Yes, reflective",
+        "generated_ids": [
+          12447,
+          20,
+          43709
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 0,
+        "do_sample": false,
+        "seed": 0,
+        "gpu_batching": false,
+        "cancelled": true,
+        "cache_valid": false,
+        "finish_reason": "cancelled"
+      }
+    },
+    {
+      "path": "/sessions/STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe/cancel",
+      "status": 409,
+      "response": {
+        "error": "generation_not_active"
+      }
+    },
+    {
+      "path": "/generate",
+      "status": 200,
+      "response": {
+        "session_id": "STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe",
+        "text": "Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "gpu_batching": false,
+        "cancelled": false,
+        "cache_valid": true,
+        "finish_reason": "length"
+      }
+    },
+    {
+      "path": "/generate",
+      "status": 200,
+      "response": {
+        "session_id": "1OStLOM-80MzQeSBVGVeGfl4PkRKw973",
+        "text": "Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes",
+        "generated_ids": [
+          12447,
+          20,
+          43709,
+          91506,
+          355,
+          8586,
+          3691,
+          267,
+          7641,
+          5491,
+          302,
+          1994,
+          40657,
+          22,
+          810,
+          10834,
+          310,
+          278,
+          4477,
+          310,
+          2038,
+          836,
+          734,
+          589,
+          1562,
+          10846,
+          20,
+          14708,
+          20,
+          309,
+          22722,
+          6394
+        ],
+        "reused_tokens": 0,
+        "consumed_tokens": 65,
+        "do_sample": false,
+        "seed": 0,
+        "gpu_batching": false,
+        "cancelled": false,
+        "cache_valid": true,
+        "finish_reason": "length"
+      }
+    },
+    {
+      "path": "/sessions/STMiMoLhuXFShx7Rhuzc-bU-n74zNWUe/close",
+      "status": 200,
+      "response": {
+        "ok": true
+      }
+    },
+    {
+      "path": "/sessions/1OStLOM-80MzQeSBVGVeGfl4PkRKw973/close",
+      "status": 200,
+      "response": {
+        "ok": true
+      }
+    }
+  ],
+  "scope": "finite authenticated HTTP running cancellation, exact partial IDs, cache discard/history preservation, peer preservation and recovery; token-boundary only, no prefill/kernel preemption or latency guarantee"
+}

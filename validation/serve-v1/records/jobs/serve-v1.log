@@ -1,0 +1,247 @@
++ date
+Thu Nov 19 17:23:17 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ M=/workspace/build/sv1-serve
++ PY=/workspace/build/venv-ref/bin/python
++ '[' -e /workspace/build/sv1-serve ']'
++ mkdir -p /workspace/build/sv1-serve
++ flags='-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include'
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_serve.sh parity-v33
+liquid-lfm3: warnings 0, sha256 3d626de10153e6f63391c88d4fb83254dc87f641c56e03a190085e4c7ce6a793, 4667664 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 ee1c4cb91ec050d0c6e64a96c229b0a5f219c7354a891fa75e40e308a5ca7259, 4528824 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+liquid-lfm3-worker: warnings 6, sha256 52d5dd91a658ad13934c4138d8b541a4815b1d26388738a6d21334a42b93d0fe, 5175144 bytes
+liquid-lfm3-server: warnings 0, sha256 ce456a86ef91d94a5e7b69eaabdb4dab9ae3ac9687e72abf65af0c1898674edd, 5723736 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ echo 'build parity-v33 rc=0'
+build parity-v33 rc=0
++ python3 tools/pascal/compare_pins.py parity-v33
+binary 3d626de10153e6f63391c88d4fb83254dc87f641c56e03a190085e4c7ce6a793  Thor pins from binary a75e26b1f357e8bc
+baseline: 4816 of 4816 trace files equal to the Thor pins; argmax ids equal; files traced here 4816; prefill 0.76 s
+arithmetic: 602 of 602 trace files equal to the Thor pins; argmax ids equal; files traced here 602; prefill 0.47 s
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.34 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.03 s
+PINS EQUAL: 7826 files equal
+rule 1 gate rc=0
++ echo 'rule 1 gate rc=0'
++ tools/pascal/build_serve.sh text-v33
+liquid-lfm3: warnings 0, sha256 d3cc88a8cdf1b070df2df112202ef7524e6d9cf04d27df1b9e5f745a0769bbde, 4142280 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 c84aa99f1cd135d7f52122e305effa774b05f057d71365e5dde8132ebd1189e5, 4010784 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+liquid-lfm3-worker: warnings 6, sha256 549bf0e3b876118b912f8c0ad2077004141cd660a183c9ef152701780e9a199f, 4658016 bytes
+liquid-lfm3-server: warnings 0, sha256 2ec69094e6e783819019bc8eef63e818d507f5e7c3e1b9373f8997e3a83f8601, 5206248 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
+build text-v33 rc=0
++ echo 'build text-v33 rc=0'
++ for f in liquid-lfm3 lfm3-score
++ for v in 32 33
++ cuobjdump -sass /workspace/build/text-v32/liquid-lfm3
++ for v in 32 33
++ cuobjdump -sass /workspace/build/text-v33/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sv1-serve/liquid-lfm3.32.sass /workspace/build/sv1-serve/liquid-lfm3.33.sass
+++ head -1 /workspace/build/sv1-serve/liquid-lfm3.sass-compare.txt
+rule 1 liquid-lfm3 device code against text-v32 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 1 liquid-lfm3 device code against text-v32 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score
++ for v in 32 33
++ cuobjdump -sass /workspace/build/text-v32/lfm3-score
++ for v in 32 33
++ cuobjdump -sass /workspace/build/text-v33/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sv1-serve/lfm3-score.32.sass /workspace/build/sv1-serve/lfm3-score.33.sass
+++ head -1 /workspace/build/sv1-serve/lfm3-score.sass-compare.txt
++ echo 'rule 1 lfm3-score device code against text-v32 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ sha256sum /workspace/build/sv1-serve/lfm3-score.32.sass /workspace/build/sv1-serve/lfm3-score.33.sass /workspace/build/sv1-serve/liquid-lfm3.32.sass /workspace/build/sv1-serve/liquid-lfm3.33.sass
+rule 1 lfm3-score device code against text-v32 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ gzip -9 /workspace/build/sv1-serve/lfm3-score.32.sass /workspace/build/sv1-serve/lfm3-score.33.sass /workspace/build/sv1-serve/liquid-lfm3.32.sass /workspace/build/sv1-serve/liquid-lfm3.33.sass
++ tools/pascal/run_text_fixtures.sh text-v33 2
+binary d3cc88a8cdf1b070df2df112202ef7524e6d9cf04d27df1b9e5f745a0769bbde  tree 03785a83cce75348 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.217 s, decode 0.240 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.212 s, decode 0.017 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.339 s, decode 0.049 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.048 s / 3 calls
+FIXTURES PASS
+rule 1 fixtures rc=0
++ echo 'rule 1 fixtures rc=0'
++ LFM3_COMPACT_WINDOWS=1
++ tools/pascal/run_text_fixtures.sh text-v33 2
+binary d3cc88a8cdf1b070df2df112202ef7524e6d9cf04d27df1b9e5f745a0769bbde  tree 03785a83cce75348 (gemm.cuh)
+baseline: ids MATCH (16), runs identical, reset ok, input 34 tokens, prefill 0.216 s, decode 0.239 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs identical, reset ok, input 31 tokens, prefill 0.213 s, decode 0.017 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs identical, reset ok, input 257 tokens, prefill 0.340 s, decode 0.049 s / 3 calls
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.048 s / 3 calls
+FIXTURES PASS
++ echo 'rule 1 fixtures compact rc=0'
++ tools/pascal/run_text_fixtures.sh text-v33 1 /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+rule 1 fixtures compact rc=0
+binary d3cc88a8cdf1b070df2df112202ef7524e6d9cf04d27df1b9e5f745a0769bbde  tree 03785a83cce75348 (gemm.cuh)
+baseline: ids MATCH (16), runs one run, reset ok, input 34 tokens, prefill 6.923 s, decode 3.325 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs one run, reset ok, input 31 tokens, prefill 6.892 s, decode 0.223 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs one run, reset ok, input 257 tokens, prefill 10.605 s, decode 0.712 s / 3 calls
+single: ids MATCH (4), runs one run, reset ok, input 1 tokens, prefill 0.221 s, decode 0.646 s / 3 calls
+FIXTURES PASS
+rule 1 memcheck fixtures rc=0
++ echo 'rule 1 memcheck fixtures rc=0'
++ STEPS=24
++ PROMPTS='257 513'
++ XPROMPTS=
++ tools/pascal/boundary_sweep.sh text-v33 sv1-serve-memcheck-sweep /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+binary d3cc88a8cdf1b070df2df112202ef7524e6d9cf04d27df1b9e5f745a0769bbde  /workspace/build/text-v33/liquid-lfm3
+c4097-p257: 25 steps; IDENTICAL ok
+c4096-p257: 25 steps; IDENTICAL ok
+c4097-p513: 25 steps; IDENTICAL ok
+c4096-p513: 25 steps; IDENTICAL ok
+pairs run 4, ok 4
+BOUNDARY SWEEP PASS
+rule 1 memcheck sweep rc=0
++ echo 'rule 1 memcheck sweep rc=0'
++ tools/pascal/boundary_sweep.sh text-v33 sv1-serve-sweep
+binary d3cc88a8cdf1b070df2df112202ef7524e6d9cf04d27df1b9e5f745a0769bbde  /workspace/build/text-v33/liquid-lfm3
+c4097-p1: 601 steps; IDENTICAL ok
+c4096-p1: 601 steps; IDENTICAL ok
+c4097-p2: 601 steps; IDENTICAL ok
+c4096-p2: 601 steps; IDENTICAL ok
+c4097-p8: 601 steps; IDENTICAL ok
+c4096-p8: 601 steps; IDENTICAL ok
+c4097-p9: 601 steps; IDENTICAL ok
+c4096-p9: 601 steps; IDENTICAL ok
+c4097-p255: 601 steps; IDENTICAL ok
+c4096-p255: 601 steps; IDENTICAL ok
+c4097-p256: 601 steps; IDENTICAL ok
+c4096-p256: 601 steps; IDENTICAL ok
+c4097-p257: 601 steps; IDENTICAL ok
+c4096-p257: 601 steps; IDENTICAL ok
+c4097-p258: 601 steps; IDENTICAL ok
+c4096-p258: 601 steps; IDENTICAL ok
+c4097-p511: 601 steps; IDENTICAL ok
+c4096-p511: 601 steps; IDENTICAL ok
+c4097-p512: 601 steps; IDENTICAL ok
+c4096-p512: 601 steps; IDENTICAL ok
+c4097-p513: 601 steps; IDENTICAL ok
+c4096-p513: 601 steps; IDENTICAL ok
+c4097-p767: 601 steps; IDENTICAL ok
+c4096-p767: 601 steps; IDENTICAL ok
+c4097-p768: 601 steps; IDENTICAL ok
+c4096-p768: 601 steps; IDENTICAL ok
+c4097-p769: 601 steps; IDENTICAL ok
+c4096-p769: 601 steps; IDENTICAL ok
+c4097-p1025: 601 steps; IDENTICAL ok
+c4096-p1025: 601 steps; IDENTICAL ok
+x4097-4096-p9: 601 steps; IDENTICAL (information)
+x4097-4096-p129: 601 steps; IDENTICAL (information)
+x4097-4096-p136: 601 steps; IDENTICAL (information)
+x4097-4096-p137: 601 steps; IDENTICAL (information)
+x4097-4096-p257: 601 steps; IDENTICAL (information)
+x4097-4096-p300: 601 steps; IDENTICAL (information)
+x4097-4096-p513: 601 steps; IDENTICAL (information)
+x4097-4096-p1025: 601 steps; IDENTICAL (information)
+x4097-4096-p2049: 601 steps; IDENTICAL (information)
+x4097-4096-p3329: 601 steps; IDENTICAL (information)
+fill-teacher: 601 steps; IDENTICAL ok
+fill-generate: 600 steps; IDENTICAL ok
+fill-prompt: 1 steps; IDENTICAL ok
+pairs run 33, ok 33
+BOUNDARY SWEEP PASS
++ echo 'rule 1 sweep rc=0'
+rule 1 sweep rc=0
++ for v in 1 2 on 01 ""
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM3_TEXT_ONLY=1 -I /workspace/build/ljt-3.2.0/ljt/include -c -o /workspace/build/sv1-serve/switch.o native/src/lfm3_worker.cu
+++ grep -o 'LFM3_TEXT_ONLY must be 0 or 1' /workspace/build/sv1-serve/switch.log
+++ head -1
+rule 2 LFM3_TEXT_ONLY='1' build rc=0 
++ echo 'rule 2 LFM3_TEXT_ONLY='\''1'\'' build rc=0 '
++ for v in 1 2 on 01 ""
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM3_TEXT_ONLY=2 -I /workspace/build/ljt-3.2.0/ljt/include -c -o /workspace/build/sv1-serve/switch.o native/src/lfm3_worker.cu
+++ grep -o 'LFM3_TEXT_ONLY must be 0 or 1' /workspace/build/sv1-serve/switch.log
+++ head -1
+rule 2 LFM3_TEXT_ONLY='2' build rc=1 LFM3_TEXT_ONLY must be 0 or 1
++ echo 'rule 2 LFM3_TEXT_ONLY='\''2'\'' build rc=1 LFM3_TEXT_ONLY must be 0 or 1'
++ for v in 1 2 on 01 ""
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM3_TEXT_ONLY=on -I /workspace/build/ljt-3.2.0/ljt/include -c -o /workspace/build/sv1-serve/switch.o native/src/lfm3_worker.cu
+++ grep -o 'LFM3_TEXT_ONLY must be 0 or 1' /workspace/build/sv1-serve/switch.log
+++ head -1
+rule 2 LFM3_TEXT_ONLY='on' build rc=1 LFM3_TEXT_ONLY must be 0 or 1
++ echo 'rule 2 LFM3_TEXT_ONLY='\''on'\'' build rc=1 LFM3_TEXT_ONLY must be 0 or 1'
++ for v in 1 2 on 01 ""
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM3_TEXT_ONLY=01 -I /workspace/build/ljt-3.2.0/ljt/include -c -o /workspace/build/sv1-serve/switch.o native/src/lfm3_worker.cu
+++ grep -o 'LFM3_TEXT_ONLY must be 0 or 1' /workspace/build/sv1-serve/switch.log
+++ head -1
+rule 2 LFM3_TEXT_ONLY='01' build rc=1 LFM3_TEXT_ONLY must be 0 or 1
++ echo 'rule 2 LFM3_TEXT_ONLY='\''01'\'' build rc=1 LFM3_TEXT_ONLY must be 0 or 1'
++ for v in 1 2 on 01 ""
++ nvcc -O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -I native/include -DLFM3_TEXT_ONLY= -I /workspace/build/ljt-3.2.0/ljt/include -c -o /workspace/build/sv1-serve/switch.o native/src/lfm3_worker.cu
+++ grep -o 'LFM3_TEXT_ONLY must be 0 or 1' /workspace/build/sv1-serve/switch.log
+++ head -1
+rule 2 LFM3_TEXT_ONLY='' build rc=1 LFM3_TEXT_ONLY must be 0 or 1
++ echo 'rule 2 LFM3_TEXT_ONLY='\'''\'' build rc=1 LFM3_TEXT_ONLY must be 0 or 1'
++ rm -f /workspace/build/sv1-serve/switch.o
++ tools/pascal/serve_gates.sh text-v33 sv1-serve-shipping own
+own control: 87 tokens; first differs from the pinned control at token 58
+sampling rc=0 24 s
+worker rc=0 77 s
+grouped-worker rc=0 74 s
+server rc=0 29 s
+cancellation rc=0 5 s
+http-cancellation rc=0 6 s
+http-batch rc=0 612 s
+native-server rc=0 113 s
+SERVE GATES PASS (text-v33, control own)
+rules 3-9 shipping rc=0
++ echo 'rules 3-9 shipping rc=0'
++ tools/pascal/serve_gates.sh parity-v33 sv1-serve-parity pinned
+sampling rc=0 31 s
+worker rc=0 885 s
+grouped-worker rc=0 886 s
+server rc=0 37 s
+cancellation rc=0 7 s
+http-cancellation rc=0 9 s
+http-batch rc=0 622 s
+native-server rc=0 201 s
+SERVE GATES PASS (parity-v33, control pinned)
++ echo 'rules 3-9 parity rc=0'
++ python3 tools/pascal/paired_decode_check.py /workspace/build/text-v33/liquid-lfm3-worker /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 /workspace/build/sv1-serve/paired
+rules 3-9 parity rc=0
++ echo 'rule 10 rc=0'
++ grep -E 'lane|PAIRED' /workspace/build/sv1-serve/paired.log
+rule 10 rc=0
+capacity 4097 prompt 3400: lane A: 600 steps, ids equal, traces equal: ok
+capacity 4097 prompt 3400: lane B: 600 steps, ids equal, traces equal: ok
+capacity 8192 prompt 7500: lane A: 600 steps, ids equal, traces equal: ok
+capacity 8192 prompt 7500: lane B: 600 steps, ids equal, traces equal: ok
+capacity 28672 prompt 28000: lane A: 600 steps, ids equal, traces equal: ok
+capacity 28672 prompt 28000: lane B: 600 steps, ids equal, traces equal: ok
+PAIRED DECODE (rule 10) PASS
++ /workspace/build/venv-ref/bin/python tools/pascal/serve_memory.py /workspace/build/text-v33/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sv1-serve-shipping/control.output.json /workspace/build/sv1-serve/memory
++ echo 'rules 11-12 rc=0'
++ grep -E 'rule|SERVE' /workspace/build/sv1-serve/memory.log
+rules 11-12 rc=0
+rule 11 one-32768: prompts [32695] of [32768], statuses [200], peak 6451 MiB: ok
+rule 11 4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200, 200], peak 6833 MiB: ok
+rule 11 2048+30720: prompts [1972, 30686] of [2048, 30720], statuses [200, 200], peak 6841 MiB: ok
+rule 11 16384+16384: prompts [16329, 16329] of [16384, 16384], statuses [200, 200], peak 6469 MiB: ok
+rule 11 batch-4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200], peak 6845 MiB: ok
+rule 12 third session: 429 session_quota, control after same ids: ok
+rule 12 capacity over the total: 429 session_quota, control after same ids: ok
+rule 12 prompt plus max_new_tokens over capacity: 400 invalid_request, control after same ids: ok
+rule 12 full queue (or the session lease first): 409 session_busy, control after same ids: ok
+SERVE MEMORY (rules 11 and 12) PASS
++ /workspace/build/venv-ref/bin/python - /workspace/build/text-v33 /workspace/build/sv1-serve
+speed CLI: 87 tokens, prefill 0.218 s, decode 15.31 ms per token, process wall 2.60 s
+speed CLI: 87 tokens, prefill 0.218 s, decode 15.32 ms per token, process wall 2.61 s
+speed CLI: 87 tokens, prefill 0.218 s, decode 15.32 ms per token, process wall 2.61 s
+speed server (warm): 87 tokens, request wall 1.582 s
+speed server (warm): 87 tokens, request wall 1.582 s
+speed server (warm): 87 tokens, request wall 1.582 s
+speed record rc=0
++ echo 'speed record rc=0'
++ date
+Thu Nov 19 18:56:24 MST 2026

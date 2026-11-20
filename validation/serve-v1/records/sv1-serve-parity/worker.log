@@ -1,0 +1,11 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+{
+  "status": "passed",
+  "preflight_only": false,
+  "worker_sha256": "52d5dd91a658ad13934c4138d8b541a4815b1d26388738a6d21334a42b93d0fe",
+  "single_sha256": "3d626de10153e6f63391c88d4fb83254dc87f641c56e03a190085e4c7ce6a793",
+  "resident32k_checked": true,
+  "resident_sampling_logit_replay": true,
+  "oracle_sha256": "ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9",
+  "scope": "single-threaded resident cache isolation/prefix/lifecycle; not GPU batching or concurrent cancellation"
+}
