@@ -1,10 +1,8 @@
 # serve-v1: phase 3's bar
 
-Status: **rule run done; 11 of 12 rules pass, rule 12 open** (2026-11-19). On the rule run (`job.sh`, tree `cdaa0ad`,
-builds `text-v33` and `parity-v33`) every rule passes but one case of rule 12: a full queue cannot be reached with
-text at the reference's two sessions, and the request it was meant to fill is refused first with 409 `session_busy`
-(the reference's answer for a busy session), not 400 or 429. The owner decides. Records: [records/](records/)
-(`SHA256SUMS` verified after the copy; the checks' logit traces are left on the card).
+Status: **rules pass** (2026-11-19); red team to follow. On the rule run (`job.sh`, tree `cdaa0ad`, builds `text-v33`
+and `parity-v33`) rules 1 to 11 pass, and rule 12 passes with its full-queue case judged unreachable by the owner
+(below). Records: [records/](records/) (`SHA256SUMS` verified after the copy; the checks' logit traces are left on the card).
 
 Phase 3's exit gate (PLAN): "the reference's server checks pass; requests that would exceed memory are refused,
 never crash". Decision 8 (PLAN) sets how: both builds, a text-only server build, paired decode on the compact caches.
@@ -102,11 +100,22 @@ The rule run: `job.sh` (tree `cdaa0ad`), log `records/jobs/serve-v1.log`. The ho
 | 3-9 | The reference's serving checks | **Pass,** all eight on both builds (`sv1-serve-shipping/status.txt`, `sv1-serve-parity/status.txt`). The shipping build against its own control (87 tokens, differing from the pinned control from token 58, as predicted); the parity build against Thor's pinned control, with the amended timing |
 | 10 | Paired decode on the compact caches | **Pass.** Both lanes of all three pairs: 600 steps, ids and every BF16 and FP32 logit equal to serial decode |
 | 11 | Memory at the limits | **Pass,** every configuration filled (prompts within 73 tokens of capacity), no failure. Peak: 6,451 MiB (one of 32,768), 6,833 (4,096 + 28,672), 6,841 (2,048 + 30,720), 6,469 (16,384 + 16,384), 6,845 (`/generate_batch` on 4,096 + 28,672); limit 7,740 |
-| 12 | Past the limits | **Three of four.** Third session: 429 `session_quota`; capacity over the total: 429 `session_quota`; prompt plus `max_new_tokens` over capacity: 400 `invalid_request`; after each, the control gives the same ids. Full queue: not reachable. With `--queue-size 1`, while one session generated and the other waited, the only further text request is to a busy session, refused with 409 `session_busy`; the control then gave the same ids. `queue_full` (429) is covered by the host suite's server tests only |
+| 12 | Past the limits | **Pass** (owner, 2026-11-19: the full-queue case unreachable). Third session: 429 `session_quota`; capacity over the total: 429 `session_quota`; prompt plus `max_new_tokens` over capacity: 400 `invalid_request`; after each, the control gives the same ids. Full queue: with `--queue-size 1`, while one session generated and the other waited, the only further text request went to a busy session and was refused with 409 `session_busy`; the control then gave the same ids |
 
 Recorded, not judged (`sv1-serve/speed.json`): the control through the CLI, 0.218 s of prefill and 15.3 ms per
 decode step (2.6 s of process wall time with the weights' load); through the server, warm, 1.58 s per request for the
 same 87 tokens (2.19 s for the first request after start).
+
+### Rule 12's full queue (owner, 2026-11-19)
+
+A full queue cannot occur in the text-only server at the reference's limits. The imported HTTP layer accepts
+`--max-sessions` 1 to 2 only (`lfm3_http.hpp`, held as imported by rule 2); a job leaves the queue when it starts
+running, so only waiting jobs count against `queue_size` (at least 1); every queued text operation holds its
+session's lease or, for `create`, a place in the session quota; and the text-only build refuses `/speech` with 501
+before the queue. So while one session's job runs, at most one job (the other session's) can wait, and any further
+request is refused first: 409 `session_busy`, 429 `session_quota` or 501. The owner first chose to force a full queue;
+that needs more than two sessions or speech, which the host side as imported does not allow, and the owner then
+judged the case unreachable. 429 `queue_full` remains covered by the host suite's server tests on a fake engine.
 
 ### Predictions against the measurements
 
