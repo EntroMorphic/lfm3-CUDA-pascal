@@ -52,6 +52,19 @@ must not change.
    - *Batching:* paired decode (`/generate_batch`) learns the compact window caches, so it works at the reference's
      limits (2 sessions, 32,768 tokens in total), held to every logit bit equal to serial decode.
 
+9. **Speech** (2026-11-20, before phase 4's rules; [speech-v1](validation/speech-v1/)).
+   - *Parity:* the parity build must reproduce the Thor engine's speech byte for byte, on the clips of the
+     reference's blind listening sets and on LibriSpeech's word errors; then the reference's speech results hold for
+     it as they stand.
+   - *Shipping:* the shipping build's speech is judged as the reference judged its own: Whisper WER per case against
+     HF's committed transcripts, endings and length, the owner's blind listening (the final gate), and audio in's
+     corpus WER against HF.
+   - *The scorer:* Whisper large-v3 at the reference's pinned revision runs on the GTX 1080 when the engine is not
+     running (the owner: "Let's run it on the GTX while the GTX is free."), in its own environment, and first must
+     reproduce the committed transcripts.
+   - *Build:* the batch decoder runs on `lfm::gemm`'s prefill kernel at every row count; vision stays out until
+     phase 5 (`LFM3_VISION=0`).
+
 ## The constraint
 
 | | MiB |
@@ -98,6 +111,7 @@ with red-team, remediate, verify, commit.
 | Red team | passed 2026-11-18 ([red-team-1](validation/red-team-1/)): two rounds of independent review of everything written since the import; every finding fixed; recorded results unchanged byte for byte |
 | 2 | closed 2026-11-19 by the owner with rule 12 failed ([speed-v1](validation/speed-v1/)): 13 of 14 rules pass. Prefill 3.4 times faster at 4,096 tokens, 3.1 at 32,768, 2.7 at 257, 2 at 32; decode 1% faster at 1,000 tokens (at the 245 GB/s bar, decision 7) and 16% at 31,000, where it misses its bar by 0.18 ms; outputs unchanged; no more memory. Carried: position 0 still costs about 150 ms per prefill |
 | 3 | passed 2026-11-19 ([serve-v1](validation/serve-v1/)), red team done. The reference's eight serving checks pass on both builds (parity against Thor's pinned control); paired decode serves the compact caches, equal to serial in every logit bit; every admissible configuration fits (peak 6,845 MiB); refusals past the limits, a full queue included (429 `queue_full`, measured after the red team disproved the earlier claim that it was unreachable), leave the server serving |
+| 4 | rules set 2026-11-20 ([speech-v1](validation/speech-v1/)); development |
 
 ## Parking list
 

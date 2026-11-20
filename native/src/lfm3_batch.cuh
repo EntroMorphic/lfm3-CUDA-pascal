@@ -7,21 +7,26 @@
 // row through each layer at once, so each weight is read once per step for all rows.
 //
 // Row independence (the batch gate): a row's tokens do not depend on which rows share its batch, or how many.
-// - Projections use lfm::gemm's wide (tensor-core) kernel at every row count; its per-element arithmetic does not
-//   depend on M (bench/lfm3_decode_gemm_bench.cu checks it bitwise). The serial runner's decode uses thin (M <= 8),
-//   so a row here is not bitwise the serial runner's decode; it is its own engine path, gated on its own.
+// - Projections use lfm::gemm's prefill kernel at every row count (Problem::wide): in the parity build
+//   (LFM_GEMM_TENSOR_CORE_MODEL) the tensor-core model, the arithmetic of the Thor engine's wide kernel, which this file
+//   launched there in a tile shape chosen by row count (every shape the same k16 steps in the same order); in the
+//   shipping build the plain prefill kernel. Either way each output's arithmetic does not depend on M. The serial
+//   runner's decode uses thin (M <= 8), so a row here is not bitwise the serial runner's decode; it is its own engine
+//   path, gated on its own.
 // - Norms run each row with the one-row block width (the serial decode's), not the row-count-dependent one.
 // - Attention is split-K over fixed 256-key splits relative to the row's first key, combined in split order: it
 //   depends only on the row's own cache and position.
 // - Token selection runs on the device, one block per row, in index order.
 // Attention keeps scores, the online softmax and P.V in FP32 (the serial path rounds probabilities to BF16 for P.V).
+// Pascal port (validation/speech-v1): the Thor tile table and the compressed weights (gemm_lossless.cuh, LFM3_LOSSLESS=1,
+// cp.async and the tensor cores) are left out; LFM3_LOSSLESS=1 is refused rather than ignored.
 #include <lfm/gemm.cuh>
-#include <lfm/gemm_lossless.cuh>
 
 #include <climits>
 #include <cstdint>
 #include <type_traits>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace lfm3_batch {
@@ -29,23 +34,9 @@ namespace lfm3_batch {
 constexpr int kSplit = 256;   // keys per attention split
 constexpr int kGroupMax = 8;  // query heads per KV head supported by the attention kernel
 
-// Y = X W^T (+ FP32 output): the wide kernel whatever the row count, in the tile shape measured fastest for the
-// projection and row bucket (native/bench/lfm3_decode_tile_sweep.cu, Thor, distinct weights per instance). Every tile
-// shape accumulates each output over the same k16 steps in the same order, so the choice never changes a value
-// (the sweep checks it bitwise); a tile's row count is at least the batch's, so weights are read once per step.
-namespace tiles {
-using lfm::gemm::detail::Tile;
-using S16 = Tile<16, 64, 64, 1, 4, 8>;    // narrow outputs and the 2048-wide projections, rows <= 16
-using C32 = Tile<32, 64, 64, 1, 4, 6>;    // 2048 x 2048 and the long-K down projection
-using W32 = Tile<32, 128, 64, 2, 2, 6>;   // wide outputs (MLP up, LM head), rows <= 32
-using N32 = Tile<32, 64, 64, 2, 2, 6>;    // the long-K down projection, rows 17..32
-using A64 = Tile<64, 64, 64, 2, 2, 4>;    // MLP up, rows 33..64
-using B64 = Tile<64, 64, 64, 4, 2, 4>;    // 2048-wide and the down projection, rows 33..64
-using H64 = Tile<64, 128, 64, 2, 2, 3>;   // conv input and LM head, rows 33..64
-}  // namespace tiles
 // Split-K for long reductions: K is cut into `splits` equal slices (a function of K alone, never of the batch), each
-// slice's FP32 partial is the wide kernel over that slice (the slices ride on its batch dimension), and the partials
-// are added in slice order. More blocks in flight for the 2048-wide, 7680-deep down projection.
+// slice's FP32 partial is the prefill kernel over that slice (the slices ride on its batch dimension), and the partials
+// are added in slice order. Off unless LFM3_BATCH_SPLITK asks for it.
 __global__ void sum_splits(const float* parts, int splits, size_t count, bf16* y, float* y32) {
   const size_t i = size_t(blockIdx.x) * blockDim.x + threadIdx.x;
   if (i >= count) return;
@@ -68,56 +59,18 @@ inline float* split_workspace(size_t floats) {
   }
   return p;
 }
-inline void linear_tiled(const lfm::gemm::Problem& p, int rows, int in, int out);
-// LFM3_LOSSLESS=1: weights packed by pack_model() are read compressed (bitwise the same outputs).
+// LFM3_LOSSLESS=1 (the Thor engine's compressed weights) is not built here.
 inline bool lossless_enabled() {
   static const bool on = [] { const char* v = std::getenv("LFM3_LOSSLESS"); return v && std::string(v) == "1"; }();
   return on;
 }
-// Lossless tiles, measured (lfm3_lossless_check, Thor): the decode needs resident warps, so smaller, shallower tiles
-// than the plain table. Above 32 rows the plain kernel is used (not yet measured for lossless).
-using LosslessS = lfm::gemm::detail::Tile<16, 64, 64, 1, 4, 3>;  // rows <= 16: 16.5 vs 19.2 ms a step's projections
-using LosslessM = lfm::gemm::detail::Tile<32, 64, 64, 2, 4, 3>;  // rows <= 32: 17.1 vs 19.3 ms
-template <class T>
-inline void launch(const lfm::gemm::Problem& p) {
-  if (lossless_enabled() && p.m <= 32) {
-    auto& table = lfm::gemm::packed_weights();
-    auto it = table.find(p.b);
-    if (it != table.end()) {
-      if (p.m <= 16) return lfm::gemm::detail::launch_wide_lossless<LosslessS>(p, it->second, 0);
-      return lfm::gemm::detail::launch_wide_lossless<LosslessM>(p, it->second, 0);
-    }
-  }
-  lfm::gemm::detail::launch_wide<T, true>(p, 0);
+inline std::pair<size_t, size_t> pack_model(Runner&) {
+  if (lossless_enabled()) throw std::runtime_error("LFM3_LOSSLESS=1: compressed weights are not built for this GPU");
+  return {0, 0};
 }
-// Packs every projection and the tied LM head once (LFM3_LOSSLESS=1). Returns the packed and the original bytes.
-inline std::pair<size_t, size_t> pack_model(Runner& base) {
-  static std::pair<size_t, size_t> done{0, 0};
-  if (!lossless_enabled() || done.second) return done;
-  const auto& s = base.s;
-  auto add = [&](const std::string& name, int n, int k) {
-    const bf16* w = base.w(name);
-    if (lfm::gemm::packed_weights().count(w)) return;
-    auto packed = lfm::gemm::pack(w, n, k);
-    done.second += size_t(n) * k * 2;
-    if (packed) lfm::gemm::packed_weights()[w] = packed, done.first += size_t(n) * k * 104 / 64;
-    else done.first += size_t(n) * k * 2;
-  };
-  for (int i = 0; i < s.layers; ++i) {
-    const std::string p = "layers." + std::to_string(i) + ".";
-    if (base.config.attention[i]) {
-      add(p + "self_attn.q_proj.weight", s.hidden, s.hidden); add(p + "self_attn.o_proj.weight", s.hidden, s.hidden);
-      add(p + "self_attn.k_proj.weight", s.kv_width(), s.hidden); add(p + "self_attn.v_proj.weight", s.kv_width(), s.hidden);
-      add(p + "self_attn.gate_proj.weight", s.query_heads, s.hidden);
-    } else {
-      add(p + "conv.in_proj.weight", 3 * s.hidden, s.hidden); add(p + "conv.out_proj.weight", s.hidden, s.hidden);
-    }
-    add(p + "feed_forward.w1.weight", s.mlp, s.hidden); add(p + "feed_forward.w3.weight", s.mlp, s.hidden);
-    add(p + "feed_forward.w2.weight", s.hidden, s.mlp);
-  }
-  add("embed_tokens.weight", s.vocabulary, s.hidden);
-  cuda_check(cudaDeviceSynchronize());
-  return done;
+inline void linear_tiled(lfm::gemm::Problem p) {
+  p.wide = true;
+  lfm::gemm::run(p);
 }
 inline void linear(const bf16* x, const bf16* w, bf16* y, int rows, int in, int out, float* y32 = nullptr) {
   const int splits = k_splits(in);
@@ -128,43 +81,14 @@ inline void linear(const bf16* x, const bf16* w, bf16* y, int rows, int in, int 
     p.lda = in, p.ldb = in, p.c_f32 = parts;
     p.batch = splits, p.stride_a = slice, p.stride_b = slice, p.stride_c = (long long)rows * out;
     lfm::gemm::check(p);
-    linear_tiled(p, rows, slice, out);
+    linear_tiled(p);
     sum_splits<<<grid(size_t(rows) * out), 256>>>(parts, splits, size_t(rows) * out, y, y32);
     return;
   }
   auto p = lfm::gemm::linear(x, w, y, rows, in, out);
   if (y32) p.c = nullptr, p.c_f32 = y32;
   lfm::gemm::check(p);
-  linear_tiled(p, rows, in, out);
-}
-inline void linear_tiled(const lfm::gemm::Problem& p, int rows, int in, int out) {
-  using namespace lfm::gemm::detail;
-  using namespace tiles;
-  // LFM3_BATCH_TILES=base: Wide32/64/128 by row count only (for paired measurement against the tuned table)
-  static const bool base_tiles = [] { const char* v = std::getenv("LFM3_BATCH_TILES"); return v && std::string(v) == "base"; }();
-  if (base_tiles) {
-    if (rows <= 32) launch<Wide32>(p);
-    else if (rows <= 64) launch<Wide64>(p);
-    else launch<Wide128>(p);
-    return;
-  }
-  const bool head = out >= 65536, up = out >= 6144 && out < 65536, longk = in > 4096;
-  if (rows <= 16) {
-    if (head || (up && out == 7680)) launch<W32>(p);
-    else if (longk || out == 2048) launch<C32>(p);
-    else launch<S16>(p);  // conv input (6144), K/V (512), gates
-  } else if (rows <= 32) {
-    if (head || up) launch<W32>(p);
-    else if (longk) launch<N32>(p);
-    else if (out == 2048) launch<C32>(p);
-    else launch<lfm::gemm::detail::Wide32>(p);
-  } else if (rows <= 64) {
-    if (head || out == 6144) launch<H64>(p);
-    else if (up) launch<A64>(p);
-    else launch<B64>(p);
-  } else {
-    launch<lfm::gemm::detail::Wide128>(p);
-  }
+  linear_tiled(p);
 }
 
 // K/V of row b into its cache [b][kv_head][capacity][dim] at position cursor[b]: active rows only. An inactive row

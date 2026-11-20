@@ -114,6 +114,16 @@ __global__ void __launch_bounds__(256) linear(const float* X, const W* w, const 
     }
 }
 
+// LFM_FP32_STAGED (0 or 1; 0 here, validation/speech-v1): 1 builds `linear_staged` below, which needs cp.async
+// (sm_80) and 64 KiB of shared memory a block; the GTX 1080 has neither. With 0, `linear` serves every call, and every
+// output is the same: `linear_staged` does `linear`'s arithmetic exactly (below).
+#ifndef LFM_FP32_STAGED
+#define LFM_FP32_STAGED 0
+#endif
+#if LFM_FP32_STAGED != 0 && LFM_FP32_STAGED != 1
+#error "LFM_FP32_STAGED must be 0 or 1"
+#endif
+#if LFM_FP32_STAGED
 // `linear` restaged (validation/speech-speed-v1), for BF16 weights when K is a multiple of 256 and X and w are 16-byte
 // aligned. Each thread does exactly `linear`'s arithmetic, so every output is the same sum in the same order, bit for
 // bit: lane l sums k = 256 j + 8 l + e in ascending (j, e) with FMA from +0 for each of its rows x columns, then the
@@ -198,6 +208,7 @@ __global__ void __launch_bounds__(256, 2) linear_staged(const float* X, const bf
       if (lane == 0 && r < rows && n < N) Y[size_t(row0 + r) * N + n] = bias ? __fadd_rn(v, value(bias[n])) : v;
     }
 }
+#endif  // LFM_FP32_STAGED
 
 // One warp per row: y = w * (x / sqrt(mean(x^2) + eps)), plus `residual` when given; in place is allowed. Row r uses
 // weights w + r * weight_stride (0: one weight vector for all rows).
@@ -242,6 +253,7 @@ __global__ void rotary(float* x, int rows, int heads, int dim, long long positio
 
 inline int blocks(size_t threads) { return int((threads + 255) / 256); }
 
+#if LFM_FP32_STAGED
 template <int Rows>
 void linear_staged(const float* x, const __nv_bfloat16* w, const __nv_bfloat16* bias, float* y, int M, int N, int K,
                    cudaStream_t s) {
@@ -256,10 +268,12 @@ void linear_staged(const float* x, const __nv_bfloat16* w, const __nv_bfloat16* 
   kernels::linear_staged<Rows><<<dim3((N + per_block - 1) / per_block, (M + Rows - 1) / Rows), 256, bytes, s>>>(
       x, w, bias, y, M, N, K);
 }
+#endif  // LFM_FP32_STAGED
 
 template <class W>
 void linear(const float* x, const W* w, const __nv_bfloat16* bias, float* y, int M, int N, int K, cudaStream_t s = 0) {
   if (M <= 0 || N <= 0) return;
+#if LFM_FP32_STAGED
   if constexpr (std::is_same_v<W, __nv_bfloat16>) {
     const bool aligned = (reinterpret_cast<uintptr_t>(x) | reinterpret_cast<uintptr_t>(w)) % 16 == 0;
     if (K > 0 && K % kernels::kChunk == 0 && aligned) {  // the same outputs, restaged (kernels::linear_staged)
@@ -268,6 +282,7 @@ void linear(const float* x, const W* w, const __nv_bfloat16* bias, float* y, int
       return;
     }
   }
+#endif
   const int per_block = kernels::kWarps * kernels::kColumnsPerWarp;
   kernels::linear<W><<<dim3((N + per_block - 1) / per_block, (M + kernels::kRows - 1) / kernels::kRows), 256, 0, s>>>(
       x, w, bias, y, M, N, K);

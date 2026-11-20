@@ -23,7 +23,23 @@
 // prefilled by the Runner, then loaded into the row) and leaves when it finishes (take). Session, the single-request
 // API, is a batch of one: one code path.
 #include <lfm/audio_encoder.cuh>
+// LFM3_VISION (0 or 1; validation/speech-v1): 1 the vision encoder, 0 its interface with every call refused
+// (lfm/vision_absent.hpp), the Pascal build until images (phase 5).
+#ifndef LFM3_VISION
+#define LFM3_VISION 0
+#endif
+#define LFM3_SPEECH_PASTE_(a, b, c) a##b##c
+#define LFM3_SPEECH_PASTE(a, b, c) LFM3_SPEECH_PASTE_(a, b, c)
+#define LFM3_SPEECH_DIGIT_0_ 1
+#define LFM3_SPEECH_DIGIT_1_ 1
+#if !LFM3_SPEECH_PASTE(LFM3_SPEECH_DIGIT_, LFM3_VISION, _)
+#error "LFM3_VISION must be 0 or 1"
+#endif
+#if LFM3_VISION
 #include <lfm/vision_encoder.cuh>
+#else
+#include <lfm/vision_absent.hpp>
+#endif
 #include <lfm/audio_modes.hpp>
 #include <lfm/speech_run.hpp>
 #include <lfm/audio_sampling.hpp>
