@@ -1,0 +1,81 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+{
+  "status": "passed",
+  "worker_sha256": "b49a6ec0947d6dee817b72c6e336591130c36392c4a36cb47f30cac8b25e88ea",
+  "source_sha256": {
+    "check_lfm3_http_batch.py": "8dc55c1a063fbe74afa1061bb5ec922d9dcae6a404d6b2433a0c13990b931fe3",
+    "lfm3_server.py": "0bf92f4ff61bd7c79704b3ab7f1be711b4b4c928e67dd2e5836dab9da33cec87",
+    "lfm3_worker_client.py": "dcbfd5d7de36c2dd5768f98f39d0972a652cf66bed7c05be622030ea89727f17"
+  },
+  "limits": {
+    "warm_rss_growth_bytes": 33554432,
+    "warm_fd_growth": 2,
+    "warm_device_free_drop_bytes": 134217728
+  },
+  "requested_cycles": 60,
+  "minimum_seconds": 600,
+  "scope": "authenticated fixed-two-lane HTTP grouping, per-lane cancellation, exact IDs, bounded extended soak and device-wide memory observation; not automatic microbatching or a universal production SLA",
+  "empty_session_gpu_baseline": {
+    "ok": true,
+    "sessions": 0,
+    "reserved_tokens": 0,
+    "weights_loaded": true,
+    "cuda_free_bytes": 4045275136,
+    "cuda_total_bytes": 8497594368,
+    "device_allocated_bytes": 4452319232,
+    "app_live_bytes": 0,
+    "app_outstanding_allocations": 0,
+    "app_metrics_valid": true
+  },
+  "baseline": {
+    "cycle": -1,
+    "elapsed_seconds": 17.727155219996348,
+    "server": {
+      "rss_bytes": 293650432,
+      "descriptors": 8
+    },
+    "worker": {
+      "rss_bytes": 4518273024,
+      "descriptors": 34
+    },
+    "gpu": {
+      "ok": true,
+      "sessions": 2,
+      "reserved_tokens": 1024,
+      "weights_loaded": true,
+      "cuda_free_bytes": 3900571648,
+      "cuda_total_bytes": 8497594368,
+      "device_allocated_bytes": 4597022720,
+      "app_live_bytes": 143112448,
+      "app_outstanding_allocations": 138,
+      "app_metrics_valid": true
+    }
+  },
+  "cycles_completed": 279,
+  "soak_seconds": 600.5784124399943,
+  "latency_summary": {
+    "serial-pair": {
+      "samples": 5,
+      "median_seconds": 2.3663124659797177,
+      "median_aggregate_tokens_per_second": 27.04630133176527
+    },
+    "group": {
+      "samples": 279,
+      "median_seconds": 1.913028369017411,
+      "median_aggregate_tokens_per_second": 33.45480968108817
+    }
+  },
+  "post_close_gpu": {
+    "ok": true,
+    "sessions": 0,
+    "reserved_tokens": 0,
+    "weights_loaded": true,
+    "cuda_free_bytes": 4045275136,
+    "cuda_total_bytes": 8497594368,
+    "device_allocated_bytes": 4452319232,
+    "app_live_bytes": 0,
+    "app_outstanding_allocations": 0,
+    "app_metrics_valid": true
+  },
+  "memory_judged_by": "worker engine-buffer bytes (exact); device-wide readings recorded only"
+}

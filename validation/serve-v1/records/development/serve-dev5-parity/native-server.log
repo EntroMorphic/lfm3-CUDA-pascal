@@ -1,0 +1,12 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Traceback (most recent call last):
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/check_lfm3_native_server_parity.py", line 459, in <module>
+    main()
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/check_lfm3_native_server_parity.py", line 435, in main
+    stage()
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/check_lfm3_native_server_parity.py", line 431, in <lambda>
+    ("batching", lambda: batching(client, server, reference, args.soak_cycles, report)),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/check_lfm3_native_server_parity.py", line 244, in batching
+    raise AssertionError(f"no attempt cancelled a running batch lane: {attempts}")
+AssertionError: no attempt cancelled a running batch lane: [{'delay_seconds': 0.3, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 0.15, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 0.5, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 0.05, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 1.0, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 2.0, 'cancel_status': 409, 'generated': 32, 'cancelled': False}, {'delay_seconds': 4.0, 'cancel_status': 409, 'generated': 32, 'cancelled': False}, {'delay_seconds': 8.0, 'cancel_status': 409, 'generated': 32, 'cancelled': False}]

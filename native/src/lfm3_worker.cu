@@ -12,11 +12,13 @@
 #ifndef LFM3_TEXT_ONLY
 #define LFM3_TEXT_ONLY 0
 #endif
-#define LFM3_WORKER_PASTE_(a, b) a##b
-#define LFM3_WORKER_PASTE(a, b) LFM3_WORKER_PASTE_(a, b)
-#define LFM3_WORKER_DIGIT_0 1
-#define LFM3_WORKER_DIGIT_1 1
-#if !LFM3_WORKER_PASTE(LFM3_WORKER_DIGIT_, LFM3_TEXT_ONLY)
+// The value is pasted between a prefix and a suffix, so only the single token 0 or 1 forms a defined name: anything
+// else (2, on, 01, empty, 1+0, (1)) leaves an undefined name, a stray token or a bad pasting, and stops the build.
+#define LFM3_WORKER_PASTE_(a, b, c) a##b##c
+#define LFM3_WORKER_PASTE(a, b, c) LFM3_WORKER_PASTE_(a, b, c)
+#define LFM3_WORKER_DIGIT_0_ 1
+#define LFM3_WORKER_DIGIT_1_ 1
+#if !LFM3_WORKER_PASTE(LFM3_WORKER_DIGIT_, LFM3_TEXT_ONLY, _)
 #error "LFM3_TEXT_ONLY must be 0 or 1"
 #endif
 #if defined(LFM3_NATIVE_GEMM) && !LFM3_TEXT_ONLY

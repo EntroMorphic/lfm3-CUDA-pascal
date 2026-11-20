@@ -1,0 +1,47 @@
++ date
+Thu Nov 19 15:42:55 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ tools/pascal/serve_gates.sh serve-d1 serve-dev4-shipping own
+own control: 87 tokens; first differs from the pinned control at token 58
+sampling rc=0 24 s
+worker rc=0 77 s
+grouped-worker rc=0 73 s
+server rc=0 30 s
+cancellation rc=0 6 s
+http-cancellation rc=0 6 s
+http-batch rc=0 611 s
+native-server rc=0 113 s
+SERVE GATES PASS (serve-d1, control own)
+shipping rc=0
++ echo 'shipping rc=0'
++ tools/pascal/serve_gates.sh serve-d1p serve-dev4-parity pinned
+sampling rc=0 31 s
+worker rc=1 317 s
+grouped-worker rc=1 211 s
+server rc=0 38 s
+cancellation rc=0 7 s
+http-cancellation rc=0 8 s
+http-batch rc=0 623 s
+native-server rc=1 57 s
+SERVE GATES FAIL (serve-d1p, control pinned)
++ echo 'parity rc=1'
+parity rc=1
++ python3 -c 'import json; r=json.load(open('\''validation/serve-v1/inputs/decode_into32768.request.json'\'')); json.dump(dict(input_ids=r['\''input_ids'\''][:32763], capacity=32768, experimental_long_context=True, max_new_tokens=1), open('\''/workspace/build/serve-dev4-parity/p32k.json'\'','\''w'\''))'
++ for b in serve-d1 serve-d1p
+++ date +%s.%N
++ s=1795130410.765148158
++ /workspace/build/serve-d1/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/serve-dev4-parity/p32k.json /workspace/build/serve-dev4-parity/p32k.serve-d1.json
+++ python3 -c 'import time;print(round(time.time()-1795130410.765148158,1))'
+++ python3 -c 'import json;print(json.load(open('\''/workspace/build/serve-dev4-parity/p32k.serve-d1.json'\''))['\''prefill_seconds'\''])'
+serve-d1 32,763-token prefill rc=0 wall 29.8 s, prefill_seconds 28.6272
++ echo 'serve-d1 32,763-token prefill rc=0 wall 29.8 s, prefill_seconds 28.6272'
++ for b in serve-d1 serve-d1p
+++ date +%s.%N
++ s=1795130440.588497708
++ /workspace/build/serve-d1p/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/serve-dev4-parity/p32k.json /workspace/build/serve-dev4-parity/p32k.serve-d1p.json
+++ python3 -c 'import time;print(round(time.time()-1795130440.588497708,1))'
+++ python3 -c 'import json;print(json.load(open('\''/workspace/build/serve-dev4-parity/p32k.serve-d1p.json'\''))['\''prefill_seconds'\''])'
++ echo 'serve-d1p 32,763-token prefill rc=0 wall 430.6 s, prefill_seconds 429.464'
++ date
+serve-d1p 32,763-token prefill rc=0 wall 430.6 s, prefill_seconds 429.464
+Thu Nov 19 16:27:51 MST 2026

@@ -1,0 +1,12 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Traceback (most recent call last):
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_native_server.py", line 454, in <module>
+    main()
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_native_server.py", line 430, in main
+    stage()
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_native_server.py", line 426, in <lambda>
+    ("batching", lambda: batching(client, server, reference, args.soak_cycles, report)),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_native_server.py", line 239, in batching
+    raise AssertionError(f"no attempt cancelled a running batch lane: {attempts}")
+AssertionError: no attempt cancelled a running batch lane: [{'delay_seconds': 0.3, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 0.15, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 0.5, 'cancel_status': 202, 'generated': 0, 'cancelled': True}, {'delay_seconds': 0.05, 'cancel_status': 202, 'generated': 0, 'cancelled': True}]

@@ -1,0 +1,27 @@
++ date
+Thu Nov 19 17:15:53 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ PY=/workspace/build/venv-ref/bin/python
++ mkdir -p /workspace/build/serve-dev6
++ LFM_ALLOCATION_METRICS=1
++ /workspace/build/venv-ref/bin/python tools/pascal/check_lfm3_native_server_parity.py --checkpoint /workspace/models/LFM3-Omni-2B --server /workspace/build/serve-d1p/liquid-lfm3-server --worker /workspace/build/serve-d1p/liquid-lfm3-worker --control-result validation/serve-v1/inputs/control.output.json --output /workspace/build/serve-dev6/native-server
+parity native-server rc=0
++ echo 'parity native-server rc=0'
++ /workspace/build/venv-ref/bin/python tools/pascal/serve_memory.py /workspace/build/serve-d1/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/serve-dev4-shipping/control.output.json /workspace/build/serve-dev6/memory
++ echo 'memory rc=0'
+memory rc=0
++ grep -E 'rule|SERVE|rror' /workspace/build/serve-dev6/memory.log
++ tail -12
+rule 11 one-32768: prompts [32695] of [32768], statuses [200], peak 6451 MiB: ok
+rule 11 4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200, 200], peak 6833 MiB: ok
+rule 11 2048+30720: prompts [1972, 30686] of [2048, 30720], statuses [200, 200], peak 6841 MiB: ok
+rule 11 16384+16384: prompts [16329, 16329] of [16384, 16384], statuses [200, 200], peak 6469 MiB: ok
+rule 11 batch-4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200], peak 6845 MiB: ok
+rule 12 third session: 429 session_quota, control after same ids: ok
+rule 12 capacity over the total: 429 session_quota, control after same ids: ok
+rule 12 prompt plus max_new_tokens over capacity: 400 invalid_request, control after same ids: ok
+rule 12 full queue (or the session lease first): 409 session_busy, control after same ids: ok
+SERVE MEMORY (rules 11 and 12) PASS
++ date
+Thu Nov 19 17:21:47 MST 2026

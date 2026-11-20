@@ -2,7 +2,7 @@
 
 Status: **rules pass** (2026-11-19); red team to follow. On the rule run (`job.sh`, tree `cdaa0ad`, builds `text-v33`
 and `parity-v33`) rules 1 to 11 pass, and rule 12 passes with its full-queue case judged unreachable by the owner
-(below). Records: [records/](records/) (`SHA256SUMS` verified after the copy; the checks' logit traces are left on the card).
+(below). Records: [records/](records/) (`SHA256SUMS` verified after the copy; the reference checks' logit traces are left on the card).
 
 Phase 3's exit gate (PLAN): "the reference's server checks pass; requests that would exceed memory are refused,
 never crash". Decision 8 (PLAN) sets how: both builds, a text-only server build, paired decode on the compact caches.
@@ -51,13 +51,15 @@ shipping build with `text-vN`'s own output on the pinned request, recorded by th
 - The checks' Python front end runs the reference's pinned stack (Transformers 5.22.1, tokenizers 0.23.3, Jinja2
   3.1.6, Python 3.12.3) in its own environment on the card (`/workspace/build/venv-ref`); the container had none.
 - `check_lfm3_worker.py` ran the CLI beside the resident worker; both cannot hold the weights in 8 GB. The copy
-  computes the same CLI references before the worker loads them (`check_lfm3_worker.diff`: reordering only).
+  computes the same CLI references before the worker loads them (`check_lfm3_worker.diff`: the calls moved, still
+  inside the check's `preflight_only` guard, and an import path; every comparison the same).
 
 *Amendment to rules 3 to 9 (owner, 2026-11-19, after development runs).* The parity build's prefill is 15 times the
 shipping build's (429 s against 28.6 s at 32,763 tokens). On the reference's timing it failed three checks only by
 time: the worker check's 300 s limit on its 32K CLI reference, the grouped-worker check's 180 s worker deadline on its
 32K pair, and the native-server check's batch cancellations (0.05 to 0.5 s), which all landed before its prefill
-ended. It passed the other five, among them every check against Thor's pinned control. For the parity build only,
+ended. It passed the other five, four of them against Thor's pinned control (the fifth such check is the
+native-server one). The figures are from development runs (`records/development/`). For the parity build only,
 those three run with their timing scaled: 1,800 s limits, and cancellation delays from 1.0 to 2.0 s in steps of
 0.05 s after the reference's four (a first try with 1, 2, 4 and 8 s missed: decode ran between 1.0 and 2.0 s) (`*_parity.diff`). Every
 comparison is unchanged. The shipping build runs the reference's timing.
@@ -86,7 +88,7 @@ CLI.
 
 - Rules 1 and 2 hold: the serial path is not touched.
 - The checks pass on both builds; the shipping build's control differs from the reference's from token 58.
-- The reference's limits fit: the worst configuration about 6.9 GB.
+- The reference's limits fit: the worst configuration about 6.9 GB (a survey's estimate; 6,580 MiB).
 
 ## Results
 
@@ -98,8 +100,8 @@ The rule run: `job.sh` (tree `cdaa0ad`), log `records/jobs/serve-v1.log`. The ho
 | 1 | Serial path unchanged | **Pass.** Parity gate 7,826 of 7,826. `liquid-lfm3` and `lfm3-score`: device code identical to `text-v32` in all 93 and 94 functions (`sv1-serve/*.sass-compare.txt`; `text-v32`'s NLL and long-decode results stand). Fixtures pass with the compact windows off and on; the sanitizer reports 0 errors on the fixtures and the 257- and 513-token compact sweep; boundary sweep 33 of 33. Host suite as recorded (2,397 passed, 5 skipped, 1 needing Transformers 5.x) |
 | 2 | Host side as imported | **Pass.** 21 host files (`lfm3_http.hpp`, the tokenizer, the text front ends, sessions, limits, cancellation, image front end, `lfm3_server.cu`, the Python server and front end) byte-identical to the import (`git diff fc130a3`: none). `LFM3_TEXT_ONLY=1` builds; `2`, `on`, `01` and empty stop the build |
 | 3-9 | The reference's serving checks | **Pass,** all eight on both builds (`sv1-serve-shipping/status.txt`, `sv1-serve-parity/status.txt`). The shipping build against its own control (87 tokens, differing from the pinned control from token 58, as predicted); the parity build against Thor's pinned control, with the amended timing |
-| 10 | Paired decode on the compact caches | **Pass.** Both lanes of all three pairs: 600 steps, ids and every BF16 and FP32 logit equal to serial decode |
-| 11 | Memory at the limits | **Pass,** every configuration filled (prompts within 73 tokens of capacity), no failure. Peak: 6,451 MiB (one of 32,768), 6,833 (4,096 + 28,672), 6,841 (2,048 + 30,720), 6,469 (16,384 + 16,384), 6,845 (`/generate_batch` on 4,096 + 28,672); limit 7,740 |
+| 10 | Paired decode on the compact caches | **Pass.** Both lanes of all three pairs (the session of 4,097, 8,192 or 28,672 on the compact caches; its partner of 4,096 not): 600 steps, 581 of them paired (the worker traces at most 32 tokens per request, so the run is 19 continuations, each opening with one serial step); ids and every BF16 and FP32 logit equal to serial decode |
+| 11 | Memory at the limits | **Pass,** for the five configurations tried (greedy, 32 new tokens; prompts 33 to 76 tokens short of capacity), no failure. Peak: 6,451 MiB (one of 32,768), 6,833 (4,096 + 28,672), 6,841 (2,048 + 30,720), 6,469 (16,384 + 16,384), 6,845 (`/generate_batch` on 4,096 + 28,672); limit 7,740 |
 | 12 | Past the limits | **Pass** (owner, 2026-11-19: the full-queue case unreachable). Third session: 429 `session_quota`; capacity over the total: 429 `session_quota`; prompt plus `max_new_tokens` over capacity: 400 `invalid_request`; after each, the control gives the same ids. Full queue: with `--queue-size 1`, while one session generated and the other waited, the only further text request went to a busy session and was refused with 409 `session_busy`; the control then gave the same ids |
 
 Recorded, not judged (`sv1-serve/speed.json`): the control through the CLI, 0.218 s of prefill and 15.3 ms per
@@ -122,4 +124,4 @@ judged the case unreachable. 429 `queue_full` remains covered by the host suite'
 - Rules 1 and 2 held, and the serial path's device code did not change at all.
 - The checks pass on both builds, after the adaptations and the amendment above; the shipping build's control
   differs from token 58, as predicted.
-- The worst configuration peaked at 6,845 MiB (predicted about 6.9 GB).
+- The worst configuration peaked at 6,845 MiB (predicted about 6,580 MiB, the survey's 6.9 GB).

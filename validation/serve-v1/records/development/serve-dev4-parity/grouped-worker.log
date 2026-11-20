@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "/workspace/lfm3-CUDA-pascal/tools/lfm3_worker_client.py", line 256, in call
+    result = self._read(deadline)
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/lfm3_worker_client.py", line 159, in _read
+    raise TimeoutError("worker response deadline")
+TimeoutError: worker response deadline
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_batch_worker.py", line 280, in <module>
+    main()
+  File "/workspace/lfm3-CUDA-pascal/tools/lfm3_owned_process.py", line 80, in guarded
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_batch_worker.py", line 251, in main
+    pair([dict(session_id="A", input_ids=[1], max_new_tokens=2, trace_sampling=True),
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_batch_worker.py", line 135, in pair
+    reference = [call(dict(op="generate", **lane)) for lane in lanes]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_batch_worker.py", line 125, in call
+    response = worker.call(request)
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/lfm3_worker_client.py", line 264, in call
+    raise WorkerFailure("worker RPC failed; all caches invalid") from exc
+lfm3_worker_client.WorkerFailure: worker RPC failed; all caches invalid

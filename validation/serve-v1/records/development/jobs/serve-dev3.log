@@ -1,0 +1,30 @@
++ date
+Thu Nov 19 15:35:32 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ tools/pascal/serve_gates.sh serve-d1 serve-dev3-shipping own
+own control: 87 tokens; first differs from the pinned control at token 58
+sampling rc=0 24 s
+worker rc=1 8 s
+grouped-worker rc=0 72 s
+server rc=1 0 s
+cancellation rc=0 5 s
+http-cancellation rc=1 0 s
+http-batch rc=1 1 s
+native-server rc=1 1 s
+SERVE GATES FAIL (serve-d1, control own)
+shipping rc=1
++ echo 'shipping rc=1'
++ tools/pascal/serve_gates.sh serve-d1p serve-dev3-parity pinned
+sampling rc=0 31 s
+worker rc=1 11 s
+grouped-worker rc=1 211 s
+server rc=1 0 s
+cancellation rc=0 7 s
+http-cancellation rc=1 0 s
+http-batch rc=1 0 s
+native-server rc=1 1 s
+SERVE GATES FAIL (serve-d1p, control pinned)
+parity rc=1
++ echo 'parity rc=1'
++ date
+Thu Nov 19 15:41:46 MST 2026

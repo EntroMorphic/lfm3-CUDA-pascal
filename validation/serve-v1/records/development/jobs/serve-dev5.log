@@ -1,0 +1,33 @@
++ date
+Thu Nov 19 16:29:54 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ tools/pascal/serve_gates.sh serve-d1p serve-dev5-parity pinned
+sampling rc=0 31 s
+worker rc=0 882 s
+grouped-worker rc=0 888 s
+server rc=0 37 s
+cancellation rc=0 7 s
+http-cancellation rc=0 9 s
+http-batch rc=0 619 s
+native-server rc=1 74 s
+SERVE GATES FAIL (serve-d1p, control pinned)
+parity rc=1
++ echo 'parity rc=1'
++ /workspace/build/venv-ref/bin/python tools/pascal/serve_memory.py /workspace/build/serve-d1/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/serve-dev4-shipping/control.output.json /workspace/build/serve-dev5-memory
++ echo 'memory rc=1'
+memory rc=1
++ grep -E 'rule|SERVE|Error|error' /workspace/build/serve-dev5-memory.log
++ tail -20
+rule 11 one-32768: prompts [32695] of [32768], statuses [200], peak 6451 MiB: ok
+rule 11 4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200, 200], peak 6833 MiB: ok
+rule 11 2048+30720: prompts [1972, 30686] of [2048, 30720], statuses [200, 200], peak 6841 MiB: ok
+rule 11 16384+16384: prompts [16329, 16329] of [16384, 16384], statuses [200, 200], peak 6469 MiB: ok
+rule 11 batch-4096+28672: prompts [4030, 28628] of [4096, 28672], statuses [200], peak 6845 MiB: ok
+rule 12 third session: 429 session_quota, control after same ids: ok
+rule 12 capacity over the total: 429 session_quota, control after same ids: ok
+rule 12 prompt plus max_new_tokens over capacity: 400 invalid_request, control after same ids: ok
+    raise AssertionError((path, status, decoded))
+AssertionError: ('/generate', 400, {'error': 'invalid_request'})
++ date
+Thu Nov 19 17:14:51 MST 2026

@@ -1,0 +1,24 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Traceback (most recent call last):
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/check_lfm3_worker_8gb.py", line 280, in <module>
+    if __name__=="__main__":main()
+                            ^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/check_lfm3_worker_8gb.py", line 177, in main
+    expected_long=single_logits("resident32k-reference",long_prompt,[],capacity=32768)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/check_lfm3_worker_8gb.py", line 146, in single_logits
+    subprocess.run([str(args.single),"--experimental",str(args.checkpoint),str(directory/"request.json"),
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2141, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+  File "/usr/lib/python3.12/subprocess.py", line 1264, in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2045, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['/workspace/build/serve-d1p/liquid-lfm3', '--experimental', '/workspace/models/LFM3-Omni-2B', '/workspace/build/serve-dev4-parity/worker/resident32k-reference/request.json', '/workspace/build/serve-dev4-parity/worker/resident32k-reference/result.json']' timed out after 299.99999319700873 seconds

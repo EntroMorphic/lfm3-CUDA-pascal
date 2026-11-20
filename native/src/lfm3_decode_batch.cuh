@@ -16,6 +16,12 @@ inline void validate(const std::vector<Runner*>& lanes, const std::vector<int>& 
     lfm::text::scratch_rows(s.context);
 #ifndef LFM3_NATIVE_GEMM
     require_full_length_caches(r,"decode batch");  // the native path below also serves the compact caches (phase 3)
+#else
+    // A compact layer's slots must hold the positions up to the cursor (WindowSlots::make_room's own check), so that
+    // forward() rejects a lane here, before either lane's caches change.
+    for(int layer=0;layer<s.layers;++layer)
+      if(r.keys[layer] && r.compact(layer) && r.slots[layer].base+r.slots[layer].count!=r.cursor)
+        throw std::invalid_argument("decode batch: window cache is not contiguous");
 #endif
     if(r.cursor<=0 || r.cursor>=s.context || r.step==std::numeric_limits<int>::max() ||
        ids[i]<0 || ids[i]>=s.vocabulary)
