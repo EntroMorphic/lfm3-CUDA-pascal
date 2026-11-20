@@ -114,7 +114,7 @@ try:
     # A full queue: with --queue-size 1, while A generates and B waits, try every further text request there is.
     def full_queue():
         with ThreadPoolExecutor(2) as pool:
-            first = pool.submit(lambda: client.call("POST", "/generate", dict(session_id=a_sid, messages=text(fill(4096)), max_new_tokens=512), expected=(200, 429)))
+            first = pool.submit(lambda: client.call("POST", "/generate", dict(session_id=a_sid, messages=text(fill(2048)), max_new_tokens=512), expected=(200, 429)))
             time.sleep(1.0)
             second = pool.submit(lambda: client.call("POST", "/generate", dict(session_id=b_sid, messages=CONTROL, max_new_tokens=128), expected=(200, 429)))
             time.sleep(0.5)

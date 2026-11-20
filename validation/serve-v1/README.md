@@ -56,8 +56,8 @@ shipping build's (429 s against 28.6 s at 32,763 tokens). On the reference's tim
 time: the worker check's 300 s limit on its 32K CLI reference, the grouped-worker check's 180 s worker deadline on its
 32K pair, and the native-server check's batch cancellations (0.05 to 0.5 s), which all landed before its prefill
 ended. It passed the other five, among them every check against Thor's pinned control. For the parity build only,
-those three run with their timing scaled: 1,800 s limits, and cancellation delays of 1, 2, 4 and 8 s after the
-reference's four (`*_parity.diff`). Every comparison is unchanged. The shipping build runs the reference's timing.
+those three run with their timing scaled: 1,800 s limits, and cancellation delays from 1.0 to 2.0 s in steps of
+0.05 s after the reference's four (a first try with 1, 2, 4 and 8 s missed: decode ran between 1.0 and 2.0 s) (`*_parity.diff`). Every comparison is unchanged. The shipping build runs the reference's timing.
 
 **Paired decode on the compact caches:**
 

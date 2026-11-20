@@ -1,5 +1,5 @@
 """Pascal parity-build copy of tools/check_lfm3_native_server.py, made by validation/serve-v1 (owner, 2026-11-19): the parity build's prefill
-is 15 times the shipping build's (429 s at 32,763 tokens), so its timing is scaled: the grouped-cancellation attempts add delays of 1, 2, 4 and 8 s after the reference's four. Every call and
+is 15 times the shipping build's (429 s at 32,763 tokens), so its timing is scaled: the grouped-cancellation attempts add delays from 1.0 to 2.0 s in steps of 0.05 s after the reference's four. Every call and
 comparison is the reference's; validation/serve-v1/check_lfm3_native_server_parity.diff is the whole difference.
 
 GPU gate for liquid-lfm3-server, the single-executable text server (G7). Thor, lfm3-profile-v1.
@@ -230,7 +230,7 @@ def batching(client, server, reference, cycles, report):
     for _ in range(3):
         batch()
     attempts = []
-    for delay in (0.3, 0.15, 0.5, 0.05, 1.0, 2.0, 4.0, 8.0):
+    for delay in (0.3, 0.15, 0.5, 0.05) + tuple(round(1.0 + 0.05 * i, 2) for i in range(21)):
         with ThreadPoolExecutor(1) as executor:
             pending = executor.submit(client.call, "POST", "/generate_batch", dict(requests=requests))
             time.sleep(delay)
