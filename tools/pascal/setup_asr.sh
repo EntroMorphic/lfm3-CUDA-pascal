@@ -7,8 +7,8 @@
 set -euo pipefail
 V=/workspace/build/venv-asr; W=/workspace/models/whisper-large-v3
 [ -e $V ] || python3 -m venv $V
-$V/bin/pip install -q --index-url https://download.pytorch.org/whl/cu126 "torch==2.7.1"
-$V/bin/pip install -q "transformers==5.22.1" "huggingface_hub" "librosa" "soundfile" "numpy"
+$V/bin/pip install -q --index-url https://download.pytorch.org/whl/cu126 "torch==2.7.1" "torchvision==0.22.1"
+$V/bin/pip install -q "transformers==5.22.1" "jinja2==3.1.6" "huggingface_hub" "librosa" "soundfile" "numpy"
 $V/bin/python - "$W" <<'PY'
 import json, sys
 from pathlib import Path

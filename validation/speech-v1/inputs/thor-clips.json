@@ -1,0 +1,114 @@
+[
+ {
+  "run": "il-fridge-s1",
+  "set": "listening-c3-v1",
+  "side": "B",
+  "file": "listening-c3-v1/il-fridge/B.wav",
+  "sha256": "60c7dfcf8e7223c6e1e3d71f5eb6fed681e95d5309bf9a07b09ab3f7694ef566"
+ },
+ {
+  "run": "il-reflective-s1",
+  "set": "listening-c3-v1",
+  "side": "B",
+  "file": "listening-c3-v1/il-reflective/B.wav",
+  "sha256": "ef919d4cbcc1cf7929ad4d641f260211426e5b7e1952a816f97906607a491291"
+ },
+ {
+  "run": "il-study-s1",
+  "set": "listening-c3-v1",
+  "side": "A",
+  "file": "listening-c3-v1/il-study/A.wav",
+  "sha256": "6f0ae9d8f8bd4bc9dbfb0be25aac4757ceb7dd6e23e7e5b3c4c6e8ea8ac9cbad"
+ },
+ {
+  "run": "tts-fox-female-s1",
+  "set": "listening-c3-v1",
+  "side": "A",
+  "file": "listening-c3-v1/tts-fox-female/A.wav",
+  "sha256": "3918b49349db124d23c4485963287925424670663a26bc57e6347d91b6e8ca7b"
+ },
+ {
+  "run": "tts-fox-male-s1",
+  "set": "listening-c3-v1",
+  "side": "A",
+  "file": "listening-c3-v1/tts-fox-male/A.wav",
+  "sha256": "7ca845dae5a64986bd062ca15188cd06f294017d368bd802b3ab7ddcbe504b2e"
+ },
+ {
+  "run": "tts-long-male-s1",
+  "set": "listening-c3-v1",
+  "side": "B",
+  "file": "listening-c3-v1/tts-long-male/B.wav",
+  "sha256": "987530cf7536ad44b7ed1390aa3626f63c94471d2158d09ea632bd3a21851b3c"
+ },
+ {
+  "run": "tts-museum-female-s1",
+  "set": "listening-c3-v1",
+  "side": "B",
+  "file": "listening-c3-v1/tts-museum-female/B.wav",
+  "sha256": "803da4ec26fdd1118c7e5a436c3587aa56d8ae1ab4d66ad722e0d9bcd2f57dc8"
+ },
+ {
+  "run": "tts-museum-male-s1",
+  "set": "listening-c3-v1",
+  "side": "A",
+  "file": "listening-c3-v1/tts-museum-male/A.wav",
+  "sha256": "107d30d6e8717d1b7d4b12bd2e6fc2569517d9cd18e91e50922d2783b0f027a0"
+ },
+ {
+  "run": "tts-numbers-female-s1",
+  "set": "listening-c3-v1",
+  "side": "A",
+  "file": "listening-c3-v1/tts-numbers-female/A.wav",
+  "sha256": "a2bbb5dee0640747fc7c75f6b4e85fe13f7529828b8cb6b28385571ab558e91c"
+ },
+ {
+  "run": "tts-numbers-male-s1",
+  "set": "listening-c3-v1",
+  "side": "B",
+  "file": "listening-c3-v1/tts-numbers-male/B.wav",
+  "sha256": "1422f55fe05d1fec20f772ac5c9cbe907d9d123db33cd3a674b73b9cada2fce8"
+ },
+ {
+  "run": "tts-long-male-s1",
+  "set": "listening-split-v1",
+  "side": "A",
+  "file": "listening-split-v1/seed1/tts-long-male/A.wav",
+  "sha256": "987530cf7536ad44b7ed1390aa3626f63c94471d2158d09ea632bd3a21851b3c"
+ },
+ {
+  "run": "probe-other-long-s1",
+  "set": "listening-split-v1",
+  "side": "engine only",
+  "file": "listening-split-v1/bread-native-split/seed1.wav",
+  "sha256": "8ef8c32d2e5c83c41a185438494fdf5a44458f0d8e37be8b0db2609aa64e93b5"
+ },
+ {
+  "run": "tts-long-male-s2",
+  "set": "listening-split-v1",
+  "side": "A",
+  "file": "listening-split-v1/seed2/tts-long-male/A.wav",
+  "sha256": "8f82bf209271000fde6de0e216147ab34075f9923934f9ca020d78377e9d77ad"
+ },
+ {
+  "run": "probe-other-long-s2",
+  "set": "listening-split-v1",
+  "side": "engine only",
+  "file": "listening-split-v1/bread-native-split/seed2.wav",
+  "sha256": "5d6363b51fdf48ae207d702af8dd292bfa816121374e6bba35ed5853c818eeb2"
+ },
+ {
+  "run": "tts-long-male-s3",
+  "set": "listening-split-v1",
+  "side": "A",
+  "file": "listening-split-v1/seed3/tts-long-male/A.wav",
+  "sha256": "79bbb97cde8a79092452646f32ae02bad5fc0b1032ffd71f69b804caadd10ea9"
+ },
+ {
+  "run": "probe-other-long-s3",
+  "set": "listening-split-v1",
+  "side": "engine only",
+  "file": "listening-split-v1/bread-native-split/seed3.wav",
+  "sha256": "f6a3a3b4c9002ecbc58c9fbcdfcf803deefc5048a4711e74285ac0f6bf55fe3c"
+ }
+]
