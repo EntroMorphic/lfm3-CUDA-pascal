@@ -20,8 +20,9 @@ request at a time: alone), and the servers that relied on the reference's defaul
 rules 4 and 5, the 7 TTS + 5 spoken) are given --speech-rows 8. Decision 10 (timing recorded, not judged): the crowd
 server runs with --request-timeout 3600 (a queued request's deadline; the reference's 330 s default is about what the
 shipping build's crowd waits, and the parity build is about three times slower), and the server helpers and client
-deadlines come from tools/pascal/check_lfm3_speech_stream.py (3,600 s); generate()'s deadline is 3,600 s. Nothing else
-differs from tools/check_lfm3_speech_batch_server.py.
+deadlines come from tools/pascal/check_lfm3_speech_stream.py (3,600 s); generate()'s deadline is 3,600 s. Every
+server's exit code is also written to the report (server_exits; the reference reports only the crowd server's). Nothing
+else differs from tools/check_lfm3_speech_batch_server.py.
 Usage: check_lfm3_speech_batch_server.py SERVER_BINARY OLD_SERVER MODEL_DIR BUILD_DIR LIBRI_WAV_DIR OUT_JSON
 """
 import concurrent.futures
@@ -121,6 +122,7 @@ def main(binary, old, model, build, libri, out_json):
     finally:
         code, _ = reference.stop()
         ok &= code == 0
+        report.setdefault("server_exits", {})["alone"] = code
     print("alone done", flush=True)
 
     def same(name, streamed, result):
@@ -217,6 +219,7 @@ def main(binary, old, model, build, libri, out_json):
         code, stderr = server.stop()
         report["server_exit"], report["server_stderr"] = code, stderr[-1500:]
         ok &= code == 0
+        report.setdefault("server_exits", {})["crowd"] = code
     # 3. real time at N concurrent streams, a server per N (rows = N)
     report["real_time"] = {}
     for n in (8, 12, 16):
@@ -232,6 +235,7 @@ def main(binary, old, model, build, libri, out_json):
         finally:
             code, _ = server.stop()
             ok &= code == 0
+            report.setdefault("server_exits", {})[f"real time {n}"] = code
     # spoken questions joining 7 running TTS streams: their admissions (audio encoding, prefill) run inside steps
     server = start(binary, model, out.parent, "--speech-rows", "8")
     try:
@@ -251,6 +255,7 @@ def main(binary, old, model, build, libri, out_json):
     finally:
         code, _ = server.stop()
         ok &= code == 0
+        report.setdefault("server_exits", {})["7 tts + 5 spoken"] = code
     report["rule3_pass"] = sum(report["real_time"][8]["stalls"]) == 0 and report["real_time"][8]["all_done"]
     report["largest_n_without_gaps"] = max([n for n, r in report["real_time"].items() if isinstance(n, int) and sum(r["stalls"]) == 0],
                                            default=0)

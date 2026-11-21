@@ -5,7 +5,9 @@ lfm/lfm3_http.hpp), and the controls then give the same bytes as before.
 Controls, before and after: a pinned greedy /generate (a session of 1,024; 128 new tokens; ids) and a short /speech
 (one sentence, audio, seed 1; the WAV's bytes). Refusals, each sent once (a 429 frontend_busy is sent again, as a
 client does):
-  text      the messages' text over 64 KiB (kSpeechMaxTextBytes)                       400 invalid_request
+  text      the messages' text just over 64 KiB (kSpeechMaxTextBytes) in under 512 long sentences, split: within
+            every other limit (chunks, prompt tokens, each chunk's capacity), so only the
+            byte limit can refuse it (a broken one would answer 200)                    400 invalid_request
   chunks    513 sentences, split (kSpeechMaxChunks 512)                                  400 invalid_request
   prompt    512 sentences, each chunk's prompt with a ~300-token system message: over
             131,072 prompt tokens in all (kSpeechMaxPromptTokens), every chunk within
@@ -41,6 +43,10 @@ out.mkdir(parents=True, exist_ok=False)
 records, report, ok = [], dict(rows=rows, queue_size=queue, refusals={}), True
 TTS = "Perform TTS in American English using a female voice."
 SENTENCE = "The small boat drifted slowly past the quiet harbor wall."
+LONG_SENTENCE = ("The small boat drifted slowly past the quiet harbor wall while the gulls circled overhead and the "
+                 "fishermen mended their long nets.")
+LONG_COUNT = 65536 // (len(LONG_SENTENCE) + 1) + 1  # just over 64 KiB with the spaces
+assert LONG_COUNT < 512 and len(" ".join([LONG_SENTENCE] * LONG_COUNT)) > 65536
 PARAGRAPH = ("The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards "
              "and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.")
 
@@ -108,7 +114,8 @@ try:
     text0, wav0 = controls()
     report["control_tokens"], report["control_wav_bytes"] = len(text0), len(wav0)
     refused("text", (400, "invalid_request"), speech(dict(messages=[{"role": "system", "content": TTS},
-            {"role": "user", "content": (SENTENCE + " ") * 1200}], mode="audio", max_new_tokens=64, seed=1, split=True)))
+            {"role": "user", "content": " ".join([LONG_SENTENCE] * LONG_COUNT)}], mode="audio", max_new_tokens=4, seed=1,
+            split=True)))
     refused("chunks", (400, "invalid_request"), speech(dict(messages=[{"role": "system", "content": TTS},
             {"role": "user", "content": " ".join([SENTENCE] * 513)}], mode="audio", max_new_tokens=12, seed=1, split=True)))
     long_system = TTS + " " + " ".join(["lighthouse keeper"] * 100)

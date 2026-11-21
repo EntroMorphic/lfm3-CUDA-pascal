@@ -17,7 +17,7 @@ outputs/
 *.safetensors
 
 # The Thor engine this repository was imported from (a local snapshot, not committed)
-reference/
+/reference/
 
 # The target machine's addresses (see tools/pascal/target.env.example)
 tools/pascal/target.env

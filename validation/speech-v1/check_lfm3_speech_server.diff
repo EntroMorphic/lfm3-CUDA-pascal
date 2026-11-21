@@ -1,0 +1,33 @@
+--- tools/check_lfm3_speech_server.py	2026-11-18 15:18:58.880307411 -0700
++++ tools/pascal/check_lfm3_speech_server.py	2026-11-20 20:12:25.222422538 -0700
+@@ -13,6 +13,12 @@
+      4000 steps each (cut early by the budget: truncated). The report records the server binary's sha256.
+ Writes OUT_JSON (per case: pass, sizes, timings) and exits 1 on any failure.
+ Usage: check_lfm3_speech_server.py SERVER_BINARY MODEL_DIR BUILD_DIR OUT_JSON   (BUILD_DIR: the validated runs)
++
++Pascal adaptation (speech-v1 rule 11, decision 10: timing recorded, not judged): on the GTX 1080 the worst cases take
++longer than the server's session idle timeout (300 s), so the text control's session expired before its second
++/generate (404), which tests nothing about text. Here the server runs with --session-idle-timeout 3600, and the worst
++cases' client deadline is 3600 s (900 in the reference; the parity build's worst case is longer than that). The
++240 s limit is still computed and reported (tools/pascal/judge_speech_server.py records it); nothing else differs.
+ """
+ import base64
+ import json
+@@ -32,7 +38,7 @@
+     fd = os.open(token_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+     with os.fdopen(fd, "w") as f:
+         f.write(token + "\n")
+-    proc = subprocess.Popen([binary, "--experimental", model, "--token-file", str(token_path), "--port", "0"],
++    proc = subprocess.Popen([binary, "--experimental", model, "--token-file", str(token_path), "--port", "0", "--session-idle-timeout", "3600"],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+     port = json.loads(proc.stdout.readline())["port"]
+     token_path.unlink()
+@@ -101,7 +107,7 @@
+                                                     {"role": "user", "content": " ".join([sentence] * 512)}],
+                                           mode="audio", normalize=False, max_new_tokens=4000, seed=1))):
+         t0 = time.time()
+-        status, r = post("/speech", body, timeout=900)
++        status, r = post("/speech", body, timeout=3600)
+         wall = time.time() - t0
+         res = dict(status=status, wall_seconds=round(wall, 1), truncated=r.get("truncated"), chunks_run=len(r.get("chunks", [])),
+                    frames=r.get("frames"), prefill_seconds=r.get("prefill_seconds"), generate_seconds=r.get("generate_seconds"))

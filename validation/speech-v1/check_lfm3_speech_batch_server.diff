@@ -1,0 +1,82 @@
+--- tools/check_lfm3_speech_batch_server.py	2026-11-18 15:18:58.880307411 -0700
++++ tools/pascal/check_lfm3_speech_batch_server.py	2026-11-21 04:48:57.388292578 -0700
+@@ -13,6 +13,16 @@
+   5. text: a /generate arriving under continuous speech load: its ids equal its reference; its latency is reported
+      beside the time the rows running at its arrival took to finish (it waits for them, then runs).
+ Writes OUT_JSON and exits 1 on any failure.
++
++Pascal port (speech-v1 rule 11): the card's server defaults to fewer speech rows than the reference's 8 (rule 12, memory
++with text at its limits), and there is no older single-request server. So OLD_SERVER is run with --speech-rows 1 (one
++request at a time: alone), and the servers that relied on the reference's default of 8 rows (the crowd, the load for
++rules 4 and 5, the 7 TTS + 5 spoken) are given --speech-rows 8. Decision 10 (timing recorded, not judged): the crowd
++server runs with --request-timeout 3600 (a queued request's deadline; the reference's 330 s default is about what the
++shipping build's crowd waits, and the parity build is about three times slower), and the server helpers and client
++deadlines come from tools/pascal/check_lfm3_speech_stream.py (3,600 s); generate()'s deadline is 3,600 s. Every
++server's exit code is also written to the report (server_exits; the reference reports only the crowd server's). Nothing
++else differs from tools/check_lfm3_speech_batch_server.py.
+ Usage: check_lfm3_speech_batch_server.py SERVER_BINARY OLD_SERVER MODEL_DIR BUILD_DIR LIBRI_WAV_DIR OUT_JSON
+ """
+ import concurrent.futures
+@@ -58,7 +68,7 @@
+     def post(path, b):
+         req = urllib.request.Request(f"http://127.0.0.1:{server.port}{path}", data=json.dumps(b).encode(), method="POST",
+                                      headers={"Authorization": "Bearer " + server.token, "Content-Type": "application/json"})
+-        with urllib.request.urlopen(req, timeout=600) as r:
++        with urllib.request.urlopen(req, timeout=3600) as r:
+             return json.loads(r.read())
+     sid = post("/sessions", {"capacity": 1024})["session_id"]
+     try:
+@@ -99,7 +109,7 @@
+     cases = check.cases(build, libri)
+     ok = True
+     # alone: each case unstreamed and streamed, one at a time, on the single-request server
+-    reference = start(old, model, out.parent)
++    reference = start(old, model, out.parent, "--speech-rows", "1")
+     alone, alone_stream = {}, {}
+     try:
+         reference.post(cases[0][2])  # warm
+@@ -112,6 +122,7 @@
+     finally:
+         code, _ = reference.stop()
+         ok &= code == 0
++        report.setdefault("server_exits", {})["alone"] = code
+     print("alone done", flush=True)
+ 
+     def same(name, streamed, result):
+@@ -123,7 +134,8 @@
+         status, reply = result
+         return status == 200 and strip(reply) == alone[name]
+ 
+-    server = start(binary, model, out.parent, "--handlers", "96", "--queue-size", "64")
++    server = start(binary, model, out.parent, "--handlers", "96", "--queue-size", "64", "--speech-rows", "8",
++                   "--request-timeout", "3600")
+     try:
+         server.post(cases[0][2])  # warm
+         rng = random.Random(7)
+@@ -207,6 +219,7 @@
+         code, stderr = server.stop()
+         report["server_exit"], report["server_stderr"] = code, stderr[-1500:]
+         ok &= code == 0
++        report.setdefault("server_exits", {})["crowd"] = code
+     # 3. real time at N concurrent streams, a server per N (rows = N)
+     report["real_time"] = {}
+     for n in (8, 12, 16):
+@@ -222,8 +235,9 @@
+         finally:
+             code, _ = server.stop()
+             ok &= code == 0
++            report.setdefault("server_exits", {})[f"real time {n}"] = code
+     # spoken questions joining 7 running TTS streams: their admissions (audio encoding, prefill) run inside steps
+-    server = start(binary, model, out.parent)
++    server = start(binary, model, out.parent, "--speech-rows", "8")
+     try:
+         server.post(tts[0])
+         spoken = [b for n, _, b in cases if n.startswith("spoken-q")]
+@@ -241,6 +255,7 @@
+     finally:
+         code, _ = server.stop()
+         ok &= code == 0
++        report.setdefault("server_exits", {})["7 tts + 5 spoken"] = code
+     report["rule3_pass"] = sum(report["real_time"][8]["stalls"]) == 0 and report["real_time"][8]["all_done"]
+     report["largest_n_without_gaps"] = max([n for n, r in report["real_time"].items() if isinstance(n, int) and sum(r["stalls"]) == 0],
+                                            default=0)

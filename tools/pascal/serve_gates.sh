@@ -39,7 +39,9 @@ REQ=$I/generation-request.json; LONG=$I/decode_into32768.request.json; O=$out
 PY=${PY:-/workspace/build/venv-ref/bin/python}; "$PY" -m pip freeze > "$out/python-freeze.txt" || exit 2
 export LFM_ALLOCATION_METRICS=1
 failed=0; : > "$out/status.txt"
-run() { local s=$1; shift; local t0=$(date +%s); "$PY" "$@" > "$out/$s.log" 2>&1; local rc=$?
+# STAGES (optional, space-separated stage names): run only those (speech-v1 decision 11: the stages whose binaries changed)
+run() { local s=$1; shift; [ -n "${STAGES:-}" ] && [[ " $STAGES " != *" $s "* ]] && return 0
+  local t0=$(date +%s); "$PY" "$@" > "$out/$s.log" 2>&1; local rc=$?
   echo "$s rc=$rc $(( $(date +%s) - t0 )) s" | tee -a "$out/status.txt"; [ $rc = 0 ] || failed=1; }
 run sampling          $T/check_lfm3_sampling.py --checkpoint $CK --binary $N/liquid-lfm3 --request $REQ --oracle $N/text-sampling-oracle --output $O/sampling
 run worker            $W --checkpoint $CK --worker $N/liquid-lfm3-worker --single $N/liquid-lfm3 --request $REQ --long-request $LONG --oracle $N/text-sampling-oracle --output $O/worker
@@ -49,5 +51,5 @@ run cancellation      $T/check_lfm3_cancellation.py --checkpoint $CK --worker $N
 run http-cancellation $T/check_lfm3_http_cancellation.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/http-cancellation
 run http-batch        $T/check_lfm3_http_batch.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/http-batch --require-exact-accounting
 run native-server     $S --checkpoint $CK --server $N/liquid-lfm3-server --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/native-server
-[ $failed = 0 ] && echo "SERVE GATES PASS ($tag, control $control)" || echo "SERVE GATES FAIL ($tag, control $control)"
+[ $failed = 0 ] && echo "SERVE GATES PASS ($tag, control $control${STAGES:+, stages: $STAGES})" || echo "SERVE GATES FAIL ($tag, control $control${STAGES:+, stages: $STAGES})"
 exit $failed

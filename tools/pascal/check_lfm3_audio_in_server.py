@@ -16,7 +16,8 @@ Usage: check_lfm3_audio_in_server.py SERVER_BINARY SPEECH_BINARY MODEL_DIR WAV_D
 Pascal adaptation (speech-v1 rule 11): the reference ran each case's lfm3-speech while the server held the model; on
 the GTX 1080 (8 GB) the second copy of the model does not fit (cudaMalloc model payload: out of memory). Here every
 lfm3-speech reference runs first, before the server starts; the requests, the comparisons and the rules are unchanged.
-Decision 10 (timing recorded, not judged): the client's deadline is 3,600 s (600 in the reference).
+Decision 10 (timing recorded, not judged): the client's deadline is 3,600 s (600 in the reference). Each case's report
+also records its mode (for tools/pascal/judge_speech_server.py: text present unless audio).
 """
 import base64
 import hashlib
@@ -126,7 +127,7 @@ def main(server, speech, model, wav_dir, work, out_json):
         status, reply = post("/speech", body)
         wall = time.time() - t0
         got_wav = base64.b64decode(reply.get("audio_wav_base64", "")) if status == 200 else b""
-        res = dict(status=status, reference_exit=r.returncode, reference_stderr=r.stderr[-300:],
+        res = dict(status=status, mode=mode, reference_exit=r.returncode, reference_stderr=r.stderr[-300:],
                    text_identical=status == 200 and reply.get("text") == ref.get("text"),
                    wav_identical=status == 200 and got_wav == ref_wav, wav_bytes=len(got_wav), text=reply.get("text"),
                    audio_seconds=reply.get("audio_seconds"), prefill_seconds=reply.get("prefill_seconds"),

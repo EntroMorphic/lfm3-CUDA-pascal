@@ -10,8 +10,10 @@
 // --speech-rows (1..16, the most validated; default 1 on the GTX 1080, validation/speech-v1 rule 12: with text at its
 // limits, one row is what fits in 7,740 MiB; the reference's default was 8): /speech requests generated at once in the
 // engine's speech batch (validation/speech-batch-v1); more wait in the queue (--queue-size of them).
-// --total-capacity: default 32,768 (serve-v1 rule 11), or kSpeechTotalCapacity when the engine serves speech (speech-v1
-// rule 12: the speech weights and one row leave room for that much). Without --handlers, the server takes
+// --total-capacity: default 32,768 (serve-v1 rule 11), or, when the engine serves speech, kSpeechTotalCapacity less
+// kSpeechCapacityPerRow for each speech row past the first, at least kSpeechMinTotalCapacity (speech-v1 rule 12: the
+// speech weights, one row and audio in at its limit leave room for 30,720; a row costs about 102 MiB, 1,024 tokens of
+// capacity about 52 MiB). Without --handlers, the server takes
 // max(8, 2 x speech rows) handlers: at most half of them stream at once (Service::speech_stream), so every row can.
 // The bearer token comes from --token-file (an owned mode-0600 file), or LFM3_SERVER_TOKEN, or else the default file
 // ~/.config/liquid-lfm3/token ($XDG_CONFIG_HOME/liquid-lfm3/token), created with a random token on first start and
@@ -33,7 +35,12 @@
 namespace {
 // validation/speech-v1 rule 12: the largest multiple of 1,024 at which serve-v1 rule 11's configurations, scaled, pass
 // beside one speech row on the GTX 1080 (sp-dev10).
-constexpr int kSpeechTotalCapacity=31744;
+constexpr int kSpeechTotalCapacity=30720;
+// Each further speech row (red-team review: more rows beside the one-row default could exhaust the card and fail the
+// service closed), down to kSpeechMinTotalCapacity at 15 and 16 rows (measured at 8 and 16 rows, validation/speech-v1
+// development 15).
+constexpr int kSpeechCapacityPerRow=2048;
+constexpr int kSpeechMinTotalCapacity=2048;
 
 class CoreBackend final : public lfm::http::Backend {
  public:
@@ -131,7 +138,7 @@ int main(int argc,char** argv) try {
   CoreBackend backend(directory);
   backend.core().set_speech_rows(speech_rows);
   if(!seen.count("--total-capacity") && backend.core().speech_supported()) {
-    settings.total_capacity=kSpeechTotalCapacity;
+    settings.total_capacity=std::max(kSpeechMinTotalCapacity,kSpeechTotalCapacity-kSpeechCapacityPerRow*(speech_rows-1));
     settings.validate();
   }
   backend.core().set_image_cache_mb(settings.image_cache_mb);

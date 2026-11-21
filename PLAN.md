@@ -70,8 +70,15 @@ must not change.
     a streamed player, first audio within 1.0 s under load). On the GTX 1080 every output of those checks is exact,
     and some limits are missed by time alone. They are recorded, not judged (the owner chose this over lowering the
     speech limits or failing the phase on them). Memory at the limits also set the server's defaults: one speech row,
-    and a total capacity of 31,744 tokens when speech is served (rule 12 as written; the owner: "Let's roll with it
-    as is").
+    and a total capacity of 30,720 tokens when speech is served (rule 12 as written; the owner: "Let's roll with it
+    as is"; 31,744 until the red-team review's configuration, audio in at its limit beside text at its limit, went 41
+    MiB over).
+
+11. **Carrying development results to the rule run** (2026-11-21; [speech-v1](validation/speech-v1/)). The owner:
+    "Time is life. Let's save time everywhere we can without cutting corners." A development result is carried to the
+    final tree only when the rule run shows that nothing changed since could reach it: the final binaries' device code
+    equals that build's function for function, the differing host sources are off its path, and the final binaries
+    reproduce a sample of its inputs byte for byte. Everything else runs again.
 
 ## The constraint
 

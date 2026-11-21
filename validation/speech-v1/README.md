@@ -1,6 +1,7 @@
 # speech-v1: phase 4's bar
 
-Status: **rules set** (2026-11-20), before any speech output of this engine has been generated on the card.
+Status: **development done; red team reviewed; the rule run to follow** (2026-11-21). The rules were set
+(2026-11-20) before any speech output of this engine had been generated on the card.
 
 Phase 4's exit gate (PLAN): "the reference's speech rounds: word error rate against HF, and listening". Decision 9
 (PLAN) sets how.
@@ -20,6 +21,16 @@ free." Whisper large-v3 at the reference's pinned revision runs on the card, nev
 
 Decision 10 (PLAN, 2026-11-20, after development 11). The owner, on the reference checks' timing limits: record them,
 do not judge them (see the amendment under rule 11).
+
+Decision 11 (PLAN, 2026-11-21, before the rule run). The owner, on the rule run's 16 hours: "Time is life. Let's save
+time everywhere we can without cutting corners." The rules are judged on the final tree, as set. A result from a
+development run is carried to the final tree only when nothing changed since could reach it, shown in the rule run
+itself: (E1) the device code of every final binary equals that development build's function for function
+(`sass_compare.py`), and the host sources that differ are listed and are off that result's path; (E2) the final
+binaries, run again on a sample of that result's inputs, give byte-identical outputs (every run behind rules 7 and 8,
+the 24 escalation runs, the 19 committed LibriSpeech utterances and every 32nd other on both builds; rule 3's 15 clips
+on the parity build). Everything a change could reach runs again on the final binaries. Phase 3 set the precedent
+(serve-v1 rule 1: identical device code in place of the NLL and long-decode runs).
 
 ## Seen before the rules were set
 
@@ -58,7 +69,8 @@ do not judge them (see the amendment under rule 11).
 
 ## Development (after the rules were set)
 
-Records in `records/` (the `dev*.sh` scripts here say what each run did).
+The `dev*.sh` scripts here say what each development run did; its records stay on the card's host (the rule run's are
+committed with the results).
 
 - **The codec checkpoint, shared** (development 9). Every row of the speech batch built its own codec decoder, and each
   loaded its own copy of the codec checkpoint (147 MB; harmless on Thor's unified memory). On the card that made each
@@ -67,23 +79,39 @@ Records in `records/` (the `dev*.sh` scripts here say what each run did).
   loaded checkpoint; `lfm3_speech.cuh`); the weights are only read, and each decoder keeps its own buffers. Host code
   only. Both builds give the same 15 rule-3 WAVs byte for byte as before; the CLI's 41 concurrent requests at 8, 12
   and 16 rows equal their alone runs, at 5,933, 6,287 and 6,703 MiB. A row now costs about 102 MiB.
-- **Rule 12's outcome** (developments 8 to 10, `tools/pascal/speech_memory.py`). With text at its limits, 8 rows peak
-  at 8,073 MiB, and even one row exceeds the limit at a total capacity of 32,768 (`/generate_batch` on 4,096 + 28,672:
-  7,745 MiB). Lowered as the rule says: one speech row, and the total capacity to 31,744, where every configuration
-  (scaled) passes beside one row (the batch at 7,693 MiB). Each 1,024 tokens of capacity is about 52 MiB, so each
-  further row would cost about 2,048 tokens of capacity; the owner kept the rule as written (2026-11-20, "Let's roll
-  with it as is"). The server defaults to `--speech-rows 1` and, when it serves speech, `--total-capacity 31744`
-  (32,768 without speech, as serve-v1 measured); its ready line reports both
-  (`{"ready":true,"port":N,"total_capacity":31744,"speech_rows":1}`). `--speech-rows` still accepts 1 to 16; more rows
-  than one fit beside smaller text sessions, not beside text at its limits.
+- **Rule 12's outcome** (developments 8 to 10, 14 and 15, `tools/pascal/speech_memory.py`). With text at its limits,
+  8 rows peak at 8,073 MiB, and even one row exceeds the limit at a total capacity of 32,768 (`/generate_batch` on
+  4,096 + 28,672: 7,745 MiB). Lowered as the rule says: one speech row, and the total capacity to 31,744 (development
+  10; the owner kept the rule as written, 2026-11-20: "Let's roll with it as is"); then to 30,720 after the red-team
+  review's configuration, audio in at its limit while the text session at its limit is open, peaked at 7,781 MiB at
+  31,744 (development 14). At 30,720 every configuration passes beside one row (the highest, that audio-in
+  configuration, 7,697 MiB; development 15). Each 1,024 tokens of capacity is about 52 MiB and a row about 102 MiB,
+  so each further row takes 2,048 tokens from the default, down to 2,048: 8 rows at 16,384 pass (7,461 MiB at the
+  highest) and 16 rows at 2,048 pass (7,709 MiB). The server defaults to `--speech-rows 1` and, when it serves speech,
+  a total capacity of 30,720 (32,768 without speech, as serve-v1 measured); its ready line reports both
+  (`{"ready":true,"port":N,"total_capacity":30720,"speech_rows":1}`). An explicit `--total-capacity` is the
+  operator's.
 - **`/generate_batch` and speech.** A batch is an exclusive job: the server lets the running speech rows finish before
   it runs (`lfm3_http.hpp`, `speech_first`). So that configuration of rule 12 cannot run beside generating rows; the
   check counts it when the rows ran first, their batch still resident.
-- **Adaptations to the card** (rule 11, copies in `tools/pascal/` with their whole diffs):
-  `check_lfm3_audio_in_server.py` runs every `lfm3-speech` reference before the server starts (a second copy of the
-  model does not fit); `check_lfm3_speech_batch_server.py` runs its alone server as the same binary with
-  `--speech-rows 1` (there is no older single-request server) and gives `--speech-rows 8` to the servers that relied on
-  the reference's default of 8.
+- **Adaptations to the card** (rule 11): four copies in `tools/pascal/`, each with its whole diff against the
+  reference's check here (`check_lfm3_*.diff`). `check_lfm3_audio_in_server.py` runs every `lfm3-speech` reference
+  before the server starts (a second copy of the model does not fit) and records each case's mode;
+  `check_lfm3_speech_batch_server.py` runs its alone server as the same binary with `--speech-rows 1` (there is no older
+  single-request server), gives `--speech-rows 8` to the servers that relied on the reference's default of 8, and
+  reports every server's exit code; decision 10's longer deadlines in those two and in `check_lfm3_speech_server.py`
+  (also a longer session idle timeout) and `check_lfm3_speech_stream.py`. Every comparison is the reference's.
+- **The red-team review** (2026-11-21, after development 13) found, and these were changed:
+  rule 12's audio-in configuration had never been resident beside the text session (the clip was sent 20 s before the
+  session existed; now the clip goes three times while the filled session is open); `judge_speech_server.py` dropped
+  two non-timing criteria (audio-in: text present unless audio; the batch check's other servers' exit codes) and did
+  not check that the reports were of the build judged or complete (now it checks the binaries' and references' hashes
+  and every case count); rule 6's comparison passed on a subset (now all 25 clips); `--speech-rows` above 1 kept the
+  one-row capacity, which could exhaust the card (now the default capacity falls by 2,048 tokens per further row);
+  rule 13's text case also broke the chunk limit (now within every other limit); the imported reference records were
+  not in git (a `.gitignore` pattern; now anchored, and the records committed); the listening set's index printed
+  durations and HF's texts, which identify HF against listening-c3-v1 (now neither; see rule 9 below); the rule run
+  lacked rule 3's rendering clause and escalated only two cases (now both).
 
 ## Rules
 
@@ -129,6 +157,12 @@ Judged on the final phase 4 tree. "Parity build" and "shipping build" as in deci
    frames per utterance is within 15% of HF's (the reference measured 0.95 to 1.05 outside the long-form loops).
 9. Listening (C3), the final gate. The owner, blind, the shipping build against HF: seed 1 of the ten cases (HF's from
    `listening-c3-v1`), A and B by a draw from the OS's entropy, the key opened after every verdict. Pass: the owner's.
+
+   *The set* (`tools/pascal/listening_set.py`, on the development machine, 2026-11-21; `outputs/listening-speech-v1`,
+   not committed): the shipping clips are development 4's runs (`sp-refs-text-s1`), byte-identical to every later
+   build's; the rule run checks the final build's against the key's hashes. HF's clips are the same files as
+   listening-c3-v1's HF side, whose key the owner has seen; the index gives only each case's prompt, and the owner
+   listens without consulting that set.
 10. Audio in. Over the 2,620 utterances, the shipping build's corpus WER minus HF's has a paired-bootstrap 95% upper
     bound of at most +0.25 points (audio-in-v1's rule 3). HF's per-utterance word errors: the parity build's,
     except the 19 committed utterances, where HF's own; valid only if rule 4 passes.

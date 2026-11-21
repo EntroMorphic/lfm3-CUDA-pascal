@@ -1,0 +1,32 @@
+--- tools/check_lfm3_speech_stream.py	2026-11-18 15:18:58.881307426 -0700
++++ tools/pascal/check_lfm3_speech_stream.py	2026-11-20 20:14:16.410889959 -0700
+@@ -15,6 +15,11 @@
+ Writes OUT_JSON and exits 1 on any failure.
+ Usage: check_lfm3_speech_stream.py SERVER_BINARY MODEL_DIR BUILD_DIR LIBRI_WAV_DIR OUT_JSON
+   (BUILD_DIR: build/ on Thor, holding speech-e2e-v1, speech-chunk-native-v1 and audio-in-listen)
++
++Pascal adaptation (speech-v1 rule 11, decision 10: timing recorded, not judged): the client's deadlines are 3,600 s
++(600 in the reference). The parity build is about three times slower than the shipping build, whose budget-truncated
++case alone took 280 s. Every comparison and every limit is unchanged (tools/pascal/judge_speech_server.py records the
++timing ones).
+ """
+ import base64
+ import hashlib
+@@ -86,7 +91,7 @@
+         self.port = json.loads(self.proc.stdout.readline())["port"]
+         token_path.unlink()
+ 
+-    def post(self, body, timeout=600):
++    def post(self, body, timeout=3600):
+         req = urllib.request.Request(f"http://127.0.0.1:{self.port}/speech", data=json.dumps(body).encode(), method="POST",
+                                      headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"})
+         try:
+@@ -95,7 +100,7 @@
+         except urllib.error.HTTPError as e:
+             return e.code, json.loads(e.read())
+ 
+-    def stream(self, body, close_after_audio=False, timeout=600):
++    def stream(self, body, close_after_audio=False, timeout=3600):
+         """(status, events, arrival seconds from the request's first byte, the first byte's monotonic time)."""
+         payload = json.dumps(dict(body, stream=True)).encode()
+         head = (f"POST /speech HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\n"

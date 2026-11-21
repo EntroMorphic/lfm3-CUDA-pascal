@@ -71,12 +71,19 @@ def compare(work, asr_hf, asr_engine, validation, out_json):
             c = committed[r["case"]]
             rows.append(dict(kind=kind, case=r["case"], equal=r["transcript"] == c["transcript"],
                              transcript=r["transcript"], committed=c["transcript"], wer=r["wer"], committed_wer=c["wer"]))
-    ok = bool(rows) and all(r["equal"] for r in rows)
-    Path(out_json).write_text(json.dumps(dict(clips=len(rows), equal=sum(r["equal"] for r in rows), pass_=ok, rows=rows),
+    # every prepared clip transcribed exactly once (red-team review: a missing clip must not pass on the subset): the 25
+    # seed-1 clips, ten HF and fifteen Thor-engine (the split tts-long-male among them, as prepare() writes them)
+    prepared = sorted((k, d.name) for k in ("hf", "engine") for d in (Path(work) / k).iterdir() if d.is_dir())
+    got = sorted((r["kind"], r["case"]) for r in rows)
+    complete = got == prepared and len(prepared) == 25
+    ok = complete and all(r["equal"] for r in rows)
+    Path(out_json).write_text(json.dumps(dict(clips=len(rows), prepared=len(prepared), complete=complete,
+                                              equal=sum(r["equal"] for r in rows), pass_=ok, rows=rows),
                                          indent=1) + "\n")
     for r in rows:
         print(f"{r['kind']:6s} {r['case']:24s} {'equal' if r['equal'] else 'DIFFERS'}  wer {r['wer']:.3f} (committed {r['committed_wer']:.3f})")
-    print(f"rule 6 (the scorer): {sum(r['equal'] for r in rows)} of {len(rows)} transcripts equal: {'PASS' if ok else 'FAIL'}")
+    print(f"rule 6 (the scorer): {sum(r['equal'] for r in rows)} of {len(rows)} transcripts equal, {len(prepared)} clips prepared"
+          f"{'' if complete else ' (INCOMPLETE)'}: {'PASS' if ok else 'FAIL'}")
     sys.exit(0 if ok else 1)
 
 

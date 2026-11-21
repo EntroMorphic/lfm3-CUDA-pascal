@@ -1,0 +1,9 @@
+bdf152f96526d8dd485373e992988f2a481383aa847eeab816e5288235679f80  ./audio-in-v1/round2-full-check.json
+784fe4f306c90fdb77fc8f4d8b0f2e70b27c6b0b526a9aec816b403e9fb85e9c  ./speech-e2e-v1/rounds/e2e/asr-hf.json
+7a0d1722c1ea4626d3cbe45ce2c7b9be9a1032145038571086858db946594218  ./speech-e2e-v1/rounds/e2e/asr-native-cases.json
+fe33a07875e6b50420dd8a9fe81d3272f5e24e23e6e23c12011ccd7195127627  ./speech-e2e-v1/rounds/fridge/asr-hf.json
+0449440e565224b7f6d51a77254da06b6c9b192823d53cc71daa2a23277e6164  ./speech-e2e-v1/rounds/fridge/asr-native-cases.json
+93c00ad42e47b70961847410efad511e75beaf94b566efecec9f3941732c4ac9  ./speech-e2e-v1/rounds/long/asr-hf.json
+e1dfe609dbf57101c7904b9d38a02d54184010b7b020c92c61fe1ba4860bf540  ./speech-e2e-v1/rounds/long/asr-native-cases.json
+326329d2f734572a90f263a30c8830c2d21a9f13746c7d28a1cb2c3348cdbbb2  ./speech-long-form-v1/asr/hf-bf16-split.json
+9d3dbb415597c6947de3ac65976dea66629986c6bf29cc528e58976704d4598d  ./speech-long-form-v1/asr/native-split.json

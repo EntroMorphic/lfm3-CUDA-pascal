@@ -7,8 +7,11 @@ session filled to capacity - 33 prompt tokens, 32 new) runs while every speech r
 a sentence, seeds 1..ROWS; sent 0.5 s apart, each again after a 429 frontend_busy) are sent first, the text
 configuration starts SETTLE (20) seconds after the first, and the configuration counts only if every speech request was still running when
 its text requests ended. A sixth configuration is audio
-in at the request limits: one clip as long as the 4 MiB body allows (LibriSpeech utterances joined, 16 kHz 16-bit),
-with ROWS - 1 speech rows generating and the one-32768 text session. Whole-card memory every 0.2 s (nvidia-smi);
+in at the request limits beside text at its limits: the single text session (TOTAL) filled and resident, then one clip
+as long as the 4 MiB body allows (LibriSpeech utterances joined, 16 kHz 16-bit; transcribed, 64 new tokens) sent three
+times in turn, while ROWS - 1 speech rows generate; it counts only if every audio request succeeded while the session
+was open, and every speech row was still running when the last one ended. (Red-team review: the earlier version sent
+the clip with the speech load, 20 s before the text session existed, so the two were never resident together.) Whole-card memory every 0.2 s (nvidia-smi);
 every request must succeed (200) and every configuration's peak must be at most LIMIT MiB. First, for the record, the
 speech rows alone (no text session). /generate_batch is an exclusive job: the server drains the speech rows before it
 runs (lfm3_http.hpp, speech_first), so that configuration cannot overlap speech; it counts when every speech request
@@ -112,14 +115,14 @@ def post_once(body, result):
 
 try:
     idle = Sampler(); time.sleep(1); report["before_mib"] = idle.done()
-    sid = client.call("POST", "/sessions", dict(capacity=4096))["session_id"]
+    sid = client.call("POST", "/sessions", dict(capacity=min(4096, total)))["session_id"]  # the calibration (TOTAL may be less)
     n = {}
-    for r in (1, 11):
+    for r in ((1, 11) if total >= 4096 else (1, 3)):
         client.call("POST", f"/sessions/{sid}/reset", {})
         n[r] = client.call("POST", "/generate", dict(session_id=sid, messages=text(r), max_new_tokens=1))["consumed_tokens"]
-    b = (n[11] - n[1]) / 10; a = n[1] - b
+    hi = max(n); b = (n[hi] - n[1]) / (hi - 1); a = n[1] - b
     client.call("POST", f"/sessions/{sid}/close", {})
-    report["calibration"] = dict(tokens_at_1=n[1], tokens_at_11=n[11])
+    report["calibration"] = {f"tokens_at_{k}": v for k, v in n.items()}
     def fill(capacity): return max(1, int((capacity - 33 - a) // b))
     clip = long_clip()
     report["clip"] = dict(bytes=len(clip), seconds=(len(clip) - 44) / 32000)
@@ -128,11 +131,11 @@ try:
         global failed
         speech = [dict(messages=LIGHTHOUSE, mode="audio", max_new_tokens=1536, seed=k + 1)
                   for k in range(speech_rows)]
-        if audio_in:
-            speech.append(dict(messages=[{"role": "system", "content": "Respond with text."},
-                                         {"role": "user", "content": [{"type": "audio", "audio": base64.b64encode(clip).decode()},
-                                                                      {"type": "text", "text": "Transcribe the audio."}]}],
-                               mode="text", max_new_tokens=64, seed=1))
+        audio_body = dict(messages=[{"role": "system", "content": "Respond with text."},
+                                    {"role": "user", "content": [{"type": "audio", "audio": base64.b64encode(clip).decode()},
+                                                                 {"type": "text", "text": "Transcribe the audio."}]}],
+                          mode="text", max_new_tokens=64, seed=1)
+        audio = []
         sampler = Sampler(); entry = dict(name=name, capacities=capacities, speech=len(speech), prompts=[], statuses=[])
         results = [dict() for _ in speech]
         threads = [threading.Thread(target=post_speech, args=(body, res, 0.5 * k)) for k, (body, res) in enumerate(zip(speech, results))]
@@ -155,6 +158,10 @@ try:
                     if status == 200: entry["prompts"].append(reply["consumed_tokens"] - len(reply["generated_ids"]) + 1)
                     else: entry["error"] = reply
             text_end = time.monotonic()
+            if audio_in:  # the session still open and filled: the clip, three times in turn
+                for k in range(3):
+                    audio.append(dict()); post_speech(audio_body, audio[-1], 0)
+            last_end = time.monotonic()
             for s in sids: client.call("POST", f"/sessions/{s}/close", {})
             [t.join() for t in threads]
         finally:
@@ -162,15 +169,18 @@ try:
             report["last_peak_mib"] = entry["peak_mib"]
         entry["text_seconds"] = round(text_end - text_start, 1)
         entry["speech"] = [dict(r, start=round(r["start"] - text_start, 1), end=round(r["end"] - text_start, 1)) for r in results]
-        overlapped = all(r.get("end", 0) >= text_end for r in results[:speech_rows])
+        entry["audio_in"] = [dict(r, start=round(r["start"] - text_start, 1), end=round(r["end"] - text_start, 1)) for r in audio]
+        overlapped = all(r.get("end", 0) >= last_end for r in results[:speech_rows])
         if batch: overlapped = all(r.get("end", text_end) < text_end for r in results[:speech_rows])  # drained, then the batch
         entry["speech_overlapped_text"] = overlapped
         ok = all(s == 200 for s in entry["statuses"]) and all(r["status"] == 200 for r in results) and overlapped and \
+            (not audio_in or (len(audio) == 3 and all(r["status"] == 200 and text_end <= r["start"] and r["end"] <= last_end
+                                                      for r in audio))) and \
             entry["peak_mib"] <= limit and entry["samples"] >= 5 and entry["peak_mib"] > report["before_mib"] and \
             len(entry["prompts"]) == len(capacities) and all(p >= c - 33 - 2 * b for p, c in zip(entry["prompts"], capacities))
         if batch: ok = ok and entry.get("gpu_batching") is True
         entry["ok"] = ok; failed |= not ok; report["configurations"].append(entry)
-        print(f"rule 12 {name} with {len(speech)} speech: text {entry['statuses']} in {entry['text_seconds']} s, speech "
+        print(f"rule 12 {name} with {len(speech)} speech{' and 3 audio in' if audio_in else ''}: text {entry['statuses']} in {entry['text_seconds']} s, speech "
               f"{[r['status'] for r in results]} (overlapped {overlapped}), peak {entry['peak_mib']} MiB "
               f"({entry['samples']} samples): {'ok' if ok else 'FAIL'}", flush=True)
 

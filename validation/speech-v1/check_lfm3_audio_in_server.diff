@@ -1,0 +1,64 @@
+--- tools/check_lfm3_audio_in_server.py	2026-11-18 15:18:58.871307275 -0700
++++ tools/pascal/check_lfm3_audio_in_server.py	2026-11-21 04:48:57.388292578 -0700
+@@ -12,6 +12,12 @@
+ (split, normalize), against lfm3-speech asked for both, the chunk texts (normalized sentences) equal too. Then: the same request twice gives the same reply; a pinned greedy
+ /generate before and after gives the same ids; the server exits cleanly. Writes OUT_JSON; exits 1 on any failure.
+ Usage: check_lfm3_audio_in_server.py SERVER_BINARY SPEECH_BINARY MODEL_DIR WAV_DIR WORK_DIR OUT_JSON
++
++Pascal adaptation (speech-v1 rule 11): the reference ran each case's lfm3-speech while the server held the model; on
++the GTX 1080 (8 GB) the second copy of the model does not fit (cudaMalloc model payload: out of memory). Here every
++lfm3-speech reference runs first, before the server starts; the requests, the comparisons and the rules are unchanged.
++Decision 10 (timing recorded, not judged): the client's deadline is 3,600 s (600 in the reference). Each case's report
++also records its mode (for tools/pascal/judge_speech_server.py: text present unless audio).
+ """
+ import base64
+ import hashlib
+@@ -71,6 +77,14 @@
+         ("tts-numbers-normalized-s1", [{"role": "system", "content": "Perform TTS in American English using a female voice."},
+                                        {"role": "user", "content": NUMBERS}], "audio", 512, 1),
+     ]
++    refs = {}  # Pascal: every lfm3-speech reference before the server starts (one model on the card at a time)
++    for name, messages, mode, count, seed in cases:
++        req_path, stem = work / f"{name}.req.json", work / name
++        driver = dict(messages=messages, mode=mode, max_new_tokens=count, seed=seed)
++        if mode == "audio" and all(isinstance(m["content"], str) for m in messages):
++            driver.update(split=True, normalize=True)  # the server's defaults for text in, speech out
++        req_path.write_text(json.dumps(driver))
++        refs[name] = subprocess.run([speech, model, str(req_path), str(stem)], capture_output=True, text=True)
+     token = secrets.token_urlsafe(32)
+     token_path = Path(out_json).with_suffix(".token")
+     fd = os.open(token_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+@@ -81,7 +95,7 @@
+     port = json.loads(proc.stdout.readline())["port"]
+     token_path.unlink()
+ 
+-    def post(path, body, timeout=600):
++    def post(path, body, timeout=3600):
+         req = urllib.request.Request(f"http://127.0.0.1:{port}{path}", data=json.dumps(body).encode(), method="POST",
+                                      headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"})
+         try:
+@@ -100,13 +114,8 @@
+     post(f"/sessions/{sid}/reset", {})
+     first = None
+     for name, messages, mode, count, seed in cases:
+-        # the reference: lfm3-speech with the clips as paths
+-        req_path, stem = work / f"{name}.req.json", work / name
+-        driver = dict(messages=messages, mode=mode, max_new_tokens=count, seed=seed)
+-        if mode == "audio" and all(isinstance(m["content"], str) for m in messages):
+-            driver.update(split=True, normalize=True)  # the server's defaults for text in, speech out
+-        req_path.write_text(json.dumps(driver))
+-        r = subprocess.run([speech, model, str(req_path), str(stem)], capture_output=True, text=True)
++        # the reference: lfm3-speech with the clips as paths (run above, before the server started)
++        r = refs[name]
+         ref = json.loads((work / f"{name}.json").read_text()) if r.returncode == 0 else {}
+         ref_wav = (work / f"{name}.wav").read_bytes() if r.returncode == 0 else b""
+         # the server: the clips as base64 WAV bytes
+@@ -118,7 +127,7 @@
+         status, reply = post("/speech", body)
+         wall = time.time() - t0
+         got_wav = base64.b64decode(reply.get("audio_wav_base64", "")) if status == 200 else b""
+-        res = dict(status=status, reference_exit=r.returncode, reference_stderr=r.stderr[-300:],
++        res = dict(status=status, mode=mode, reference_exit=r.returncode, reference_stderr=r.stderr[-300:],
+                    text_identical=status == 200 and reply.get("text") == ref.get("text"),
+                    wav_identical=status == 200 and got_wav == ref_wav, wav_bytes=len(got_wav), text=reply.get("text"),
+                    audio_seconds=reply.get("audio_seconds"), prefill_seconds=reply.get("prefill_seconds"),
