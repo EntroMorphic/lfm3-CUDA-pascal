@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "binary_sha256": "b9c13611c6aaf2aa725131d735a14f36148e05aee844de201379c2639f79338d",
+  "live_token_count": 125033,
+  "seed_reproducible": true,
+  "warmup_rng_isolated": true,
+  "independent_logit_replay": true,
+  "non_greedy_fixture_verified": true,
+  "oracle_sha256": "ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9",
+  "topk1_equals_greedy": true,
+  "exact_reset_all_runs": true,
+  "preupload_sampling_rejections": 14,
+  "distinct_seeds_differ": true,
+  "scope": "finite native integration fixtures; sampler distribution tested separately; no torch RNG identity"
+}

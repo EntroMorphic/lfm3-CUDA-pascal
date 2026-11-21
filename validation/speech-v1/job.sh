@@ -188,7 +188,10 @@ STAGES=native-server tools/pascal/serve_gates.sh parity-v35 sp-v1-serve-parity p
 # 14 (development 13), rule 2's other stages and serve-v1's rule 10 (development 13), 12 at 8 and 16 rows (development 15)
 K=$O/carried; mkdir -p $K
 cp $D3/rule4.json $D3/rule10.json $D3/rule4.log $D3/rule10.log $K/
-cp $B/sp-dev5/c1c2.json $B/sp-dev5/asr-e2e.json $B/sp-dev5/asr-split.json $X6/numbers.json $X6/long.json $X6/asr-numbers.json $X6/asr-split.json $K/
+cp $B/sp-dev5/c1c2.json $B/sp-dev5/asr-e2e.json $B/sp-dev5/asr-split.json $K/
+# (as run, the escalation's four went into $K/ itself, where its asr-split.json collided with development 5's and was
+# refused; copied to escalate/ by hand after the run)
+mkdir -p $K/escalate && cp $X6/numbers.json $X6/long.json $X6/asr-numbers.json $X6/asr-split.json $K/escalate/
 mkdir -p $K/rule14 && cp -r $B/sp-dev13/m-text $B/sp-dev13/m-parity $K/rule14/ && find $K/rule14 \( -name "*.wav" -o -name "*.f32" -o -name "*.i32" \) -delete
 cp -r $B/sp-dev13-serve-shipping $K/serve-shipping-dev13; cp -r $B/sp-dev13-serve-parity $K/serve-parity-dev13; cp $B/sp-dev13/paired.log $K/
 cp -r $B/sp-dev15/memory-rows8-16384 $B/sp-dev15/memory-rows16-2048 $B/sp-dev15/memory-rows8-16384.log $B/sp-dev15/memory-rows16-2048.log $K/

@@ -1,0 +1,15 @@
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/il-fridge-s1.req.json /workspace/build/sp-v1/rule3/out/il-fridge-s1
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/il-reflective-s1.req.json /workspace/build/sp-v1/rule3/out/il-reflective-s1
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/il-study-s1.req.json /workspace/build/sp-v1/rule3/out/il-study-s1
+/workspace/build/sp-refs-parity-s1/speech-chunk-native-v1/requests/probe-other-long-s1.req.json /workspace/build/sp-v1/rule3/out/probe-other-long-s1
+/workspace/build/sp-refs-parity-s1/speech-chunk-native-v1/requests/probe-other-long-s2.req.json /workspace/build/sp-v1/rule3/out/probe-other-long-s2
+/workspace/build/sp-refs-parity-s1/speech-chunk-native-v1/requests/probe-other-long-s3.req.json /workspace/build/sp-v1/rule3/out/probe-other-long-s3
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/sp-v1/rule3/out/tts-fox-female-s1
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-fox-male-s1.req.json /workspace/build/sp-v1/rule3/out/tts-fox-male-s1
+/workspace/build/sp-refs-parity-s1/speech-chunk-native-v1/requests/tts-long-male-s1.req.json /workspace/build/sp-v1/rule3/out/tts-long-male-s1
+/workspace/build/sp-refs-parity-s1/speech-chunk-native-v1/requests/tts-long-male-s2.req.json /workspace/build/sp-v1/rule3/out/tts-long-male-s2
+/workspace/build/sp-refs-parity-s1/speech-chunk-native-v1/requests/tts-long-male-s3.req.json /workspace/build/sp-v1/rule3/out/tts-long-male-s3
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-museum-female-s1.req.json /workspace/build/sp-v1/rule3/out/tts-museum-female-s1
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-museum-male-s1.req.json /workspace/build/sp-v1/rule3/out/tts-museum-male-s1
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-numbers-female-s1.req.json /workspace/build/sp-v1/rule3/out/tts-numbers-female-s1
+/workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-numbers-male-s1.req.json /workspace/build/sp-v1/rule3/out/tts-numbers-male-s1

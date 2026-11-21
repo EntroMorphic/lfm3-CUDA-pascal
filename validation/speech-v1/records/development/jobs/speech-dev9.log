@@ -1,0 +1,923 @@
++ date
+Fri Nov 20 15:16:20 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev9
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ D1=/workspace/build/sp-dev1
++ '[' -e /workspace/build/sp-dev9 ']'
++ mkdir -p /workspace/build/sp-dev9
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-s3
+build parity-s3 rc=0
++ echo 'build parity-s3 rc=0'
++ tools/pascal/build_speech.sh text-s3
+build text-s3 rc=0
++ echo 'build text-s3 rc=0'
++ for b in text parity
++ mkdir -p /workspace/build/sp-dev9/text
+++ ls /workspace/build/sp-dev1/single/requests
+++ grep -- '-s1\.req\.json$'
+++ grep -v tts-long-male
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json /workspace/build/sp-dev9/text/il-fridge-s1 /workspace/build/sp-dev1/text-s1/il-fridge-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json /workspace/build/sp-dev9/text/il-reflective-s1 /workspace/build/sp-dev1/text-s1/il-reflective-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/il-study-s1.req.json /workspace/build/sp-dev9/text/il-study-s1 /workspace/build/sp-dev1/text-s1/il-study-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev9/text/tts-fox-female-s1 /workspace/build/sp-dev1/text-s1/tts-fox-female-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json /workspace/build/sp-dev9/text/tts-fox-male-s1 /workspace/build/sp-dev1/text-s1/tts-fox-male-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json /workspace/build/sp-dev9/text/tts-museum-female-s1 /workspace/build/sp-dev1/text-s1/tts-museum-female-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json /workspace/build/sp-dev9/text/tts-museum-male-s1 /workspace/build/sp-dev1/text-s1/tts-museum-male-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json /workspace/build/sp-dev9/text/tts-numbers-female-s1 /workspace/build/sp-dev1/text-s1/tts-numbers-female-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json /workspace/build/sp-dev9/text/tts-numbers-male-s1 /workspace/build/sp-dev1/text-s1/tts-numbers-male-s1.wav'
+++ ls /workspace/build/sp-dev1/split/requests
+++ grep -E -- '-s[123]\.req\.json$'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s1
++ w=/workspace/build/sp-dev1/text-s1/probe-other-long-s1.wav
++ '[' probe-other-long-s1 '!=' probe-other-long-s1 ']'
++ echo '/workspace/build/sp-dev1/split/requests/probe-other-long-s1.req.json /workspace/build/sp-dev9/text/probe-other-long-s1 /workspace/build/sp-dev1/text-s1/probe-other-long-s1.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s2
++ w=/workspace/build/sp-dev1/text-s1/probe-other-long-s2.wav
++ '[' probe-other-long-s2 '!=' probe-other-long-s2 ']'
++ echo '/workspace/build/sp-dev1/split/requests/probe-other-long-s2.req.json /workspace/build/sp-dev9/text/probe-other-long-s2 /workspace/build/sp-dev1/text-s1/probe-other-long-s2.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s3
++ w=/workspace/build/sp-dev1/text-s1/probe-other-long-s3.wav
++ '[' probe-other-long-s3 '!=' probe-other-long-s3 ']'
++ echo '/workspace/build/sp-dev1/split/requests/probe-other-long-s3.req.json /workspace/build/sp-dev9/text/probe-other-long-s3 /workspace/build/sp-dev1/text-s1/probe-other-long-s3.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s1
++ w=/workspace/build/sp-dev1/text-s1/tts-long-male-s1.wav
++ '[' -s1 '!=' tts-long-male-s1 ']'
++ w=/workspace/build/sp-dev1/text-s1-split/tts-long-male-s1.wav
++ echo '/workspace/build/sp-dev1/split/requests/tts-long-male-s1.req.json /workspace/build/sp-dev9/text/tts-long-male-s1 /workspace/build/sp-dev1/text-s1-split/tts-long-male-s1.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s2
++ w=/workspace/build/sp-dev1/text-s1/tts-long-male-s2.wav
++ '[' -s2 '!=' tts-long-male-s2 ']'
++ w=/workspace/build/sp-dev1/text-s1-split/tts-long-male-s2.wav
++ echo '/workspace/build/sp-dev1/split/requests/tts-long-male-s2.req.json /workspace/build/sp-dev9/text/tts-long-male-s2 /workspace/build/sp-dev1/text-s1-split/tts-long-male-s2.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s3
++ w=/workspace/build/sp-dev1/text-s1/tts-long-male-s3.wav
++ '[' -s3 '!=' tts-long-male-s3 ']'
++ w=/workspace/build/sp-dev1/text-s1-split/tts-long-male-s3.wav
++ echo '/workspace/build/sp-dev1/split/requests/tts-long-male-s3.req.json /workspace/build/sp-dev9/text/tts-long-male-s3 /workspace/build/sp-dev1/text-s1-split/tts-long-male-s3.wav'
++ cut '-d ' -f1,2 /workspace/build/sp-dev9/text.map
++ /workspace/build/text-s3/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-dev9/text.list
+++ tail -1 /workspace/build/sp-dev9/text.err
++ echo 'text-s3 batch rc=0 lfm3-speech: batch: 15 done, 0 failed'
++ same=0
++ n=0
++ read r s w
+text-s3 batch rc=0 lfm3-speech: batch: 15 done, 0 failed
++ n=1
++ cmp -s /workspace/build/sp-dev9/text/il-fridge-s1.wav /workspace/build/sp-dev1/text-s1/il-fridge-s1.wav
++ same=1
++ read r s w
++ n=2
++ cmp -s /workspace/build/sp-dev9/text/il-reflective-s1.wav /workspace/build/sp-dev1/text-s1/il-reflective-s1.wav
++ same=2
++ read r s w
++ n=3
++ cmp -s /workspace/build/sp-dev9/text/il-study-s1.wav /workspace/build/sp-dev1/text-s1/il-study-s1.wav
++ same=3
++ read r s w
++ n=4
++ cmp -s /workspace/build/sp-dev9/text/tts-fox-female-s1.wav /workspace/build/sp-dev1/text-s1/tts-fox-female-s1.wav
++ same=4
++ read r s w
++ n=5
++ cmp -s /workspace/build/sp-dev9/text/tts-fox-male-s1.wav /workspace/build/sp-dev1/text-s1/tts-fox-male-s1.wav
++ same=5
++ read r s w
++ n=6
++ cmp -s /workspace/build/sp-dev9/text/tts-museum-female-s1.wav /workspace/build/sp-dev1/text-s1/tts-museum-female-s1.wav
++ same=6
++ read r s w
++ n=7
++ cmp -s /workspace/build/sp-dev9/text/tts-museum-male-s1.wav /workspace/build/sp-dev1/text-s1/tts-museum-male-s1.wav
++ same=7
++ read r s w
++ n=8
++ cmp -s /workspace/build/sp-dev9/text/tts-numbers-female-s1.wav /workspace/build/sp-dev1/text-s1/tts-numbers-female-s1.wav
++ same=8
++ read r s w
++ n=9
++ cmp -s /workspace/build/sp-dev9/text/tts-numbers-male-s1.wav /workspace/build/sp-dev1/text-s1/tts-numbers-male-s1.wav
++ same=9
++ read r s w
++ n=10
++ cmp -s /workspace/build/sp-dev9/text/probe-other-long-s1.wav /workspace/build/sp-dev1/text-s1/probe-other-long-s1.wav
++ same=10
++ read r s w
++ n=11
++ cmp -s /workspace/build/sp-dev9/text/probe-other-long-s2.wav /workspace/build/sp-dev1/text-s1/probe-other-long-s2.wav
++ same=11
++ read r s w
++ n=12
++ cmp -s /workspace/build/sp-dev9/text/probe-other-long-s3.wav /workspace/build/sp-dev1/text-s1/probe-other-long-s3.wav
++ same=12
++ read r s w
++ n=13
++ cmp -s /workspace/build/sp-dev9/text/tts-long-male-s1.wav /workspace/build/sp-dev1/text-s1-split/tts-long-male-s1.wav
++ same=13
++ read r s w
++ n=14
++ cmp -s /workspace/build/sp-dev9/text/tts-long-male-s2.wav /workspace/build/sp-dev1/text-s1-split/tts-long-male-s2.wav
++ same=14
++ read r s w
++ n=15
++ cmp -s /workspace/build/sp-dev9/text/tts-long-male-s3.wav /workspace/build/sp-dev1/text-s1-split/tts-long-male-s3.wav
++ same=15
++ read r s w
++ echo 'text-s3 against text-s1: 15 of 15 WAVs equal'
++ for b in text parity
++ mkdir -p /workspace/build/sp-dev9/parity
+text-s3 against text-s1: 15 of 15 WAVs equal
+++ ls /workspace/build/sp-dev1/single/requests
+++ grep -- '-s1\.req\.json$'
+++ grep -v tts-long-male
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json /workspace/build/sp-dev9/parity/il-fridge-s1 /workspace/build/sp-dev1/parity-s1/il-fridge-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json /workspace/build/sp-dev9/parity/il-reflective-s1 /workspace/build/sp-dev1/parity-s1/il-reflective-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/il-study-s1.req.json /workspace/build/sp-dev9/parity/il-study-s1 /workspace/build/sp-dev1/parity-s1/il-study-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev9/parity/tts-fox-female-s1 /workspace/build/sp-dev1/parity-s1/tts-fox-female-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json /workspace/build/sp-dev9/parity/tts-fox-male-s1 /workspace/build/sp-dev1/parity-s1/tts-fox-male-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json /workspace/build/sp-dev9/parity/tts-museum-female-s1 /workspace/build/sp-dev1/parity-s1/tts-museum-female-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json /workspace/build/sp-dev9/parity/tts-museum-male-s1 /workspace/build/sp-dev1/parity-s1/tts-museum-male-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json /workspace/build/sp-dev9/parity/tts-numbers-female-s1 /workspace/build/sp-dev1/parity-s1/tts-numbers-female-s1.wav'
++ for f in $(ls $D1/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male)
++ echo '/workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json /workspace/build/sp-dev9/parity/tts-numbers-male-s1 /workspace/build/sp-dev1/parity-s1/tts-numbers-male-s1.wav'
+++ ls /workspace/build/sp-dev1/split/requests
+++ grep -E -- '-s[123]\.req\.json$'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s1
++ w=/workspace/build/sp-dev1/parity-s1/probe-other-long-s1.wav
++ '[' probe-other-long-s1 '!=' probe-other-long-s1 ']'
++ echo '/workspace/build/sp-dev1/split/requests/probe-other-long-s1.req.json /workspace/build/sp-dev9/parity/probe-other-long-s1 /workspace/build/sp-dev1/parity-s1/probe-other-long-s1.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s2
++ w=/workspace/build/sp-dev1/parity-s1/probe-other-long-s2.wav
++ '[' probe-other-long-s2 '!=' probe-other-long-s2 ']'
++ echo '/workspace/build/sp-dev1/split/requests/probe-other-long-s2.req.json /workspace/build/sp-dev9/parity/probe-other-long-s2 /workspace/build/sp-dev1/parity-s1/probe-other-long-s2.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s3
++ w=/workspace/build/sp-dev1/parity-s1/probe-other-long-s3.wav
++ '[' probe-other-long-s3 '!=' probe-other-long-s3 ']'
++ echo '/workspace/build/sp-dev1/split/requests/probe-other-long-s3.req.json /workspace/build/sp-dev9/parity/probe-other-long-s3 /workspace/build/sp-dev1/parity-s1/probe-other-long-s3.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s1
++ w=/workspace/build/sp-dev1/parity-s1/tts-long-male-s1.wav
++ '[' -s1 '!=' tts-long-male-s1 ']'
++ w=/workspace/build/sp-dev1/parity-s1-split/tts-long-male-s1.wav
++ echo '/workspace/build/sp-dev1/split/requests/tts-long-male-s1.req.json /workspace/build/sp-dev9/parity/tts-long-male-s1 /workspace/build/sp-dev1/parity-s1-split/tts-long-male-s1.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s2
++ w=/workspace/build/sp-dev1/parity-s1/tts-long-male-s2.wav
++ '[' -s2 '!=' tts-long-male-s2 ']'
++ w=/workspace/build/sp-dev1/parity-s1-split/tts-long-male-s2.wav
++ echo '/workspace/build/sp-dev1/split/requests/tts-long-male-s2.req.json /workspace/build/sp-dev9/parity/tts-long-male-s2 /workspace/build/sp-dev1/parity-s1-split/tts-long-male-s2.wav'
++ for f in $(ls $D1/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s3
++ w=/workspace/build/sp-dev1/parity-s1/tts-long-male-s3.wav
++ '[' -s3 '!=' tts-long-male-s3 ']'
++ w=/workspace/build/sp-dev1/parity-s1-split/tts-long-male-s3.wav
++ echo '/workspace/build/sp-dev1/split/requests/tts-long-male-s3.req.json /workspace/build/sp-dev9/parity/tts-long-male-s3 /workspace/build/sp-dev1/parity-s1-split/tts-long-male-s3.wav'
++ cut '-d ' -f1,2 /workspace/build/sp-dev9/parity.map
++ /workspace/build/parity-s3/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-dev9/parity.list
+++ tail -1 /workspace/build/sp-dev9/parity.err
++ echo 'parity-s3 batch rc=0 lfm3-speech: batch: 15 done, 0 failed'
++ same=0
++ n=0
+parity-s3 batch rc=0 lfm3-speech: batch: 15 done, 0 failed
++ read r s w
++ n=1
++ cmp -s /workspace/build/sp-dev9/parity/il-fridge-s1.wav /workspace/build/sp-dev1/parity-s1/il-fridge-s1.wav
++ same=1
++ read r s w
++ n=2
++ cmp -s /workspace/build/sp-dev9/parity/il-reflective-s1.wav /workspace/build/sp-dev1/parity-s1/il-reflective-s1.wav
++ same=2
++ read r s w
++ n=3
++ cmp -s /workspace/build/sp-dev9/parity/il-study-s1.wav /workspace/build/sp-dev1/parity-s1/il-study-s1.wav
++ same=3
++ read r s w
++ n=4
++ cmp -s /workspace/build/sp-dev9/parity/tts-fox-female-s1.wav /workspace/build/sp-dev1/parity-s1/tts-fox-female-s1.wav
++ same=4
++ read r s w
++ n=5
++ cmp -s /workspace/build/sp-dev9/parity/tts-fox-male-s1.wav /workspace/build/sp-dev1/parity-s1/tts-fox-male-s1.wav
++ same=5
++ read r s w
++ n=6
++ cmp -s /workspace/build/sp-dev9/parity/tts-museum-female-s1.wav /workspace/build/sp-dev1/parity-s1/tts-museum-female-s1.wav
++ same=6
++ read r s w
++ n=7
++ cmp -s /workspace/build/sp-dev9/parity/tts-museum-male-s1.wav /workspace/build/sp-dev1/parity-s1/tts-museum-male-s1.wav
++ same=7
++ read r s w
++ n=8
++ cmp -s /workspace/build/sp-dev9/parity/tts-numbers-female-s1.wav /workspace/build/sp-dev1/parity-s1/tts-numbers-female-s1.wav
++ same=8
++ read r s w
++ n=9
++ cmp -s /workspace/build/sp-dev9/parity/tts-numbers-male-s1.wav /workspace/build/sp-dev1/parity-s1/tts-numbers-male-s1.wav
++ same=9
++ read r s w
++ n=10
++ cmp -s /workspace/build/sp-dev9/parity/probe-other-long-s1.wav /workspace/build/sp-dev1/parity-s1/probe-other-long-s1.wav
++ same=10
++ read r s w
++ n=11
++ cmp -s /workspace/build/sp-dev9/parity/probe-other-long-s2.wav /workspace/build/sp-dev1/parity-s1/probe-other-long-s2.wav
++ same=11
++ read r s w
++ n=12
++ cmp -s /workspace/build/sp-dev9/parity/probe-other-long-s3.wav /workspace/build/sp-dev1/parity-s1/probe-other-long-s3.wav
++ same=12
++ read r s w
++ n=13
++ cmp -s /workspace/build/sp-dev9/parity/tts-long-male-s1.wav /workspace/build/sp-dev1/parity-s1-split/tts-long-male-s1.wav
++ same=13
++ read r s w
++ n=14
++ cmp -s /workspace/build/sp-dev9/parity/tts-long-male-s2.wav /workspace/build/sp-dev1/parity-s1-split/tts-long-male-s2.wav
++ same=14
++ read r s w
++ n=15
++ cmp -s /workspace/build/sp-dev9/parity/tts-long-male-s3.wav /workspace/build/sp-dev1/parity-s1-split/tts-long-male-s3.wav
++ same=15
++ read r s w
++ echo 'parity-s3 against parity-s1: 15 of 15 WAVs equal'
+parity-s3 against parity-s1: 15 of 15 WAVs equal
++ L=/workspace/build/sp-dev4/concurrent-work/conc16-staggered/list.txt
++ for rows in 8 12 16
++ mkdir -p /workspace/build/sp-dev9/rows8
++ sed s#/workspace/build/sp-dev4/concurrent-work/conc16-staggered/#/workspace/build/sp-dev9/rows8/# /workspace/build/sp-dev4/concurrent-work/conc16-staggered/list.txt
++ S=899415
++ /workspace/build/text-s3/lfm3-speech /workspace/models/LFM3-Omni-2B --concurrent 8 /workspace/build/sp-dev9/rows8/list.txt 12
++ nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -lms 200
++ rc=0
++ kill 899415
++ same=0
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-1089-134686-0000.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-1089-134686-0000.wav /workspace/build/sp-dev9/rows8/asr-1089-134686-0000.wav
++ same=1
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-121-123859-0002.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-121-123859-0002.wav /workspace/build/sp-dev9/rows8/asr-121-123859-0002.wav
++ same=2
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-4446-2275-0004.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-4446-2275-0004.wav /workspace/build/sp-dev9/rows8/asr-4446-2275-0004.wav
++ same=3
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/bread-split-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/bread-split-s1.wav /workspace/build/sp-dev9/rows8/bread-split-s1.wav
++ same=4
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s1.wav /workspace/build/sp-dev9/rows8/il-fridge-s1.wav
++ same=5
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s2.wav /workspace/build/sp-dev9/rows8/il-fridge-s2.wav
++ same=6
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s3.wav /workspace/build/sp-dev9/rows8/il-fridge-s3.wav
++ same=7
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s1.wav /workspace/build/sp-dev9/rows8/il-reflective-s1.wav
++ same=8
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s2.wav /workspace/build/sp-dev9/rows8/il-reflective-s2.wav
++ same=9
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s3.wav /workspace/build/sp-dev9/rows8/il-reflective-s3.wav
++ same=10
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s1.wav /workspace/build/sp-dev9/rows8/il-study-s1.wav
++ same=11
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s2.wav /workspace/build/sp-dev9/rows8/il-study-s2.wav
++ same=12
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s3.wav /workspace/build/sp-dev9/rows8/il-study-s3.wav
++ same=13
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/lighthouse-split-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/lighthouse-split-s1.wav /workspace/build/sp-dev9/rows8/lighthouse-split-s1.wav
++ same=14
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/numbers-normalized-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/numbers-normalized-s1.wav /workspace/build/sp-dev9/rows8/numbers-normalized-s1.wav
++ same=15
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q0.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q0.wav /workspace/build/sp-dev9/rows8/spoken-q0.wav
++ same=16
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q1.wav /workspace/build/sp-dev9/rows8/spoken-q1.wav
++ same=17
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q2.wav /workspace/build/sp-dev9/rows8/spoken-q2.wav
++ same=18
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q3.wav /workspace/build/sp-dev9/rows8/spoken-q3.wav
++ same=19
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q4.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q4.wav /workspace/build/sp-dev9/rows8/spoken-q4.wav
++ same=20
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s1.wav /workspace/build/sp-dev9/rows8/tts-fox-female-s1.wav
++ same=21
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s2.wav /workspace/build/sp-dev9/rows8/tts-fox-female-s2.wav
++ same=22
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s3.wav /workspace/build/sp-dev9/rows8/tts-fox-female-s3.wav
++ same=23
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s1.wav /workspace/build/sp-dev9/rows8/tts-fox-male-s1.wav
++ same=24
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s2.wav /workspace/build/sp-dev9/rows8/tts-fox-male-s2.wav
++ same=25
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s3.wav /workspace/build/sp-dev9/rows8/tts-fox-male-s3.wav
++ same=26
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s1.wav /workspace/build/sp-dev9/rows8/tts-long-male-s1.wav
++ same=27
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s2.wav /workspace/build/sp-dev9/rows8/tts-long-male-s2.wav
++ same=28
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s3.wav /workspace/build/sp-dev9/rows8/tts-long-male-s3.wav
++ same=29
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s1.wav /workspace/build/sp-dev9/rows8/tts-museum-female-s1.wav
++ same=30
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s2.wav /workspace/build/sp-dev9/rows8/tts-museum-female-s2.wav
++ same=31
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s3.wav /workspace/build/sp-dev9/rows8/tts-museum-female-s3.wav
++ same=32
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s1.wav /workspace/build/sp-dev9/rows8/tts-museum-male-s1.wav
++ same=33
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s2.wav /workspace/build/sp-dev9/rows8/tts-museum-male-s2.wav
++ same=34
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s3.wav /workspace/build/sp-dev9/rows8/tts-museum-male-s3.wav
++ same=35
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s1.wav /workspace/build/sp-dev9/rows8/tts-numbers-female-s1.wav
++ same=36
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s2.wav /workspace/build/sp-dev9/rows8/tts-numbers-female-s2.wav
++ same=37
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s3.wav /workspace/build/sp-dev9/rows8/tts-numbers-female-s3.wav
++ same=38
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s1.wav /workspace/build/sp-dev9/rows8/tts-numbers-male-s1.wav
++ same=39
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s2.wav /workspace/build/sp-dev9/rows8/tts-numbers-male-s2.wav
++ same=40
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s3.wav /workspace/build/sp-dev9/rows8/tts-numbers-male-s3.wav
++ same=41
+++ sort -n /workspace/build/sp-dev9/rows8/memory.txt
+++ tail -1
+++ tail -1 /workspace/build/sp-dev9/rows8/err.log
++ echo 'rows 8 rc=0 peak 5933 MiB, WAVs equal to alone: 41 lfm3-speech: concurrent: 41 done, 0 failed'
++ for rows in 8 12 16
++ mkdir -p /workspace/build/sp-dev9/rows12
+rows 8 rc=0 peak 5933 MiB, WAVs equal to alone: 41 lfm3-speech: concurrent: 41 done, 0 failed
++ sed s#/workspace/build/sp-dev4/concurrent-work/conc16-staggered/#/workspace/build/sp-dev9/rows12/# /workspace/build/sp-dev4/concurrent-work/conc16-staggered/list.txt
++ S=899527
++ /workspace/build/text-s3/lfm3-speech /workspace/models/LFM3-Omni-2B --concurrent 12 /workspace/build/sp-dev9/rows12/list.txt 12
++ nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -lms 200
++ rc=0
++ kill 899527
++ same=0
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-1089-134686-0000.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-1089-134686-0000.wav /workspace/build/sp-dev9/rows12/asr-1089-134686-0000.wav
++ same=1
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-121-123859-0002.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-121-123859-0002.wav /workspace/build/sp-dev9/rows12/asr-121-123859-0002.wav
++ same=2
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-4446-2275-0004.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-4446-2275-0004.wav /workspace/build/sp-dev9/rows12/asr-4446-2275-0004.wav
++ same=3
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/bread-split-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/bread-split-s1.wav /workspace/build/sp-dev9/rows12/bread-split-s1.wav
++ same=4
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s1.wav /workspace/build/sp-dev9/rows12/il-fridge-s1.wav
++ same=5
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s2.wav /workspace/build/sp-dev9/rows12/il-fridge-s2.wav
++ same=6
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s3.wav /workspace/build/sp-dev9/rows12/il-fridge-s3.wav
++ same=7
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s1.wav /workspace/build/sp-dev9/rows12/il-reflective-s1.wav
++ same=8
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s2.wav /workspace/build/sp-dev9/rows12/il-reflective-s2.wav
++ same=9
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s3.wav /workspace/build/sp-dev9/rows12/il-reflective-s3.wav
++ same=10
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s1.wav /workspace/build/sp-dev9/rows12/il-study-s1.wav
++ same=11
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s2.wav /workspace/build/sp-dev9/rows12/il-study-s2.wav
++ same=12
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s3.wav /workspace/build/sp-dev9/rows12/il-study-s3.wav
++ same=13
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/lighthouse-split-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/lighthouse-split-s1.wav /workspace/build/sp-dev9/rows12/lighthouse-split-s1.wav
++ same=14
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/numbers-normalized-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/numbers-normalized-s1.wav /workspace/build/sp-dev9/rows12/numbers-normalized-s1.wav
++ same=15
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q0.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q0.wav /workspace/build/sp-dev9/rows12/spoken-q0.wav
++ same=16
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q1.wav /workspace/build/sp-dev9/rows12/spoken-q1.wav
++ same=17
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q2.wav /workspace/build/sp-dev9/rows12/spoken-q2.wav
++ same=18
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q3.wav /workspace/build/sp-dev9/rows12/spoken-q3.wav
++ same=19
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q4.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q4.wav /workspace/build/sp-dev9/rows12/spoken-q4.wav
++ same=20
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s1.wav /workspace/build/sp-dev9/rows12/tts-fox-female-s1.wav
++ same=21
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s2.wav /workspace/build/sp-dev9/rows12/tts-fox-female-s2.wav
++ same=22
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s3.wav /workspace/build/sp-dev9/rows12/tts-fox-female-s3.wav
++ same=23
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s1.wav /workspace/build/sp-dev9/rows12/tts-fox-male-s1.wav
++ same=24
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s2.wav /workspace/build/sp-dev9/rows12/tts-fox-male-s2.wav
++ same=25
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s3.wav /workspace/build/sp-dev9/rows12/tts-fox-male-s3.wav
++ same=26
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s1.wav /workspace/build/sp-dev9/rows12/tts-long-male-s1.wav
++ same=27
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s2.wav /workspace/build/sp-dev9/rows12/tts-long-male-s2.wav
++ same=28
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s3.wav /workspace/build/sp-dev9/rows12/tts-long-male-s3.wav
++ same=29
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s1.wav /workspace/build/sp-dev9/rows12/tts-museum-female-s1.wav
++ same=30
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s2.wav /workspace/build/sp-dev9/rows12/tts-museum-female-s2.wav
++ same=31
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s3.wav /workspace/build/sp-dev9/rows12/tts-museum-female-s3.wav
++ same=32
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s1.wav /workspace/build/sp-dev9/rows12/tts-museum-male-s1.wav
++ same=33
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s2.wav /workspace/build/sp-dev9/rows12/tts-museum-male-s2.wav
++ same=34
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s3.wav /workspace/build/sp-dev9/rows12/tts-museum-male-s3.wav
++ same=35
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s1.wav /workspace/build/sp-dev9/rows12/tts-numbers-female-s1.wav
++ same=36
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s2.wav /workspace/build/sp-dev9/rows12/tts-numbers-female-s2.wav
++ same=37
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s3.wav /workspace/build/sp-dev9/rows12/tts-numbers-female-s3.wav
++ same=38
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s1.wav /workspace/build/sp-dev9/rows12/tts-numbers-male-s1.wav
++ same=39
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s2.wav /workspace/build/sp-dev9/rows12/tts-numbers-male-s2.wav
++ same=40
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s3.wav /workspace/build/sp-dev9/rows12/tts-numbers-male-s3.wav
++ same=41
+++ sort -n /workspace/build/sp-dev9/rows12/memory.txt
+++ tail -1
+++ tail -1 /workspace/build/sp-dev9/rows12/err.log
+rows 12 rc=0 peak 6287 MiB, WAVs equal to alone: 41 lfm3-speech: concurrent: 41 done, 0 failed
++ echo 'rows 12 rc=0 peak 6287 MiB, WAVs equal to alone: 41 lfm3-speech: concurrent: 41 done, 0 failed'
++ for rows in 8 12 16
++ mkdir -p /workspace/build/sp-dev9/rows16
++ sed s#/workspace/build/sp-dev4/concurrent-work/conc16-staggered/#/workspace/build/sp-dev9/rows16/# /workspace/build/sp-dev4/concurrent-work/conc16-staggered/list.txt
++ S=899642
++ /workspace/build/text-s3/lfm3-speech /workspace/models/LFM3-Omni-2B --concurrent 16 /workspace/build/sp-dev9/rows16/list.txt 12
++ nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -lms 200
++ rc=0
++ kill 899642
++ same=0
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-1089-134686-0000.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-1089-134686-0000.wav /workspace/build/sp-dev9/rows16/asr-1089-134686-0000.wav
++ same=1
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-121-123859-0002.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-121-123859-0002.wav /workspace/build/sp-dev9/rows16/asr-121-123859-0002.wav
++ same=2
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/asr-4446-2275-0004.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/asr-4446-2275-0004.wav /workspace/build/sp-dev9/rows16/asr-4446-2275-0004.wav
++ same=3
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/bread-split-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/bread-split-s1.wav /workspace/build/sp-dev9/rows16/bread-split-s1.wav
++ same=4
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s1.wav /workspace/build/sp-dev9/rows16/il-fridge-s1.wav
++ same=5
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s2.wav /workspace/build/sp-dev9/rows16/il-fridge-s2.wav
++ same=6
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-fridge-s3.wav /workspace/build/sp-dev9/rows16/il-fridge-s3.wav
++ same=7
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s1.wav /workspace/build/sp-dev9/rows16/il-reflective-s1.wav
++ same=8
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s2.wav /workspace/build/sp-dev9/rows16/il-reflective-s2.wav
++ same=9
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-reflective-s3.wav /workspace/build/sp-dev9/rows16/il-reflective-s3.wav
++ same=10
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s1.wav /workspace/build/sp-dev9/rows16/il-study-s1.wav
++ same=11
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s2.wav /workspace/build/sp-dev9/rows16/il-study-s2.wav
++ same=12
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/il-study-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/il-study-s3.wav /workspace/build/sp-dev9/rows16/il-study-s3.wav
++ same=13
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/lighthouse-split-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/lighthouse-split-s1.wav /workspace/build/sp-dev9/rows16/lighthouse-split-s1.wav
++ same=14
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/numbers-normalized-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/numbers-normalized-s1.wav /workspace/build/sp-dev9/rows16/numbers-normalized-s1.wav
++ same=15
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q0.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q0.wav /workspace/build/sp-dev9/rows16/spoken-q0.wav
++ same=16
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q1.wav /workspace/build/sp-dev9/rows16/spoken-q1.wav
++ same=17
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q2.wav /workspace/build/sp-dev9/rows16/spoken-q2.wav
++ same=18
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q3.wav /workspace/build/sp-dev9/rows16/spoken-q3.wav
++ same=19
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/spoken-q4.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/spoken-q4.wav /workspace/build/sp-dev9/rows16/spoken-q4.wav
++ same=20
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s1.wav /workspace/build/sp-dev9/rows16/tts-fox-female-s1.wav
++ same=21
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s2.wav /workspace/build/sp-dev9/rows16/tts-fox-female-s2.wav
++ same=22
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-female-s3.wav /workspace/build/sp-dev9/rows16/tts-fox-female-s3.wav
++ same=23
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s1.wav /workspace/build/sp-dev9/rows16/tts-fox-male-s1.wav
++ same=24
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s2.wav /workspace/build/sp-dev9/rows16/tts-fox-male-s2.wav
++ same=25
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-fox-male-s3.wav /workspace/build/sp-dev9/rows16/tts-fox-male-s3.wav
++ same=26
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s1.wav /workspace/build/sp-dev9/rows16/tts-long-male-s1.wav
++ same=27
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s2.wav /workspace/build/sp-dev9/rows16/tts-long-male-s2.wav
++ same=28
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-long-male-s3.wav /workspace/build/sp-dev9/rows16/tts-long-male-s3.wav
++ same=29
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s1.wav /workspace/build/sp-dev9/rows16/tts-museum-female-s1.wav
++ same=30
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s2.wav /workspace/build/sp-dev9/rows16/tts-museum-female-s2.wav
++ same=31
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-female-s3.wav /workspace/build/sp-dev9/rows16/tts-museum-female-s3.wav
++ same=32
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s1.wav /workspace/build/sp-dev9/rows16/tts-museum-male-s1.wav
++ same=33
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s2.wav /workspace/build/sp-dev9/rows16/tts-museum-male-s2.wav
++ same=34
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-museum-male-s3.wav /workspace/build/sp-dev9/rows16/tts-museum-male-s3.wav
++ same=35
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s1.wav /workspace/build/sp-dev9/rows16/tts-numbers-female-s1.wav
++ same=36
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s2.wav /workspace/build/sp-dev9/rows16/tts-numbers-female-s2.wav
++ same=37
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-female-s3.wav /workspace/build/sp-dev9/rows16/tts-numbers-female-s3.wav
++ same=38
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s1.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s1.wav /workspace/build/sp-dev9/rows16/tts-numbers-male-s1.wav
++ same=39
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s2.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s2.wav /workspace/build/sp-dev9/rows16/tts-numbers-male-s2.wav
++ same=40
++ for w in $B/sp-dev4/concurrent-work/alone/*.wav
+++ basename /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s3.wav
++ cmp -s /workspace/build/sp-dev4/concurrent-work/alone/tts-numbers-male-s3.wav /workspace/build/sp-dev9/rows16/tts-numbers-male-s3.wav
++ same=41
+++ sort -n /workspace/build/sp-dev9/rows16/memory.txt
+++ tail -1
+++ tail -1 /workspace/build/sp-dev9/rows16/err.log
++ echo 'rows 16 rc=0 peak 6703 MiB, WAVs equal to alone: 41 lfm3-speech: concurrent: 41 done, 0 failed'
+rows 16 rc=0 peak 6703 MiB, WAVs equal to alone: 41 lfm3-speech: concurrent: 41 done, 0 failed
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 8 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows8
+memory rows 8 rc=1
++ rc=1
++ echo 'memory rows 8 rc=1'
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows8.log
++ cut -c1-400
+rule 12 speech-only with 8 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 5869 MiB (609 samples): ok
+rule 12 one-32768 with 8 speech: text [200] in 32.3 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 8073 MiB (737 samples): FAIL
+rule 12 4096+28672: AssertionError(('/sessions/ZcpZgIcaZIkYRM8JVv4kiwSFBeOc2Iui/close', 503, {'error': 'worker_unavailable'})), peak 6523 MiB: FAIL (stopped)
+SPEECH MEMORY (rule 12, 8 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 7 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows7
+memory rows 7 rc=1
++ rc=1
++ echo 'memory rows 7 rc=1'
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows7.log
++ cut -c1-400
+rule 12 speech-only with 7 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 5767 MiB (583 samples): ok
+rule 12 one-32768 with 7 speech: text [200] in 31.8 s, speech [200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7969 MiB (711 samples): FAIL
+rule 12 4096+28672: AssertionError(('/sessions/klxX1mmF3qLW_TgzRLEWjDeZIKFtfQNM/close', 503, {'error': 'worker_unavailable'})), peak 6421 MiB: FAIL (stopped)
+SPEECH MEMORY (rule 12, 7 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 6 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows6
++ rc=1
++ echo 'memory rows 6 rc=1'
+memory rows 6 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows6.log
++ cut -c1-400
+rule 12 speech-only with 6 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200] (overlapped True), peak 5665 MiB (549 samples): ok
+rule 12 one-32768 with 6 speech: text [200] in 31.9 s, speech [200, 200, 200, 200, 200, 200] (overlapped True), peak 7867 MiB (676 samples): FAIL
+rule 12 4096+28672: AssertionError(('/sessions/FJEintmVza1qGVDvhVq0Gple3K4fihlO/close', 503, {'error': 'worker_unavailable'})), peak 6319 MiB: FAIL (stopped)
+SPEECH MEMORY (rule 12, 6 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 5 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows5
++ rc=1
++ echo 'memory rows 5 rc=1'
+memory rows 5 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows5.log
++ cut -c1-400
+rule 12 speech-only with 5 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200] (overlapped True), peak 5561 MiB (520 samples): ok
+rule 12 one-32768 with 5 speech: text [200] in 32.8 s, speech [200, 200, 200, 200, 200] (overlapped True), peak 7765 MiB (647 samples): FAIL
+rule 12 4096+28672: AssertionError(('/sessions/zvHNsS6rN1UiPeBsFMXV2AJnjxaOls7v/close', 503, {'error': 'worker_unavailable'})), peak 6215 MiB: FAIL (stopped)
+SPEECH MEMORY (rule 12, 5 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 4 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows4
++ rc=1
++ echo 'memory rows 4 rc=1'
+memory rows 4 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows4.log
++ cut -c1-400
+rule 12 speech-only with 4 speech: text [] in 0.0 s, speech [200, 200, 200, 200] (overlapped True), peak 5457 MiB (489 samples): ok
+rule 12 one-32768 with 4 speech: text [200] in 32.2 s, speech [200, 200, 200, 200] (overlapped True), peak 7659 MiB (615 samples): ok
+rule 12 4096+28672 with 4 speech: text [200, 200] in 32.8 s, speech [200, 200, 200, 200] (overlapped True), peak 8041 MiB (608 samples): FAIL
+rule 12 2048+30720 with 4 speech: text [200, 200] in 33.8 s, speech [200, 200, 200, 200] (overlapped True), peak 8049 MiB (612 samples): FAIL
+rule 12 16384+16384 with 4 speech: text [200, 200] in 28.9 s, speech [200, 200, 200, 200] (overlapped True), peak 7677 MiB (591 samples): ok
+rule 12 batch-4096+28672 with 4 speech: text [200] in 120.5 s, speech [200, 200, 200, 200] (overlapped False), peak 8053 MiB (606 samples): FAIL
+rule 12 audio-in-one-32768 with 4 speech: text [200] in 32.2 s, speech [200, 200, 200, 200] (overlapped True), peak 7665 MiB (602 samples): ok
+SPEECH MEMORY (rule 12, 4 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 3 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows3
+memory rows 3 rc=1
++ rc=1
++ echo 'memory rows 3 rc=1'
++ cut -c1-400
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows3.log
+rule 12 speech-only with 3 speech: text [] in 0.0 s, speech [200, 200, 200] (overlapped True), peak 5353 MiB (463 samples): ok
+rule 12 one-32768 with 3 speech: text [200] in 31.4 s, speech [200, 200, 200] (overlapped True), peak 7557 MiB (589 samples): ok
+rule 12 4096+28672 with 3 speech: text [200, 200] in 32.0 s, speech [200, 200, 200] (overlapped True), peak 7939 MiB (583 samples): FAIL
+rule 12 2048+30720 with 3 speech: text [200, 200] in 33.0 s, speech [200, 200, 200] (overlapped True), peak 7945 MiB (587 samples): FAIL
+rule 12 16384+16384 with 3 speech: text [200, 200] in 28.1 s, speech [200, 200, 200] (overlapped True), peak 7575 MiB (566 samples): ok
+rule 12 batch-4096+28672 with 3 speech: text [200] in 114.5 s, speech [200, 200, 200] (overlapped False), peak 7951 MiB (581 samples): FAIL
+rule 12 audio-in-one-32768 with 3 speech: text [200] in 31.6 s, speech [200, 200, 200] (overlapped True), peak 7563 MiB (568 samples): ok
+SPEECH MEMORY (rule 12, 3 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 2 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows2
+memory rows 2 rc=1
++ rc=1
++ echo 'memory rows 2 rc=1'
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows2.log
++ cut -c1-400
+rule 12 speech-only with 2 speech: text [] in 0.0 s, speech [200, 200] (overlapped True), peak 5251 MiB (429 samples): ok
+rule 12 one-32768 with 2 speech: text [200] in 31.3 s, speech [200, 200] (overlapped True), peak 7453 MiB (556 samples): ok
+rule 12 4096+28672 with 2 speech: text [200, 200] in 31.8 s, speech [200, 200] (overlapped True), peak 7835 MiB (549 samples): FAIL
+rule 12 2048+30720 with 2 speech: text [200, 200] in 32.7 s, speech [200, 200] (overlapped True), peak 7843 MiB (553 samples): FAIL
+rule 12 16384+16384 with 2 speech: text [200, 200] in 27.8 s, speech [200, 200] (overlapped True), peak 7471 MiB (532 samples): ok
+rule 12 batch-4096+28672 with 2 speech: text [200] in 106.8 s, speech [200, 200] (overlapped False), peak 7847 MiB (547 samples): FAIL
+rule 12 audio-in-one-32768 with 2 speech: text [200] in 31.3 s, speech [200, 200] (overlapped True), peak 7459 MiB (522 samples): ok
+SPEECH MEMORY (rule 12, 2 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 8 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/sp-dev9/memory-rows1
++ rc=1
++ echo 'memory rows 1 rc=1'
+memory rows 1 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev9/memory-rows1.log
++ cut -c1-400
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5147 MiB (383 samples): ok
+rule 12 one-32768 with 1 speech: text [200] in 31.2 s, speech [200] (overlapped True), peak 7351 MiB (509 samples): ok
+rule 12 4096+28672 with 1 speech: text [200, 200] in 31.7 s, speech [200] (overlapped True), peak 7733 MiB (503 samples): ok
+rule 12 2048+30720 with 1 speech: text [200, 200] in 32.7 s, speech [200] (overlapped True), peak 7739 MiB (507 samples): ok
+rule 12 16384+16384 with 1 speech: text [200, 200] in 27.8 s, speech [200] (overlapped True), peak 7369 MiB (486 samples): ok
+rule 12 batch-4096+28672 with 1 speech: text [200] in 95.9 s, speech [200] (overlapped False), peak 7745 MiB (500 samples): FAIL
+rule 12 audio-in-one-32768 with 1 speech: text [200] in 29.1 s, speech [200] (overlapped True), peak 7357 MiB (212 samples): ok
+SPEECH MEMORY (rule 12, 1 rows) FAIL
++ '[' 1 = 0 ']'
++ date
+Fri Nov 20 17:06:55 MST 2026

@@ -1,0 +1,11 @@
+rule 13 text: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 chunks: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 prompt: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 capacity: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 clips: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 body: 413 body_limit (expected 413 body_limit): ok
+rule 13 body-16: 413 body_limit (expected 413 body_limit): ok
+rule 13 queue: 429 queue_full (expected 429 queue_full): ok
+rule 13 queue's requests: [200, 200, 200, 200, 200] all held at the extra one: True
+rule 13 controls: text identical True | speech identical True
+SPEECH LIMITS (rule 13) PASS

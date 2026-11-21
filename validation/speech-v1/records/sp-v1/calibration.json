@@ -1,0 +1,234 @@
+{
+ "clips": 25,
+ "prepared": 25,
+ "complete": true,
+ "equal": 25,
+ "pass_": true,
+ "rows": [
+  {
+   "kind": "hf",
+   "case": "il-fridge-s1",
+   "equal": true,
+   "transcript": "First, the compressor runs and squeezes the refrigerant, turning it into a low-pressure gas. Then the gas flows through a condenser, where it cools and turns back into a liquid, releasing heat into the room. Next, the liquid passes through an evaporator coil inside the fridge, where it picks up heat from the food and turns back into a gas. Finally, the now high-pressure refrigerant goes back to the compressor to start the cycle again.",
+   "committed": "First, the compressor runs and squeezes the refrigerant, turning it into a low-pressure gas. Then the gas flows through a condenser, where it cools and turns back into a liquid, releasing heat into the room. Next, the liquid passes through an evaporator coil inside the fridge, where it picks up heat from the food and turns back into a gas. Finally, the now high-pressure refrigerant goes back to the compressor to start the cycle again.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "hf",
+   "case": "il-reflective-s1",
+   "equal": true,
+   "transcript": "That's an interesting idea. Reflective recursion is a concept from computer science where a function calls itself and uses the results of those calls to shape its own behavior. In cognition, we see similar self-referential processes in language, planning, and theory of mind, where the mind forms a model of itself and adjusts its behavior based on that model. So while it isn't a formal cognitive function, the underlying mechanisms of metacognition and self-modeling can be thought of as reflecting recursive processes.",
+   "committed": "That's an interesting idea. Reflective recursion is a concept from computer science where a function calls itself and uses the results of those calls to shape its own behavior. In cognition, we see similar self-referential processes in language, planning, and theory of mind, where the mind forms a model of itself and adjusts its behavior based on that model. So while it isn't a formal cognitive function, the underlying mechanisms of metacognition and self-modeling can be thought of as reflecting recursive processes.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "hf",
+   "case": "il-study-s1",
+   "equal": true,
+   "transcript": "Sure. Here are three quick tips. First, set up a dedicated study space that's free of distractions so you can stay in the zone. Second, break your work into short, focused sessions with regular breaks to keep your mind fresh. And third, turn off notifications and put your phone out of sight. Maybe use an app blocker so you're not tempted to check social media during study time.",
+   "committed": "Sure. Here are three quick tips. First, set up a dedicated study space that's free of distractions so you can stay in the zone. Second, break your work into short, focused sessions with regular breaks to keep your mind fresh. And third, turn off notifications and put your phone out of sight. Maybe use an app blocker so you're not tempted to check social media during study time.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "hf",
+   "case": "tts-fox-female-s1",
+   "equal": true,
+   "transcript": "The quick brown fox jumps over the lazy dog.",
+   "committed": "The quick brown fox jumps over the lazy dog.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "hf",
+   "case": "tts-fox-male-s1",
+   "equal": true,
+   "transcript": "The quick brown fox jumps over the lazy dog.",
+   "committed": "The quick brown fox jumps over the lazy dog.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "hf",
+   "case": "tts-long-male-s1",
+   "equal": true,
+   "transcript": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today, most lights are automatica, but many towers still stand and visitors climb them. Tadvitas climb them. Tuluncu washed still stand and visitors climb them to look out over the same waters the keepers once washed.",
+   "committed": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today, most lights are automatica, but many towers still stand and visitors climb them. Tadvitas climb them. Tuluncu washed still stand and visitors climb them to look out over the same waters the keepers once washed.",
+   "wer": 0.13402061855670103,
+   "committed_wer": 0.13402061855670103
+  },
+  {
+   "kind": "hf",
+   "case": "tts-museum-female-s1",
+   "equal": true,
+   "transcript": "On March 3, 2024, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "committed": "On March 3, 2024, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "hf",
+   "case": "tts-museum-male-s1",
+   "equal": true,
+   "transcript": "On March 3, 2244, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "committed": "On March 3, 2244, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "wer": 0.041666666666666664,
+   "committed_wer": 0.041666666666666664
+  },
+  {
+   "kind": "hf",
+   "case": "tts-numbers-female-s1",
+   "equal": true,
+   "transcript": "Your flight leaves at 7.45 in the morning from gate 22, and the total fare comes to $289.50.",
+   "committed": "Your flight leaves at 7.45 in the morning from gate 22, and the total fare comes to $289.50.",
+   "wer": 0.15789473684210525,
+   "committed_wer": 0.15789473684210525
+  },
+  {
+   "kind": "hf",
+   "case": "tts-numbers-male-s1",
+   "equal": true,
+   "transcript": "Your flight leaves at 7.45 in the morning from Gate 20 and the total fare comes to $809.50.",
+   "committed": "Your flight leaves at 7.45 in the morning from Gate 20 and the total fare comes to $809.50.",
+   "wer": 0.21052631578947367,
+   "committed_wer": 0.21052631578947367
+  },
+  {
+   "kind": "engine",
+   "case": "il-fridge-s1",
+   "equal": true,
+   "transcript": "First, the compressor runs and squeezes the refrigerant, turning it into a low-pressure gas. Then the gas flows through a condenser where it cools and turns back into a liquid, releasing heat into the room. Next, the liquid passes through an evaporator inside the fridge, picking up heat from the food as it evaporates into a gas. Finally, the now high-pressure refrigerant is compressed again and sent back to the compressor to start the cycle over.",
+   "committed": "First, the compressor runs and squeezes the refrigerant, turning it into a low-pressure gas. Then the gas flows through a condenser where it cools and turns back into a liquid, releasing heat into the room. Next, the liquid passes through an evaporator inside the fridge, picking up heat from the food as it evaporates into a gas. Finally, the now high-pressure refrigerant is compressed again and sent back to the compressor to start the cycle over.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "il-reflective-s1",
+   "equal": true,
+   "transcript": "That's an interesting idea. Reflective recursion is a cognitive mechanism that lets a system examine its own processes and adjust behavior accordingly, which lines up with how humans learn from feedback. So in theory, a system could exhibit a form of reflective recursion, though implementing it reliably would be challenging.",
+   "committed": "That's an interesting idea. Reflective recursion is a cognitive mechanism that lets a system examine its own processes and adjust behavior accordingly, which lines up with how humans learn from feedback. So in theory, a system could exhibit a form of reflective recursion, though implementing it reliably would be challenging.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "il-study-s1",
+   "equal": true,
+   "transcript": "Sure. Here are three quick tips. First, set up a dedicated study space that's free of distractions so you can stay in the zone. Second, break your work into short, focused sessions with regular breaks to keep your mind fresh. And third, turn off notifications on your phone and computer. And consider using an app or website that blocks distracting sites while you study.",
+   "committed": "Sure. Here are three quick tips. First, set up a dedicated study space that's free of distractions so you can stay in the zone. Second, break your work into short, focused sessions with regular breaks to keep your mind fresh. And third, turn off notifications on your phone and computer. And consider using an app or website that blocks distracting sites while you study.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "probe-other-long-s1",
+   "equal": true,
+   "transcript": "Bread begins with only four ingredients, flour, water, salt, and yeast. The baker mixes them into a rough dough and lets it rest so the flour can absorb the water. Then the dough is folded and stretched until it becomes smooth and elastic. During a slow rise, the yeast fills it with tiny bubbles of gas. Finally, the loaf goes into a hot oven where the crust turns golden and the kitchen fills with a warm, familiar smell that brings the whole family to the table.",
+   "committed": "Bread begins with only four ingredients, flour, water, salt, and yeast. The baker mixes them into a rough dough and lets it rest so the flour can absorb the water. Then the dough is folded and stretched until it becomes smooth and elastic. During a slow rise, the yeast fills it with tiny bubbles of gas. Finally, the loaf goes into a hot oven where the crust turns golden and the kitchen fills with a warm, familiar smell that brings the whole family to the table.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "probe-other-long-s2",
+   "equal": true,
+   "transcript": "Bread begins with only four ingredients, flour, water, salt, and yeast. The baker mixes them into a rough dough and lets it rest so the flour can absorb the water. Then the dough is folded and stretched until it becomes smooth and elastic. During a slow rise, the yeast fills it with tiny bubbles of gas. Finally, the loaf goes into a hot oven, where the crust turns golden and the kitchen fills with a warm, familiar smell that brings the whole family to the table.",
+   "committed": "Bread begins with only four ingredients, flour, water, salt, and yeast. The baker mixes them into a rough dough and lets it rest so the flour can absorb the water. Then the dough is folded and stretched until it becomes smooth and elastic. During a slow rise, the yeast fills it with tiny bubbles of gas. Finally, the loaf goes into a hot oven, where the crust turns golden and the kitchen fills with a warm, familiar smell that brings the whole family to the table.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "probe-other-long-s3",
+   "equal": true,
+   "transcript": "Bread begins with only four ingredients, flour, water, salt, and yeast. The baker mixes them into a rough dough and lets it rest so the flour can absorb the water. Then the dough is folded and stretched until it becomes smooth and elastic. During a slow rise, the yeast fills it with tiny bubbles of gas. Finally, the loaf goes into a hot oven where the crust turns golden and the kitchen fills with a warm, familiar smell that brings the whole family to the table.",
+   "committed": "Bread begins with only four ingredients, flour, water, salt, and yeast. The baker mixes them into a rough dough and lets it rest so the flour can absorb the water. Then the dough is folded and stretched until it becomes smooth and elastic. During a slow rise, the yeast fills it with tiny bubbles of gas. Finally, the loaf goes into a hot oven where the crust turns golden and the kitchen fills with a warm, familiar smell that brings the whole family to the table.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-fox-female-s1",
+   "equal": true,
+   "transcript": "The quick brown fox jumps over the lazy dog.",
+   "committed": "The quick brown fox jumps over the lazy dog.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-fox-male-s1",
+   "equal": true,
+   "transcript": "The quick brown fox jumps over the lazy dog.",
+   "committed": "The quick brown fox jumps over the lazy dog.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-long-male-s1",
+   "equal": true,
+   "transcript": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "committed": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-long-male-s2",
+   "equal": true,
+   "transcript": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "committed": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-long-male-s3",
+   "equal": true,
+   "transcript": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "committed": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-museum-female-s1",
+   "equal": true,
+   "transcript": "On March 3, 2024, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "committed": "On March 3, 2024, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-museum-male-s1",
+   "equal": true,
+   "transcript": "On March 3, 2024, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "committed": "On March 3, 2024, the museum reopened after a two-year renovation. Visitors could finally see the restored murals, which date back nearly 400 years.",
+   "wer": 0.0,
+   "committed_wer": 0.0
+  },
+  {
+   "kind": "engine",
+   "case": "tts-numbers-female-s1",
+   "equal": true,
+   "transcript": "Your flight leaves at 7.45 in the morning from gate 22, and the total fare comes to $409.50.",
+   "committed": "Your flight leaves at 7.45 in the morning from gate 22, and the total fare comes to $409.50.",
+   "wer": 0.15789473684210525,
+   "committed_wer": 0.15789473684210525
+  },
+  {
+   "kind": "engine",
+   "case": "tts-numbers-male-s1",
+   "equal": true,
+   "transcript": "Your flight leaves at 7.45 in the morning from Gate 22, and the total fare comes to $890.50.",
+   "committed": "Your flight leaves at 7.45 in the morning from Gate 22, and the total fare comes to $890.50.",
+   "wer": 0.15789473684210525,
+   "committed_wer": 0.15789473684210525
+  }
+ ]
+}

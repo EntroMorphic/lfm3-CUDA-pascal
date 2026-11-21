@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Perform TTS in American English using a female voice."}, {"role": "user", "content": "The meeting starts at 7:45 and ends by 9:00. Order number 389 cost $3.50, about 2.75% more than in 1984. Dr. Patel met Mr. Lee at St. Mary's on Nov. 9, 2026."}], "mode": "audio", "max_new_tokens": 512, "seed": 1, "split": true, "normalize": true}

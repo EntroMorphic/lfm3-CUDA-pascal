@@ -1,0 +1,7 @@
+E1 host source differing from s1: include/lfm/codec.cuh
+E1 host source differing from s1: src/lfm3_decode_batch.cuh
+E1 host source differing from s1: src/lfm3_server.cu
+E1 host source differing from s1: src/lfm3_speech.cuh
+E1 host source differing from s1: src/lfm3_worker.cu
+E1 host source differing from s1: tests/text_sampling_oracle.cpp
+E1 host source differing from s4: src/lfm3_server.cu

@@ -1,0 +1,1 @@
+rule 9 (2026-11-21, development machine): the key's shipping_source_sha256 entries: 10; found among the final shipping build's seed-1 clips (sp-v1/rule9-shipping-clips.sha256, 11 clips: the ten cases and tts-long-male unsplit): 10 of 10

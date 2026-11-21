@@ -1,0 +1,147 @@
++ date
+Sat Nov 21 04:52:53 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev14
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -e /workspace/build/sp-dev14 ']'
++ mkdir -p /workspace/build/sp-dev14
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-s5
++ echo 'build parity-s5 rc=0'
++ tools/pascal/build_speech.sh text-s5
+build parity-s5 rc=0
+build text-s5 rc=0
++ echo 'build text-s5 rc=0'
++ for b in text parity
+++ cmp -l /workspace/build/text-s4/lfm3-speech /workspace/build/text-s5/lfm3-speech
+++ wc -l
++ echo 'text lfm3-speech s4/s5 bytes differing: 4'
++ for b in text parity
+text lfm3-speech s4/s5 bytes differing: 4
+++ cmp -l /workspace/build/parity-s4/lfm3-speech /workspace/build/parity-s5/lfm3-speech
+++ wc -l
++ echo 'parity lfm3-speech s4/s5 bytes differing: 3'
+parity lfm3-speech s4/s5 bytes differing: 3
++ for rows in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-s5/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev14 1
+ready line at 1 rows: {"ready":true,"port":40345,"total_capacity":31744,"speech_rows":1} exit 0
++ for rows in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-s5/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev14 8
+ready line at 8 rows: {"ready":true,"port":54703,"total_capacity":17408,"speech_rows":8} exit 0
++ for rows in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-s5/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev14 16
+ready line at 16 rows: {"ready":true,"port":51449,"total_capacity":1024,"speech_rows":16} exit 0
++ for rt in "1 31744" "8 17408" "16 1024"
++ set -- 1 31744
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s5/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/sp-dev14/memory-rows1 7740 31744
+rule 12 rows 1 total 31744 rc=1
++ echo 'rule 12 rows 1 total 31744 rc=1'
++ cut -c1-400
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev14/memory-rows1.log
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5147 MiB (381 samples): ok
+rule 12 one-31744 with 1 speech: text [200] in 28.9 s, speech [200] (overlapped True), peak 7299 MiB (498 samples): ok
+rule 12 3968+27776 with 1 speech: text [200, 200] in 29.6 s, speech [200] (overlapped True), peak 7681 MiB (492 samples): ok
+rule 12 1984+29760 with 1 speech: text [200, 200] in 30.9 s, speech [200] (overlapped True), peak 7687 MiB (497 samples): ok
+rule 12 15872+15872 with 1 speech: text [200, 200] in 26.5 s, speech [200] (overlapped True), peak 7317 MiB (479 samples): ok
+rule 12 batch-3968+27776 with 1 speech: text [200] in 94.4 s, speech [200] (overlapped True), peak 7693 MiB (493 samples): ok
+rule 12 audio-in-one-31744 with 0 speech and 3 audio in: text [200] in 27.1 s, speech [] (overlapped True), peak 7781 MiB (283 samples): FAIL
+SPEECH MEMORY (rule 12, 1 rows) FAIL
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in "1 31744" "8 17408" "16 1024"
++ set -- 8 17408
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s5/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 8 /workspace/data/librispeech/wav /workspace/build/sp-dev14/memory-rows8 7740 17408
++ echo 'rule 12 rows 8 total 17408 rc=0'
+rule 12 rows 8 total 17408 rc=0
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev14/memory-rows8.log
++ cut -c1-400
+rule 12 speech-only with 8 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 5869 MiB (615 samples): ok
+rule 12 one-17408 with 8 speech: text [200] in 15.7 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7065 MiB (671 samples): ok
+rule 12 2176+15232 with 8 speech: text [200, 200] in 19.4 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7353 MiB (670 samples): ok
+rule 12 1088+16320 with 8 speech: text [200, 200] in 19.7 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7201 MiB (671 samples): ok
+rule 12 8704+8704 with 8 speech: text [200, 200] in 18.5 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7117 MiB (666 samples): ok
+rule 12 batch-2176+15232 with 8 speech: text [200] in 134.8 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7359 MiB (667 samples): ok
+rule 12 audio-in-one-17408 with 7 speech and 3 audio in: text [200] in 15.1 s, speech [200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7547 MiB (679 samples): ok
+SPEECH MEMORY (rule 12, 8 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in "1 31744" "8 17408" "16 1024"
++ set -- 16 1024
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s5/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 16 /workspace/data/librispeech/wav /workspace/build/sp-dev14/memory-rows16 7740 1024
++ echo 'rule 12 rows 16 total 1024 rc=1'
+rule 12 rows 16 total 1024 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev14/memory-rows16.log
++ cut -c1-400
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_limits.py /workspace/build/text-s5/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev14/limits-text
++ echo 'rule 13 text rc=0'
++ grep -E '^rule 13|SPEECH LIMITS' /workspace/build/sp-dev14/limits-text.log
+rule 13 text rc=0
+rule 13 text: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 chunks: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 prompt: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 capacity: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 clips: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 body: 413 body_limit (expected 413 body_limit): ok
+rule 13 body-16: 413 body_limit (expected 413 body_limit): ok
+rule 13 queue: 429 queue_full (expected 429 queue_full): ok
+rule 13 queue's requests: [200, 200, 200, 200, 200] all held at the extra one: True
+rule 13 controls: text identical True | speech identical True
+SPEECH LIMITS (rule 13) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ N3=/workspace/build/sp-dev14/rule3-native
++ mkdir -p /workspace/build/sp-dev14/rule3-native/requests /workspace/build/sp-dev14/rule3-native/out
++ R=/workspace/build/sp-refs-parity-s1
++ sed -n '/^python3 - \$B\/sp-v1-refs-parity validation\/speech-v1\/inputs\/thor-clips.json \$N3 <<.PY.$/,/^PY$/p' validation/speech-v1/job.sh
++ sed '1d;$d'
++ sed -n '/^python3 - \$B\/sp-v1-refs-parity \$N3 > \$O\/rule3-native.txt <<.PY.$/,/^PY$/p' validation/speech-v1/job.sh
++ sed '1d;$d'
++ python3 /workspace/build/sp-dev14/render.py /workspace/build/sp-refs-parity-s1 validation/speech-v1/inputs/thor-clips.json /workspace/build/sp-dev14/rule3-native
++ echo 'render rc=0'
++ /workspace/build/parity-s5/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-dev14/rule3-native/list
+render rc=0
+++ tail -1 /workspace/build/sp-dev14/rule3-native/err
++ echo 'rendering runs rc=0 lfm3-speech: batch: 15 done, 0 failed'
+rendering runs rc=0 lfm3-speech: batch: 15 done, 0 failed
++ python3 /workspace/build/sp-dev14/compare.py /workspace/build/sp-refs-parity-s1 /workspace/build/sp-dev14/rule3-native
+rule 3 rendering il-fridge-s1: DIFFERS
+rule 3 rendering il-reflective-s1: DIFFERS
+rule 3 rendering il-study-s1: DIFFERS
+rule 3 rendering probe-other-long-s1: DIFFERS
+rule 3 rendering probe-other-long-s2: DIFFERS
+rule 3 rendering probe-other-long-s3: DIFFERS
+rule 3 rendering tts-fox-female-s1: DIFFERS
+rule 3 rendering tts-fox-male-s1: DIFFERS
+rule 3 rendering tts-long-male-s1: DIFFERS
+rule 3 rendering tts-long-male-s2: DIFFERS
+rule 3 rendering tts-long-male-s3: DIFFERS
+rule 3 rendering tts-museum-female-s1: DIFFERS
+rule 3 rendering tts-museum-male-s1: DIFFERS
+rule 3 rendering tts-numbers-female-s1: DIFFERS
+rule 3 rendering tts-numbers-male-s1: DIFFERS
+rule 3 rendering: 0 of 15 equal
+rule 3 rendering rc=1
++ echo 'rule 3 rendering rc=1'
++ date
+Sat Nov 21 05:45:01 MST 2026

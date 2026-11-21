@@ -1,0 +1,69 @@
++ date
+Fri Nov 20 12:30:22 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev4
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -e /workspace/build/sp-dev4 ']'
++ mkdir -p /workspace/build/sp-dev4
++ SAMPLER=885877
++ for b in text-s1 parity-s1
++ /usr/bin/time -f '%e s' tools/pascal/speech_refs.sh text-s1 sp-refs-text-s1
++ nvidia-smi --query-gpu=timestamp,memory.used --format=csv,noheader -lms 1000
+++ tail -2 /workspace/build/sp-dev4/refs-text-s1.log
+++ tr '\n' ' '
+refs text-s1 rc=0 speech_refs.sh: /workspace/build/sp-refs-text-s1 done 632.09 s 
++ echo 'refs text-s1 rc=0 speech_refs.sh: /workspace/build/sp-refs-text-s1 done 632.09 s '
++ for b in text-s1 parity-s1
++ /usr/bin/time -f '%e s' tools/pascal/speech_refs.sh parity-s1 sp-refs-parity-s1
+++ tail -2 /workspace/build/sp-dev4/refs-parity-s1.log
+++ tr '\n' ' '
+refs parity-s1 rc=0 speech_refs.sh: /workspace/build/sp-refs-parity-s1 done 1882.90 s 
++ echo 'refs parity-s1 rc=0 speech_refs.sh: /workspace/build/sp-refs-parity-s1 done 1882.90 s '
++ S=/workspace/build/text-s1
++ R=/workspace/build/sp-refs-text-s1
++ printf '#!/bin/sh\nexec %s "$@" --speech-rows 1\n' /workspace/build/text-s1/liquid-lfm3-server
++ chmod +x /workspace/build/sp-dev4/server-rows1
++ run speech-server /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_server.py /workspace/build/text-s1/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/build/sp-dev4/speech-server.json
++ local n=speech-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_server.py /workspace/build/text-s1/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/build/sp-dev4/speech-server.json
+++ tail -1 /workspace/build/sp-dev4/speech-server.log
+speech-server rc=1 0.05 s
++ echo 'speech-server rc=1 0.05 s'
++ run audio-in-server /workspace/build/venv-asr/bin/python tools/check_lfm3_audio_in_server.py /workspace/build/text-s1/liquid-lfm3-server /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-dev4/audio-in-work /workspace/build/sp-dev4/audio-in-server.json
++ local n=audio-in-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_audio_in_server.py /workspace/build/text-s1/liquid-lfm3-server /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-dev4/audio-in-work /workspace/build/sp-dev4/audio-in-server.json
+++ tail -1 /workspace/build/sp-dev4/audio-in-server.log
+audio-in-server rc=1 0.07 s
++ echo 'audio-in-server rc=1 0.07 s'
++ run speech-stream /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_stream.py /workspace/build/text-s1/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev4/speech-stream.json
++ local n=speech-stream
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_stream.py /workspace/build/text-s1/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev4/speech-stream.json
+++ tail -1 /workspace/build/sp-dev4/speech-stream.log
+speech-stream rc=1 0.09 s
++ echo 'speech-stream rc=1 0.09 s'
++ run speech-concurrent /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_concurrent.py /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev4/concurrent-work /workspace/build/sp-dev4/speech-concurrent.json
++ local n=speech-concurrent
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_concurrent.py /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev4/concurrent-work /workspace/build/sp-dev4/speech-concurrent.json
+++ tail -1 /workspace/build/sp-dev4/speech-concurrent.log
+speech-concurrent rc=1 953.99 s
++ echo 'speech-concurrent rc=1 953.99 s'
++ run speech-batch-server /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_batch_server.py /workspace/build/text-s1/liquid-lfm3-server /workspace/build/sp-dev4/server-rows1 /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev4/speech-batch-server.json
++ local n=speech-batch-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_batch_server.py /workspace/build/text-s1/liquid-lfm3-server /workspace/build/sp-dev4/server-rows1 /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev4/speech-batch-server.json
+++ tail -1 /workspace/build/sp-dev4/speech-batch-server.log
+speech-batch-server rc=1 0.07 s
++ echo 'speech-batch-server rc=1 0.07 s'
++ kill 885877
++ sort -t, -k2 -n /workspace/build/sp-dev4/memory.csv
++ tail -1
+2026/11/20 13:28:02.826, 6865 MiB
++ date
+Fri Nov 20 13:28:12 MST 2026

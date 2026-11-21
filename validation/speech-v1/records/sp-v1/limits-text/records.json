@@ -1,0 +1,489 @@
+[
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "6f5hjRRkxZKyxfEVcJr2nzvbU7lCdEzx",
+   "capacity": 1024,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "6f5hjRRkxZKyxfEVcJr2nzvbU7lCdEzx",
+   "text": "A lighthouse warns ships at night by emitting a powerful, rhythmic beam of light from a rotating lantern room, which is visible from far away and serves as a visual signal to guide vessels safely along the coast or into harbors, while its distinctive pattern of flashes and colors helps ships identify its specific location and purpose.",
+   "generated_ids": [
+    41,
+    117323,
+    57115,
+    12045,
+    462,
+    4414,
+    467,
+    854,
+    5115,
+    267,
+    7517,
+    20,
+    34220,
+    10050,
+    18109,
+    302,
+    2292,
+    487,
+    267,
+    35884,
+    14507,
+    905,
+    4861,
+    20,
+    643,
+    355,
+    9566,
+    487,
+    2913,
+    3098,
+    309,
+    13927,
+    405,
+    267,
+    6229,
+    7347,
+    310,
+    7669,
+    13260,
+    18915,
+    2755,
+    278,
+    6956,
+    432,
+    918,
+    4561,
+    59027,
+    20,
+    1657,
+    851,
+    23859,
+    4309,
+    302,
+    933,
+    19499,
+    309,
+    10776,
+    5812,
+    12045,
+    5191,
+    851,
+    3179,
+    5748,
+    309,
+    6174,
+    22,
+    124900
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 89,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "stop"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/6f5hjRRkxZKyxfEVcJr2nzvbU7lCdEzx/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 200,
+  "response": {
+   "mode": "audio",
+   "text": "",
+   "audio_wav_base64": "<235580 base64 chars>",
+   "sample_rate": 24000,
+   "audio_seconds": 3.68,
+   "frames": 46,
+   "chunks": [
+    {
+     "text": "The quick brown fox jumps over the lazy dog.",
+     "frames": 46,
+     "ended_by_eos": true
+    }
+   ],
+   "seed": 1,
+   "split": true,
+   "normalize": true,
+   "cancelled": false,
+   "truncated": false,
+   "prefill_seconds": 0.219128278,
+   "generate_seconds": 2.78567061
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 400,
+  "response": {
+   "error": "invalid_request"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 400,
+  "response": {
+   "error": "invalid_request"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 400,
+  "response": {
+   "error": "invalid_request"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 400,
+  "response": {
+   "error": "invalid_request"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 400,
+  "response": {
+   "error": "invalid_request"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 413,
+  "response": {
+   "error": "body_limit"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 429,
+  "response": {
+   "error": "queue_full"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 200,
+  "response": {
+   "mode": "audio",
+   "text": "",
+   "audio_wav_base64": "<1853500 base64 chars>",
+   "sample_rate": 24000,
+   "audio_seconds": 28.96,
+   "frames": 362,
+   "chunks": [
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 184,
+     "ended_by_eos": true
+    },
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 178,
+     "ended_by_eos": true
+    }
+   ],
+   "seed": 1,
+   "split": true,
+   "normalize": true,
+   "cancelled": false,
+   "truncated": false,
+   "prefill_seconds": 0.503788957,
+   "generate_seconds": 21.556724263
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 200,
+  "response": {
+   "mode": "audio",
+   "text": "",
+   "audio_wav_base64": "<1833020 base64 chars>",
+   "sample_rate": 24000,
+   "audio_seconds": 28.64,
+   "frames": 358,
+   "chunks": [
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 176,
+     "ended_by_eos": true
+    },
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 182,
+     "ended_by_eos": true
+    }
+   ],
+   "seed": 2,
+   "split": true,
+   "normalize": true,
+   "cancelled": false,
+   "truncated": false,
+   "prefill_seconds": 0.503797614,
+   "generate_seconds": 21.320996271
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 200,
+  "response": {
+   "mode": "audio",
+   "text": "",
+   "audio_wav_base64": "<1802300 base64 chars>",
+   "sample_rate": 24000,
+   "audio_seconds": 28.16,
+   "frames": 352,
+   "chunks": [
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 178,
+     "ended_by_eos": true
+    },
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 174,
+     "ended_by_eos": true
+    }
+   ],
+   "seed": 3,
+   "split": true,
+   "normalize": true,
+   "cancelled": false,
+   "truncated": false,
+   "prefill_seconds": 0.504017164,
+   "generate_seconds": 20.964742791
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 200,
+  "response": {
+   "mode": "audio",
+   "text": "",
+   "audio_wav_base64": "<1853500 base64 chars>",
+   "sample_rate": 24000,
+   "audio_seconds": 28.96,
+   "frames": 362,
+   "chunks": [
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 184,
+     "ended_by_eos": true
+    },
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 178,
+     "ended_by_eos": true
+    }
+   ],
+   "seed": 4,
+   "split": true,
+   "normalize": true,
+   "cancelled": false,
+   "truncated": false,
+   "prefill_seconds": 0.503958584,
+   "generate_seconds": 21.558256371
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 200,
+  "response": {
+   "mode": "audio",
+   "text": "",
+   "audio_wav_base64": "<1843260 base64 chars>",
+   "sample_rate": 24000,
+   "audio_seconds": 28.8,
+   "frames": 360,
+   "chunks": [
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 182,
+     "ended_by_eos": true
+    },
+    {
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor, until it widens into the slow brown estuary where the herons wait.",
+     "frames": 178,
+     "ended_by_eos": true
+    }
+   ],
+   "seed": 5,
+   "split": true,
+   "normalize": true,
+   "cancelled": false,
+   "truncated": false,
+   "prefill_seconds": 0.50392427,
+   "generate_seconds": 21.438700386999997
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "upoSHq-ONImIbfuSAkn95_AeJfEGCAu7",
+   "capacity": 1024,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "upoSHq-ONImIbfuSAkn95_AeJfEGCAu7",
+   "text": "A lighthouse warns ships at night by emitting a powerful, rhythmic beam of light from a rotating lantern room, which is visible from far away and serves as a visual signal to guide vessels safely along the coast or into harbors, while its distinctive pattern of flashes and colors helps ships identify its specific location and purpose.",
+   "generated_ids": [
+    41,
+    117323,
+    57115,
+    12045,
+    462,
+    4414,
+    467,
+    854,
+    5115,
+    267,
+    7517,
+    20,
+    34220,
+    10050,
+    18109,
+    302,
+    2292,
+    487,
+    267,
+    35884,
+    14507,
+    905,
+    4861,
+    20,
+    643,
+    355,
+    9566,
+    487,
+    2913,
+    3098,
+    309,
+    13927,
+    405,
+    267,
+    6229,
+    7347,
+    310,
+    7669,
+    13260,
+    18915,
+    2755,
+    278,
+    6956,
+    432,
+    918,
+    4561,
+    59027,
+    20,
+    1657,
+    851,
+    23859,
+    4309,
+    302,
+    933,
+    19499,
+    309,
+    10776,
+    5812,
+    12045,
+    5191,
+    851,
+    3179,
+    5748,
+    309,
+    6174,
+    22,
+    124900
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 89,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "stop"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/upoSHq-ONImIbfuSAkn95_AeJfEGCAu7/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/speech",
+  "status": 200,
+  "response": {
+   "mode": "audio",
+   "text": "",
+   "audio_wav_base64": "<235580 base64 chars>",
+   "sample_rate": 24000,
+   "audio_seconds": 3.68,
+   "frames": 46,
+   "chunks": [
+    {
+     "text": "The quick brown fox jumps over the lazy dog.",
+     "frames": 46,
+     "ended_by_eos": true
+    }
+   ],
+   "seed": 1,
+   "split": true,
+   "normalize": true,
+   "cancelled": false,
+   "truncated": false,
+   "prefill_seconds": 0.218955935,
+   "generate_seconds": 2.78368523
+  }
+ },
+ {
+  "method": "GET",
+  "path": "/health",
+  "status": 200,
+  "response": {
+   "ready": true,
+   "gpu_batching": false
+  }
+ }
+]

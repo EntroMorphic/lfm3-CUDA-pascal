@@ -1,0 +1,51 @@
++ date
+Fri Nov 20 06:07:34 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev1
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ '[' -e /workspace/build/sp-dev1 ']'
++ mkdir -p /workspace/build/sp-dev1
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-s1
+validation/speech-v1/dev1.sh: line 8: tools/pascal/build_speech.sh: Permission denied
++ echo 'build parity-s1 rc=126'
+build parity-s1 rc=126
++ tools/pascal/build_speech.sh text-s1
+validation/speech-v1/dev1.sh: line 9: tools/pascal/build_speech.sh: Permission denied
+build text-s1 rc=126
++ echo 'build text-s1 rc=126'
++ /workspace/build/venv-asr/bin/python tools/lfm3_speech_hf.py /workspace/models/LFM3-Omni-2B validation/speech-e2e-v1/prompts.json /workspace/build/sp-dev1/single requests
++ echo 'requests single rc=1'
++ /workspace/build/venv-asr/bin/python tools/lfm3_speech_chunked_hf.py /workspace/models/LFM3-Omni-2B validation/speech-e2e-v1/prompts-chunked.json /workspace/build/sp-dev1/split requests
+requests single rc=1
++ echo 'requests split rc=1'
+requests split rc=1
++ wc -l
++ ls /workspace/build/sp-dev1/single/requests /workspace/build/sp-dev1/split/requests
+ls: cannot access '/workspace/build/sp-dev1/split/requests': No such file or directory
+1
++ nvidia-smi --query-gpu=memory.used,clocks.mem,clocks.sm,temperature.gpu --format=csv,noheader
+2 MiB, 405 MHz, 139 MHz, 47
++ for build in parity-s1 text-s1
++ mkdir -p /workspace/build/sp-dev1/parity-s1
+++ ls /workspace/build/sp-dev1/single/requests
+++ grep -- '-s1\.req\.json$'
+++ grep -v tts-long-male
+++ ls /workspace/build/sp-dev1/split/requests
+++ grep -E -- '-s[123]\.req\.json$'
+ls: cannot access '/workspace/build/sp-dev1/split/requests': No such file or directory
++ for build in parity-s1 text-s1
++ mkdir -p /workspace/build/sp-dev1/text-s1
+++ ls /workspace/build/sp-dev1/single/requests
+++ grep -- '-s1\.req\.json$'
+++ grep -v tts-long-male
+++ ls /workspace/build/sp-dev1/split/requests
+++ grep -E -- '-s[123]\.req\.json$'
+ls: cannot access '/workspace/build/sp-dev1/split/requests': No such file or directory
++ cd /workspace/build/sp-dev1
++ sha256sum '*/*.wav'
+sha256sum: '*/*.wav': No such file or directory
++ date
+Fri Nov 20 06:07:44 MST 2026

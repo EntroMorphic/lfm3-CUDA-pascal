@@ -1,0 +1,26 @@
++ date
+Fri Nov 20 17:09:26 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev10
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -e /workspace/build/sp-dev10 ']'
++ mkdir -p /workspace/build/sp-dev10
++ for total in 31744 30720 28672
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/sp-dev10/memory-rows1-31744 7740 31744
++ echo 'memory rows 1 total 31744 rc=0'
+memory rows 1 total 31744 rc=0
++ cut -c1-400
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev10/memory-rows1-31744.log
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5147 MiB (383 samples): ok
+rule 12 one-31744 with 1 speech: text [200] in 29.8 s, speech [200] (overlapped True), peak 7299 MiB (503 samples): ok
+rule 12 3968+27776 with 1 speech: text [200, 200] in 30.5 s, speech [200] (overlapped True), peak 7681 MiB (497 samples): ok
+rule 12 1984+29760 with 1 speech: text [200, 200] in 31.4 s, speech [200] (overlapped True), peak 7687 MiB (502 samples): ok
+rule 12 15872+15872 with 1 speech: text [200, 200] in 26.9 s, speech [200] (overlapped True), peak 7317 MiB (482 samples): ok
+rule 12 batch-3968+27776 with 1 speech: text [200] in 94.9 s, speech [200] (overlapped True), peak 7693 MiB (496 samples): ok
+rule 12 audio-in-one-31744 with 1 speech: text [200] in 27.7 s, speech [200] (overlapped True), peak 7305 MiB (206 samples): ok
+SPEECH MEMORY (rule 12, 1 rows) PASS
++ for total in 31744 30720 28672
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s3/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/sp-dev10/memory-rows1-30720 7740 30720

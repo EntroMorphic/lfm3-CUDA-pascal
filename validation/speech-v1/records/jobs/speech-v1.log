@@ -1,0 +1,1032 @@
++ date
+Sat Nov 21 06:49:01 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-v1
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ W=/workspace/models/whisper-large-v3
++ V=validation/speech-v1/inputs/reference
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -e /workspace/build/sp-v1 ']'
++ mkdir -p /workspace/build/sp-v1
++ cat
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-v35
++ echo 'build parity-v35 rc=0'
++ tools/pascal/build_speech.sh text-v35
+build parity-v35 rc=0
++ echo 'build text-v35 rc=0'
+build text-v35 rc=0
++ for b in text-v35 parity-v35 text-s4 parity-s4 text-s1 parity-s1
++ cd /workspace/build/text-v35
++ sed 's#  #  text-v35/#'
+++ ls liquid-lfm3-worker liquid-lfm3-server
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-server liquid-lfm3-worker
++ for b in text-v35 parity-v35 text-s4 parity-s4 text-s1 parity-s1
++ cd /workspace/build/parity-v35
++ sed 's#  #  parity-v35/#'
+++ ls liquid-lfm3-worker liquid-lfm3-server
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-server liquid-lfm3-worker
++ for b in text-v35 parity-v35 text-s4 parity-s4 text-s1 parity-s1
++ cd /workspace/build/text-s4
++ sed 's#  #  text-s4/#'
+++ ls liquid-lfm3-worker liquid-lfm3-server
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-server liquid-lfm3-worker
++ for b in text-v35 parity-v35 text-s4 parity-s4 text-s1 parity-s1
++ cd /workspace/build/parity-s4
++ sed 's#  #  parity-s4/#'
+++ ls liquid-lfm3-worker liquid-lfm3-server
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-server liquid-lfm3-worker
++ for b in text-v35 parity-v35 text-s4 parity-s4 text-s1 parity-s1
++ cd /workspace/build/text-s1
++ sed 's#  #  text-s1/#'
+++ ls liquid-lfm3-worker liquid-lfm3-server
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech
++ for b in text-v35 parity-v35 text-s4 parity-s4 text-s1 parity-s1
++ cd /workspace/build/parity-s1
++ sed 's#  #  parity-s1/#'
+++ ls liquid-lfm3-worker liquid-lfm3-server
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech
++ mkdir -p /workspace/build/sp-v1/e1
++ for f in lfm3-speech liquid-lfm3-server liquid-lfm3-worker
++ for k in text parity
++ for d in s1 s4
++ '[' -e /workspace/build/text-s1/lfm3-speech ']'
++ cuobjdump -sass /workspace/build/text-v35/lfm3-speech
++ cuobjdump -sass /workspace/build/text-s1/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/lfm3-speech.text-v35.text-s1.txt
+E1 lfm3-speech text-v35 against text-s1 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'E1 lfm3-speech text-v35 against text-s1 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for d in s1 s4
++ '[' -e /workspace/build/text-s4/lfm3-speech ']'
++ cuobjdump -sass /workspace/build/text-v35/lfm3-speech
++ cuobjdump -sass /workspace/build/text-s4/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/lfm3-speech.text-v35.text-s4.txt
+E1 lfm3-speech text-v35 against text-s4 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'E1 lfm3-speech text-v35 against text-s4 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ for d in s1 s4
++ '[' -e /workspace/build/parity-s1/lfm3-speech ']'
++ cuobjdump -sass /workspace/build/parity-v35/lfm3-speech
++ cuobjdump -sass /workspace/build/parity-s1/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/lfm3-speech.parity-v35.parity-s1.txt
+E1 lfm3-speech parity-v35 against parity-s1 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'E1 lfm3-speech parity-v35 against parity-s1 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for d in s1 s4
++ '[' -e /workspace/build/parity-s4/lfm3-speech ']'
++ cuobjdump -sass /workspace/build/parity-v35/lfm3-speech
++ cuobjdump -sass /workspace/build/parity-s4/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/lfm3-speech.parity-v35.parity-s4.txt
++ echo 'E1 lfm3-speech parity-v35 against parity-s4 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in lfm3-speech liquid-lfm3-server liquid-lfm3-worker
++ for k in text parity
+E1 lfm3-speech parity-v35 against parity-s4 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ for d in s1 s4
++ '[' -e /workspace/build/text-s1/liquid-lfm3-server ']'
++ continue
++ for d in s1 s4
++ '[' -e /workspace/build/text-s4/liquid-lfm3-server ']'
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-s4/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/liquid-lfm3-server.text-v35.text-s4.txt
++ echo 'E1 liquid-lfm3-server text-v35 against text-s4 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ for d in s1 s4
++ '[' -e /workspace/build/parity-s1/liquid-lfm3-server ']'
++ continue
++ for d in s1 s4
++ '[' -e /workspace/build/parity-s4/liquid-lfm3-server ']'
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3-server
+E1 liquid-lfm3-server text-v35 against text-s4 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/parity-s4/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/liquid-lfm3-server.parity-v35.parity-s4.txt
++ echo 'E1 liquid-lfm3-server parity-v35 against parity-s4 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in lfm3-speech liquid-lfm3-server liquid-lfm3-worker
++ for k in text parity
++ for d in s1 s4
++ '[' -e /workspace/build/text-s1/liquid-lfm3-worker ']'
++ continue
++ for d in s1 s4
++ '[' -e /workspace/build/text-s4/liquid-lfm3-worker ']'
+E1 liquid-lfm3-server parity-v35 against parity-s4 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3-worker
++ cuobjdump -sass /workspace/build/text-s4/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/liquid-lfm3-worker.text-v35.text-s4.txt
+E1 liquid-lfm3-worker text-v35 against text-s4 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'E1 liquid-lfm3-worker text-v35 against text-s4 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ for d in s1 s4
++ '[' -e /workspace/build/parity-s1/liquid-lfm3-worker ']'
++ continue
++ for d in s1 s4
++ '[' -e /workspace/build/parity-s4/liquid-lfm3-worker ']'
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3-worker
++ cuobjdump -sass /workspace/build/parity-s4/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+++ head -1 /workspace/build/sp-v1/e1/liquid-lfm3-worker.parity-v35.parity-s4.txt
++ echo 'E1 liquid-lfm3-worker parity-v35 against parity-s4 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ rm -f /workspace/build/sp-v1/e1/a.sass /workspace/build/sp-v1/e1/b.sass
+E1 liquid-lfm3-worker parity-v35 against parity-s4 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ for d in s1 s4
++ tee /workspace/build/sp-v1/e1/sources.txt
++ grep '^>'
++ sed 's#^> [0-9a-f]* #E1 host source differing from s1: #'
++ diff /dev/fd/63 /dev/fd/62
+++ cut '-d ' -f1,3 /workspace/build/text-s1/speech-sources.sha256
+++ cut '-d ' -f1,3 /workspace/build/text-v35/speech-sources.sha256
+++ sort -k2
+++ sort -k2
+E1 host source differing from s1: include/lfm/codec.cuh
+E1 host source differing from s1: src/lfm3_decode_batch.cuh
+E1 host source differing from s1: src/lfm3_server.cu
+E1 host source differing from s1: src/lfm3_speech.cuh
+E1 host source differing from s1: src/lfm3_worker.cu
+E1 host source differing from s1: tests/text_sampling_oracle.cpp
++ for d in s1 s4
++ grep '^>'
++ sed 's#^> [0-9a-f]* #E1 host source differing from s4: #'
++ diff /dev/fd/63 /dev/fd/62
+++ cut '-d ' -f1,3 /workspace/build/text-s4/speech-sources.sha256
+++ cut '-d ' -f1,3 /workspace/build/text-v35/speech-sources.sha256
+++ sort -k2
+++ sort -k2
+E1 host source differing from s4: src/lfm3_server.cu
++ python3 tools/pascal/compare_pins.py parity-v35
++ echo 'rule 1 gate rc=0'
++ tail -1 /workspace/build/sp-v1/gate.log
+rule 1 gate rc=0
+PINS EQUAL: 7826 files equal
++ for f in liquid-lfm3 lfm3-score
++ cuobjdump -sass /workspace/build/text-v33/liquid-lfm3
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/liquid-lfm3.v33.sass /workspace/build/sp-v1/liquid-lfm3.v35.sass
+++ head -1 /workspace/build/sp-v1/liquid-lfm3.sass-compare.txt
+rule 1 liquid-lfm3 device code against text-v33 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 1 liquid-lfm3 device code against text-v33 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score
++ cuobjdump -sass /workspace/build/text-v33/lfm3-score
++ cuobjdump -sass /workspace/build/text-v35/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-v1/lfm3-score.v33.sass /workspace/build/sp-v1/lfm3-score.v35.sass
+++ head -1 /workspace/build/sp-v1/lfm3-score.sass-compare.txt
+rule 1 lfm3-score device code against text-v33 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 1 lfm3-score device code against text-v33 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ tools/pascal/run_text_fixtures.sh text-v35 2
+rule 1 fixtures rc=0
++ echo 'rule 1 fixtures rc=0'
++ tail -1 /workspace/build/sp-v1/fixtures.log
+FIXTURES PASS
++ for b in text parity
++ cuobjdump -sass /workspace/build/text-v35/lfm3-speech
++ for b in text parity
++ cuobjdump -sass /workspace/build/parity-v35/lfm3-speech
++ python3 tools/pascal/sass_speech_only.py /workspace/build/sp-v1/speech.text.sass /workspace/build/sp-v1/speech.parity.sass
+rule 5 rc=0
+134 and 140 functions; outside lfm::gemm: 57 identical, 0 not; lfm::gemm: 10 in one only, 0 differing
++ echo 'rule 5 rc=0'
++ head -1 /workspace/build/sp-v1/rule5.txt
++ sha256sum /workspace/build/sp-v1/lfm3-score.v33.sass /workspace/build/sp-v1/lfm3-score.v35.sass /workspace/build/sp-v1/liquid-lfm3.v33.sass /workspace/build/sp-v1/liquid-lfm3.v35.sass /workspace/build/sp-v1/speech.parity.sass /workspace/build/sp-v1/speech.text.sass
++ gzip -9 /workspace/build/sp-v1/lfm3-score.v33.sass /workspace/build/sp-v1/lfm3-score.v35.sass /workspace/build/sp-v1/liquid-lfm3.v33.sass /workspace/build/sp-v1/liquid-lfm3.v35.sass /workspace/build/sp-v1/speech.parity.sass /workspace/build/sp-v1/speech.text.sass
++ R3=/workspace/build/sp-v1/rule3
++ mkdir -p /workspace/build/sp-v1/rule3/out
++ RP=/workspace/build/sp-refs-parity-s1
++ python3 - /workspace/build/sp-refs-parity-s1 validation/speech-v1/inputs/thor-clips.json /workspace/build/sp-v1/rule3
++ /workspace/build/parity-v35/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-v1/rule3/list
+++ tail -1 /workspace/build/sp-v1/rule3/err
++ echo 'rule 3 runs rc=0 lfm3-speech: batch: 15 done, 0 failed'
++ python3 - /workspace/build/sp-v1/rule3/out validation/speech-v1/inputs/thor-clips.json
+rule 3 runs rc=0 lfm3-speech: batch: 15 done, 0 failed
++ echo 'rule 3 rc=0'
++ tail -1 /workspace/build/sp-v1/rule3.txt
+rule 3 rc=0
+rule 3: 16 of 16 clips (15 runs) equal to the Thor engine's
++ N3=/workspace/build/sp-v1/rule3-native
++ mkdir -p /workspace/build/sp-v1/rule3-native/requests /workspace/build/sp-v1/rule3-native/out
++ python3 - /workspace/build/sp-refs-parity-s1 validation/speech-v1/inputs/thor-clips.json /workspace/build/sp-v1/rule3-native
++ /workspace/build/parity-v35/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-v1/rule3-native/list
+++ tail -1 /workspace/build/sp-v1/rule3-native/err
+rule 3 native rendering runs rc=0 lfm3-speech: batch: 15 done, 0 failed
++ echo 'rule 3 native rendering runs rc=0 lfm3-speech: batch: 15 done, 0 failed'
++ python3 - /workspace/build/sp-v1/rule3/out /workspace/build/sp-v1/rule3-native /workspace/build/sp-refs-parity-s1
++ echo 'rule 3 rendering rc=0'
++ tail -1 /workspace/build/sp-v1/rule3-native.txt
+rule 3 rendering rc=0
+rule 3 rendering: 15 of 15 equal
++ E=/workspace/build/sp-v1/e2
++ mkdir -p /workspace/build/sp-v1/e2
++ RT=/workspace/build/sp-refs-text-s1
++ X6=/workspace/build/sp-dev6/escalate
++ D3=/workspace/build/sp-dev3
+++ ls /workspace/build/sp-refs-text-s1/speech-e2e-v1/requests
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-fridge-s1.req.json /workspace/build/sp-v1/e2/text/il-fridge-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-fridge-s2.req.json /workspace/build/sp-v1/e2/text/il-fridge-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-fridge-s3.req.json /workspace/build/sp-v1/e2/text/il-fridge-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-reflective-s1.req.json /workspace/build/sp-v1/e2/text/il-reflective-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-reflective-s2.req.json /workspace/build/sp-v1/e2/text/il-reflective-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-reflective-s3.req.json /workspace/build/sp-v1/e2/text/il-reflective-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-study-s1.req.json /workspace/build/sp-v1/e2/text/il-study-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-study-s2.req.json /workspace/build/sp-v1/e2/text/il-study-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-study-s3.req.json /workspace/build/sp-v1/e2/text/il-study-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/sp-v1/e2/text/tts-fox-female-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s2.req.json /workspace/build/sp-v1/e2/text/tts-fox-female-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s3.req.json /workspace/build/sp-v1/e2/text/tts-fox-female-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-male-s1.req.json /workspace/build/sp-v1/e2/text/tts-fox-male-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-male-s2.req.json /workspace/build/sp-v1/e2/text/tts-fox-male-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-male-s3.req.json /workspace/build/sp-v1/e2/text/tts-fox-male-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-long-male-s1.req.json /workspace/build/sp-v1/e2/text/tts-long-male-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-long-male-s2.req.json /workspace/build/sp-v1/e2/text/tts-long-male-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-long-male-s3.req.json /workspace/build/sp-v1/e2/text/tts-long-male-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-female-s1.req.json /workspace/build/sp-v1/e2/text/tts-museum-female-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-female-s2.req.json /workspace/build/sp-v1/e2/text/tts-museum-female-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-female-s3.req.json /workspace/build/sp-v1/e2/text/tts-museum-female-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-male-s1.req.json /workspace/build/sp-v1/e2/text/tts-museum-male-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-male-s2.req.json /workspace/build/sp-v1/e2/text/tts-museum-male-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-male-s3.req.json /workspace/build/sp-v1/e2/text/tts-museum-male-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-female-s1.req.json /workspace/build/sp-v1/e2/text/tts-numbers-female-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-female-s2.req.json /workspace/build/sp-v1/e2/text/tts-numbers-female-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-female-s3.req.json /workspace/build/sp-v1/e2/text/tts-numbers-female-s3'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-male-s1.req.json /workspace/build/sp-v1/e2/text/tts-numbers-male-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-male-s2.req.json /workspace/build/sp-v1/e2/text/tts-numbers-male-s2'
++ for f in $(ls $RT/speech-e2e-v1/requests)
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-male-s3.req.json /workspace/build/sp-v1/e2/text/tts-numbers-male-s3'
++ for s in 1 2 3
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s1.req.json /workspace/build/sp-v1/e2/text-split/tts-long-male-s1'
++ for s in 1 2 3
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s2.req.json /workspace/build/sp-v1/e2/text-split/tts-long-male-s2'
++ for s in 1 2 3
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s3.req.json /workspace/build/sp-v1/e2/text-split/tts-long-male-s3'
+++ seq 4 15
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s4.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s4'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s4.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s4'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s5.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s5'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s5.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s5'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s6.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s6'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s6.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s6'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s7.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s7'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s7.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s7'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s8.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s8'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s8.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s8'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s9.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s9'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s9.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s9'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s10.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s10'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s10.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s10'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s11.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s11'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s11.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s11'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s12.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s12'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s12.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s12'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s13.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s13'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s13.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s13'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s14.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s14'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s14.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s14'
++ for s in $(seq 4 15)
++ echo '/workspace/build/sp-dev6/escalate/long/requests/tts-numbers-female-s15.req.json /workspace/build/sp-v1/e2/text-escalate-numbers/tts-numbers-female-s15'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s15.req.json /workspace/build/sp-v1/e2/text-escalate-split/tts-long-male-s15'
++ mkdir -p /workspace/build/sp-v1/e2/text /workspace/build/sp-v1/e2/text-split /workspace/build/sp-v1/e2/text-escalate-numbers /workspace/build/sp-v1/e2/text-escalate-split
++ /workspace/build/text-v35/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-v1/e2/text.list
+++ tail -1 /workspace/build/sp-v1/e2/text.err
+E2 shipping runs rc=0 lfm3-speech: batch: 57 done, 0 failed
++ echo 'E2 shipping runs rc=0 lfm3-speech: batch: 57 done, 0 failed'
++ tail -2
+++ ls /workspace/build/sp-refs-text-s1/speech-e2e-v1/requests
+++ sed 's/\.req\.json$//'
++ python3 /workspace/build/sp-v1/same.py /workspace/build/sp-v1/e2/text /workspace/build/sp-refs-text-s1/speech-e2e-v1/native il-fridge-s1 il-fridge-s2 il-fridge-s3 il-reflective-s1 il-reflective-s2 il-reflective-s3 il-study-s1 il-study-s2 il-study-s3 tts-fox-female-s1 tts-fox-female-s2 tts-fox-female-s3 tts-fox-male-s1 tts-fox-male-s2 tts-fox-male-s3 tts-long-male-s1 tts-long-male-s2 tts-long-male-s3 tts-museum-female-s1 tts-museum-female-s2 tts-museum-female-s3 tts-museum-male-s1 tts-museum-male-s2 tts-museum-male-s3 tts-numbers-female-s1 tts-numbers-female-s2 tts-numbers-female-s3 tts-numbers-male-s1 tts-numbers-male-s2 tts-numbers-male-s3
+30 of 30 identical (/workspace/build/sp-v1/e2/text against /workspace/build/sp-refs-text-s1/speech-e2e-v1/native)
++ echo 'E2 rules 7-8 runs rc=0'
+E2 rules 7-8 runs rc=0
++ python3 /workspace/build/sp-v1/same.py /workspace/build/sp-v1/e2/text-split /workspace/build/sp-refs-text-s1/speech-chunk-native-v1/native tts-long-male-s1 tts-long-male-s2 tts-long-male-s3
++ tail -1
+3 of 3 identical (/workspace/build/sp-v1/e2/text-split against /workspace/build/sp-refs-text-s1/speech-chunk-native-v1/native)
+E2 split runs rc=0
++ echo 'E2 split runs rc=0'
++ tail -1
+++ seq -f tts-numbers-female-s%g 4 15
++ python3 /workspace/build/sp-v1/same.py /workspace/build/sp-v1/e2/text-escalate-numbers /workspace/build/sp-dev6/escalate/numbers tts-numbers-female-s4 tts-numbers-female-s5 tts-numbers-female-s6 tts-numbers-female-s7 tts-numbers-female-s8 tts-numbers-female-s9 tts-numbers-female-s10 tts-numbers-female-s11 tts-numbers-female-s12 tts-numbers-female-s13 tts-numbers-female-s14 tts-numbers-female-s15
+12 of 12 identical (/workspace/build/sp-v1/e2/text-escalate-numbers against /workspace/build/sp-dev6/escalate/numbers)
++ echo 'E2 escalation numbers rc=0'
+E2 escalation numbers rc=0
++ tail -1
+++ seq -f tts-long-male-s%g 4 15
++ python3 /workspace/build/sp-v1/same.py /workspace/build/sp-v1/e2/text-escalate-split /workspace/build/sp-dev6/escalate/split tts-long-male-s4 tts-long-male-s5 tts-long-male-s6 tts-long-male-s7 tts-long-male-s8 tts-long-male-s9 tts-long-male-s10 tts-long-male-s11 tts-long-male-s12 tts-long-male-s13 tts-long-male-s14 tts-long-male-s15
+12 of 12 identical (/workspace/build/sp-v1/e2/text-escalate-split against /workspace/build/sp-dev6/escalate/split)
+E2 escalation split rc=0
++ echo 'E2 escalation split rc=0'
++ python3 - validation/speech-v1/inputs/reference/audio-in-v1/round2-full-check.json /workspace/build/sp-dev3/requests
++ for b in text parity
++ mkdir -p /workspace/build/sp-v1/e2/libri-text
+++ cat /workspace/build/sp-v1/e2/libri-stems.txt
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1221-135766-0011.req.json /workspace/build/sp-v1/e2/libri-text/1221-135766-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123286-0027.req.json /workspace/build/sp-v1/e2/libri-text/260-123286-0027'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5694-0011.req.json /workspace/build/sp-v1/e2/libri-text/3570-5694-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3575-170457-0046.req.json /workspace/build/sp-v1/e2/libri-text/3575-170457-0046'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13751-0011.req.json /workspace/build/sp-v1/e2/libri-text/4077-13751-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13754-0006.req.json /workspace/build/sp-v1/e2/libri-text/4077-13754-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2275-0012.req.json /workspace/build/sp-v1/e2/libri-text/4446-2275-0012'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0026.req.json /workspace/build/sp-v1/e2/libri-text/4507-16021-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0030.req.json /workspace/build/sp-v1/e2/libri-text/4970-29095-0030'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0035.req.json /workspace/build/sp-v1/e2/libri-text/4970-29095-0035'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0007.req.json /workspace/build/sp-v1/e2/libri-text/5142-33396-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0018.req.json /workspace/build/sp-v1/e2/libri-text/6829-68769-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0014.req.json /workspace/build/sp-v1/e2/libri-text/6930-75918-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0018.req.json /workspace/build/sp-v1/e2/libri-text/6930-75918-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-81414-0009.req.json /workspace/build/sp-v1/e2/libri-text/6930-81414-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-79740-0013.req.json /workspace/build/sp-v1/e2/libri-text/7021-79740-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7729-102255-0009.req.json /workspace/build/sp-v1/e2/libri-text/7729-102255-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294825-0006.req.json /workspace/build/sp-v1/e2/libri-text/8463-294825-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-284449-0002.req.json /workspace/build/sp-v1/e2/libri-text/8555-284449-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1089-134686-0000.req.json /workspace/build/sp-v1/e2/libri-text/1089-134686-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1089-134686-0032.req.json /workspace/build/sp-v1/e2/libri-text/1089-134686-0032'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1188-133604-0000.req.json /workspace/build/sp-v1/e2/libri-text/1188-133604-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1188-133604-0032.req.json /workspace/build/sp-v1/e2/libri-text/1188-133604-0032'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/121-123852-0004.req.json /workspace/build/sp-v1/e2/libri-text/121-123852-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/121-127105-0026.req.json /workspace/build/sp-v1/e2/libri-text/121-127105-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1221-135767-0006.req.json /workspace/build/sp-v1/e2/libri-text/1221-135767-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1284-1180-0013.req.json /workspace/build/sp-v1/e2/libri-text/1284-1180-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1284-1181-0012.req.json /workspace/build/sp-v1/e2/libri-text/1284-1181-0012'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1320-122612-0014.req.json /workspace/build/sp-v1/e2/libri-text/1320-122612-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1320-122617-0029.req.json /workspace/build/sp-v1/e2/libri-text/1320-122617-0029'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1580-141083-0019.req.json /workspace/build/sp-v1/e2/libri-text/1580-141083-0019'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1580-141083-0051.req.json /workspace/build/sp-v1/e2/libri-text/1580-141083-0051'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1580-141084-0029.req.json /workspace/build/sp-v1/e2/libri-text/1580-141084-0029'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1995-1826-0010.req.json /workspace/build/sp-v1/e2/libri-text/1995-1826-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1995-1837-0000.req.json /workspace/build/sp-v1/e2/libri-text/1995-1837-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2094-142345-0002.req.json /workspace/build/sp-v1/e2/libri-text/2094-142345-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2094-142345-0034.req.json /workspace/build/sp-v1/e2/libri-text/2094-142345-0034'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2300-131720-0005.req.json /workspace/build/sp-v1/e2/libri-text/2300-131720-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2300-131720-0037.req.json /workspace/build/sp-v1/e2/libri-text/2300-131720-0037'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/237-134493-0001.req.json /workspace/build/sp-v1/e2/libri-text/237-134493-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/237-134500-0014.req.json /workspace/build/sp-v1/e2/libri-text/237-134500-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123286-0003.req.json /workspace/build/sp-v1/e2/libri-text/260-123286-0003'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123288-0004.req.json /workspace/build/sp-v1/e2/libri-text/260-123288-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123440-0007.req.json /workspace/build/sp-v1/e2/libri-text/260-123440-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2830-3980-0005.req.json /workspace/build/sp-v1/e2/libri-text/2830-3980-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2830-3980-0037.req.json /workspace/build/sp-v1/e2/libri-text/2830-3980-0037'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2830-3980-0069.req.json /workspace/build/sp-v1/e2/libri-text/2830-3980-0069'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2961-961-0001.req.json /workspace/build/sp-v1/e2/libri-text/2961-961-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5694-0010.req.json /workspace/build/sp-v1/e2/libri-text/3570-5694-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5696-0004.req.json /workspace/build/sp-v1/e2/libri-text/3570-5696-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3575-170457-0025.req.json /workspace/build/sp-v1/e2/libri-text/3575-170457-0025'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3729-6852-0001.req.json /workspace/build/sp-v1/e2/libri-text/3729-6852-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3729-6852-0033.req.json /workspace/build/sp-v1/e2/libri-text/3729-6852-0033'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13751-0019.req.json /workspace/build/sp-v1/e2/libri-text/4077-13751-0019'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2271-0013.req.json /workspace/build/sp-v1/e2/libri-text/4446-2271-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2273-0020.req.json /workspace/build/sp-v1/e2/libri-text/4446-2273-0020'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2275-0016.req.json /workspace/build/sp-v1/e2/libri-text/4446-2275-0016'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0002.req.json /workspace/build/sp-v1/e2/libri-text/4507-16021-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0035.req.json /workspace/build/sp-v1/e2/libri-text/4507-16021-0035'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29093-0007.req.json /workspace/build/sp-v1/e2/libri-text/4970-29093-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0015.req.json /workspace/build/sp-v1/e2/libri-text/4970-29095-0015'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4992-23283-0010.req.json /workspace/build/sp-v1/e2/libri-text/4992-23283-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4992-41797-0021.req.json /workspace/build/sp-v1/e2/libri-text/4992-41797-0021'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5105-28240-0001.req.json /workspace/build/sp-v1/e2/libri-text/5105-28240-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5105-28241-0008.req.json /workspace/build/sp-v1/e2/libri-text/5105-28241-0008'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0021.req.json /workspace/build/sp-v1/e2/libri-text/5142-33396-0021'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0053.req.json /workspace/build/sp-v1/e2/libri-text/5142-33396-0053'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-36377-0016.req.json /workspace/build/sp-v1/e2/libri-text/5142-36377-0016'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5639-40744-0015.req.json /workspace/build/sp-v1/e2/libri-text/5639-40744-0015'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5683-32865-0005.req.json /workspace/build/sp-v1/e2/libri-text/5683-32865-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5683-32866-0019.req.json /workspace/build/sp-v1/e2/libri-text/5683-32866-0019'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5683-32879-0020.req.json /workspace/build/sp-v1/e2/libri-text/5683-32879-0020'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/61-70968-0026.req.json /workspace/build/sp-v1/e2/libri-text/61-70968-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/61-70968-0058.req.json /workspace/build/sp-v1/e2/libri-text/61-70968-0058'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/61-70970-0027.req.json /workspace/build/sp-v1/e2/libri-text/61-70970-0027'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/672-122797-0018.req.json /workspace/build/sp-v1/e2/libri-text/672-122797-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/672-122797-0050.req.json /workspace/build/sp-v1/e2/libri-text/672-122797-0050'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0007.req.json /workspace/build/sp-v1/e2/libri-text/6829-68769-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0040.req.json /workspace/build/sp-v1/e2/libri-text/6829-68769-0040'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68771-0018.req.json /workspace/build/sp-v1/e2/libri-text/6829-68771-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0013.req.json /workspace/build/sp-v1/e2/libri-text/6930-75918-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-76324-0026.req.json /workspace/build/sp-v1/e2/libri-text/6930-76324-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-79730-0002.req.json /workspace/build/sp-v1/e2/libri-text/7021-79730-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-85628-0004.req.json /workspace/build/sp-v1/e2/libri-text/7021-85628-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7127-75946-0008.req.json /workspace/build/sp-v1/e2/libri-text/7127-75946-0008'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7127-75947-0010.req.json /workspace/build/sp-v1/e2/libri-text/7127-75947-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7176-88083-0001.req.json /workspace/build/sp-v1/e2/libri-text/7176-88083-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7176-92135-0005.req.json /workspace/build/sp-v1/e2/libri-text/7176-92135-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7176-92135-0037.req.json /workspace/build/sp-v1/e2/libri-text/7176-92135-0037'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7729-102255-0024.req.json /workspace/build/sp-v1/e2/libri-text/7729-102255-0024'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8224-274381-0009.req.json /workspace/build/sp-v1/e2/libri-text/8224-274381-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8230-279154-0009.req.json /workspace/build/sp-v1/e2/libri-text/8230-279154-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8230-279154-0041.req.json /workspace/build/sp-v1/e2/libri-text/8230-279154-0041'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8455-210777-0029.req.json /workspace/build/sp-v1/e2/libri-text/8455-210777-0029'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8455-210777-0061.req.json /workspace/build/sp-v1/e2/libri-text/8455-210777-0061'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294825-0008.req.json /workspace/build/sp-v1/e2/libri-text/8463-294825-0008'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294828-0020.req.json /workspace/build/sp-v1/e2/libri-text/8463-294828-0020'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-284447-0013.req.json /workspace/build/sp-v1/e2/libri-text/8555-284447-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-292519-0000.req.json /workspace/build/sp-v1/e2/libri-text/8555-292519-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/908-157963-0016.req.json /workspace/build/sp-v1/e2/libri-text/908-157963-0016'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/908-31957-0017.req.json /workspace/build/sp-v1/e2/libri-text/908-31957-0017'
++ /workspace/build/text-v35/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-v1/e2/libri-text.list
+++ tail -1 /workspace/build/sp-v1/e2/libri-text.err
++ echo 'E2 LibriSpeech text runs rc=0 lfm3-speech: batch: 101 done, 0 failed'
+E2 LibriSpeech text runs rc=0 lfm3-speech: batch: 101 done, 0 failed
++ tail -2
+++ cat /workspace/build/sp-v1/e2/libri-stems.txt
++ python3 /workspace/build/sp-v1/same.py /workspace/build/sp-v1/e2/libri-text /workspace/build/sp-dev3/text-s1 1221-135766-0011 260-123286-0027 3570-5694-0011 3575-170457-0046 4077-13751-0011 4077-13754-0006 4446-2275-0012 4507-16021-0026 4970-29095-0030 4970-29095-0035 5142-33396-0007 6829-68769-0018 6930-75918-0014 6930-75918-0018 6930-81414-0009 7021-79740-0013 7729-102255-0009 8463-294825-0006 8555-284449-0002 1089-134686-0000 1089-134686-0032 1188-133604-0000 1188-133604-0032 121-123852-0004 121-127105-0026 1221-135767-0006 1284-1180-0013 1284-1181-0012 1320-122612-0014 1320-122617-0029 1580-141083-0019 1580-141083-0051 1580-141084-0029 1995-1826-0010 1995-1837-0000 2094-142345-0002 2094-142345-0034 2300-131720-0005 2300-131720-0037 237-134493-0001 237-134500-0014 260-123286-0003 260-123288-0004 260-123440-0007 2830-3980-0005 2830-3980-0037 2830-3980-0069 2961-961-0001 3570-5694-0010 3570-5696-0004 3575-170457-0025 3729-6852-0001 3729-6852-0033 4077-13751-0019 4446-2271-0013 4446-2273-0020 4446-2275-0016 4507-16021-0002 4507-16021-0035 4970-29093-0007 4970-29095-0015 4992-23283-0010 4992-41797-0021 5105-28240-0001 5105-28241-0008 5142-33396-0021 5142-33396-0053 5142-36377-0016 5639-40744-0015 5683-32865-0005 5683-32866-0019 5683-32879-0020 61-70968-0026 61-70968-0058 61-70970-0027 672-122797-0018 672-122797-0050 6829-68769-0007 6829-68769-0040 6829-68771-0018 6930-75918-0013 6930-76324-0026 7021-79730-0002 7021-85628-0004 7127-75946-0008 7127-75947-0010 7176-88083-0001 7176-92135-0005 7176-92135-0037 7729-102255-0024 8224-274381-0009 8230-279154-0009 8230-279154-0041 8455-210777-0029 8455-210777-0061 8463-294825-0008 8463-294828-0020 8555-284447-0013 8555-292519-0000 908-157963-0016 908-31957-0017
+101 of 101 identical (/workspace/build/sp-v1/e2/libri-text against /workspace/build/sp-dev3/text-s1)
+E2 LibriSpeech text rc=0
++ echo 'E2 LibriSpeech text rc=0'
++ for b in text parity
++ mkdir -p /workspace/build/sp-v1/e2/libri-parity
+++ cat /workspace/build/sp-v1/e2/libri-stems.txt
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1221-135766-0011.req.json /workspace/build/sp-v1/e2/libri-parity/1221-135766-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123286-0027.req.json /workspace/build/sp-v1/e2/libri-parity/260-123286-0027'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5694-0011.req.json /workspace/build/sp-v1/e2/libri-parity/3570-5694-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3575-170457-0046.req.json /workspace/build/sp-v1/e2/libri-parity/3575-170457-0046'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13751-0011.req.json /workspace/build/sp-v1/e2/libri-parity/4077-13751-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13754-0006.req.json /workspace/build/sp-v1/e2/libri-parity/4077-13754-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2275-0012.req.json /workspace/build/sp-v1/e2/libri-parity/4446-2275-0012'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0026.req.json /workspace/build/sp-v1/e2/libri-parity/4507-16021-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0030.req.json /workspace/build/sp-v1/e2/libri-parity/4970-29095-0030'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0035.req.json /workspace/build/sp-v1/e2/libri-parity/4970-29095-0035'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0007.req.json /workspace/build/sp-v1/e2/libri-parity/5142-33396-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0018.req.json /workspace/build/sp-v1/e2/libri-parity/6829-68769-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0014.req.json /workspace/build/sp-v1/e2/libri-parity/6930-75918-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0018.req.json /workspace/build/sp-v1/e2/libri-parity/6930-75918-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-81414-0009.req.json /workspace/build/sp-v1/e2/libri-parity/6930-81414-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-79740-0013.req.json /workspace/build/sp-v1/e2/libri-parity/7021-79740-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7729-102255-0009.req.json /workspace/build/sp-v1/e2/libri-parity/7729-102255-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294825-0006.req.json /workspace/build/sp-v1/e2/libri-parity/8463-294825-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-284449-0002.req.json /workspace/build/sp-v1/e2/libri-parity/8555-284449-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1089-134686-0000.req.json /workspace/build/sp-v1/e2/libri-parity/1089-134686-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1089-134686-0032.req.json /workspace/build/sp-v1/e2/libri-parity/1089-134686-0032'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1188-133604-0000.req.json /workspace/build/sp-v1/e2/libri-parity/1188-133604-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1188-133604-0032.req.json /workspace/build/sp-v1/e2/libri-parity/1188-133604-0032'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/121-123852-0004.req.json /workspace/build/sp-v1/e2/libri-parity/121-123852-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/121-127105-0026.req.json /workspace/build/sp-v1/e2/libri-parity/121-127105-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1221-135767-0006.req.json /workspace/build/sp-v1/e2/libri-parity/1221-135767-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1284-1180-0013.req.json /workspace/build/sp-v1/e2/libri-parity/1284-1180-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1284-1181-0012.req.json /workspace/build/sp-v1/e2/libri-parity/1284-1181-0012'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1320-122612-0014.req.json /workspace/build/sp-v1/e2/libri-parity/1320-122612-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1320-122617-0029.req.json /workspace/build/sp-v1/e2/libri-parity/1320-122617-0029'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1580-141083-0019.req.json /workspace/build/sp-v1/e2/libri-parity/1580-141083-0019'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1580-141083-0051.req.json /workspace/build/sp-v1/e2/libri-parity/1580-141083-0051'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1580-141084-0029.req.json /workspace/build/sp-v1/e2/libri-parity/1580-141084-0029'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1995-1826-0010.req.json /workspace/build/sp-v1/e2/libri-parity/1995-1826-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1995-1837-0000.req.json /workspace/build/sp-v1/e2/libri-parity/1995-1837-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2094-142345-0002.req.json /workspace/build/sp-v1/e2/libri-parity/2094-142345-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2094-142345-0034.req.json /workspace/build/sp-v1/e2/libri-parity/2094-142345-0034'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2300-131720-0005.req.json /workspace/build/sp-v1/e2/libri-parity/2300-131720-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2300-131720-0037.req.json /workspace/build/sp-v1/e2/libri-parity/2300-131720-0037'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/237-134493-0001.req.json /workspace/build/sp-v1/e2/libri-parity/237-134493-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/237-134500-0014.req.json /workspace/build/sp-v1/e2/libri-parity/237-134500-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123286-0003.req.json /workspace/build/sp-v1/e2/libri-parity/260-123286-0003'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123288-0004.req.json /workspace/build/sp-v1/e2/libri-parity/260-123288-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123440-0007.req.json /workspace/build/sp-v1/e2/libri-parity/260-123440-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2830-3980-0005.req.json /workspace/build/sp-v1/e2/libri-parity/2830-3980-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2830-3980-0037.req.json /workspace/build/sp-v1/e2/libri-parity/2830-3980-0037'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2830-3980-0069.req.json /workspace/build/sp-v1/e2/libri-parity/2830-3980-0069'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/2961-961-0001.req.json /workspace/build/sp-v1/e2/libri-parity/2961-961-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5694-0010.req.json /workspace/build/sp-v1/e2/libri-parity/3570-5694-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5696-0004.req.json /workspace/build/sp-v1/e2/libri-parity/3570-5696-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3575-170457-0025.req.json /workspace/build/sp-v1/e2/libri-parity/3575-170457-0025'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3729-6852-0001.req.json /workspace/build/sp-v1/e2/libri-parity/3729-6852-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3729-6852-0033.req.json /workspace/build/sp-v1/e2/libri-parity/3729-6852-0033'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13751-0019.req.json /workspace/build/sp-v1/e2/libri-parity/4077-13751-0019'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2271-0013.req.json /workspace/build/sp-v1/e2/libri-parity/4446-2271-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2273-0020.req.json /workspace/build/sp-v1/e2/libri-parity/4446-2273-0020'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2275-0016.req.json /workspace/build/sp-v1/e2/libri-parity/4446-2275-0016'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0002.req.json /workspace/build/sp-v1/e2/libri-parity/4507-16021-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0035.req.json /workspace/build/sp-v1/e2/libri-parity/4507-16021-0035'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29093-0007.req.json /workspace/build/sp-v1/e2/libri-parity/4970-29093-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0015.req.json /workspace/build/sp-v1/e2/libri-parity/4970-29095-0015'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4992-23283-0010.req.json /workspace/build/sp-v1/e2/libri-parity/4992-23283-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4992-41797-0021.req.json /workspace/build/sp-v1/e2/libri-parity/4992-41797-0021'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5105-28240-0001.req.json /workspace/build/sp-v1/e2/libri-parity/5105-28240-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5105-28241-0008.req.json /workspace/build/sp-v1/e2/libri-parity/5105-28241-0008'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0021.req.json /workspace/build/sp-v1/e2/libri-parity/5142-33396-0021'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0053.req.json /workspace/build/sp-v1/e2/libri-parity/5142-33396-0053'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-36377-0016.req.json /workspace/build/sp-v1/e2/libri-parity/5142-36377-0016'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5639-40744-0015.req.json /workspace/build/sp-v1/e2/libri-parity/5639-40744-0015'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5683-32865-0005.req.json /workspace/build/sp-v1/e2/libri-parity/5683-32865-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5683-32866-0019.req.json /workspace/build/sp-v1/e2/libri-parity/5683-32866-0019'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5683-32879-0020.req.json /workspace/build/sp-v1/e2/libri-parity/5683-32879-0020'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/61-70968-0026.req.json /workspace/build/sp-v1/e2/libri-parity/61-70968-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/61-70968-0058.req.json /workspace/build/sp-v1/e2/libri-parity/61-70968-0058'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/61-70970-0027.req.json /workspace/build/sp-v1/e2/libri-parity/61-70970-0027'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/672-122797-0018.req.json /workspace/build/sp-v1/e2/libri-parity/672-122797-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/672-122797-0050.req.json /workspace/build/sp-v1/e2/libri-parity/672-122797-0050'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0007.req.json /workspace/build/sp-v1/e2/libri-parity/6829-68769-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0040.req.json /workspace/build/sp-v1/e2/libri-parity/6829-68769-0040'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68771-0018.req.json /workspace/build/sp-v1/e2/libri-parity/6829-68771-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0013.req.json /workspace/build/sp-v1/e2/libri-parity/6930-75918-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-76324-0026.req.json /workspace/build/sp-v1/e2/libri-parity/6930-76324-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-79730-0002.req.json /workspace/build/sp-v1/e2/libri-parity/7021-79730-0002'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-85628-0004.req.json /workspace/build/sp-v1/e2/libri-parity/7021-85628-0004'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7127-75946-0008.req.json /workspace/build/sp-v1/e2/libri-parity/7127-75946-0008'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7127-75947-0010.req.json /workspace/build/sp-v1/e2/libri-parity/7127-75947-0010'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7176-88083-0001.req.json /workspace/build/sp-v1/e2/libri-parity/7176-88083-0001'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7176-92135-0005.req.json /workspace/build/sp-v1/e2/libri-parity/7176-92135-0005'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7176-92135-0037.req.json /workspace/build/sp-v1/e2/libri-parity/7176-92135-0037'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7729-102255-0024.req.json /workspace/build/sp-v1/e2/libri-parity/7729-102255-0024'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8224-274381-0009.req.json /workspace/build/sp-v1/e2/libri-parity/8224-274381-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8230-279154-0009.req.json /workspace/build/sp-v1/e2/libri-parity/8230-279154-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8230-279154-0041.req.json /workspace/build/sp-v1/e2/libri-parity/8230-279154-0041'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8455-210777-0029.req.json /workspace/build/sp-v1/e2/libri-parity/8455-210777-0029'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8455-210777-0061.req.json /workspace/build/sp-v1/e2/libri-parity/8455-210777-0061'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294825-0008.req.json /workspace/build/sp-v1/e2/libri-parity/8463-294825-0008'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294828-0020.req.json /workspace/build/sp-v1/e2/libri-parity/8463-294828-0020'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-284447-0013.req.json /workspace/build/sp-v1/e2/libri-parity/8555-284447-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-292519-0000.req.json /workspace/build/sp-v1/e2/libri-parity/8555-292519-0000'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/908-157963-0016.req.json /workspace/build/sp-v1/e2/libri-parity/908-157963-0016'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/908-31957-0017.req.json /workspace/build/sp-v1/e2/libri-parity/908-31957-0017'
++ /workspace/build/parity-v35/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-v1/e2/libri-parity.list
+++ tail -1 /workspace/build/sp-v1/e2/libri-parity.err
+E2 LibriSpeech parity runs rc=0 lfm3-speech: batch: 101 done, 0 failed
++ echo 'E2 LibriSpeech parity runs rc=0 lfm3-speech: batch: 101 done, 0 failed'
++ tail -2
+++ cat /workspace/build/sp-v1/e2/libri-stems.txt
++ python3 /workspace/build/sp-v1/same.py /workspace/build/sp-v1/e2/libri-parity /workspace/build/sp-dev3/parity-s1 1221-135766-0011 260-123286-0027 3570-5694-0011 3575-170457-0046 4077-13751-0011 4077-13754-0006 4446-2275-0012 4507-16021-0026 4970-29095-0030 4970-29095-0035 5142-33396-0007 6829-68769-0018 6930-75918-0014 6930-75918-0018 6930-81414-0009 7021-79740-0013 7729-102255-0009 8463-294825-0006 8555-284449-0002 1089-134686-0000 1089-134686-0032 1188-133604-0000 1188-133604-0032 121-123852-0004 121-127105-0026 1221-135767-0006 1284-1180-0013 1284-1181-0012 1320-122612-0014 1320-122617-0029 1580-141083-0019 1580-141083-0051 1580-141084-0029 1995-1826-0010 1995-1837-0000 2094-142345-0002 2094-142345-0034 2300-131720-0005 2300-131720-0037 237-134493-0001 237-134500-0014 260-123286-0003 260-123288-0004 260-123440-0007 2830-3980-0005 2830-3980-0037 2830-3980-0069 2961-961-0001 3570-5694-0010 3570-5696-0004 3575-170457-0025 3729-6852-0001 3729-6852-0033 4077-13751-0019 4446-2271-0013 4446-2273-0020 4446-2275-0016 4507-16021-0002 4507-16021-0035 4970-29093-0007 4970-29095-0015 4992-23283-0010 4992-41797-0021 5105-28240-0001 5105-28241-0008 5142-33396-0021 5142-33396-0053 5142-36377-0016 5639-40744-0015 5683-32865-0005 5683-32866-0019 5683-32879-0020 61-70968-0026 61-70968-0058 61-70970-0027 672-122797-0018 672-122797-0050 6829-68769-0007 6829-68769-0040 6829-68771-0018 6930-75918-0013 6930-76324-0026 7021-79730-0002 7021-85628-0004 7127-75946-0008 7127-75947-0010 7176-88083-0001 7176-92135-0005 7176-92135-0037 7729-102255-0024 8224-274381-0009 8230-279154-0009 8230-279154-0041 8455-210777-0029 8455-210777-0061 8463-294825-0008 8463-294828-0020 8555-284447-0013 8555-292519-0000 908-157963-0016 908-31957-0017
+101 of 101 identical (/workspace/build/sp-v1/e2/libri-parity against /workspace/build/sp-dev3/parity-s1)
+E2 LibriSpeech parity rc=0
++ echo 'E2 LibriSpeech parity rc=0'
++ C=/workspace/data/speech-calibration
++ for k in hf engine
++ /workspace/build/venv-asr/bin/python tools/lfm3_asr.py /workspace/models/whisper-large-v3 /workspace/build/sp-v1/calibration-asr-hf.json /workspace/data/speech-calibration/hf/il-fridge-s1 /workspace/data/speech-calibration/hf/il-reflective-s1 /workspace/data/speech-calibration/hf/il-study-s1 /workspace/data/speech-calibration/hf/tts-fox-female-s1 /workspace/data/speech-calibration/hf/tts-fox-male-s1 /workspace/data/speech-calibration/hf/tts-long-male-s1 /workspace/data/speech-calibration/hf/tts-museum-female-s1 /workspace/data/speech-calibration/hf/tts-museum-male-s1 /workspace/data/speech-calibration/hf/tts-numbers-female-s1 /workspace/data/speech-calibration/hf/tts-numbers-male-s1
+rule 6 asr hf rc=0
++ echo 'rule 6 asr hf rc=0'
++ for k in hf engine
++ /workspace/build/venv-asr/bin/python tools/lfm3_asr.py /workspace/models/whisper-large-v3 /workspace/build/sp-v1/calibration-asr-engine.json /workspace/data/speech-calibration/engine/il-fridge-s1 /workspace/data/speech-calibration/engine/il-reflective-s1 /workspace/data/speech-calibration/engine/il-study-s1 /workspace/data/speech-calibration/engine/probe-other-long-s1 /workspace/data/speech-calibration/engine/probe-other-long-s2 /workspace/data/speech-calibration/engine/probe-other-long-s3 /workspace/data/speech-calibration/engine/tts-fox-female-s1 /workspace/data/speech-calibration/engine/tts-fox-male-s1 /workspace/data/speech-calibration/engine/tts-long-male-s1 /workspace/data/speech-calibration/engine/tts-long-male-s2 /workspace/data/speech-calibration/engine/tts-long-male-s3 /workspace/data/speech-calibration/engine/tts-museum-female-s1 /workspace/data/speech-calibration/engine/tts-museum-male-s1 /workspace/data/speech-calibration/engine/tts-numbers-female-s1 /workspace/data/speech-calibration/engine/tts-numbers-male-s1
++ echo 'rule 6 asr engine rc=0'
++ python3 tools/pascal/asr_calibration.py compare /workspace/data/speech-calibration /workspace/build/sp-v1/calibration-asr-hf.json /workspace/build/sp-v1/calibration-asr-engine.json validation/speech-v1/inputs/reference /workspace/build/sp-v1/calibration.json
+rule 6 asr engine rc=0
++ echo 'rule 6 rc=0'
++ tail -1 /workspace/build/sp-v1/rule6.log
+rule 6 rc=0
+rule 6 (the scorer): 25 of 25 transcripts equal, 25 clips prepared: PASS
++ cd /workspace/build/sp-v1/e2
++ sha256sum text/il-fridge-s1.wav text/il-reflective-s1.wav text/il-study-s1.wav text/tts-fox-female-s1.wav text/tts-fox-male-s1.wav text/tts-long-male-s1.wav text/tts-museum-female-s1.wav text/tts-museum-male-s1.wav text/tts-numbers-female-s1.wav text/tts-numbers-male-s1.wav text-split/tts-long-male-s1.wav
++ for b in text parity
++ S=/workspace/build/text-v35
++ R=/workspace/build/sp-refs-text-s1
++ run text-audio-in-server /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_audio_in_server.py /workspace/build/text-v35/liquid-lfm3-server /workspace/build/text-v35/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-v1/text-audio-in-work /workspace/build/sp-v1/text-audio-in-server.json
++ local n=text-audio-in-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_audio_in_server.py /workspace/build/text-v35/liquid-lfm3-server /workspace/build/text-v35/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-v1/text-audio-in-work /workspace/build/sp-v1/text-audio-in-server.json
+++ grep -E 'PASS|FAIL' /workspace/build/sp-v1/text-audio-in-server.log
+++ tr '\n' ' '
+++ cut -c1-1500
+++ tail -1 /workspace/build/sp-v1/text-audio-in-server.log
+text-audio-in-server rc=0 repeat identical: True | text control identical: True | exit: 0 | PASS  138.12 s
++ echo 'text-audio-in-server rc=0 repeat identical: True | text control identical: True | exit: 0 | PASS  138.12 s'
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ run text-batch-server /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_speech_batch_server.py /workspace/build/text-v35/liquid-lfm3-server /workspace/build/text-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-v1/text-batch-server.json
++ local n=text-batch-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_speech_batch_server.py /workspace/build/text-v35/liquid-lfm3-server /workspace/build/text-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-v1/text-batch-server.json
+++ grep -E 'PASS|FAIL' /workspace/build/sp-v1/text-batch-server.log
+++ tr '\n' ' '
+++ cut -c1-1500
+++ tail -1 /workspace/build/sp-v1/text-batch-server.log
++ echo 'text-batch-server rc=1 BATCH SERVER CHECK FAIL  3536.32 s'
++ clean
+text-batch-server rc=1 BATCH SERVER CHECK FAIL  3536.32 s
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for b in text parity
++ S=/workspace/build/parity-v35
++ R=/workspace/build/sp-refs-parity-s1
++ run parity-audio-in-server /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_audio_in_server.py /workspace/build/parity-v35/liquid-lfm3-server /workspace/build/parity-v35/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-v1/parity-audio-in-work /workspace/build/sp-v1/parity-audio-in-server.json
++ local n=parity-audio-in-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_audio_in_server.py /workspace/build/parity-v35/liquid-lfm3-server /workspace/build/parity-v35/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-v1/parity-audio-in-work /workspace/build/sp-v1/parity-audio-in-server.json
+++ grep -E 'PASS|FAIL' /workspace/build/sp-v1/parity-audio-in-server.log
+++ tr '\n' ' '
+++ cut -c1-1500
+++ tail -1 /workspace/build/sp-v1/parity-audio-in-server.log
++ echo 'parity-audio-in-server rc=0 repeat identical: True | text control identical: True | exit: 0 | PASS  379.90 s'
++ clean
++ pkill -TERM -f liquid-lfm3-server
+parity-audio-in-server rc=0 repeat identical: True | text control identical: True | exit: 0 | PASS  379.90 s
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ run parity-batch-server /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_speech_batch_server.py /workspace/build/parity-v35/liquid-lfm3-server /workspace/build/parity-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-parity-s1 /workspace/data/librispeech/wav /workspace/build/sp-v1/parity-batch-server.json
++ local n=parity-batch-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_speech_batch_server.py /workspace/build/parity-v35/liquid-lfm3-server /workspace/build/parity-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-parity-s1 /workspace/data/librispeech/wav /workspace/build/sp-v1/parity-batch-server.json
+++ grep -E 'PASS|FAIL' /workspace/build/sp-v1/parity-batch-server.log
+++ tr '\n' ' '
+++ cut -c1-1500
+++ tail -1 /workspace/build/sp-v1/parity-batch-server.log
++ echo 'parity-batch-server rc=1 BATCH SERVER CHECK FAIL  10395.03 s'
++ clean
+parity-batch-server rc=1 BATCH SERVER CHECK FAIL  10395.03 s
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ cp /workspace/build/sp-dev12/text-speech-server.json /workspace/build/sp-dev11/text-speech-stream.json /workspace/build/sp-dev11/text-speech-concurrent.json /workspace/build/sp-dev12/parity-speech-server.json /workspace/build/sp-dev12/parity-speech-stream.json /workspace/build/sp-dev12/parity-speech-concurrent.json /workspace/build/sp-v1/
++ for b in text parity
++ python3 tools/pascal/judge_speech_server.py /workspace/build/sp-v1 text /workspace/build/text-v35,/workspace/build/text-s4,/workspace/build/text-s1 /workspace/build/sp-refs-text-s1
+rule 11 text reports of these builds: pass
+rule 11 text speech-server: pass
+rule 11 text speech-stream: pass
+rule 11 text audio-in-server: pass
+rule 11 text speech-concurrent: pass
+rule 11 text batch-server: pass
+RULE 11 (text, decision 10) PASS
+rule 11 text rc=0
++ echo 'rule 11 text rc=0'
++ for b in text parity
++ python3 tools/pascal/judge_speech_server.py /workspace/build/sp-v1 parity /workspace/build/parity-v35,/workspace/build/parity-s4,/workspace/build/parity-s1 /workspace/build/sp-refs-parity-s1
+rule 11 parity reports of these builds: pass
+rule 11 parity speech-server: pass
+rule 11 parity speech-stream: pass
+rule 11 parity audio-in-server: pass
+rule 11 parity speech-concurrent: pass
+rule 11 parity batch-server: pass
+RULE 11 (parity, decision 10) PASS
+rule 11 parity rc=0
++ echo 'rule 11 parity rc=0'
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-v1
+rule 12 ready line (defaults): {"ready":true,"port":33377,"total_capacity":30720,"speech_rows":1} exit 0 ok
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/sp-v1/memory 7740 30720
+rule 12 rc=0
++ echo 'rule 12 rc=0'
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-v1/memory.log
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5147 MiB (383 samples): ok
+rule 12 one-30720 with 1 speech: text [200] in 28.5 s, speech [200] (overlapped True), peak 7215 MiB (497 samples): ok
+rule 12 3840+26880 with 1 speech: text [200, 200] in 29.3 s, speech [200] (overlapped True), peak 7605 MiB (491 samples): ok
+rule 12 1920+28800 with 1 speech: text [200, 200] in 30.2 s, speech [200] (overlapped True), peak 7611 MiB (496 samples): ok
+rule 12 15360+15360 with 1 speech: text [200, 200] in 25.9 s, speech [200] (overlapped True), peak 7265 MiB (477 samples): ok
+rule 12 batch-3840+26880 with 1 speech: text [200] in 93.5 s, speech [200] (overlapped True), peak 7615 MiB (490 samples): ok
+rule 12 audio-in-one-30720 with 0 speech and 3 audio in: text [200] in 26.0 s, speech [] (overlapped True), peak 7697 MiB (280 samples): ok
+SPEECH MEMORY (rule 12, 1 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for b in text parity
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_limits.py /workspace/build/text-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-v1/limits-text
+rule 13 text rc=0
++ echo 'rule 13 text rc=0'
++ grep -E '^rule 13|SPEECH LIMITS' /workspace/build/sp-v1/limits-text.log
+rule 13 text: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 chunks: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 prompt: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 capacity: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 clips: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 body: 413 body_limit (expected 413 body_limit): ok
+rule 13 body-16: 413 body_limit (expected 413 body_limit): ok
+rule 13 queue: 429 queue_full (expected 429 queue_full): ok
+rule 13 queue's requests: [200, 200, 200, 200, 200] all held at the extra one: True
+rule 13 controls: text identical True | speech identical True
+SPEECH LIMITS (rule 13) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for b in text parity
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_limits.py /workspace/build/parity-v35/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-v1/limits-parity
++ echo 'rule 13 parity rc=0'
++ grep -E '^rule 13|SPEECH LIMITS' /workspace/build/sp-v1/limits-parity.log
+rule 13 parity rc=0
+rule 13 text: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 chunks: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 prompt: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 capacity: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 clips: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 body: 413 body_limit (expected 413 body_limit): ok
+rule 13 body-16: 413 body_limit (expected 413 body_limit): ok
+rule 13 queue: 429 queue_full (expected 429 queue_full): ok
+rule 13 queue's requests: [200, 200, 200, 200, 200] all held at the extra one: True
+rule 13 controls: text identical True | speech identical True
+SPEECH LIMITS (rule 13) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ STAGES=native-server
++ tools/pascal/serve_gates.sh text-v35 sp-v1-serve-shipping own
++ echo 'rule 2 shipping native-server rc=0'
+rule 2 shipping native-server rc=0
++ cat /workspace/build/sp-v1-serve-shipping/status.txt
+native-server rc=0 109 s
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ STAGES=native-server
++ tools/pascal/serve_gates.sh parity-v35 sp-v1-serve-parity pinned
++ echo 'rule 2 parity native-server rc=0'
+rule 2 parity native-server rc=0
++ cat /workspace/build/sp-v1-serve-parity/status.txt
+native-server rc=0 197 s
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ K=/workspace/build/sp-v1/carried
++ mkdir -p /workspace/build/sp-v1/carried
++ cp /workspace/build/sp-dev3/rule4.json /workspace/build/sp-dev3/rule10.json /workspace/build/sp-dev3/rule4.log /workspace/build/sp-dev3/rule10.log /workspace/build/sp-v1/carried/
++ cp /workspace/build/sp-dev5/c1c2.json /workspace/build/sp-dev5/asr-e2e.json /workspace/build/sp-dev5/asr-split.json /workspace/build/sp-dev6/escalate/numbers.json /workspace/build/sp-dev6/escalate/long.json /workspace/build/sp-dev6/escalate/asr-numbers.json /workspace/build/sp-dev6/escalate/asr-split.json /workspace/build/sp-v1/carried/
+cp: will not overwrite just-created '/workspace/build/sp-v1/carried/asr-split.json' with '/workspace/build/sp-dev6/escalate/asr-split.json'
++ mkdir -p /workspace/build/sp-v1/carried/rule14
++ cp -r /workspace/build/sp-dev13/m-text /workspace/build/sp-dev13/m-parity /workspace/build/sp-v1/carried/rule14/
++ find /workspace/build/sp-v1/carried/rule14 '(' -name '*.wav' -o -name '*.f32' -o -name '*.i32' ')' -delete
++ cp -r /workspace/build/sp-dev13-serve-shipping /workspace/build/sp-v1/carried/serve-shipping-dev13
++ cp -r /workspace/build/sp-dev13-serve-parity /workspace/build/sp-v1/carried/serve-parity-dev13
++ cp /workspace/build/sp-dev13/paired.log /workspace/build/sp-v1/carried/
++ cp -r /workspace/build/sp-dev15/memory-rows8-16384 /workspace/build/sp-dev15/memory-rows16-2048 /workspace/build/sp-dev15/memory-rows8-16384.log /workspace/build/sp-dev15/memory-rows16-2048.log /workspace/build/sp-v1/carried/
++ grep -h '^SPEECH MEMORY\|PAIRED\|ERROR SUMMARY' /workspace/build/sp-v1/carried/memory-rows16-2048.log /workspace/build/sp-v1/carried/memory-rows8-16384.log /workspace/build/sp-v1/carried/paired.log /workspace/build/sp-v1/carried/rule10.log /workspace/build/sp-v1/carried/rule4.log /workspace/build/sp-v1/carried/rule14/m-parity/memcheck.err /workspace/build/sp-v1/carried/rule14/m-parity/memcheck.list /workspace/build/sp-v1/carried/rule14/m-parity/memcheck.log /workspace/build/sp-v1/carried/rule14/m-text/memcheck.err /workspace/build/sp-v1/carried/rule14/m-text/memcheck.list /workspace/build/sp-v1/carried/rule14/m-text/memcheck.log
++ sort
++ uniq -c
+      2 ========= ERROR SUMMARY: 0 errors
+      1 PAIRED DECODE (rule 10) PASS
+      1 SPEECH MEMORY (rule 12, 16 rows) PASS
+      1 SPEECH MEMORY (rule 12, 8 rows) PASS
++ for d in $E/text $B/sp-refs-parity-s1/speech-e2e-v1/native
++ python3 - /workspace/build/sp-v1/e2/text
+speed /workspace/build/sp-v1/e2/text CLI il-fridge: real-time factor 1.06 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI il-reflective: real-time factor 1.08 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI il-study: real-time factor 1.07 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI tts-fox-female: real-time factor 1.35 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI tts-fox-male: real-time factor 1.36 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI tts-long-male: real-time factor 1.38 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI tts-museum-female: real-time factor 1.38 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI tts-museum-male: real-time factor 1.38 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI tts-numbers-female: real-time factor 1.37 (seeds 3)
+speed /workspace/build/sp-v1/e2/text CLI tts-numbers-male: real-time factor 1.37 (seeds 3)
++ for d in $E/text $B/sp-refs-parity-s1/speech-e2e-v1/native
++ python3 - /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI il-fridge: real-time factor 0.38 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI il-reflective: real-time factor 0.39 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI il-study: real-time factor 0.39 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI tts-fox-female: real-time factor 0.49 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI tts-fox-male: real-time factor 0.49 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI tts-long-male: real-time factor 0.50 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI tts-museum-female: real-time factor 0.50 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI tts-museum-male: real-time factor 0.50 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI tts-numbers-female: real-time factor 0.49 (seeds 3)
+speed /workspace/build/sp-refs-parity-s1/speech-e2e-v1/native CLI tts-numbers-male: real-time factor 0.49 (seeds 3)
++ date
+Sat Nov 21 12:23:21 MST 2026

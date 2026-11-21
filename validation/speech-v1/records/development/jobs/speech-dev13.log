@@ -1,0 +1,198 @@
++ date
+Sat Nov 21 02:46:04 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev13
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ SAN='/usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9'
++ '[' -e /workspace/build/sp-dev13 ']'
++ mkdir -p /workspace/build/sp-dev13
++ python3 tools/pascal/compare_pins.py parity-s4
++ echo 'rule 1 gate rc=0'
++ tail -3 /workspace/build/sp-dev13/gate.log
+rule 1 gate rc=0
+window257: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 3.42 s
+single: 1204 of 1204 trace files equal to the Thor pins; argmax ids equal; files traced here 1204; prefill 0.03 s
+PINS EQUAL: 7826 files equal
++ for f in liquid-lfm3 lfm3-score
++ cuobjdump -sass /workspace/build/text-v33/liquid-lfm3
++ cuobjdump -sass /workspace/build/text-s4/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-dev13/liquid-lfm3.v33.sass /workspace/build/sp-dev13/liquid-lfm3.s4.sass
+++ head -1 /workspace/build/sp-dev13/liquid-lfm3.sass-compare.txt
+rule 1 liquid-lfm3 device code against text-v33 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 1 liquid-lfm3 device code against text-v33 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score
++ cuobjdump -sass /workspace/build/text-v33/lfm3-score
++ cuobjdump -sass /workspace/build/text-s4/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/sp-dev13/lfm3-score.v33.sass /workspace/build/sp-dev13/lfm3-score.s4.sass
+++ head -1 /workspace/build/sp-dev13/lfm3-score.sass-compare.txt
+rule 1 lfm3-score device code against text-v33 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 1 lfm3-score device code against text-v33 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ tools/pascal/run_text_fixtures.sh text-s4 2
++ echo 'rule 1 fixtures rc=0'
++ tail -2 /workspace/build/sp-dev13/fixtures.log
+rule 1 fixtures rc=0
+single: ids MATCH (4), runs identical, reset ok, input 1 tokens, prefill 0.016 s, decode 0.048 s / 3 calls
+FIXTURES PASS
++ for b in text parity
++ cuobjdump -sass /workspace/build/text-s4/lfm3-speech
++ for b in text parity
++ cuobjdump -sass /workspace/build/parity-s4/lfm3-speech
++ python3 tools/pascal/sass_speech_only.py /workspace/build/sp-dev13/speech.text.sass /workspace/build/sp-dev13/speech.parity.sass
++ echo 'rule 5 rc=0'
++ head -3 /workspace/build/sp-dev13/rule5.txt
+rule 5 rc=0
+134 and 140 functions; outside lfm::gemm: 57 identical, 0 not; lfm::gemm: 10 in one only, 0 differing
++ sha256sum /workspace/build/sp-dev13/lfm3-score.s4.sass /workspace/build/sp-dev13/lfm3-score.v33.sass /workspace/build/sp-dev13/liquid-lfm3.s4.sass /workspace/build/sp-dev13/liquid-lfm3.v33.sass /workspace/build/sp-dev13/speech.parity.sass /workspace/build/sp-dev13/speech.text.sass
++ gzip -9 /workspace/build/sp-dev13/lfm3-score.s4.sass /workspace/build/sp-dev13/lfm3-score.v33.sass /workspace/build/sp-dev13/liquid-lfm3.s4.sass /workspace/build/sp-dev13/liquid-lfm3.v33.sass /workspace/build/sp-dev13/speech.parity.sass /workspace/build/sp-dev13/speech.text.sass
++ for b in text parity
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_limits.py /workspace/build/text-s4/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev13/limits-text
++ echo 'rule 13 text rc=0'
++ grep -E '^rule 13|SPEECH LIMITS' /workspace/build/sp-dev13/limits-text.log
+rule 13 text rc=0
+rule 13 text: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 chunks: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 prompt: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 capacity: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 clips: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 body: 413 body_limit (expected 413 body_limit): ok
+rule 13 body-16: 413 body_limit (expected 413 body_limit): ok
+rule 13 queue: 429 queue_full (expected 429 queue_full): ok
+rule 13 queue's requests: [200, 200, 200, 200, 200] all held at the extra one: True
+rule 13 controls: text identical True | speech identical True
+SPEECH LIMITS (rule 13) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for b in text parity
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_limits.py /workspace/build/parity-s4/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev13/limits-parity
++ echo 'rule 13 parity rc=0'
++ grep -E '^rule 13|SPEECH LIMITS' /workspace/build/sp-dev13/limits-parity.log
+rule 13 parity rc=0
+rule 13 text: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 chunks: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 prompt: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 capacity: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 clips: 400 invalid_request (expected 400 invalid_request): ok
+rule 13 body: 413 body_limit (expected 413 body_limit): ok
+rule 13 body-16: 413 body_limit (expected 413 body_limit): ok
+rule 13 queue: 429 queue_full (expected 429 queue_full): ok
+rule 13 queue's requests: [200, 200, 200, 200, 200] all held at the extra one: True
+rule 13 controls: text identical True | speech identical True
+SPEECH LIMITS (rule 13) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ W=/workspace/build/sp-dev11/text-concurrent-work/requests
++ for b in text parity
++ for k in plain memcheck
++ mkdir -p /workspace/build/sp-dev13/m-text/plain
++ printf '%s %s\n' /workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev13/m-text/plain/tts-fox-female-s1 /workspace/build/sp-dev11/text-concurrent-work/requests/spoken-q4.req.json /workspace/build/sp-dev13/m-text/plain/spoken-q4 /workspace/build/sp-dev11/text-concurrent-work/requests/asr-121-123859-0002.req.json /workspace/build/sp-dev13/m-text/plain/asr-121-123859-0002
++ w=
++ '[' plain = memcheck ']'
++ /usr/bin/time -f '%e s' /workspace/build/text-s4/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-dev13/m-text/plain.list
+++ tail -1 /workspace/build/sp-dev13/m-text/plain.err
+rule 14 text plain rc=0 18.21 s
++ echo 'rule 14 text plain rc=0 18.21 s'
++ for k in plain memcheck
++ mkdir -p /workspace/build/sp-dev13/m-text/memcheck
++ printf '%s %s\n' /workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev13/m-text/memcheck/tts-fox-female-s1 /workspace/build/sp-dev11/text-concurrent-work/requests/spoken-q4.req.json /workspace/build/sp-dev13/m-text/memcheck/spoken-q4 /workspace/build/sp-dev11/text-concurrent-work/requests/asr-121-123859-0002.req.json /workspace/build/sp-dev13/m-text/memcheck/asr-121-123859-0002
++ w=
++ '[' memcheck = memcheck ']'
++ w='/usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9'
++ /usr/bin/time -f '%e s' /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9 /workspace/build/text-s4/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-dev13/m-text/memcheck.list
+++ tail -1 /workspace/build/sp-dev13/m-text/memcheck.err
+rule 14 text memcheck rc=0 534.48 s
++ echo 'rule 14 text memcheck rc=0 534.48 s'
++ grep -E 'ERROR SUMMARY|errors' /workspace/build/sp-dev13/m-text/memcheck.log /workspace/build/sp-dev13/m-text/memcheck.err
++ tail -2
+/workspace/build/sp-dev13/m-text/memcheck.log:========= ERROR SUMMARY: 0 errors
++ python3 - /workspace/build/sp-dev13/m-text
+rule 14 m-text tts-fox-female-s1: outputs identical
+rule 14 m-text spoken-q4: outputs identical
+rule 14 m-text asr-121-123859-0002: outputs identical
+rule 14 m-text: 3 of 3 identical
++ for b in text parity
++ for k in plain memcheck
++ mkdir -p /workspace/build/sp-dev13/m-parity/plain
++ printf '%s %s\n' /workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev13/m-parity/plain/tts-fox-female-s1 /workspace/build/sp-dev11/text-concurrent-work/requests/spoken-q4.req.json /workspace/build/sp-dev13/m-parity/plain/spoken-q4 /workspace/build/sp-dev11/text-concurrent-work/requests/asr-121-123859-0002.req.json /workspace/build/sp-dev13/m-parity/plain/asr-121-123859-0002
++ w=
++ '[' plain = memcheck ']'
++ /usr/bin/time -f '%e s' /workspace/build/parity-s4/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-dev13/m-parity/plain.list
+++ tail -1 /workspace/build/sp-dev13/m-parity/plain.err
+rule 14 parity plain rc=0 48.76 s
++ echo 'rule 14 parity plain rc=0 48.76 s'
++ for k in plain memcheck
++ mkdir -p /workspace/build/sp-dev13/m-parity/memcheck
++ printf '%s %s\n' /workspace/build/sp-refs-parity-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev13/m-parity/memcheck/tts-fox-female-s1 /workspace/build/sp-dev11/text-concurrent-work/requests/spoken-q4.req.json /workspace/build/sp-dev13/m-parity/memcheck/spoken-q4 /workspace/build/sp-dev11/text-concurrent-work/requests/asr-121-123859-0002.req.json /workspace/build/sp-dev13/m-parity/memcheck/asr-121-123859-0002
++ w=
++ '[' memcheck = memcheck ']'
++ w='/usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9'
++ /usr/bin/time -f '%e s' /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9 /workspace/build/parity-s4/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/sp-dev13/m-parity/memcheck.list
+++ tail -1 /workspace/build/sp-dev13/m-parity/memcheck.err
++ echo 'rule 14 parity memcheck rc=0 1516.08 s'
+rule 14 parity memcheck rc=0 1516.08 s
++ grep -E 'ERROR SUMMARY|errors' /workspace/build/sp-dev13/m-parity/memcheck.log /workspace/build/sp-dev13/m-parity/memcheck.err
++ tail -2
+/workspace/build/sp-dev13/m-parity/memcheck.log:========= ERROR SUMMARY: 0 errors
++ python3 - /workspace/build/sp-dev13/m-parity
+rule 14 m-parity tts-fox-female-s1: outputs identical
+rule 14 m-parity spoken-q4: outputs identical
+rule 14 m-parity asr-121-123859-0002: outputs identical
+rule 14 m-parity: 3 of 3 identical
++ tools/pascal/serve_gates.sh text-s4 sp-dev13-serve-shipping own
++ echo 'rule 2 shipping rc=0'
++ cat /workspace/build/sp-dev13-serve-shipping/status.txt
+rule 2 shipping rc=0
+sampling rc=0 24 s
+worker rc=0 78 s
+grouped-worker rc=0 72 s
+server rc=0 30 s
+cancellation rc=0 5 s
+http-cancellation rc=0 6 s
+http-batch rc=0 612 s
+native-server rc=0 113 s
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ tools/pascal/serve_gates.sh parity-s4 sp-dev13-serve-parity pinned
++ echo 'rule 2 parity rc=0'
+rule 2 parity rc=0
++ cat /workspace/build/sp-dev13-serve-parity/status.txt
+sampling rc=0 31 s
+worker rc=0 876 s
+grouped-worker rc=0 877 s
+server rc=0 38 s
+cancellation rc=0 7 s
+http-cancellation rc=0 8 s
+http-batch rc=0 622 s
+native-server rc=0 201 s
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ python3 tools/pascal/paired_decode_check.py /workspace/build/text-s4/liquid-lfm3-worker /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 /workspace/build/sp-dev13/paired
++ echo 'rule 2 (serve-v1 rule 10) rc=0'
++ grep -E 'lane|PAIRED' /workspace/build/sp-dev13/paired.log
+rule 2 (serve-v1 rule 10) rc=0
+capacity 4097 prompt 3400: lane A: 600 steps, ids equal, traces equal: ok
+capacity 4097 prompt 3400: lane B: 600 steps, ids equal, traces equal: ok
+capacity 8192 prompt 7500: lane A: 600 steps, ids equal, traces equal: ok
+capacity 8192 prompt 7500: lane B: 600 steps, ids equal, traces equal: ok
+capacity 28672 prompt 28000: lane A: 600 steps, ids equal, traces equal: ok
+capacity 28672 prompt 28000: lane B: 600 steps, ids equal, traces equal: ok
+PAIRED DECODE (rule 10) PASS
++ date
+Sat Nov 21 04:32:12 MST 2026

@@ -1,0 +1,95 @@
++ date
+Fri Nov 20 14:58:18 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev8
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ S=/workspace/build/text-s2
++ '[' -e /workspace/build/sp-dev8 ']'
++ mkdir -p /workspace/build/sp-dev8
++ for rows in 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 7 /workspace/data/librispeech/wav /workspace/build/sp-dev8/memory-rows7
++ rc=1
++ echo 'rows 7 rc=1'
+rows 7 rc=1
++ cut -c1-400
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev8/memory-rows7.log
+rule 12 one-32768: AssertionError(('/sessions/1OT7y0VDOoAmEm22dVfUNAS14f9h23SE/close', 503, {'error': 'worker_unavailable'})): FAIL (stopped)
+SPEECH MEMORY (rule 12, 7 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 6 /workspace/data/librispeech/wav /workspace/build/sp-dev8/memory-rows6
++ rc=1
++ echo 'rows 6 rc=1'
+rows 6 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev8/memory-rows6.log
++ cut -c1-400
+rule 12 one-32768: AssertionError(('/sessions/l4iJivsuGRUPpJf9GTqZVbZz8Cuiio0R/close', 503, {'error': 'worker_unavailable'})): FAIL (stopped)
+SPEECH MEMORY (rule 12, 6 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 5 /workspace/data/librispeech/wav /workspace/build/sp-dev8/memory-rows5
++ rc=1
++ echo 'rows 5 rc=1'
+rows 5 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev8/memory-rows5.log
++ cut -c1-400
+rule 12 one-32768: AssertionError(('/sessions/pE0XbDmzQaszWcXpLpPF8019xloY5bu0/close', 503, {'error': 'worker_unavailable'})): FAIL (stopped)
+SPEECH MEMORY (rule 12, 5 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 4 /workspace/data/librispeech/wav /workspace/build/sp-dev8/memory-rows4
++ rc=1
++ echo 'rows 4 rc=1'
+rows 4 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev8/memory-rows4.log
++ cut -c1-400
+rule 12 one-32768 with 4 speech: text [200] in 31.3 s, speech [200, 200, 429, 200] (overlapped False), peak 8085 MiB (283 samples): FAIL
+rule 12 4096+28672: AssertionError(('/sessions/QKdqvIeVcjnPmEbC1STJWEDD3JITSjfA/close', 503, {'error': 'worker_unavailable'})): FAIL (stopped)
+SPEECH MEMORY (rule 12, 4 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 3 /workspace/data/librispeech/wav /workspace/build/sp-dev8/memory-rows3
++ rc=1
++ echo 'rows 3 rc=1'
+rows 3 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev8/memory-rows3.log
++ cut -c1-400
+rule 12 one-32768 with 3 speech: text [200] in 31.2 s, speech [200, 429, 200] (overlapped False), peak 7841 MiB (270 samples): FAIL
+rule 12 4096+28672: AssertionError(('/sessions/YWFcpamzDlVO_qToE8VVtdnG5QpuvvXV/close', 503, {'error': 'worker_unavailable'})): FAIL (stopped)
+SPEECH MEMORY (rule 12, 3 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 2 /workspace/data/librispeech/wav /workspace/build/sp-dev8/memory-rows2
++ rc=1
++ echo 'rows 2 rc=1'
+rows 2 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev8/memory-rows2.log
++ cut -c1-400
+rule 12 one-32768 with 2 speech: text [200] in 31.2 s, speech [200, 429] (overlapped False), peak 7595 MiB (255 samples): FAIL
+rule 12 4096+28672 with 2 speech: text [200, 200] in 31.8 s, speech [200, 429] (overlapped False), peak 7977 MiB (248 samples): FAIL
+rule 12 2048+30720 with 2 speech: text [200, 200] in 32.7 s, speech [429, 200] (overlapped False), peak 7985 MiB (255 samples): FAIL
+rule 12 16384+16384 with 2 speech: text [200, 200] in 27.8 s, speech [429, 200] (overlapped False), peak 7613 MiB (234 samples): FAIL
+rule 12 batch-4096+28672 with 2 speech: text [200] in 37.7 s, speech [429, 200] (overlapped False), peak 7989 MiB (249 samples): FAIL
+rule 12 audio-in-one-32768 with 2 speech: text [200] in 31.3 s, speech [200, 200] (overlapped True), peak 7601 MiB (267 samples): ok
+SPEECH MEMORY (rule 12, 2 rows) FAIL
++ '[' 1 = 0 ']'
++ for rows in 7 6 5 4 3 2 1
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/sp-dev8/memory-rows1
++ rc=1
++ echo 'rows 1 rc=1'
+rows 1 rc=1
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev8/memory-rows1.log
++ cut -c1-400
+rule 12 one-32768 with 1 speech: text [200] in 31.2 s, speech [200] (overlapped True), peak 7351 MiB (255 samples): ok
+rule 12 4096+28672 with 1 speech: text [200, 200] in 31.8 s, speech [200] (overlapped True), peak 7733 MiB (248 samples): ok
+rule 12 2048+30720 with 1 speech: text [200, 200] in 32.8 s, speech [200] (overlapped True), peak 7739 MiB (253 samples): ok
+rule 12 16384+16384 with 1 speech: text [200, 200] in 27.8 s, speech [200] (overlapped True), peak 7369 MiB (231 samples): ok
+rule 12 batch-4096+28672 with 1 speech: text [200] in 37.0 s, speech [200] (overlapped False), peak 7745 MiB (247 samples): FAIL
+rule 12 audio-in-one-32768 with 1 speech: text [200] in 29.0 s, speech [200] (overlapped True), peak 7357 MiB (212 samples): ok
+SPEECH MEMORY (rule 12, 1 rows) FAIL
++ '[' 1 = 0 ']'
++ date
+Fri Nov 20 15:14:10 MST 2026

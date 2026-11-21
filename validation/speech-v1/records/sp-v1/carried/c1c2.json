@@ -1,0 +1,354 @@
+{
+ "seeds": [
+  1,
+  2,
+  3
+ ],
+ "cases": {
+  "tts-fox-female": {
+   "mode": "audio",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "shipping_mean": 0.0,
+   "hf_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "hf_worst": 0.0,
+   "c1_flag": false,
+   "shipping_seconds": [
+    3.2,
+    3.84,
+    3.68
+   ],
+   "hf_seconds": [
+    3.52,
+    3.84,
+    3.36
+   ],
+   "length_ratio": 1.0,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "tts-fox-male": {
+   "mode": "audio",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "shipping_mean": 0.0,
+   "hf_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "hf_worst": 0.0,
+   "c1_flag": false,
+   "shipping_seconds": [
+    3.84,
+    4,
+    3.6
+   ],
+   "hf_seconds": [
+    3.52,
+    4.0,
+    3.6
+   ],
+   "length_ratio": 1.0287769784172662,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "tts-museum-female": {
+   "mode": "audio",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.041666666666666664,
+    0.0,
+    0.041666666666666664
+   ],
+   "shipping_mean": 0.027777777777777776,
+   "hf_wer": [
+    0.0,
+    0.041666666666666664,
+    0.041666666666666664
+   ],
+   "hf_worst": 0.041666666666666664,
+   "c1_flag": false,
+   "shipping_seconds": [
+    12,
+    12,
+    12.16
+   ],
+   "hf_seconds": [
+    11.84,
+    11.68,
+    12.64
+   ],
+   "length_ratio": 1.0,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "tts-museum-male": {
+   "mode": "audio",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.0,
+    0.0,
+    0.041666666666666664
+   ],
+   "shipping_mean": 0.013888888888888888,
+   "hf_wer": [
+    0.041666666666666664,
+    0.0,
+    0.041666666666666664
+   ],
+   "hf_worst": 0.041666666666666664,
+   "c1_flag": false,
+   "shipping_seconds": [
+    12.16,
+    12.48,
+    12
+   ],
+   "hf_seconds": [
+    12.32,
+    12.0,
+    12.32
+   ],
+   "length_ratio": 1.0,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "tts-numbers-female": {
+   "mode": "audio",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.15789473684210525,
+    0.15789473684210525,
+    0.21052631578947367
+   ],
+   "shipping_mean": 0.17543859649122806,
+   "hf_wer": [
+    0.15789473684210525,
+    0.15789473684210525,
+    0.15789473684210525
+   ],
+   "hf_worst": 0.15789473684210525,
+   "c1_flag": true,
+   "shipping_seconds": [
+    9.28,
+    10.4,
+    8.64
+   ],
+   "hf_seconds": [
+    9.92,
+    9.44,
+    8.64
+   ],
+   "length_ratio": 1.0114285714285713,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "tts-numbers-male": {
+   "mode": "audio",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.15789473684210525,
+    0.15789473684210525,
+    0.21052631578947367
+   ],
+   "shipping_mean": 0.17543859649122806,
+   "hf_wer": [
+    0.21052631578947367,
+    0.15789473684210525,
+    0.15789473684210525
+   ],
+   "hf_worst": 0.21052631578947367,
+   "c1_flag": false,
+   "shipping_seconds": [
+    9.6,
+    9.76,
+    9.44
+   ],
+   "hf_seconds": [
+    9.44,
+    9.44,
+    8.96
+   ],
+   "length_ratio": 1.0344827586206897,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "tts-long-male": {
+   "mode": "audio",
+   "kind": "split",
+   "shipping_wer": [
+    0.0,
+    0.010309278350515464,
+    0.0
+   ],
+   "shipping_mean": 0.003436426116838488,
+   "hf_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "hf_worst": 0.0,
+   "c1_flag": true,
+   "shipping_seconds": [
+    39.04,
+    40,
+    39.52
+   ],
+   "hf_seconds": [
+    39.52,
+    39.6,
+    38.72
+   ],
+   "length_ratio": 1.0061099796334012,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "il-reflective": {
+   "mode": "interleaved",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "shipping_mean": 0.0,
+   "hf_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "hf_worst": 0.0,
+   "c1_flag": false,
+   "shipping_seconds": [
+    26.72,
+    23.92,
+    25.36
+   ],
+   "hf_seconds": [
+    31.76,
+    25.6,
+    20.72
+   ],
+   "length_ratio": 0.9733606557377048,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "il-study": {
+   "mode": "interleaved",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "shipping_mean": 0.0,
+   "hf_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "hf_worst": 0.0,
+   "c1_flag": false,
+   "shipping_seconds": [
+    22.56,
+    16.16,
+    22.8
+   ],
+   "hf_seconds": [
+    23.44,
+    21.36,
+    21.52
+   ],
+   "length_ratio": 0.9276236429433052,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  },
+  "il-fridge": {
+   "mode": "interleaved",
+   "kind": "e2e",
+   "shipping_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "shipping_mean": 0.0,
+   "hf_wer": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "hf_worst": 0.0,
+   "c1_flag": false,
+   "shipping_seconds": [
+    25.12,
+    22.08,
+    25.92
+   ],
+   "hf_seconds": [
+    25.04,
+    26.0,
+    17.44
+   ],
+   "length_ratio": 1.0677570093457944,
+   "length_ok": true,
+   "ended_by_eos": [
+    true,
+    true,
+    true
+   ]
+  }
+ },
+ "c1_flagged": [
+  "tts-numbers-female",
+  "tts-long-male"
+ ],
+ "rule8_pass": true
+}

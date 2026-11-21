@@ -1,0 +1,18 @@
+Loading weights:   0%|          | 0/1259 [00:00<?, ?it/s]Loading weights:  60%|█████▉    | 755/1259 [00:00<00:00, 7512.48it/s]Loading weights: 100%|██████████| 1259/1259 [00:00<00:00, 7263.23it/s]
+[transformers] Passing `generation_config` together with generation-related arguments=({'begin_suppress_tokens', 'suppress_tokens'}) is deprecated and will be removed in future versions. Please pass either a `generation_config` object OR all generation parameters explicitly, but not both.
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer WhisperTokenizer. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+il-fridge-s1: WER 0.000 (0/75)
+il-reflective-s1: WER 0.000 (0/51)
+il-study-s1: WER 0.000 (0/65)
+probe-other-long-s1: WER 0.000 (0/86)
+probe-other-long-s2: WER 0.000 (0/86)
+probe-other-long-s3: WER 0.000 (0/86)
+tts-fox-female-s1: WER 0.000 (0/9)
+tts-fox-male-s1: WER 0.000 (0/9)
+tts-long-male-s1: WER 0.000 (0/97)
+tts-long-male-s2: WER 0.000 (0/97)
+tts-long-male-s3: WER 0.000 (0/97)
+tts-museum-female-s1: WER 0.000 (0/24)
+tts-museum-male-s1: WER 0.000 (0/24)
+tts-numbers-female-s1: WER 0.158 (3/19)
+tts-numbers-male-s1: WER 0.158 (3/19)

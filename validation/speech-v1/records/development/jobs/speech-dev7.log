@@ -1,0 +1,54 @@
++ date
+Fri Nov 20 14:10:28 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev7
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ S=/workspace/build/text-s2
++ R=/workspace/build/sp-refs-text-s1
++ '[' -e /workspace/build/sp-dev7 ']'
++ mkdir -p /workspace/build/sp-dev7
++ run memory-rows8 /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 8 /workspace/data/librispeech/wav /workspace/build/sp-dev7/memory-rows8
++ local n=memory-rows8
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 8 /workspace/data/librispeech/wav /workspace/build/sp-dev7/memory-rows8
+++ grep -E '^rule 12|PASS|FAIL' /workspace/build/sp-dev7/memory-rows8.log
+++ cut -c1-1500
+++ tr '\n' ' '
+++ tail -1 /workspace/build/sp-dev7/memory-rows8.log
++ echo 'memory-rows8 rc=1  23.79 s'
++ run speech-server /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_server.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/build/sp-dev7/speech-server.json
++ local n=speech-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_server.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/build/sp-dev7/speech-server.json
+memory-rows8 rc=1  23.79 s
+++ grep -E '^rule 12|PASS|FAIL' /workspace/build/sp-dev7/speech-server.log
+++ tr '\n' ' '
+++ cut -c1-1500
+++ tail -1 /workspace/build/sp-dev7/speech-server.log
++ echo 'speech-server rc=1 repeat identical: True | text control identical: False | exit: 0 | FAIL  762.16 s'
+speech-server rc=1 repeat identical: True | text control identical: False | exit: 0 | FAIL  762.16 s
++ run audio-in-server /workspace/build/venv-asr/bin/python tools/check_lfm3_audio_in_server.py /workspace/build/text-s2/liquid-lfm3-server /workspace/build/text-s2/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-dev7/audio-in-work /workspace/build/sp-dev7/audio-in-server.json
++ local n=audio-in-server
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_audio_in_server.py /workspace/build/text-s2/liquid-lfm3-server /workspace/build/text-s2/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/sp-dev7/audio-in-work /workspace/build/sp-dev7/audio-in-server.json
+++ grep -E '^rule 12|PASS|FAIL' /workspace/build/sp-dev7/audio-in-server.log
+++ cut -c1-1500
+++ tr '\n' ' '
+++ tail -1 /workspace/build/sp-dev7/audio-in-server.log
++ echo 'audio-in-server rc=1 repeat identical: True | text control identical: True | exit: 0 | FAIL  67.20 s'
+audio-in-server rc=1 repeat identical: True | text control identical: True | exit: 0 | FAIL  67.20 s
++ run speech-stream /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_stream.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev7/speech-stream.json
++ local n=speech-stream
++ shift
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/check_lfm3_speech_stream.py /workspace/build/text-s2/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-refs-text-s1 /workspace/data/librispeech/wav /workspace/build/sp-dev7/speech-stream.json
+++ grep -E '^rule 12|PASS|FAIL' /workspace/build/sp-dev7/speech-stream.log
+++ tr '\n' ' '
+++ cut -c1-1500
+++ tail -1 /workspace/build/sp-dev7/speech-stream.log
+speech-stream rc=1 STREAM CHECK FAIL  1973.85 s
++ echo 'speech-stream rc=1 STREAM CHECK FAIL  1973.85 s'
++ date
+Fri Nov 20 14:57:35 MST 2026

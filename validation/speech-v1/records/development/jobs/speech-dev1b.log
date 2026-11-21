@@ -1,0 +1,301 @@
++ date
+Fri Nov 20 06:08:35 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev1
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ '[' -e /workspace/build/sp-dev1 ']'
++ mkdir -p /workspace/build/sp-dev1
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-s1
+liquid-lfm3: warnings 0, sha256 343b73f5ac3ddb023a91c42db535bc150ac66a39bc730823a68acdeb9eb2bd70, 4667664 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 5b35262009edf0e7af70b536a300593dca87029bd04a912c8e056adec3b77f68, 4528824 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-speech: warnings 0, sha256 594f9b63e1389cb2222623b5c7364c8d8ec52e1184763c65c146e65743d22ef2, 6084904 bytes
+build parity-s1 rc=0
++ echo 'build parity-s1 rc=0'
++ tools/pascal/build_speech.sh text-s1
+liquid-lfm3: warnings 0, sha256 175a6269953d0f4e42ed6518a395b87b343438d4e64f3bf42dc173ae62fffeaf, 4142280 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 a4f82fffeb100d138c30b4e494dc349351a925b150a164380b0d0682e281c8a4, 4010784 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-speech: warnings 0, sha256 5b285e6730e0d0276fe13b71a7eab5ca78b4295a363aa0254d2509dc3a78cae4, 5567712 bytes
++ echo 'build text-s1 rc=0'
++ /workspace/build/venv-asr/bin/python tools/lfm3_speech_hf.py /workspace/models/LFM3-Omni-2B validation/speech-e2e-v1/prompts.json /workspace/build/sp-dev1/single requests
+build text-s1 rc=0
+requests single rc=0
++ echo 'requests single rc=0'
++ /workspace/build/venv-asr/bin/python tools/lfm3_speech_chunked_hf.py /workspace/models/LFM3-Omni-2B validation/speech-e2e-v1/prompts-chunked.json /workspace/build/sp-dev1/split requests
++ echo 'requests split rc=0'
+requests split rc=0
++ ls /workspace/build/sp-dev1/single/requests /workspace/build/sp-dev1/split/requests
++ wc -l
+63
++ nvidia-smi --query-gpu=memory.used,clocks.mem,clocks.sm,temperature.gpu --format=csv,noheader
+2 MiB, 405 MHz, 139 MHz, 47
++ for build in parity-s1 text-s1
++ mkdir -p /workspace/build/sp-dev1/parity-s1
+++ ls /workspace/build/sp-dev1/single/requests
+++ grep -- '-s1\.req\.json$'
+++ grep -v tts-long-male
+++ ls /workspace/build/sp-dev1/split/requests
+++ grep -E -- '-s[123]\.req\.json$'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=il-fridge-s1
++ r=/workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json /workspace/build/sp-dev1/parity-s1/il-fridge-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/il-fridge-s1.err
++ echo 'parity-s1 il-fridge-s1 rc=0 68.75 s 4518452 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=il-reflective-s1
++ r=/workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json ']'
+parity-s1 il-fridge-s1 rc=0 68.75 s 4518452 KiB
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json /workspace/build/sp-dev1/parity-s1/il-reflective-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/il-reflective-s1.err
++ echo 'parity-s1 il-reflective-s1 rc=0 51.93 s 4518136 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=il-study-s1
++ r=/workspace/build/sp-dev1/single/requests/il-study-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/il-study-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/il-study-s1.req.json /workspace/build/sp-dev1/parity-s1/il-study-s1
+parity-s1 il-reflective-s1 rc=0 51.93 s 4518136 KiB
+++ tail -1 /workspace/build/sp-dev1/parity-s1/il-study-s1.err
++ echo 'parity-s1 il-study-s1 rc=0 58.07 s 4518196 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-fox-female-s1
+parity-s1 il-study-s1 rc=0 58.07 s 4518196 KiB
++ r=/workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev1/parity-s1/tts-fox-female-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-fox-female-s1.err
++ echo 'parity-s1 tts-fox-female-s1 rc=0 8.16 s 4518572 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-fox-male-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json ']'
+parity-s1 tts-fox-female-s1 rc=0 8.16 s 4518572 KiB
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json /workspace/build/sp-dev1/parity-s1/tts-fox-male-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-fox-male-s1.err
++ echo 'parity-s1 tts-fox-male-s1 rc=0 8.80 s 4518452 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-museum-female-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json ']'
+parity-s1 tts-fox-male-s1 rc=0 8.80 s 4518452 KiB
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json /workspace/build/sp-dev1/parity-s1/tts-museum-female-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-museum-female-s1.err
+parity-s1 tts-museum-female-s1 rc=0 27.04 s 4518448 KiB
++ echo 'parity-s1 tts-museum-female-s1 rc=0 27.04 s 4518448 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-museum-male-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json /workspace/build/sp-dev1/parity-s1/tts-museum-male-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-museum-male-s1.err
+parity-s1 tts-museum-male-s1 rc=0 26.40 s 4518316 KiB
++ echo 'parity-s1 tts-museum-male-s1 rc=0 26.40 s 4518316 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-numbers-female-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json /workspace/build/sp-dev1/parity-s1/tts-numbers-female-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-numbers-female-s1.err
+parity-s1 tts-numbers-female-s1 rc=0 20.06 s 4518708 KiB
++ echo 'parity-s1 tts-numbers-female-s1 rc=0 20.06 s 4518708 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-numbers-male-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json /workspace/build/sp-dev1/parity-s1/tts-numbers-male-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-numbers-male-s1.err
++ echo 'parity-s1 tts-numbers-male-s1 rc=0 21.34 s 4518448 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s1
++ r=/workspace/build/sp-dev1/single/requests/probe-other-long-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/probe-other-long-s1.req.json ']'
++ r=/workspace/build/sp-dev1/split/requests/probe-other-long-s1.req.json
+parity-s1 tts-numbers-male-s1 rc=0 21.34 s 4518448 KiB
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/split/requests/probe-other-long-s1.req.json /workspace/build/sp-dev1/parity-s1/probe-other-long-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/probe-other-long-s1.err
+parity-s1 probe-other-long-s1 rc=0 73.98 s 4521620 KiB
++ echo 'parity-s1 probe-other-long-s1 rc=0 73.98 s 4521620 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s2
++ r=/workspace/build/sp-dev1/single/requests/probe-other-long-s2.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/probe-other-long-s2.req.json ']'
++ r=/workspace/build/sp-dev1/split/requests/probe-other-long-s2.req.json
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/split/requests/probe-other-long-s2.req.json /workspace/build/sp-dev1/parity-s1/probe-other-long-s2
+++ tail -1 /workspace/build/sp-dev1/parity-s1/probe-other-long-s2.err
+parity-s1 probe-other-long-s2 rc=0 73.38 s 4521876 KiB
++ echo 'parity-s1 probe-other-long-s2 rc=0 73.38 s 4521876 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s3
++ r=/workspace/build/sp-dev1/single/requests/probe-other-long-s3.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/probe-other-long-s3.req.json ']'
++ r=/workspace/build/sp-dev1/split/requests/probe-other-long-s3.req.json
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/split/requests/probe-other-long-s3.req.json /workspace/build/sp-dev1/parity-s1/probe-other-long-s3
+++ tail -1 /workspace/build/sp-dev1/parity-s1/probe-other-long-s3.err
++ echo 'parity-s1 probe-other-long-s3 rc=0 76.82 s 4521988 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-long-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-long-male-s1.req.json ']'
+parity-s1 probe-other-long-s3 rc=0 76.82 s 4521988 KiB
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-long-male-s1.req.json /workspace/build/sp-dev1/parity-s1/tts-long-male-s1
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-long-male-s1.err
+parity-s1 tts-long-male-s1 rc=0 193.09 s 4533276 KiB
++ echo 'parity-s1 tts-long-male-s1 rc=0 193.09 s 4533276 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s2
++ r=/workspace/build/sp-dev1/single/requests/tts-long-male-s2.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-long-male-s2.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-long-male-s2.req.json /workspace/build/sp-dev1/parity-s1/tts-long-male-s2
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-long-male-s2.err
+parity-s1 tts-long-male-s2 rc=0 82.37 s 4522528 KiB
++ echo 'parity-s1 tts-long-male-s2 rc=0 82.37 s 4522528 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s3
++ r=/workspace/build/sp-dev1/single/requests/tts-long-male-s3.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-long-male-s3.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/parity-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-long-male-s3.req.json /workspace/build/sp-dev1/parity-s1/tts-long-male-s3
+++ tail -1 /workspace/build/sp-dev1/parity-s1/tts-long-male-s3.err
+parity-s1 tts-long-male-s3 rc=0 104.18 s 4523920 KiB
++ echo 'parity-s1 tts-long-male-s3 rc=0 104.18 s 4523920 KiB'
++ for build in parity-s1 text-s1
++ mkdir -p /workspace/build/sp-dev1/text-s1
+++ ls /workspace/build/sp-dev1/single/requests
+++ grep -- '-s1\.req\.json$'
+++ grep -v tts-long-male
+++ ls /workspace/build/sp-dev1/split/requests
+++ grep -E -- '-s[123]\.req\.json$'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=il-fridge-s1
++ r=/workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/il-fridge-s1.req.json /workspace/build/sp-dev1/text-s1/il-fridge-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/il-fridge-s1.err
+text-s1 il-fridge-s1 rc=0 25.07 s 4517676 KiB
++ echo 'text-s1 il-fridge-s1 rc=0 25.07 s 4517676 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=il-reflective-s1
++ r=/workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/il-reflective-s1.req.json /workspace/build/sp-dev1/text-s1/il-reflective-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/il-reflective-s1.err
++ echo 'text-s1 il-reflective-s1 rc=0 25.94 s 4518044 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=il-study-s1
++ r=/workspace/build/sp-dev1/single/requests/il-study-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/il-study-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/il-study-s1.req.json /workspace/build/sp-dev1/text-s1/il-study-s1
+text-s1 il-reflective-s1 rc=0 25.94 s 4518044 KiB
+++ tail -1 /workspace/build/sp-dev1/text-s1/il-study-s1.err
++ echo 'text-s1 il-study-s1 rc=0 22.34 s 4518028 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-fox-female-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json ']'
+text-s1 il-study-s1 rc=0 22.34 s 4518028 KiB
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev1/text-s1/tts-fox-female-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-fox-female-s1.err
+text-s1 tts-fox-female-s1 rc=0 3.45 s 4517780 KiB
++ echo 'text-s1 tts-fox-female-s1 rc=0 3.45 s 4517780 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-fox-male-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-fox-male-s1.req.json /workspace/build/sp-dev1/text-s1/tts-fox-male-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-fox-male-s1.err
+text-s1 tts-fox-male-s1 rc=0 3.91 s 4518036 KiB
++ echo 'text-s1 tts-fox-male-s1 rc=0 3.91 s 4518036 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-museum-female-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-museum-female-s1.req.json /workspace/build/sp-dev1/text-s1/tts-museum-female-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-museum-female-s1.err
++ echo 'text-s1 tts-museum-female-s1 rc=0 9.85 s 4518036 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
+text-s1 tts-museum-female-s1 rc=0 9.85 s 4518036 KiB
++ n=tts-museum-male-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-museum-male-s1.req.json /workspace/build/sp-dev1/text-s1/tts-museum-male-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-museum-male-s1.err
+text-s1 tts-museum-male-s1 rc=0 9.96 s 4517668 KiB
++ echo 'text-s1 tts-museum-male-s1 rc=0 9.96 s 4517668 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-numbers-female-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-numbers-female-s1.req.json /workspace/build/sp-dev1/text-s1/tts-numbers-female-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-numbers-female-s1.err
+text-s1 tts-numbers-female-s1 rc=0 7.85 s 4518048 KiB
++ echo 'text-s1 tts-numbers-female-s1 rc=0 7.85 s 4518048 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-numbers-male-s1
++ r=/workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-numbers-male-s1.req.json /workspace/build/sp-dev1/text-s1/tts-numbers-male-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-numbers-male-s1.err
+text-s1 tts-numbers-male-s1 rc=0 8.07 s 4517668 KiB
++ echo 'text-s1 tts-numbers-male-s1 rc=0 8.07 s 4517668 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s1
++ r=/workspace/build/sp-dev1/single/requests/probe-other-long-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/probe-other-long-s1.req.json ']'
++ r=/workspace/build/sp-dev1/split/requests/probe-other-long-s1.req.json
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/split/requests/probe-other-long-s1.req.json /workspace/build/sp-dev1/text-s1/probe-other-long-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/probe-other-long-s1.err
++ echo 'text-s1 probe-other-long-s1 rc=0 27.65 s 4520948 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
+text-s1 probe-other-long-s1 rc=0 27.65 s 4520948 KiB
++ n=probe-other-long-s2
++ r=/workspace/build/sp-dev1/single/requests/probe-other-long-s2.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/probe-other-long-s2.req.json ']'
++ r=/workspace/build/sp-dev1/split/requests/probe-other-long-s2.req.json
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/split/requests/probe-other-long-s2.req.json /workspace/build/sp-dev1/text-s1/probe-other-long-s2
+++ tail -1 /workspace/build/sp-dev1/text-s1/probe-other-long-s2.err
+text-s1 probe-other-long-s2 rc=0 28.14 s 4520816 KiB
++ echo 'text-s1 probe-other-long-s2 rc=0 28.14 s 4520816 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=probe-other-long-s3
++ r=/workspace/build/sp-dev1/single/requests/probe-other-long-s3.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/probe-other-long-s3.req.json ']'
++ r=/workspace/build/sp-dev1/split/requests/probe-other-long-s3.req.json
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/split/requests/probe-other-long-s3.req.json /workspace/build/sp-dev1/text-s1/probe-other-long-s3
+++ tail -1 /workspace/build/sp-dev1/text-s1/probe-other-long-s3.err
++ echo 'text-s1 probe-other-long-s3 rc=0 27.35 s 4521712 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s1
+text-s1 probe-other-long-s3 rc=0 27.35 s 4521712 KiB
++ r=/workspace/build/sp-dev1/single/requests/tts-long-male-s1.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-long-male-s1.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-long-male-s1.req.json /workspace/build/sp-dev1/text-s1/tts-long-male-s1
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-long-male-s1.err
++ echo 'text-s1 tts-long-male-s1 rc=0 25.00 s 4521468 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
+text-s1 tts-long-male-s1 rc=0 25.00 s 4521468 KiB
++ n=tts-long-male-s2
++ r=/workspace/build/sp-dev1/single/requests/tts-long-male-s2.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-long-male-s2.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-long-male-s2.req.json /workspace/build/sp-dev1/text-s1/tts-long-male-s2
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-long-male-s2.err
+text-s1 tts-long-male-s2 rc=0 26.15 s 4521972 KiB
++ echo 'text-s1 tts-long-male-s2 rc=0 26.15 s 4521972 KiB'
++ for f in $(ls $O/single/requests | grep -- '-s1\.req\.json$' | grep -v tts-long-male) $(ls $O/split/requests | grep -E -- '-s[123]\.req\.json$')
++ n=tts-long-male-s3
++ r=/workspace/build/sp-dev1/single/requests/tts-long-male-s3.req.json
++ '[' -e /workspace/build/sp-dev1/single/requests/tts-long-male-s3.req.json ']'
++ /usr/bin/time -f '%e s %M KiB' /workspace/build/text-s1/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev1/single/requests/tts-long-male-s3.req.json /workspace/build/sp-dev1/text-s1/tts-long-male-s3
+++ tail -1 /workspace/build/sp-dev1/text-s1/tts-long-male-s3.err
+text-s1 tts-long-male-s3 rc=0 29.34 s 4522220 KiB
++ echo 'text-s1 tts-long-male-s3 rc=0 29.34 s 4522220 KiB'
++ cd /workspace/build/sp-dev1
++ sha256sum parity-s1/il-fridge-s1.wav parity-s1/il-reflective-s1.wav parity-s1/il-study-s1.wav parity-s1/probe-other-long-s1.wav parity-s1/probe-other-long-s2.wav parity-s1/probe-other-long-s3.wav parity-s1/tts-fox-female-s1.wav parity-s1/tts-fox-male-s1.wav parity-s1/tts-long-male-s1.wav parity-s1/tts-long-male-s2.wav parity-s1/tts-long-male-s3.wav parity-s1/tts-museum-female-s1.wav parity-s1/tts-museum-male-s1.wav parity-s1/tts-numbers-female-s1.wav parity-s1/tts-numbers-male-s1.wav text-s1/il-fridge-s1.wav text-s1/il-reflective-s1.wav text-s1/il-study-s1.wav text-s1/probe-other-long-s1.wav text-s1/probe-other-long-s2.wav text-s1/probe-other-long-s3.wav text-s1/tts-fox-female-s1.wav text-s1/tts-fox-male-s1.wav text-s1/tts-long-male-s1.wav text-s1/tts-long-male-s2.wav text-s1/tts-long-male-s3.wav text-s1/tts-museum-female-s1.wav text-s1/tts-museum-male-s1.wav text-s1/tts-numbers-female-s1.wav text-s1/tts-numbers-male-s1.wav
++ date
+Fri Nov 20 06:32:07 MST 2026

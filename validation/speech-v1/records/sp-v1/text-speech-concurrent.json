@@ -1,0 +1,86 @@
+{
+ "speech_sha256": "9b238f318bccb3d1e3c01d7bdcf99aae3192da53b62a9601e07aff90719408d3",
+ "requests": 41,
+ "runs": {
+  "alone": {
+   "exit": 0,
+   "wall_seconds": 528.6,
+   "stderr": "lfm3-speech: batch: 41 done, 0 failed\n",
+   "summary": null
+  },
+  "conc4": {
+   "exit": 0,
+   "wall_seconds": 168.2,
+   "stderr": "lfm3-speech: concurrent: 41 done, 0 failed\n",
+   "summary": {
+    "rows": 4,
+    "requests": 41,
+    "steps": 2238,
+    "audio_seconds": 613.76,
+    "wall_seconds": 160.228,
+    "audio_per_wall_second": 3.83053
+   },
+   "rows": 4,
+   "stagger_seed": null,
+   "identical": 41,
+   "differ": [],
+   "pass": true
+  },
+  "conc8": {
+   "exit": 0,
+   "wall_seconds": 112.0,
+   "stderr": "lfm3-speech: concurrent: 41 done, 0 failed\n",
+   "summary": {
+    "rows": 8,
+    "requests": 41,
+    "steps": 1254,
+    "audio_seconds": 613.76,
+    "wall_seconds": 103.943,
+    "audio_per_wall_second": 5.90478
+   },
+   "rows": 8,
+   "stagger_seed": null,
+   "identical": 41,
+   "differ": [],
+   "pass": true
+  },
+  "conc8-staggered": {
+   "exit": 0,
+   "wall_seconds": 136.6,
+   "stderr": "lfm3-speech: concurrent: 41 done, 0 failed\n",
+   "summary": {
+    "rows": 8,
+    "requests": 41,
+    "steps": 1630,
+    "audio_seconds": 613.76,
+    "wall_seconds": 128.568,
+    "audio_per_wall_second": 4.77381
+   },
+   "rows": 8,
+   "stagger_seed": "11",
+   "identical": 41,
+   "differ": [],
+   "pass": true
+  },
+  "conc16-staggered": {
+   "exit": 0,
+   "wall_seconds": 137.4,
+   "stderr": "lfm3-speech: concurrent: 41 done, 0 failed\n",
+   "summary": {
+    "rows": 16,
+    "requests": 41,
+    "steps": 1612,
+    "audio_seconds": 613.76,
+    "wall_seconds": 129.092,
+    "audio_per_wall_second": 4.75443
+   },
+   "rows": 16,
+   "stagger_seed": "12",
+   "identical": 41,
+   "differ": [],
+   "pass": true
+  }
+ },
+ "alone_vs_reference": null,
+ "pass": true
+}

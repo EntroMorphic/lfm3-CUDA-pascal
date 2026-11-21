@@ -1,0 +1,3 @@
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/sp-dev13/m-text/memcheck/tts-fox-female-s1
+/workspace/build/sp-dev11/text-concurrent-work/requests/spoken-q4.req.json /workspace/build/sp-dev13/m-text/memcheck/spoken-q4
+/workspace/build/sp-dev11/text-concurrent-work/requests/asr-121-123859-0002.req.json /workspace/build/sp-dev13/m-text/memcheck/asr-121-123859-0002

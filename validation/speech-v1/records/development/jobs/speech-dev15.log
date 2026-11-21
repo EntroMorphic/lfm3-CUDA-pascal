@@ -1,0 +1,94 @@
++ date
+Sat Nov 21 05:46:44 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev15
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -e /workspace/build/sp-dev15 ']'
++ mkdir -p /workspace/build/sp-dev15
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-s6
+build parity-s6 rc=0
++ echo 'build parity-s6 rc=0'
++ tools/pascal/build_speech.sh text-s6
+build text-s6 rc=0
++ echo 'build text-s6 rc=0'
++ for rows in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-s6/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev15 1
+ready line at 1 rows: {"ready":true,"port":54753,"total_capacity":30720,"speech_rows":1} exit 0
++ for rows in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-s6/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev15 8
+ready line at 8 rows: {"ready":true,"port":48495,"total_capacity":16384,"speech_rows":8} exit 0
++ for rows in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-s6/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/sp-dev15 16
+ready line at 16 rows: {"ready":true,"port":34623,"total_capacity":2048,"speech_rows":16} exit 0
++ m 1 30720
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s6/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/sp-dev15/memory-rows1-30720 7740 30720
++ local rc=0
++ echo 'rule 12 rows 1 total 30720 rc=0'
+rule 12 rows 1 total 30720 rc=0
++ cut -c1-400
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev15/memory-rows1-30720.log
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5147 MiB (382 samples): ok
+rule 12 one-30720 with 1 speech: text [200] in 28.1 s, speech [200] (overlapped True), peak 7215 MiB (495 samples): ok
+rule 12 3840+26880 with 1 speech: text [200, 200] in 28.8 s, speech [200] (overlapped True), peak 7605 MiB (489 samples): ok
+rule 12 1920+28800 with 1 speech: text [200, 200] in 29.9 s, speech [200] (overlapped True), peak 7611 MiB (494 samples): ok
+rule 12 15360+15360 with 1 speech: text [200, 200] in 25.7 s, speech [200] (overlapped True), peak 7265 MiB (476 samples): ok
+rule 12 batch-3840+26880 with 1 speech: text [200] in 93.4 s, speech [200] (overlapped True), peak 7615 MiB (489 samples): ok
+rule 12 audio-in-one-30720 with 0 speech and 3 audio in: text [200] in 26.0 s, speech [] (overlapped True), peak 7697 MiB (280 samples): ok
+SPEECH MEMORY (rule 12, 1 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ return 0
++ m 8 16384
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s6/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 8 /workspace/data/librispeech/wav /workspace/build/sp-dev15/memory-rows8-16384 7740 16384
+rule 12 rows 8 total 16384 rc=0
++ local rc=0
++ echo 'rule 12 rows 8 total 16384 rc=0'
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev15/memory-rows8-16384.log
++ cut -c1-400
+rule 12 speech-only with 8 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 5869 MiB (615 samples): ok
+rule 12 one-16384 with 8 speech: text [200] in 14.8 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6979 MiB (666 samples): ok
+rule 12 2048+14336 with 8 speech: text [200, 200] in 18.6 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7369 MiB (667 samples): ok
+rule 12 1024+15360 with 8 speech: text [200, 200] in 18.8 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7101 MiB (667 samples): ok
+rule 12 8192+8192 with 8 speech: text [200, 200] in 17.8 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6997 MiB (663 samples): ok
+rule 12 batch-2048+14336 with 8 speech: text [200] in 134.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7375 MiB (665 samples): ok
+rule 12 audio-in-one-16384 with 7 speech and 3 audio in: text [200] in 14.2 s, speech [200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7461 MiB (677 samples): ok
+SPEECH MEMORY (rule 12, 8 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ return 0
++ m 16 2048
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-s6/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 16 /workspace/data/librispeech/wav /workspace/build/sp-dev15/memory-rows16-2048 7740 2048
++ local rc=0
++ echo 'rule 12 rows 16 total 2048 rc=0'
+rule 12 rows 16 total 2048 rc=0
++ grep -E '^rule 12|^SPEECH' /workspace/build/sp-dev15/memory-rows16-2048.log
++ cut -c1-400
+rule 12 speech-only with 16 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6701 MiB (861 samples): ok
+rule 12 one-2048 with 16 speech: text [200] in 5.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7227 MiB (868 samples): ok
+rule 12 256+1792 with 16 speech: text [200, 200] in 10.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7169 MiB (872 samples): ok
+rule 12 128+1920 with 16 speech: text [200, 200] in 10.3 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7197 MiB (873 samples): ok
+rule 12 1024+1024 with 16 speech: text [200, 200] in 10.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7047 MiB (872 samples): ok
+rule 12 batch-256+1792 with 16 speech: text [200] in 182.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7171 MiB (870 samples): ok
+rule 12 audio-in-one-2048 with 15 speech and 3 audio in: text [200] in 5.1 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7709 MiB (881 samples): ok
+SPEECH MEMORY (rule 12, 16 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ return 0
++ date
+Sat Nov 21 06:47:49 MST 2026

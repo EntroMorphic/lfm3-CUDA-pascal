@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Perform ASR in English."}, {"role": "user", "content": [{"type": "audio", "audio": "/workspace/build/sp-v1/parity-audio-in-work/joined-90s.wav"}]}], "mode": "text", "max_new_tokens": 2048, "seed": 0}

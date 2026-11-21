@@ -1,0 +1,769 @@
+[
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "7z3vrIZeE4bjM0x-BM2thEblLMl-_zBX",
+   "capacity": 4096,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/7z3vrIZeE4bjM0x-BM2thEblLMl-_zBX/reset",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "7z3vrIZeE4bjM0x-BM2thEblLMl-_zBX",
+   "text": "Here",
+   "generated_ids": [
+    8650
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 61,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/7z3vrIZeE4bjM0x-BM2thEblLMl-_zBX/reset",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "7z3vrIZeE4bjM0x-BM2thEblLMl-_zBX",
+   "text": "The",
+   "generated_ids": [
+    597
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 551,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/7z3vrIZeE4bjM0x-BM2thEblLMl-_zBX/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "OXA-H34oIPIDEgwpIg4lqdL4e7d5ntW4",
+   "capacity": 16384,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "OXA-H34oIPIDEgwpIg4lqdL4e7d5ntW4",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 16360,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/OXA-H34oIPIDEgwpIg4lqdL4e7d5ntW4/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "n1zhHSep-xDaipLhYkaukApiEmXOB_XY",
+   "capacity": 2048,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "bJVyZDHdWu4CcZKE06VJ0EmlFYsogUwp",
+   "capacity": 14336,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "n1zhHSep-xDaipLhYkaukApiEmXOB_XY",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 2003,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "bJVyZDHdWu4CcZKE06VJ0EmlFYsogUwp",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 14302,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/n1zhHSep-xDaipLhYkaukApiEmXOB_XY/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/bJVyZDHdWu4CcZKE06VJ0EmlFYsogUwp/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "as-9FActConATW5z7kSIU4KsJ6ylnNTP",
+   "capacity": 1024,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "9KOIefIaSyAstiG3EKTFFdcSeGbX7xbv",
+   "capacity": 15360,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "as-9FActConATW5z7kSIU4KsJ6ylnNTP",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 974,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "9KOIefIaSyAstiG3EKTFFdcSeGbX7xbv",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 15331,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/as-9FActConATW5z7kSIU4KsJ6ylnNTP/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/9KOIefIaSyAstiG3EKTFFdcSeGbX7xbv/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "_oMyXksOfNIFdRwzf3n45MYqXBY8MFni",
+   "capacity": 8192,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "qt1tNPFX02mtFZY5o6hfkFc1oaM4q_0F",
+   "capacity": 8192,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "_oMyXksOfNIFdRwzf3n45MYqXBY8MFni",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 8177,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "qt1tNPFX02mtFZY5o6hfkFc1oaM4q_0F",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 8177,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/_oMyXksOfNIFdRwzf3n45MYqXBY8MFni/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/qt1tNPFX02mtFZY5o6hfkFc1oaM4q_0F/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "BWcbExf5CzpZNEYbpksoErbzSX6hWeGj",
+   "capacity": 2048,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "9KZGXnunhPkG2kuAtMRPI3mnOdKRqWWy",
+   "capacity": 14336,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate_batch",
+  "status": 200,
+  "response": {
+   "results": [
+    {
+     "session_id": "BWcbExf5CzpZNEYbpksoErbzSX6hWeGj",
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+     "generated_ids": [
+      597,
+      7507,
+      6476,
+      278,
+      16369,
+      296,
+      2459,
+      7998,
+      20,
+      14154,
+      274,
+      2649,
+      309,
+      10409,
+      85,
+      2146,
+      3149,
+      278,
+      2230,
+      2150,
+      20,
+      278,
+      31501,
+      2391,
+      309,
+      278,
+      1286,
+      6886,
+      302,
+      278,
+      20109,
+      8412
+     ],
+     "reused_tokens": 0,
+     "consumed_tokens": 2003,
+     "do_sample": false,
+     "seed": 0,
+     "gpu_batching": true,
+     "cancelled": false,
+     "cache_valid": true,
+     "finish_reason": "length",
+     "paired_decode_calls": 31
+    },
+    {
+     "session_id": "9KZGXnunhPkG2kuAtMRPI3mnOdKRqWWy",
+     "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+     "generated_ids": [
+      597,
+      7507,
+      6476,
+      278,
+      16369,
+      296,
+      2459,
+      7998,
+      20,
+      14154,
+      274,
+      2649,
+      309,
+      10409,
+      85,
+      2146,
+      3149,
+      278,
+      2230,
+      2150,
+      20,
+      278,
+      31501,
+      2391,
+      309,
+      278,
+      1286,
+      6886,
+      302,
+      278,
+      20109,
+      8412
+     ],
+     "reused_tokens": 0,
+     "consumed_tokens": 14302,
+     "do_sample": false,
+     "seed": 0,
+     "gpu_batching": true,
+     "cancelled": false,
+     "cache_valid": true,
+     "finish_reason": "length",
+     "paired_decode_calls": 31
+    }
+   ],
+   "gpu_batching": true,
+   "paired_decode_calls": 31
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/BWcbExf5CzpZNEYbpksoErbzSX6hWeGj/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/9KZGXnunhPkG2kuAtMRPI3mnOdKRqWWy/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions",
+  "status": 200,
+  "response": {
+   "session_id": "Nr90vQGPKeE_Fxg40-DNcHVrTmwRiivT",
+   "capacity": 16384,
+   "gpu_batching": false
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/generate",
+  "status": 200,
+  "response": {
+   "session_id": "Nr90vQGPKeE_Fxg40-DNcHVrTmwRiivT",
+   "text": "The river leaves the mountains in early spring, carrying silt and snowmelt past the old mill, the orchards and the long fields of the valley floor",
+   "generated_ids": [
+    597,
+    7507,
+    6476,
+    278,
+    16369,
+    296,
+    2459,
+    7998,
+    20,
+    14154,
+    274,
+    2649,
+    309,
+    10409,
+    85,
+    2146,
+    3149,
+    278,
+    2230,
+    2150,
+    20,
+    278,
+    31501,
+    2391,
+    309,
+    278,
+    1286,
+    6886,
+    302,
+    278,
+    20109,
+    8412
+   ],
+   "reused_tokens": 0,
+   "consumed_tokens": 16360,
+   "do_sample": false,
+   "seed": 0,
+   "gpu_batching": false,
+   "cancelled": false,
+   "cache_valid": true,
+   "finish_reason": "length"
+  }
+ },
+ {
+  "method": "POST",
+  "path": "/sessions/Nr90vQGPKeE_Fxg40-DNcHVrTmwRiivT/close",
+  "status": 200,
+  "response": {
+   "ok": true
+  }
+ }
+]

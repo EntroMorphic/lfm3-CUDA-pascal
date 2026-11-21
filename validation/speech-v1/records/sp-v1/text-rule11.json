@@ -1,0 +1,174 @@
+{
+ "build": "text",
+ "builds": [
+  "/workspace/build/text-v35",
+  "/workspace/build/text-s4",
+  "/workspace/build/text-s1"
+ ],
+ "refs": "/workspace/build/sp-refs-text-s1",
+ "judged": {
+  "reports of these builds": true,
+  "speech-server": true,
+  "speech-stream": true,
+  "audio-in-server": true,
+  "speech-concurrent": true,
+  "batch-server": true
+ },
+ "recorded_timing": {
+  "speech-server": {
+   "worst case budget (limit 240 s)": 490.0,
+   "worst case large-cap (limit 240 s)": 135.2
+  },
+  "speech-stream": {
+   "first_audio": {
+    "tts": {
+     "median": 0.913209854013985,
+     "max": 0.9475170999940019,
+     "n": 25
+    },
+    "interleaved": {
+     "median": 1.2590301860036561,
+     "max": 1.3866828290047124,
+     "n": 14
+    }
+   },
+   "first_audio_pass": true,
+   "stalled_cases": {
+    "il-fridge-s1": [
+     15,
+     1.3556
+    ],
+    "il-fridge-s2": [
+     12,
+     1.0827
+    ],
+    "il-fridge-s3": [
+     15,
+     1.3557
+    ],
+    "il-reflective-s1": [
+     14,
+     1.2667
+    ],
+    "il-reflective-s2": [
+     12,
+     1.0843
+    ],
+    "il-reflective-s3": [
+     13,
+     1.1744
+    ],
+    "il-study-s1": [
+     13,
+     1.1136
+    ],
+    "il-study-s2": [
+     8,
+     0.7197
+    ],
+    "il-study-s3": [
+     13,
+     1.1141
+    ],
+    "spoken-q0": [
+     4,
+     0.3702
+    ],
+    "spoken-q1": [
+     5,
+     0.4577
+    ],
+    "spoken-q2": [
+     5,
+     0.4563
+    ],
+    "spoken-q3": [
+     4,
+     0.3722
+    ],
+    "spoken-q4": [
+     3,
+     0.2803
+    ]
+   },
+   "no_gaps_pass": false,
+   "cancel_delay": 0.756050066993339,
+   "cancel_pass": true,
+   "cost_ratio": 1.0015475932780544,
+   "cost_pass": true
+  },
+  "audio-in-server": {
+   "asr-joined-90s (limit 240 s)": 19.55
+  },
+  "batch-server": {
+   "first_audio_under_load_median": 1.1510602484922856,
+   "first_audio_pass": false,
+   "stalls": {
+    "8": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0
+    ],
+    "12": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "16": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     11,
+     9,
+     10,
+     9,
+     9,
+     9,
+     9,
+     9,
+     9,
+     8
+    ],
+    "7 tts + 5 spoken joining": [
+     0,
+     1,
+     1,
+     0,
+     0,
+     0,
+     2,
+     4,
+     7,
+     6,
+     5,
+     3
+    ]
+   },
+   "real_time_8_pass": false,
+   "largest_n_without_gaps": 0,
+   "text_under_load": {
+    "latency": 8.04,
+    "running_rows_finished_after": 43.62,
+    "identical": true
+   }
+  }
+ },
+ "rule11_pass": true
+}

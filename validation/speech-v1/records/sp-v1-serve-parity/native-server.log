@@ -1,0 +1,234 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+{
+ "status": "passed",
+ "binaries_sha256": {
+  "liquid-lfm3-server": "d1dcc6c0730a662a3d4dcef5c5c0be76daacbb4d06e2080e2360858ef1db383f",
+  "liquid-lfm3-worker": "2fdd0397c653d998e0330d37d43e534eea0a8b48ae5c07b7db158ba5c294bee6"
+ },
+ "sources_sha256": {
+  "check_lfm3_native_server_parity.py": "4f3cfd5bfb574e076f3ebbb3454290a3d09b4cabcab21fdf5a51b1cc04e45a1b",
+  "lfm3_server.py": "0bf92f4ff61bd7c79704b3ab7f1be711b4b4c928e67dd2e5836dab9da33cec87",
+  "lfm3_worker_client.py": "dcbfd5d7de36c2dd5768f98f39d0972a652cf66bed7c05be622030ea89727f17"
+ },
+ "startup_seconds": 0.7374132839613594,
+ "stage": "shutdown",
+ "control_text_sha256": "7ea05068d0a0a00304ea660b8e045f0b817c72605818902b96a76602150b7c73",
+ "bounded_admission_rounds": [
+  {
+   "round": 0,
+   "statuses": [
+    200,
+    200,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409
+   ],
+   "post_contention_both_sessions_exact": true
+  },
+  {
+   "round": 1,
+   "statuses": [
+    200,
+    409,
+    409,
+    200,
+    409,
+    409,
+    409,
+    409
+   ],
+   "post_contention_both_sessions_exact": true
+  },
+  {
+   "round": 2,
+   "statuses": [
+    200,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    200
+   ],
+   "post_contention_both_sessions_exact": true
+  }
+ ],
+ "cancellation_attempts": [
+  {
+   "delay_seconds": 0.25,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 0.5,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.0,
+   "cancel_status": 202,
+   "generated": 21,
+   "cancelled": true
+  }
+ ],
+ "partial_text": "Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think",
+ "batch_cancellation_attempts": [
+  {
+   "delay_seconds": 0.3,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 0.15,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 0.5,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 0.05,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.0,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.05,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.1,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.15,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.2,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.25,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.3,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.35,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.4,
+   "cancel_status": 202,
+   "generated": 1,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 1.45,
+   "cancel_status": 202,
+   "generated": 4,
+   "cancelled": true
+  }
+ ],
+ "extreme_sampling": [
+  {
+   "sampling": {
+    "do_sample": true,
+    "temperature": 1e-300,
+    "seed": 1
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "temperature": 1000000.0,
+    "seed": 2
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "repetition_penalty": 1e+300,
+    "seed": 3
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "top_p": 1e-300,
+    "seed": 4
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "min_p": 1,
+    "seed": 5
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "top_k": 128000,
+    "seed": 6
+   },
+   "generated": 8
+  }
+ ],
+ "differential": {
+  "requests": 22,
+  "mismatches": [],
+  "statuses": [
+   200,
+   200,
+   429,
+   200,
+   400,
+   400,
+   200,
+   200,
+   200,
+   200,
+   200,
+   400,
+   200,
+

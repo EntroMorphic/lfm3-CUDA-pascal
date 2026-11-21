@@ -1,7 +1,8 @@
 # speech-v1: phase 4's bar
 
-Status: **development done; red team reviewed; the rule run to follow** (2026-11-21). The rules were set
-(2026-11-20) before any speech output of this engine had been generated on the card.
+Status: **rule run done: rules 1 to 8 and 10 to 14 pass on the final tree; rule 9, the owner's listening, pending**
+(2026-11-21). The rules were set (2026-11-20) before any speech output of this engine had been generated on the
+card.
 
 Phase 4's exit gate (PLAN): "the reference's speech rounds: word error rate against HF, and listening". Decision 9
 (PLAN) sets how.
@@ -206,3 +207,70 @@ rows.
 - Rule 3 holds: the batch decoder's projections are the tensor-core model's, which reproduces the Thor engine's
   prefill, and every other speech kernel is plain FP32 arithmetic in a fixed order.
 - Rule 12 needs fewer speech rows than 8 at a total capacity of 32,768.
+
+## Results
+
+The rule run: `job.sh` (tree `50acd20`; builds `text-v35` and `parity-v35`), 2026-11-21 06:49 to 12:23, log
+`records/jobs/speech-v1.log`, records `records/sp-v1/` (WAVs, raw frames and SASS left out; `SHA256SUMS` over every
+record). The development runs' job logs: `records/development/jobs/`. The host suite on the same tree:
+`records/host-suite-50acd20.txt`. Rules run again on the final binaries are marked *rerun*; results carried by
+decision 11 are marked *carried*, with the development run they come from.
+
+**Decision 11's evidence** (both hold, so every carried result stands):
+
+- E1. Device code of every final binary equals the development builds' function for function: `lfm3-speech` against
+  s1 and s4 (134 functions shipping, 140 parity), `liquid-lfm3-server` and `liquid-lfm3-worker` against s4; 0
+  differing, 0 only in one (`sp-v1/e1/`). Host sources differing: from s4, `lfm3_server.cu` only (rule 12's capacity
+  default and ready line); from s1, also `codec.cuh` and `lfm3_speech.cuh` (the shared codec checkpoint). The job also
+  listed `lfm3_decode_batch.cuh`, `lfm3_worker.cu` and `text_sampling_oracle.cpp` against s1: those files are
+  unchanged since `86e6afd`; s1 was built before `build_speech.sh` built the worker and server, so its source list
+  never hashed them.
+- E2. The final `lfm3-speech`, run again on the carried results' inputs: 280 runs, every output byte-identical. The
+  shipping build's 30 runs behind rules 7 and 8, the 3 split runs and the 24 escalation runs (57); 101 LibriSpeech
+  utterances on each build (the 19 committed and every 32nd other) against development 3's; rule 3's clips and
+  rendering below are rerun outright.
+
+| # | Rule | Source | Result |
+|---|---|---|---|
+| 1 | Text unchanged | rerun | **Pass.** Parity gate 7,826 of 7,826. `liquid-lfm3` and `lfm3-score`: device code identical to `text-v33` in all 93 and 94 functions. Fixtures pass. Host suite: 2,392 passed, 5 skipped, 1 failed (`test_every_validation_prompt_matches_hf_ids`, which needs Transformers 5.x: the same failure and skips as phase 3). Phase 3 recorded 2,397 passed; `tests/` is unchanged since, and the five are not explained (phase 3's working tree cannot be reconstructed to collect it again) |
+| 2 | The reference's serving checks | native-server rerun; the rest carried (development 13) | **Pass.** serve-v1 rules 3 to 9 on both builds with the server built with speech: `native-server` (the only stage on `liquid-lfm3-server`, whose host code changed) rerun, 109 s shipping and 197 s parity (`sp-v1-serve-*/status.txt`); sampling, worker, grouped worker, server, cancellation, HTTP cancellation and `/generate_batch` from development 13 (`sp-v1/carried/serve-*-dev13/`), the worker and CLI unchanged since (E1). serve-v1's rule 10: paired decode, all three pairs, both lanes, 600 steps, ids and traces equal (`carried/paired.log`) |
+| 3 | Speech out = the Thor engine's | rerun | **Pass.** 16 of 16 clips (15 runs: nine cases at seed 1, the lighthouse split at seeds 1 to 3) byte-identical to the Thor engine's; the native chat rendering gives the reference's ids in 15 of 15 (`rule3.txt`, `rule3-native.txt`) |
+| 4 | Audio in = the Thor engine's | carried (development 3) | **Pass.** 2,620 utterances: 1,374 word errors of 53,027 (2.591%), the Thor engine's; 19 of 19 committed transcripts equal (`carried/rule4.json`) |
+| 5 | Speech device code the same in both builds | rerun | **Pass.** Outside `lfm::gemm` 57 functions identical, 0 not (`rule5.txt`) |
+| 6 | The scorer | rerun | **Pass.** Whisper on the card: 25 of 25 transcripts equal to the committed ones, all 25 clips prepared (`calibration.json`) |
+| 7 | Intelligibility (C1) | carried (developments 5 and 6) | **Pass.** Two cases flagged at seeds 1 to 3, both passed at 15 seeds: `tts-numbers-female` (mean WER 17.5% against HF's 19.6%, p = 0.23) and `tts-long-male` split (0.14% against 0%: two seeds with one word of 97; p = 0.16). Every other case at or under HF's worst seed (`carried/c1c2.json`, `carried/escalate/`) |
+| 8 | Endings and length (C2) | carried (development 5) | **Pass.** Every utterance ended by EOS; mean frames per utterance 0.93 to 1.07 of HF's (`c1c2.json`) |
+| 9 | Listening (C3) | the owner | **Pending:** the owner's blind verdicts. The set's ten shipping clips are byte-identical to the final build's seed-1 clips (10 of 10 of the key's hashes, checked without revealing A/B: `rule9-key-check.txt`) |
+| 10 | Audio in, against HF | carried (development 3) | **Pass.** Shipping 2.601% against HF's 2.606%: difference −0.006 points, paired-bootstrap 95% interval −0.030 to +0.017 (limit +0.25); 13 utterances better, 13 worse (`carried/rule10.json`) |
+| 11 | The reference's speech server checks | audio-in and batch-server rerun; the other three carried (developments 11 and 12) | **Pass** on both builds by decision 10 (`text-rule11.json`, `parity-rule11.json`): every judged criterion holds, the reports are of these builds, every case ran. The two batch-server checks report FAIL on their own verdict by timing terms only (first audio under load, real time at 8 rows); see below |
+| 12 | Memory at the limits | rerun at 1 row; 8 and 16 rows carried (development 15) | **Pass.** Ready line with the defaults: `{"total_capacity":30720,"speech_rows":1}`. At one row and 30,720 every configuration passes, highest 7,697 MiB (audio in at its limits beside the filled text session); the five text configurations 7,215 to 7,615 MiB; limit 7,740. 8 rows at 16,384: highest 7,461 MiB; 16 rows at 2,048: 7,709 MiB (`memory.log`, `carried/memory-rows*.log`) |
+| 13 | Past the limits | rerun | **Pass** on both builds: text, chunks, prompt, capacity and clips 400 `invalid_request`; body (4 MiB + 1) and declared 16 MiB + 1 413 `body_limit`; one over the queue 429 `queue_full`, the five held requests 200; the controls (text and speech) identical before and after (`limits-*.log`) |
+| 14 | Memory safety | carried (development 13) | **Pass.** `compute-sanitizer` memcheck, one TTS, one interleaved, one audio-in case on each build: 0 errors, outputs 3 of 3 identical to the plain run's (`carried/rule14/`, `development/jobs/speech-dev13.log`) |
+
+The rule run's copy of the carried records put development 6's escalation files beside development 5's, and its
+`asr-split.json` collided with development 5's and was refused; they were copied to `carried/escalate/` by hand after
+the run (`job.sh` now does that).
+
+**Recorded, not judged** (decision 10, `*-rule11.json`; and the CLI, from the job log):
+
+| | Shipping | Parity |
+|---|---|---|
+| Real-time factor, CLI (audio seconds per wall second; mean of 3 seeds) | TTS 1.35 to 1.38, interleaved 1.06 to 1.08 | TTS 0.49 to 0.50, interleaved 0.38 to 0.39 |
+| Real-time factor, server, one request (the stream check's done time) | TTS median 1.32, interleaved median 1.05 | TTS median 0.47, interleaved median 0.38 |
+| First audio, streamed (limits: TTS median 1.0 s, max 1.5 s; interleaved median 1.5 s) | TTS median 0.91 s, max 0.95 s; interleaved median 1.26 s | TTS median 2.64 s, max 3.21 s; interleaved median 3.64 s |
+| Streams with gaps (limit: none) | 14 of 42: the interleaved cases, 0.3 to 1.4 s stalled each | 39 of 42, 2.1 to 416 s stalled each |
+| Cancel delay (limit 1.0 s); stream cost (limit 1.03) | 0.76 s; 1.002 | 2.10 s; 1.001 |
+| Worst case, 512 chunks (limit 240 s); large cap | 490 s; 135 s | 2,274 s; 382 s |
+| 90 s clip in (limit 240 s) | 19.6 s | 62.2 s |
+| First audio under load (limit: median 1.0 s) | median 1.15 s | median 3.18 s |
+| Streams with gaps at 8, 12, 16 rows; 7 + 5 | 1 of 8; 12 of 12; 16 of 16; 8 of 12 | all |
+
+The shipping build speaks faster than real time through the CLI and one request at a time through the server; at
+8 rows the speech batch is at real time on the card (one stall in one stream).
+
+### Predictions against the measurements
+
+- Rules 1, 2 and 5: held as predicted.
+- Rule 3: held as predicted, byte for byte on all 16 clips.
+- Rule 12: held, and further than predicted: not even one row fit at a total capacity of 32,768, so the total
+  capacity was lowered to 30,720.

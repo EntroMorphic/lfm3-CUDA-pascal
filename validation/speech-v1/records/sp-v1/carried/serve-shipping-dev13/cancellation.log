@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "worker_sha256": "28fb04587b506b264118da61f2fd12941da83e0d3995e821998a625708dc9dc4",
+  "scope": "native completed-decode cancellation, pre-dispatch cancellation, stale IDs, cache abort, peer preservation and exact recovery; token boundaries only, no prefill/kernel preemption or latency SLA",
+  "observed_cancel_completion_seconds": 0.017961611039936543
+}

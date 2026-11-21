@@ -1,0 +1,45 @@
+{
+ "asr": "/workspace/models/whisper-large-v3",
+ "scoring": "fold_compounds",
+ "results": [
+  {
+   "case": "tts-long-male-s1",
+   "mode": "audio",
+   "audio_seconds": 39.04,
+   "intended": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "transcript": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "normalized_intended": "lighthouses were once the most important safety systems on any coast before radio and satellite navigation a ship is captain relied on a steady beam of light to judge distance and direction in the dark each lighthouse had its own pattern of flashes so sailors could tell one from another keepers trimmed the wicks polished the great lenses and climbed the tower stairs many times every night in every kind of weather today most lights are automatic but many towers still stand and visitors climb them to look out over the same waters the keepers once watched",
+   "normalized_transcript": "lighthouses were once the most important safety systems on any coast before radio and satellite navigation a ship is captain relied on a steady beam of light to judge distance and direction in the dark each lighthouse had its own pattern of flashes so sailors could tell one from another keepers trimmed the wicks polished the great lenses and climbed the tower stairs many times every night in every kind of weather today most lights are automatic but many towers still stand and visitors climb them to look out over the same waters the keepers once watched",
+   "reference_words": 97,
+   "reference_words_folded": 97,
+   "word_errors": 0,
+   "wer": 0.0
+  },
+  {
+   "case": "tts-long-male-s2",
+   "mode": "audio",
+   "audio_seconds": 40,
+   "intended": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "transcript": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Heapers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "normalized_intended": "lighthouses were once the most important safety systems on any coast before radio and satellite navigation a ship is captain relied on a steady beam of light to judge distance and direction in the dark each lighthouse had its own pattern of flashes so sailors could tell one from another keepers trimmed the wicks polished the great lenses and climbed the tower stairs many times every night in every kind of weather today most lights are automatic but many towers still stand and visitors climb them to look out over the same waters the keepers once watched",
+   "normalized_transcript": "lighthouses were once the most important safety systems on any coast before radio and satellite navigation a ship is captain relied on a steady beam of light to judge distance and direction in the dark each lighthouse had its own pattern of flashes so sailors could tell one from another heapers trimmed the wicks polished the great lenses and climbed the tower stairs many times every night in every kind of weather today most lights are automatic but many towers still stand and visitors climb them to look out over the same waters the keepers once watched",
+   "reference_words": 97,
+   "reference_words_folded": 97,
+   "word_errors": 1,
+   "wer": 0.010309278350515464
+  },
+  {
+   "case": "tts-long-male-s3",
+   "mode": "audio",
+   "audio_seconds": 39.52,
+   "intended": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night, in every kind of weather. Today most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "transcript": "Lighthouses were once the most important safety systems on any coast. Before radio and satellite navigation, a ship's captain relied on a steady beam of light to judge distance and direction in the dark. Each lighthouse had its own pattern of flashes, so sailors could tell one from another. Keepers trimmed the wicks, polished the great lenses, and climbed the tower stairs many times every night in every kind of weather. Today, most lights are automatic, but many towers still stand, and visitors climb them to look out over the same waters the keepers once watched.",
+   "normalized_intended": "lighthouses were once the most important safety systems on any coast before radio and satellite navigation a ship is captain relied on a steady beam of light to judge distance and direction in the dark each lighthouse had its own pattern of flashes so sailors could tell one from another keepers trimmed the wicks polished the great lenses and climbed the tower stairs many times every night in every kind of weather today most lights are automatic but many towers still stand and visitors climb them to look out over the same waters the keepers once watched",
+   "normalized_transcript": "lighthouses were once the most important safety systems on any coast before radio and satellite navigation a ship is captain relied on a steady beam of light to judge distance and direction in the dark each lighthouse had its own pattern of flashes so sailors could tell one from another keepers trimmed the wicks polished the great lenses and climbed the tower stairs many times every night in every kind of weather today most lights are automatic but many towers still stand and visitors climb them to look out over the same waters the keepers once watched",
+   "reference_words": 97,
+   "reference_words_folded": 97,
+   "word_errors": 0,
+   "wer": 0.0
+  }
+ ]
+}

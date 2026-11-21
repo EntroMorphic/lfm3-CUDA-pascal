@@ -1,0 +1,55 @@
++ date
+Fri Nov 20 06:40:16 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev2
++ PY=/workspace/build/venv-asr/bin/python
++ W=/workspace/data/speech-calibration
++ R=validation/speech-v1/inputs/reference
++ '[' -e /workspace/build/sp-dev2 ']'
++ mkdir -p /workspace/build/sp-dev2
++ nvidia-smi --query-gpu=memory.used --format=csv,noheader
+2 MiB
++ cd /workspace/data/speech-calibration
++ sha256sum engine/il-fridge-s1/response.wav engine/il-reflective-s1/response.wav engine/il-study-s1/response.wav engine/probe-other-long-s1/response.wav engine/probe-other-long-s2/response.wav engine/probe-other-long-s3/response.wav engine/tts-fox-female-s1/response.wav engine/tts-fox-male-s1/response.wav engine/tts-long-male-s1/response.wav engine/tts-long-male-s2/response.wav engine/tts-long-male-s3/response.wav engine/tts-museum-female-s1/response.wav engine/tts-museum-male-s1/response.wav engine/tts-numbers-female-s1/response.wav engine/tts-numbers-male-s1/response.wav hf/il-fridge-s1/response.wav hf/il-reflective-s1/response.wav hf/il-study-s1/response.wav hf/tts-fox-female-s1/response.wav hf/tts-fox-male-s1/response.wav hf/tts-long-male-s1/response.wav hf/tts-museum-female-s1/response.wav hf/tts-museum-male-s1/response.wav hf/tts-numbers-female-s1/response.wav hf/tts-numbers-male-s1/response.wav engine/il-fridge-s1/summary.json engine/il-reflective-s1/summary.json engine/il-study-s1/summary.json engine/probe-other-long-s1/summary.json engine/probe-other-long-s2/summary.json engine/probe-other-long-s3/summary.json engine/tts-fox-female-s1/summary.json engine/tts-fox-male-s1/summary.json engine/tts-long-male-s1/summary.json engine/tts-long-male-s2/summary.json engine/tts-long-male-s3/summary.json engine/tts-museum-female-s1/summary.json engine/tts-museum-male-s1/summary.json engine/tts-numbers-female-s1/summary.json engine/tts-numbers-male-s1/summary.json hf/il-fridge-s1/summary.json hf/il-reflective-s1/summary.json hf/il-study-s1/summary.json hf/tts-fox-female-s1/summary.json hf/tts-fox-male-s1/summary.json hf/tts-long-male-s1/summary.json hf/tts-museum-female-s1/summary.json hf/tts-museum-male-s1/summary.json hf/tts-numbers-female-s1/summary.json hf/tts-numbers-male-s1/summary.json
++ for k in hf engine
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/lfm3_asr.py /workspace/models/whisper-large-v3 /workspace/build/sp-dev2/asr-hf.json /workspace/data/speech-calibration/hf/il-fridge-s1 /workspace/data/speech-calibration/hf/il-reflective-s1 /workspace/data/speech-calibration/hf/il-study-s1 /workspace/data/speech-calibration/hf/tts-fox-female-s1 /workspace/data/speech-calibration/hf/tts-fox-male-s1 /workspace/data/speech-calibration/hf/tts-long-male-s1 /workspace/data/speech-calibration/hf/tts-museum-female-s1 /workspace/data/speech-calibration/hf/tts-museum-male-s1 /workspace/data/speech-calibration/hf/tts-numbers-female-s1 /workspace/data/speech-calibration/hf/tts-numbers-male-s1
+++ tail -1 /workspace/build/sp-dev2/asr-hf.log
++ echo 'asr hf rc=0 97.43 s'
++ for k in hf engine
+asr hf rc=0 97.43 s
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/lfm3_asr.py /workspace/models/whisper-large-v3 /workspace/build/sp-dev2/asr-engine.json /workspace/data/speech-calibration/engine/il-fridge-s1 /workspace/data/speech-calibration/engine/il-reflective-s1 /workspace/data/speech-calibration/engine/il-study-s1 /workspace/data/speech-calibration/engine/probe-other-long-s1 /workspace/data/speech-calibration/engine/probe-other-long-s2 /workspace/data/speech-calibration/engine/probe-other-long-s3 /workspace/data/speech-calibration/engine/tts-fox-female-s1 /workspace/data/speech-calibration/engine/tts-fox-male-s1 /workspace/data/speech-calibration/engine/tts-long-male-s1 /workspace/data/speech-calibration/engine/tts-long-male-s2 /workspace/data/speech-calibration/engine/tts-long-male-s3 /workspace/data/speech-calibration/engine/tts-museum-female-s1 /workspace/data/speech-calibration/engine/tts-museum-male-s1 /workspace/data/speech-calibration/engine/tts-numbers-female-s1 /workspace/data/speech-calibration/engine/tts-numbers-male-s1
+++ tail -1 /workspace/build/sp-dev2/asr-engine.log
++ echo 'asr engine rc=0 169.25 s'
++ python3 tools/pascal/asr_calibration.py compare /workspace/data/speech-calibration /workspace/build/sp-dev2/asr-hf.json /workspace/build/sp-dev2/asr-engine.json validation/speech-v1/inputs/reference /workspace/build/sp-dev2/calibration.json
+asr engine rc=0 169.25 s
+hf     il-fridge-s1             equal  wer 0.000 (committed 0.000)
+hf     il-reflective-s1         equal  wer 0.000 (committed 0.000)
+hf     il-study-s1              equal  wer 0.000 (committed 0.000)
+hf     tts-fox-female-s1        equal  wer 0.000 (committed 0.000)
+hf     tts-fox-male-s1          equal  wer 0.000 (committed 0.000)
+hf     tts-long-male-s1         equal  wer 0.134 (committed 0.134)
+hf     tts-museum-female-s1     equal  wer 0.000 (committed 0.000)
+hf     tts-museum-male-s1       equal  wer 0.042 (committed 0.042)
+hf     tts-numbers-female-s1    equal  wer 0.158 (committed 0.158)
+hf     tts-numbers-male-s1      equal  wer 0.211 (committed 0.211)
+engine il-fridge-s1             equal  wer 0.000 (committed 0.000)
+engine il-reflective-s1         equal  wer 0.000 (committed 0.000)
+engine il-study-s1              equal  wer 0.000 (committed 0.000)
+engine probe-other-long-s1      equal  wer 0.000 (committed 0.000)
+engine probe-other-long-s2      equal  wer 0.000 (committed 0.000)
+engine probe-other-long-s3      equal  wer 0.000 (committed 0.000)
+engine tts-fox-female-s1        equal  wer 0.000 (committed 0.000)
+engine tts-fox-male-s1          equal  wer 0.000 (committed 0.000)
+engine tts-long-male-s1         equal  wer 0.000 (committed 0.000)
+engine tts-long-male-s2         equal  wer 0.000 (committed 0.000)
+engine tts-long-male-s3         equal  wer 0.000 (committed 0.000)
+engine tts-museum-female-s1     equal  wer 0.000 (committed 0.000)
+engine tts-museum-male-s1       equal  wer 0.000 (committed 0.000)
+engine tts-numbers-female-s1    equal  wer 0.158 (committed 0.158)
+engine tts-numbers-male-s1      equal  wer 0.158 (committed 0.158)
+rule 6 (the scorer): 25 of 25 transcripts equal: PASS
++ echo 'rule 6 rc=0'
++ date
+rule 6 rc=0
+Fri Nov 20 06:44:43 MST 2026

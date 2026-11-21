@@ -1,0 +1,39 @@
++ date
+Fri Nov 20 13:30:23 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/sp-dev5
++ PY=/workspace/build/venv-asr/bin/python
++ R=/workspace/build/sp-refs-text-s1
++ W=/workspace/models/whisper-large-v3
++ '[' -e /workspace/build/sp-dev5 ']'
++ mkdir -p /workspace/build/sp-dev5
++ nvidia-smi --query-gpu=memory.used --format=csv,noheader
+2 MiB
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/lfm3_asr.py /workspace/models/whisper-large-v3 /workspace/build/sp-dev5/asr-e2e.json /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-fridge-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-fridge-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-fridge-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-reflective-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-reflective-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-reflective-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-study-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-study-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/il-study-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-fox-female-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-fox-female-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-fox-female-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-fox-male-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-fox-male-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-fox-male-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-long-male-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-long-male-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-long-male-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-museum-female-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-museum-female-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-museum-female-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-museum-male-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-museum-male-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-museum-male-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-numbers-female-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-numbers-female-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-numbers-female-s3 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-numbers-male-s1 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-numbers-male-s2 /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases/tts-numbers-male-s3
+++ tail -1 /workspace/build/sp-dev5/asr-e2e.log
++ echo 'asr e2e rc=0 254.91 s'
+asr e2e rc=0 254.91 s
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/lfm3_asr.py /workspace/models/whisper-large-v3 /workspace/build/sp-dev5/asr-split.json /workspace/build/sp-refs-text-s1/speech-chunk-native-v1/native-cases/tts-long-male-s1 /workspace/build/sp-refs-text-s1/speech-chunk-native-v1/native-cases/tts-long-male-s2 /workspace/build/sp-refs-text-s1/speech-chunk-native-v1/native-cases/tts-long-male-s3
+++ tail -1 /workspace/build/sp-dev5/asr-split.log
++ echo 'asr split rc=0 59.50 s'
++ python3 tools/pascal/score_speech.py c1c2 validation/speech-e2e-v1/prompts.json /workspace/build/sp-dev5/asr-e2e.json /workspace/build/sp-dev5/asr-split.json /workspace/build/sp-refs-text-s1/speech-e2e-v1/native-cases /workspace/build/sp-refs-text-s1/speech-chunk-native-v1/native validation/speech-v1/inputs/reference /workspace/build/sp-dev5/c1c2.json
+asr split rc=0 59.50 s
+| case | mode | shipping WER mean [per seed] | HF WER mean [worst] | C1 | shipping/HF audio length | ended by EOS |
+|---|---|---|---|---|---|---|
+| tts-fox-female | audio | 0.000 [0.000, 0.000, 0.000] | 0.000 [0.000] | ok | 1.000 | 3/3 |
+| tts-fox-male | audio | 0.000 [0.000, 0.000, 0.000] | 0.000 [0.000] | ok | 1.029 | 3/3 |
+| tts-museum-female | audio | 0.028 [0.042, 0.000, 0.042] | 0.028 [0.042] | ok | 1.000 | 3/3 |
+| tts-museum-male | audio | 0.014 [0.000, 0.000, 0.042] | 0.028 [0.042] | ok | 1.000 | 3/3 |
+| tts-numbers-female | audio | 0.175 [0.158, 0.158, 0.211] | 0.158 [0.158] | FLAG | 1.011 | 3/3 |
+| tts-numbers-male | audio | 0.175 [0.158, 0.158, 0.211] | 0.175 [0.211] | ok | 1.034 | 3/3 |
+| tts-long-male | audio (split) | 0.003 [0.000, 0.010, 0.000] | 0.000 [0.000] | FLAG | 1.006 | 3/3 |
+| il-reflective | interleaved | 0.000 [0.000, 0.000, 0.000] | 0.000 [0.000] | ok | 0.973 | 3/3 |
+| il-study | interleaved | 0.000 [0.000, 0.000, 0.000] | 0.000 [0.000] | ok | 0.928 | 3/3 |
+| il-fridge | interleaved | 0.000 [0.000, 0.000, 0.000] | 0.000 [0.000] | ok | 1.068 | 3/3 |
+rule 7 (C1): flagged ['tts-numbers-female', 'tts-long-male']: escalate to seeds 1-15
+rule 8 (C2): PASS
++ echo 'rules 7 and 8 rc=3'
++ date
+rules 7 and 8 rc=3
+Fri Nov 20 13:35:37 MST 2026

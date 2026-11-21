@@ -1,0 +1,121 @@
+{
+ "rows": 1,
+ "queue_size": 4,
+ "refusals": {
+  "text": {
+   "status": 400,
+   "error": "invalid_request",
+   "expected": [
+    400,
+    "invalid_request"
+   ],
+   "pass": true
+  },
+  "chunks": {
+   "status": 400,
+   "error": "invalid_request",
+   "expected": [
+    400,
+    "invalid_request"
+   ],
+   "pass": true
+  },
+  "prompt": {
+   "status": 400,
+   "error": "invalid_request",
+   "expected": [
+    400,
+    "invalid_request"
+   ],
+   "pass": true
+  },
+  "capacity": {
+   "status": 400,
+   "error": "invalid_request",
+   "expected": [
+    400,
+    "invalid_request"
+   ],
+   "pass": true
+  },
+  "clips": {
+   "status": 400,
+   "error": "invalid_request",
+   "expected": [
+    400,
+    "invalid_request"
+   ],
+   "pass": true
+  },
+  "body": {
+   "status": 413,
+   "error": "body_limit",
+   "expected": [
+    413,
+    "body_limit"
+   ],
+   "pass": true
+  },
+  "body-16": {
+   "status": 413,
+   "error": "body_limit",
+   "expected": [
+    413,
+    "body_limit"
+   ],
+   "pass": true
+  },
+  "queue": {
+   "status": 429,
+   "error": "queue_full",
+   "expected": [
+    429,
+    "queue_full"
+   ],
+   "pass": true
+  }
+ },
+ "control_tokens": 67,
+ "control_wav_bytes": 176684,
+ "queue_requests": [
+  {
+   "status": 200,
+   "error": null,
+   "start": -8.0,
+   "end": 14.1
+  },
+  {
+   "status": 200,
+   "error": null,
+   "start": -7.0,
+   "end": 36.0
+  },
+  {
+   "status": 200,
+   "error": null,
+   "start": -6.0,
+   "end": 57.5
+  },
+  {
+   "status": 200,
+   "error": null,
+   "start": -5.0,
+   "end": 79.6
+  },
+  {
+   "status": 200,
+   "error": null,
+   "start": -4.0,
+   "end": 101.5
+  }
+ ],
+ "queue_requests_pass": true,
+ "text_control_identical": true,
+ "speech_control_identical": true,
+ "health": {
+  "ready": true,
+  "gpu_batching": false
+ },
+ "server_exit": 0,
+ "pass": true
+}

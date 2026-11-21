@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Perform TTS in American English using a male voice."}, {"role": "user", "content": "The quick brown fox jumps over the lazy dog"}], "mode": "audio", "max_new_tokens": 256, "seed": 1, "split": false}
