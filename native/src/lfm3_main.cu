@@ -503,8 +503,9 @@ class Runner {
 #endif
 #ifdef LFM3_NATIVE_GEMM
   // lm_head with the FP32 accumulator stored unrounded.
-  // `row0`: the prompt position of the first row (for lfm::gemm::Problem::row0; the scorer's tiles). `wide`: a
-  // tile of more than 8 rows in all, which takes the prefill kernel whatever its own row count.
+  // `row0`: the prompt position of the first row (for lfm::gemm::Problem::row0; the scorer's tiles). `wide`: take
+  // the prefill kernel whatever the tile's own row count (the scorer: a window of more than 8 tokens; not in the
+  // parity build, whose tiles are the Thor engine's).
   void lm_head(const bf16* x, float* out, int rows, int row0=-1, bool wide=false) {
     auto p=lfm::gemm::linear(x,w("embed_tokens.weight"),nullptr,rows,s.hidden,s.vocabulary);
     p.c_f32=out; p.site=lfm::gemm::kSiteHead; p.row0=row0; p.wide=wide; lfm::gemm::run(p);
@@ -523,7 +524,7 @@ class Runner {
   // (lfm::gemm::Problem::wide).
   void linear_block(const std::string& name, const bf16* x, bf16* out, int rows, int input, int output, int row0) {
     auto problem=lfm::gemm::linear(x,w(name),out,rows,input,output);
-    problem.wide=true; problem.site=site_of(name); problem.row0=row0;
+    problem.wide=true; problem.site=site_of(name); problem.row0=row0;  // row0: cursor + the block's first row
     lfm::gemm::run(problem);
   }
   // The part of the model a projection belongs to (lfm::gemm::Problem::site).
@@ -564,7 +565,13 @@ class Runner {
     if(total_rows>lfm::text::scratch_rows(s.context)) label+=".tile"+std::to_string(first);
     // Decode (one row): all heads at once. Prefill: prefill_heads() at a time (see its comment).
     const int group=rows==1?s.query_heads:prefill_heads(s);
+#ifdef LFM_GEMM_TENSOR_CORE_MODEL
+    // The parity build: the Thor engine's tiles, whose last tile of 1-8 rows takes the decode kernels (lfm::gemm::run
+    // in the Thor engine has no `wide`); so its arithmetic stays the Thor engine's above 4,096 tokens of capacity.
+    const bool wide=false;
+#else
     const bool wide=total_rows>8;  // the whole prefill's kernel, also for a last tile of 1-8 rows
+#endif
     for(int h0=0;h0<s.query_heads;h0+=group) {
       const size_t kv=size_t(h0/(s.query_heads/s.kv_heads))*stride*s.head_dim;
       head_scores(s,stride,q.p+size_t(first)*s.hidden+size_t(h0)*s.head_dim,key_cache+kv,key_start-origin,rows,end,
@@ -733,7 +740,7 @@ class Runner {
 #ifdef LFM3_NATIVE_GEMM
         const bool blocks=rows>block;  // more than one block: rows > 8, so the whole prefill's kernel is the wide one
         auto project=[&](const std::string& name,const bf16* in,bf16* out,int input,int output) {
-          if(blocks) linear_block(name,in,out,n,input,output,first); else linear(name,in,out,n,input,output);
+          if(blocks) linear_block(name,in,out,n,input,output,cursor+first); else linear(name,in,out,n,input,output);
         };
 #else
         auto project=[&](const std::string& name,const bf16* in,bf16* out,int input,int output) { linear(name,in,out,n,input,output); };

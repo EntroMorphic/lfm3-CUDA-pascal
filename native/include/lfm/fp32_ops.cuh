@@ -120,7 +120,12 @@ __global__ void __launch_bounds__(256) linear(const float* X, const W* w, const 
 #ifndef LFM_FP32_STAGED
 #define LFM_FP32_STAGED 0
 #endif
-#if LFM_FP32_STAGED != 0 && LFM_FP32_STAGED != 1
+// The preprocessor reads an unknown word as 0: the value must paste to one of the two names below.
+#define LFM_FP32_PASTE_(a, b) a##b
+#define LFM_FP32_PASTE(a, b) LFM_FP32_PASTE_(a, b)
+#define LFM_FP32_DIGIT_0 1
+#define LFM_FP32_DIGIT_1 1
+#if !LFM_FP32_PASTE(LFM_FP32_DIGIT_, LFM_FP32_STAGED) || (LFM_FP32_STAGED != 0 && LFM_FP32_STAGED != 1)
 #error "LFM_FP32_STAGED must be 0 or 1"
 #endif
 #if LFM_FP32_STAGED

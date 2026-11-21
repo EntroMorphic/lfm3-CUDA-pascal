@@ -4,11 +4,17 @@
 # fast: rules 3, 4 and the subsets of rule 5 (minutes). slow: every window at 256, 257 and 4,096, then 32,768 (hours).
 set -uo pipefail
 old=${1:?}; new=${2:?}; oldppl=${3:?}; part=${4:-all}
-[ "$old" != "$new" ] && [ "$oldppl" != "$new-ppl" ] && [ "$oldppl" != "$new-subset-old" ] && [ "$oldppl" != "$new-subset-new" ] ||
-  { echo "verify_memory.sh: OLD and NEW (and their result directories) must differ, or a file is compared with itself"; exit 2; }
 case $part in fast|slow|all) ;; *) echo "verify_memory.sh: part must be fast, slow or all"; exit 2 ;; esac
 unset LFM3_COMPACT_WINDOWS  # the "unset" legs must not inherit the caller's
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd); B=/workspace/build; M=/workspace/models/LFM3-Omni-2B
+# OLD and NEW, and OLD_PPL against every directory this script writes, compared as resolved paths (red-team-2 C4: a
+# trailing slash or ./ passed the string test, and the reference was then deleted and compared with itself)
+r() { realpath -m "$B/$1"; }
+distinct() {
+  [ "$(r "$old")" != "$(r "$new")" ] || return 1
+  local w; for w in "$new-ppl" "$new-subset-old" "$new-subset-new" "$new"; do [ "$(r "$oldppl")" != "$(r "$w")" ] || return 1; done
+}
+distinct || { echo "verify_memory.sh: OLD and NEW (and their result directories) must differ, or a file is compared with itself"; exit 2; }
 fail=0; say(){ echo "== $*"; }
 say "binaries"; sha256sum $B/$old/liquid-lfm3 $B/$old/lfm3-score $B/$new/liquid-lfm3 $B/$new/lfm3-score
 
@@ -29,7 +35,9 @@ json.dump(r, open(sys.argv[2] + "/request.json", "w"))
 PY
   if [ $side = new ]; then export LFM3_COMPACT_WINDOWS=1; else unset LFM3_COMPACT_WINDOWS; fi
   "$B/$tag/liquid-lfm3" --experimental $M "$L/$side/request.json" "$L/$side/native.json" > "$L/$side/log" 2>&1 || { echo "long decode $side FAILED: $(tail -c 300 "$L/$side/log")"; fail=1; }
-  (cd "$L/$side/trace" && ls | wc -l && sha256sum $(ls *.logits.f32 | sort -n) | sha256sum) > "$L/$side/trace.sha256" 2>/dev/null
+  # the logits files only, counted and hashed; none at all gives a count of 0, which fails rule 4 (red-team-2 C3)
+  (cd "$L/$side/trace" && shopt -s nullglob && f=(*.logits.f32) && echo ${#f[@]} &&
+   { [ ${#f[@]} -gt 0 ] && sha256sum $(printf '%s\n' "${f[@]}" | sort -n) | sha256sum || echo none; }) > "$L/$side/trace.sha256" 2>/dev/null
   rm -rf "$L/$side/trace"
 done
 unset LFM3_COMPACT_WINDOWS
@@ -37,9 +45,10 @@ python3 - "$L" <<'PY' || fail=1
 import json, sys
 L = sys.argv[1]; a, b = (json.load(open(f"{L}/{s}/native.json")) for s in ("old", "new"))
 ta, tb = (open(f"{L}/{s}/trace.sha256").read().split() for s in ("old", "new"))
-ok = a["teacher_argmax"] == b["teacher_argmax"] and len(a["teacher_argmax"]) == 701 and ta == tb and int(ta[0]) >= 701
+ok = a["teacher_argmax"] == b["teacher_argmax"] and len(a["teacher_argmax"]) == 701 and ta == tb and int(ta[0]) >= 701 \
+    and ta[1] != "none"
 print(f"long decode: {len(a['teacher_argmax'])} argmax ids {'equal' if a['teacher_argmax'] == b['teacher_argmax'] else 'DIFFER'}; "
-      f"{ta[0]} trace files, logits digest old {ta[1][:16]} new {tb[1][:16]}: {'IDENTICAL' if ta == tb else 'DIFFER'}; "
+      f"{ta[0]} logits files, digest old {ta[1][:16]} new {tb[1][:16]}: {'IDENTICAL' if ta == tb else 'DIFFER'}; "
       f"decode {a['decode_seconds']:.1f} s old, {b['decode_seconds']:.1f} s new")
 sys.exit(0 if ok else 1)
 PY

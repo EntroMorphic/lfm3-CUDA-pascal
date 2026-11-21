@@ -97,6 +97,11 @@ inline constexpr int kSpeechCapacity = 4096;
 inline constexpr size_t kSpeechMaxChunks = 512;
 inline constexpr size_t kSpeechMaxPromptTokens = 131072;
 inline constexpr double kSpeechMinEngineTimeout = 300;  // seconds; /speech is refused below it
+// POST /generate_batch runs both lanes, prefill and every decode step, as one engine call, which the watchdog bounds
+// by engine_timeout (a call past it fails the service closed). /generate is sliced and /speech runs a step a call;
+// the batch is bounded instead: at most kBatchMaxNewTokens new tokens a lane (larger: 400). On the GTX 1080 the worst
+// case, two lanes filling the total capacity, then 4,095 paired steps, is measured in validation/red-team-2.
+inline constexpr int kBatchMaxNewTokens = 4096;
 inline constexpr int kAudioOutToken = 125032;
 // The text of a /speech request's messages (audio aside), checked before normalization and the split: the step budget
 // (6,144 frames, about 8 minutes of audio) reads about 8 KB, and a chunk holds 4,096 tokens, so 64 KiB is generous; it
@@ -667,6 +672,9 @@ class Service {
     auto requests = std::make_shared<std::array<Generation, 2>>();
     for (size_t i = 0; i < 2; ++i) (*requests)[i] = validate_generation((*list)[i], body);
     body.reset();
+    for (const auto& r : *requests)
+      if (r.count > kBatchMaxNewTokens)
+        throw std::invalid_argument("batch max_new_tokens above " + std::to_string(kBatchMaxNewTokens));
     const std::array<std::string, 2> sids{(*requests)[0].sid, (*requests)[1].sid};
     if (sids[0] == sids[1]) throw std::invalid_argument("duplicate batch session");
     const std::array<Event, 2> events{std::make_shared<std::atomic<bool>>(false), std::make_shared<std::atomic<bool>>(false)};

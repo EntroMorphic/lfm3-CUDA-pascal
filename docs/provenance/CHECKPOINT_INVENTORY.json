@@ -1,5 +1,5 @@
 {
-  "checkpoint": "/home/ztflynn/Projects/000-research/lfm3-omni-2B/models/LFM3-Omni-2B",
+  "checkpoint": "~/Projects/000-research/lfm3-omni-2B/models/LFM3-Omni-2B",
   "architecture": "lfm3_omni",
   "text_tensor_prefix": "model.language_model.",
   "validated_text_tensors": 286,

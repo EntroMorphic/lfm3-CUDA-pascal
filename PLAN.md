@@ -5,7 +5,7 @@
 The smallest single-binary engine that runs LFM3-Omni-2B on an NVIDIA GTX 1080 (Pascal, `sm_61`, 8 GB) at the same
 or better quality than the Hugging Face reference. Text first, then the other modalities.
 
-This is the goal of the Thor engine ([liquid-CUDA](https://github.com/EntroMorphic), imported here at commit
+This is the goal of the Thor engine (liquid-CUDA, by [EntroMorphic](https://github.com/EntroMorphic), imported here at commit
 `e2f8b7f`) with a new target. Its discipline carries over: rules before data, measure everything, earlier results
 must not change.
 
@@ -126,7 +126,7 @@ with red-team, remediate, verify, commit.
 | Red team | passed 2026-11-18 ([red-team-1](validation/red-team-1/)): two rounds of independent review of everything written since the import; every finding fixed; recorded results unchanged byte for byte |
 | 2 | closed 2026-11-19 by the owner with rule 12 failed ([speed-v1](validation/speed-v1/)): 13 of 14 rules pass. Prefill 3.4 times faster at 4,096 tokens, 3.1 at 32,768, 2.7 at 257, 2 at 32; decode 1% faster at 1,000 tokens (at the 245 GB/s bar, decision 7) and 16% at 31,000, where it misses its bar by 0.18 ms; outputs unchanged; no more memory. Carried: position 0 still costs about 150 ms per prefill |
 | 3 | passed 2026-11-19 ([serve-v1](validation/serve-v1/)), red team done. The reference's eight serving checks pass on both builds (parity against Thor's pinned control); paired decode serves the compact caches, equal to serial in every logit bit; every admissible configuration fits (peak 6,845 MiB); refusals past the limits, a full queue included (429 `queue_full`, measured after the red team disproved the earlier claim that it was unreachable), leave the server serving |
-| 4 | rule run 2026-11-21 ([speech-v1](validation/speech-v1/)), red team done: 13 of 14 rules pass, rule 9 (the owner's blind listening) pending. The parity build's speech is the Thor engine's byte for byte (16 of 16 clips) and its audio in word for word (2,620 utterances); the shipping build's intelligibility, endings and audio-in WER pass against HF; the reference's server checks pass on everything but Thor's timing (decision 10); the server serves one speech row at a total capacity of 30,720 (peak 7,697 MiB) |
+| 4 | rule run 2026-11-21 ([speech-v1](validation/speech-v1/)), red team done: 13 of 14 rules pass, rule 9 (the owner's blind listening) pending. The parity build's speech is the Thor engine's byte for byte (16 of 16 clips) and its audio in's word errors the Thor engine's (1,374 over 2,620 utterances; the 19 committed transcripts word for word); the shipping build's intelligibility, endings and audio-in WER pass against HF; the reference's server checks pass on everything but Thor's timing (decision 10); the server serves one speech row at a total capacity of 30,720 (peak 7,697 MiB) |
 
 ## Parking list
 

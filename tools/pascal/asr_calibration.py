@@ -72,7 +72,8 @@ def compare(work, asr_hf, asr_engine, validation, out_json):
             rows.append(dict(kind=kind, case=r["case"], equal=r["transcript"] == c["transcript"],
                              transcript=r["transcript"], committed=c["transcript"], wer=r["wer"], committed_wer=c["wer"]))
     # every prepared clip transcribed exactly once (red-team review: a missing clip must not pass on the subset): the 25
-    # seed-1 clips, ten HF and fifteen Thor-engine (the split tts-long-male among them, as prepare() writes them)
+    # clips prepare() writes, ten HF (seed 1) and fifteen Thor-engine (the nine single-request cases at seed 1, and the
+    # split lighthouse and bread at seeds 1 to 3)
     prepared = sorted((k, d.name) for k in ("hf", "engine") for d in (Path(work) / k).iterdir() if d.is_dir())
     got = sorted((r["kind"], r["case"]) for r in rows)
     complete = got == prepared and len(prepared) == 25

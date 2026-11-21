@@ -7,8 +7,9 @@
 #include <lfm/text_cancellation.hpp>
 #include <lfm/text_batch_cancellation.hpp>
 #include <lfm/lfm3_text_request.hpp>
-// LFM3_TEXT_ONLY=1 (the Pascal build, PLAN decision 8): text only. Speech, the batch decoder and vision are left
-// out (their kernels are not ported to sm_61 yet) and op "speech" is refused, as in a build without the native GEMM.
+// LFM3_TEXT_ONLY=1 (tools/pascal/build_serve.sh's text-only server, PLAN decision 8): text only. Speech, the batch
+// decoder and vision are left out and op "speech" is refused, as in a build without the native GEMM.
+// tools/pascal/build_speech.sh builds with 0 (phase 4) and LFM3_VISION=0 (lfm/vision_absent.hpp: no image input).
 #ifndef LFM3_TEXT_ONLY
 #define LFM3_TEXT_ONLY 0
 #endif
@@ -370,6 +371,11 @@ class WorkerCore {
           image_in_ok=true;
         } catch(const std::exception&) {image_in_ok=false;}
       }
+      // The speech runner and batch need the full-length caches at kSpeechCapacity and the uncompressed weights; the
+      // measurement switches LFM3_COMPACT_WINDOWS=1 and LFM3_LOSSLESS=1 take them away. Speech is then not served,
+      // rather than advertised and failing the server closed at the first /speech (red-team-2 B2).
+      if(speech_ok && (compact_windows(kSpeechCapacity) || lfm3_batch::lossless_enabled()))
+        speech_ok=audio_in_ok=image_in_ok=false;
     }
 #endif
   }
@@ -687,7 +693,7 @@ class WorkerCore {
     bool chunked=false,stream=false;
   };
   SpeechJob parse_speech(const lfm::Json& request) {
-    if(!speech_ok) throw std::runtime_error("speech is not supported by this checkpoint");
+    if(!speech_ok) throw std::runtime_error("speech is not served (the checkpoint, the build or LFM3_COMPACT_WINDOWS / LFM3_LOSSLESS)");
     SpeechJob job;
     const auto mode=request.at("mode").string();
     if(mode!="audio" && mode!="interleaved" && mode!="text") throw std::runtime_error("speech mode must be audio, interleaved or text");
@@ -712,7 +718,7 @@ class WorkerCore {
     if(prompts.empty() || (!chunked && prompts.size()!=1)) throw std::runtime_error("speech needs one prompt, or chunks");
     std::vector<std::vector<float>> clips;  // decoded and checked (spans included) before any engine state changes
     if(request.has("audio")) {
-      if(!audio_in_ok) throw std::runtime_error("audio input is not supported by this checkpoint");
+      if(!audio_in_ok) throw std::runtime_error("audio input is not supported by this checkpoint or build");
       if(request.at("audio").array().size()>kSpeechMaxClips) throw std::runtime_error("too many audio clips");
       if(chunked) throw std::runtime_error("chunks cannot take audio input");
       std::vector<size_t> clip_tokens;
@@ -728,7 +734,7 @@ class WorkerCore {
     std::vector<std::string> image_keys;  // validation/image-cache-v1: each image's cache key (empty: not cached)
     std::vector<std::shared_ptr<const lfm3_speech::ImageRows>> image_rows;  // the cache's rows (null: encode)
     if(request.has("images")) {
-      if(!image_in_ok) throw std::runtime_error("image input is not supported by this checkpoint");
+      if(!image_in_ok) throw std::runtime_error("image input is not supported by this checkpoint or build (LFM3_VISION=0)");
       if(request.at("images").array().size()>kSpeechMaxImages) throw std::runtime_error("too many images");
       if(chunked) throw std::runtime_error("chunks cannot take image input");
       std::vector<size_t> image_tokens;
@@ -813,7 +819,7 @@ class WorkerCore {
   void speech(const lfm::Json& request,int rpc_id,std::ostream& out) {
 #ifndef LFM3_WORKER_MEDIA
     (void)request;(void)rpc_id;(void)out;
-    throw std::runtime_error("speech requires the native GEMM build (LIQUID_LFM3_NATIVE_GEMM=ON)");
+    throw std::runtime_error("speech is not in this build (it needs LIQUID_LFM3_NATIVE_GEMM=ON and LFM3_TEXT_ONLY=0)");
 #else
     auto job=parse_speech(request);
     ensure_speech_runner();
@@ -846,7 +852,7 @@ class WorkerCore {
   void speech_admit(const lfm::Json& request,int rpc_id,std::ostream& out) {
 #ifndef LFM3_WORKER_MEDIA
     (void)request;(void)rpc_id;(void)out;
-    throw std::runtime_error("speech requires the native GEMM build (LIQUID_LFM3_NATIVE_GEMM=ON)");
+    throw std::runtime_error("speech is not in this build (it needs LIQUID_LFM3_NATIVE_GEMM=ON and LFM3_TEXT_ONLY=0)");
 #else
     if(!progress) throw std::runtime_error("concurrent speech needs the in-process server");
     const long long ticket=request.at("ticket").integer();
@@ -881,7 +887,7 @@ class WorkerCore {
   void speech_step(const lfm::Json& request,int rpc_id,std::ostream& out) {
 #ifndef LFM3_WORKER_MEDIA
     (void)request;(void)rpc_id;(void)out;
-    throw std::runtime_error("speech requires the native GEMM build (LIQUID_LFM3_NATIVE_GEMM=ON)");
+    throw std::runtime_error("speech is not in this build (it needs LIQUID_LFM3_NATIVE_GEMM=ON and LFM3_TEXT_ONLY=0)");
 #else
     if(!progress) throw std::runtime_error("concurrent speech needs the in-process server");
     if(request.has("cancel"))

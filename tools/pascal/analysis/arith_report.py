@@ -1,10 +1,16 @@
 """validation/prefill-arithmetic-v1: each variant's NLL minus plain's on the 65-token windows, paired, with a 95%
 bootstrap interval over windows.   python3 tools/pascal/analysis/arith_report.py ARITH_DIR"""
+import json
 import sys
 from pathlib import Path
 import numpy as np
 D = Path(sys.argv[1]); W, L = 4622, 65
-def load(v): return np.fromfile(D / v / "nll-pascal-65.f32", dtype=np.float32).astype(np.float64).reshape(W, L - 1)
+def load(v):  # every value finite, and the windows of 65 tokens (red-team-2 C9)
+    meta = D / v / "nll-pascal-65.meta.json"
+    if meta.exists() and json.loads(meta.read_text()).get("length") != L: sys.exit(f"{v}: not windows of {L} tokens")
+    x = np.fromfile(D / v / "nll-pascal-65.f32", dtype=np.float32).astype(np.float64)
+    if x.size != W * (L - 1) or not np.isfinite(x).all(): sys.exit(f"{v}: not {W} windows of {L - 1} finite values")
+    return x.reshape(W, L - 1)
 rng = np.random.default_rng(0)
 def ci(per_window, n=10000):
     idx = rng.integers(0, per_window.size, size=(n, per_window.size)); m = per_window[idx].mean(axis=1)
@@ -21,3 +27,10 @@ if len(names) == 5 and (D / "exact" / "nll-pascal-65.f32").exists():
     print(f"\nsum of the five single-site differences {total:+.2e}; exact {(load('exact') - plain).mean():+.2e}")
 if (D / "nohead" / "nll-pascal-65.f32").exists() and (D / "head" / "nll-pascal-65.f32").exists():
     print(f"head + nohead {(load('head') - plain).mean() + (load('nohead') - plain).mean():+.2e}")
+# The README's table (red-team-2 C10: its "Position 1 alone" and "Positions 2-64" columns had no committed tool).
+# Position 1 is column 0 (predicted from [BOS] alone); positions 2-64 are columns 1-63, with their window bootstrap.
+print("\nvariant     position 1 alone   positions 2-64   95% CI")
+for v in ("exact", "rz", "away"):
+    if not (D / v / "nll-pascal-65.f32").exists(): continue
+    d = load(v) - plain; lo, hi = ci(d[:, 1:].mean(axis=1))
+    print(f"{v:10s}  {d[:, 0].mean():+.2e}          {d[:, 1:].mean():+.2e}        [{lo:+.2e}, {hi:+.2e}]")

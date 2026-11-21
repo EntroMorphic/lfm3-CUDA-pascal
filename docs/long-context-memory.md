@@ -87,7 +87,7 @@ use would free about 837 MiB of the 4,134.
 
 ## LFM3-1.7B at 262,144 tokens
 
-LFM3-1.7B (`lfm3-omni-2B/models/LFM3-1.7B`) is the same backbone as Omni-2B's language model, with
+LFM3-1.7B (a checkpoint in the owner's workspace, not part of this repository) is the same backbone as Omni-2B's language model, with
 `max_position_embeddings` 262,144 (Omni-2B's is 128,000, and its card documents 32K). Its weights are 3,297 MiB.
 
 | | MiB |

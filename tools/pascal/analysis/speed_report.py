@@ -2,8 +2,10 @@
 build's and the candidate's, made in the same job.
     python3 tools/pascal/analysis/speed_report.py BASELINE_DIR CANDIDATE_DIR [--output FILE]
 Each directory holds CASE.N.json records and summary.json. Prints one line per rule and exits 0 only if all hold.
+Refused as input (red-team-2 C2): the same directory twice, or two directories of the same binary; a case with fewer
+than 3 runs; a summary median that is not the median of its runs.
 """
-import argparse, json, os, sys
+import argparse, json, os, statistics, sys
 
 BARS = {  # rule: (case, the bar as a function of the baseline median, description)
     7: ("prefill-4096", lambda b: 4.6, "<= 4.6 s"),
@@ -32,7 +34,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("baseline"); ap.add_argument("candidate"); ap.add_argument("--output")
     a = ap.parse_args()
+    if os.path.samefile(a.baseline, a.candidate): sys.exit("speed_report: BASELINE and CANDIDATE are the same directory")
     (bs, br), (cs, cr) = load(a.baseline), load(a.candidate)
+    binaries = [{r["binary_sha256"] for rs in runs.values() for r in rs} for runs in (br, cr)]
+    if any(len(b) != 1 for b in binaries) or binaries[0] == binaries[1]:
+        sys.exit(f"speed_report: each directory must hold one binary's runs, and two different binaries: {binaries}")
+    for d, summary, runs in ((a.baseline, bs, br), (a.candidate, cs, cr)):
+        for case, entry in summary.items():
+            values = [r[entry["metric"]] for r in runs.get(case, [])]
+            if len(values) < 3 or statistics.median(values) != entry["median"]:
+                sys.exit(f"speed_report: {d} {case}: {len(values)} runs, median {statistics.median(values) if values else None}"
+                         f" against the summary's {entry['median']}")
     lines, ok_all = [], True
     cases = sorted(set(bs) | set(cs))
     if set(bs) != set(cs): lines.append(f"cases differ: baseline {sorted(bs)}, candidate {sorted(cs)}"); ok_all = False

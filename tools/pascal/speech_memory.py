@@ -8,7 +8,8 @@ a sentence, seeds 1..ROWS; sent 0.5 s apart, each again after a 429 frontend_bus
 configuration starts SETTLE (20) seconds after the first, and the configuration counts only if every speech request was still running when
 its text requests ended. A sixth configuration is audio
 in at the request limits beside text at its limits: the single text session (TOTAL) filled and resident, then one clip
-as long as the 4 MiB body allows (LibriSpeech utterances joined, 16 kHz 16-bit; transcribed, 64 new tokens) sent three
+as long as the 4 MiB body allows (LibriSpeech utterances joined, the last cut to fill it, 16 kHz 16-bit: 98.2 s;
+transcribed, 64 new tokens) sent three
 times in turn, while ROWS - 1 speech rows generate; it counts only if every audio request succeeded while the session
 was open, and every speech row was still running when the last one ended. (Red-team review: the earlier version sent
 the clip with the speech load, 20 s before the text session existed, so the two were never resident together.) Whole-card memory every 0.2 s (nvidia-smi);
@@ -67,15 +68,21 @@ class Sampler:
         self.stop.set(); self.thread.join(); return self.peak
 
 
+CLIP_BUDGET = ((4 * 1024 * 1024 - 4096) * 3 // 4 - 44) // 2 * 2  # PCM bytes: the base64 body within 4 MiB, 4 KiB for the JSON
+
+
 def long_clip():
-    """LibriSpeech utterances joined (sorted names) while the base64 /speech body stays under 4 MiB."""
-    frames, budget = [], (4 * 1024 * 1024 - 4096) * 3 // 4 - 44
+    """LibriSpeech utterances joined (sorted names), the last one cut, to fill the 4 MiB /speech body: 16 kHz 16-bit mono
+    is the densest format the server takes (lfm/wav.hpp; 16 kHz only), so this is the longest clip a request carries.
+    (Red-team-2 D1: the earlier version stopped at the first utterance that did not fit, 88% of the budget.)"""
+    pcm = bytearray()
     for w in sorted(libri.glob("*.wav")):
         with wave.open(str(w)) as f:
             assert (f.getframerate(), f.getnchannels(), f.getsampwidth()) == (16000, 1, 2), w
-            data = f.readframes(f.getnframes())
-        if sum(map(len, frames)) + len(data) > budget: break
-        frames.append(data)
+            pcm += f.readframes(f.getnframes())
+        if len(pcm) >= CLIP_BUDGET: break
+    assert len(pcm) >= CLIP_BUDGET, f"LibriSpeech holds {len(pcm)} bytes, fewer than the clip's {CLIP_BUDGET}"
+    frames = [bytes(pcm[:CLIP_BUDGET])]
     buf = io.BytesIO()
     with wave.open(buf, "wb") as f:
         f.setnchannels(1); f.setsampwidth(2); f.setframerate(16000); f.writeframes(b"".join(frames))
@@ -114,7 +121,6 @@ def post_once(body, result):
 
 
 try:
-    idle = Sampler(); time.sleep(1); report["before_mib"] = idle.done()
     sid = client.call("POST", "/sessions", dict(capacity=min(4096, total)))["session_id"]  # the calibration (TOTAL may be less)
     n = {}
     for r in ((1, 11) if total >= 4096 else (1, 3)):
@@ -122,10 +128,15 @@ try:
         n[r] = client.call("POST", "/generate", dict(session_id=sid, messages=text(r), max_new_tokens=1))["consumed_tokens"]
     hi = max(n); b = (n[hi] - n[1]) / (hi - 1); a = n[1] - b
     client.call("POST", f"/sessions/{sid}/close", {})
+    # Idle after the warm requests (the weights resident): every configuration's peak must be above it (red-team-2 D7:
+    # sampled before the first request, the idle figure was 2 MiB and the check could not fail).
+    idle = Sampler(); time.sleep(2); report["before_mib"] = idle.done(); report["before_samples"] = len(idle.rows)
+    assert len(idle.rows) >= 3 and report["before_mib"] > 1024, f"idle sample {report['before_mib']} MiB ({len(idle.rows)} samples)"
     report["calibration"] = {f"tokens_at_{k}": v for k, v in n.items()}
     def fill(capacity): return max(1, int((capacity - 33 - a) // b))
     clip = long_clip()
-    report["clip"] = dict(bytes=len(clip), seconds=(len(clip) - 44) / 32000)
+    report["clip"] = dict(bytes=len(clip), seconds=(len(clip) - 44) / 32000, pcm_budget_bytes=CLIP_BUDGET)
+    assert len(clip) - 44 == CLIP_BUDGET
 
     def run_configuration(name, capacities, batch=False, speech_rows=rows, audio_in=False):
         global failed

@@ -8,7 +8,7 @@
 # Exit 0 only if every build and every requested variant succeeded.
 set -uo pipefail
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd); B=/workspace/build; out=arith-v1; fail=0
-unset LFM_TCM_ROWS LFM_TCM_SITES LFM_ONCE_ROWS LFM3_COMPACT_WINDOWS LFM3_PREFILL_HEADS  # nothing inherited from the caller
+unset LFM_TCM_ROWS LFM_TCM_SITES LFM_ONCE_ROWS LFM3_COMPACT_WINDOWS LFM3_PREFILL_HEADS EXTRA_FLAGS  # nothing inherited from the caller
 build() { "$repo/tools/pascal/build_text.sh" "$1" | grep -v links || { echo "build $1 FAILED"; exit 1; }; }
 build ar-plain
 EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL build ar-exact

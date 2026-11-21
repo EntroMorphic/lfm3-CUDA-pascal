@@ -16,13 +16,13 @@ for request in "$fx"/*.request.json; do
     echo $? > "$out/$name.$run.rc"
   done
 done
-python3 - "$fx/expected.json" "$out" "$runs" "$fx" "${1:-}" <<'PY'
+python3 - "$fx/expected.json" "$out" "$runs" "$fx" "$*" <<'PY'
 import json, sys, pathlib
 expected = json.load(open(sys.argv[1]))["generated_ids"]; out = pathlib.Path(sys.argv[2]); runs = int(sys.argv[3]); ok = True
 requests = sorted(p.name[:-len(".request.json")] for p in pathlib.Path(sys.argv[4]).glob("*.request.json"))
 if not expected or requests != sorted(expected):  # every request has an expectation and every expectation a request
     print(f"fixtures {requests} do not match expected.json's {sorted(expected)}"); ok = False
-sanitizer = "compute-sanitizer" in sys.argv[5]
+sanitizer = "compute-sanitizer" in sys.argv[5]  # anywhere in the wrapper (red-team-2 C8: `env ... compute-sanitizer`)
 for name, want in expected.items():
     got = []
     for run in range(1, runs + 1):

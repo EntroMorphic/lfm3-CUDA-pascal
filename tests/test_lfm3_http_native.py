@@ -447,9 +447,11 @@ def test_generate_batch(harness_binary):
             assert result["session_id"] == lane["session_id"] and len(result["generated_ids"]) == lane["max_new_tokens"]
             assert result["gpu_batching"] is True and result["paired_decode_calls"] == 6
         assert body["results"][1]["do_sample"] is True and body["results"][1]["seed"] == 9
-        for requests in ([lanes[0]], [lanes[0], lanes[0]], lanes + lanes[:1], [lanes[0], dict(lanes[1], max_new_tokens=0)]):
+        for requests in ([lanes[0]], [lanes[0], lanes[0]], lanes + lanes[:1], [lanes[0], dict(lanes[1], max_new_tokens=0)],
+                         [lanes[0], dict(lanes[1], max_new_tokens=4097)]):  # kBatchMaxNewTokens
             assert h.call("POST", "/generate_batch", {"requests": requests}) == (400, {"error": "invalid_request"})
         assert h.call("POST", "/generate_batch", {"requests": lanes, "x": 1}) == (400, {"error": "invalid_request"})
+        assert h.call("POST", "/generate_batch", {"requests": [dict(lane, max_new_tokens=4096) for lane in lanes]})[0] == 200
         assert h.call("POST", "/generate_batch", {"requests": [lanes[0], dict(lanes[1], session_id="Z" * 32)]}) == (
             404, {"error": "unknown_session"})
         # A busy peer refuses the whole group without touching either lease.

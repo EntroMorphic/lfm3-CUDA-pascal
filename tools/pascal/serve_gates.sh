@@ -38,10 +38,12 @@ W=$T/pascal/check_lfm3_worker_8gb.py; G=$T/check_lfm3_batch_worker.py; S=$T/chec
 REQ=$I/generation-request.json; LONG=$I/decode_into32768.request.json; O=$out
 PY=${PY:-/workspace/build/venv-ref/bin/python}; "$PY" -m pip freeze > "$out/python-freeze.txt" || exit 2
 export LFM_ALLOCATION_METRICS=1
-failed=0; : > "$out/status.txt"
+failed=0; ran=0; : > "$out/status.txt"
+ALL_STAGES="sampling worker grouped-worker server cancellation http-cancellation http-batch native-server"
+for s in ${STAGES:-}; do [[ " $ALL_STAGES " == *" $s "* ]] || { echo "unknown stage $s (stages: $ALL_STAGES)"; exit 2; }; done
 # STAGES (optional, space-separated stage names): run only those (speech-v1 decision 11: the stages whose binaries changed)
 run() { local s=$1; shift; [ -n "${STAGES:-}" ] && [[ " $STAGES " != *" $s "* ]] && return 0
-  local t0=$(date +%s); "$PY" "$@" > "$out/$s.log" 2>&1; local rc=$?
+  ran=$((ran + 1)); local t0=$(date +%s); "$PY" "$@" > "$out/$s.log" 2>&1; local rc=$?
   echo "$s rc=$rc $(( $(date +%s) - t0 )) s" | tee -a "$out/status.txt"; [ $rc = 0 ] || failed=1; }
 run sampling          $T/check_lfm3_sampling.py --checkpoint $CK --binary $N/liquid-lfm3 --request $REQ --oracle $N/text-sampling-oracle --output $O/sampling
 run worker            $W --checkpoint $CK --worker $N/liquid-lfm3-worker --single $N/liquid-lfm3 --request $REQ --long-request $LONG --oracle $N/text-sampling-oracle --output $O/worker
@@ -51,5 +53,6 @@ run cancellation      $T/check_lfm3_cancellation.py --checkpoint $CK --worker $N
 run http-cancellation $T/check_lfm3_http_cancellation.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/http-cancellation
 run http-batch        $T/check_lfm3_http_batch.py --checkpoint $CK --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/http-batch --require-exact-accounting
 run native-server     $S --checkpoint $CK --server $N/liquid-lfm3-server --worker $N/liquid-lfm3-worker --control-result $CTL_RES --output $O/native-server
+[ $ran -gt 0 ] || { echo "SERVE GATES FAIL ($tag: no stage ran)"; exit 1; }
 [ $failed = 0 ] && echo "SERVE GATES PASS ($tag, control $control${STAGES:+, stages: $STAGES})" || echo "SERVE GATES FAIL ($tag, control $control${STAGES:+, stages: $STAGES})"
 exit $failed

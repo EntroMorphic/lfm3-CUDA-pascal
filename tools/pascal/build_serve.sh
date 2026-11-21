@@ -14,7 +14,8 @@ out=/workspace/build/$tag
 L=/workspace/build/ljt-3.2.0
 bash "$here/../build_libjpeg_turbo.sh" "$L" > /dev/null
 cd "$out"
-rm -f liquid-lfm3-worker liquid-lfm3-server text-sampling-oracle serve-binaries.sha256 image_*.o
+rm -f lfm3-speech liquid-lfm3-worker liquid-lfm3-server text-sampling-oracle image_*.o \
+  serve-binaries.sha256 serve-sources.sha256 serve-flags.txt speech-binaries.sha256 speech-sources.sha256 speech-flags.txt  # either script's records
 (cd "$N" && sha256sum src/lfm3_worker.cu src/lfm3_server.cu src/lfm3_decode_batch.cuh src/image_decode.cpp \
   src/image_preprocess.cpp tests/text_sampling_oracle.cpp) > serve-sources.sha256
 flags=(-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM -DLFM3_TEXT_ONLY=1

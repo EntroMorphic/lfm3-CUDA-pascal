@@ -39,4 +39,5 @@ aarch64), the disagreement is measured and one machine is declared the reference
 
 Departures are deliberate, decided with the project owner, and recorded with their reason — for example, the image
 front end shows 16-bit PNGs at full precision and refuses PNGs whose checksums fail, where the reference shows damaged
-pixels ([images-v1](../validation/images-v1/)).
+pixels (the Thor engine's images-v1, not imported here). In this port, for example, prompt position 0 is computed
+with the tensor-core arithmetic in the shipping build ([PLAN.md](../PLAN.md) decision 5).

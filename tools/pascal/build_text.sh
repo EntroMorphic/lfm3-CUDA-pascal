@@ -5,10 +5,9 @@ set -euo pipefail
 tag=${1:?usage: build_text.sh TAG}
 N=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../native" && pwd)
 out=/workspace/build/$tag
-mkdir -p "$out" && cd "$out"
+mkdir -p "$out"; cd "$out"  # separate commands: errexit does not stop at a failure inside an && list
 # EXTRA_FLAGS: e.g. -DLFM_GEMM_TENSOR_CORE_MODEL for the validation build with Blackwell's tensor-core arithmetic.
 flags=(-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM ${EXTRA_FLAGS:-} -I "$N/include")
-echo "flags: ${flags[*]}" > /dev/null
 rm -f liquid-lfm3 lfm3-score binaries.sha256  # a failed build must not leave an older binary beside the new record
 (cd "$N" && sha256sum src/lfm3_main.cu apps/lfm3_score.cu src/safetensors.cpp include/lfm/*.hpp include/lfm/*.cuh) > sources.sha256
 printf "%s\n" "${flags[*]}" > flags.txt; nvcc --version | tail -2 > toolchain.txt; gcc --version | head -1 >> toolchain.txt

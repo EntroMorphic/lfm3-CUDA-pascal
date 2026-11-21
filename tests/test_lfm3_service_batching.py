@@ -75,7 +75,7 @@ def test_one_group_independent_policies_and_eos(service):
     assert a in service.sessions and b not in service.sessions
 
 
-@pytest.mark.parametrize("kind", ["duplicate", "sampling", "count", "messages", "unknown"])
+@pytest.mark.parametrize("kind", ["duplicate", "sampling", "count", "batch-count", "messages", "unknown"])
 def test_bad_second_lane_no_native_no_lease_leak(service, kind):
     a, b = create(service), create(service)
     body = batch(a, b)
@@ -85,6 +85,8 @@ def test_bad_second_lane_no_native_no_lease_leak(service, kind):
         body["requests"][1]["sampling"] = {"seed": True}
     elif kind == "count":
         body["requests"][1]["max_new_tokens"] = True
+    elif kind == "batch-count":  # above the batch's bound (lfm3_server.py; lfm3_http.hpp kBatchMaxNewTokens)
+        body["requests"][1]["max_new_tokens"] = 4097
     elif kind == "messages":
         body["requests"][1]["messages"] = [{"role": "invalid", "content": "bad"}]
     else:

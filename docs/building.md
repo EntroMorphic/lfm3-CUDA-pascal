@@ -1,6 +1,26 @@
 # Building and running
 
-## Target
+## On the GTX 1080 (this port)
+
+| | |
+|---|---|
+| Hardware | NVIDIA GeForce GTX 1080 (Pascal, `sm_61`), 8 GB |
+| Toolchain | CUDA 12.9 (`nvcc` 12.9.86; CUDA 13 no longer targets `sm_61`), GCC 13.3, C++20, in an LXD container ([phase0-foundations-v1](../validation/phase0-foundations-v1/)) |
+| Flags | `-O3 --fmad=false -std=c++20 -arch=sm_61 -Wno-deprecated-gpu-targets -DLFM3_NATIVE_GEMM` |
+
+The builds are the scripts in `tools/pascal/`, not CMake: `build_text.sh TAG` (`liquid-lfm3`, `lfm3-score`),
+`build_serve.sh TAG` (and the text-only `liquid-lfm3-worker` and `liquid-lfm3-server`, `-DLFM3_TEXT_ONLY=1`) and
+`build_speech.sh TAG` (and `lfm3-speech`, with the worker and server built with speech, `-DLFM3_TEXT_ONLY=0
+-DLFM3_VISION=0`). Each writes `/workspace/build/TAG/` with the binaries, their SHA-256, the flags, the toolchain and
+the hashes of every source; `EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL` gives the parity build (PLAN decision 4; on the
+Thor engine "parity" meant the cuBLAS build below, which this port does not build). The checkpoint is expected at
+`/workspace/models/LFM3-Omni-2B`. `tools/pascal/remote.sh` syncs this repository to the card's machine and runs the
+scripts there (`tools/pascal/target.env`, from `target.env.example`). `native/CMakeLists.txt` is the Thor engine's:
+it sets `sm_110` per target and has no targets for `lfm3-score` or `lfm3-speech`, so it does not build for this card.
+
+The rest of this page is the Thor engine's, as imported.
+
+## Target (the Thor engine)
 
 | | |
 |---|---|

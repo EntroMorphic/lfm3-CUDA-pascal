@@ -454,6 +454,10 @@ class Service:
         bodies = body["requests"]
         for item in bodies:
             self._validate_generation(item)
+        # The batch is one engine call (prefill and every step), bounded by the worker's deadline: as the native
+        # server (lfm3_http.hpp kBatchMaxNewTokens), at most 4,096 new tokens a lane.
+        if any(item["max_new_tokens"] > 4096 for item in bodies):
+            raise ValueError("batch max_new_tokens above 4096")
         sids = [item["session_id"] for item in bodies]
         if sids[0] == sids[1]:
             raise ValueError("duplicate batch session")

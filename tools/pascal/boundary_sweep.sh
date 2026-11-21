@@ -41,6 +41,11 @@ PY
   "$@" "$bin" --experimental $M "$d/request.json" "$d/native.json" > "$d/log" 2>&1; local rc=$?
   unset LFM3_COMPACT_WINDOWS
   if [ $rc != 0 ]; then echo "$case.$side: exit $rc: $(tail -c 300 "$d/log" | tr '\n' ' ')"; rm -rf "$d/trace"; return 1; fi
+  # Under compute-sanitizer its own summary decides, whatever the exit status (red-team-2 C8); its log is kept.
+  if [[ " $* " == *compute-sanitizer* ]]; then
+    cp "$d/log" "$out/$case.$side.sanitizer.log"
+    grep -q "ERROR SUMMARY: 0 errors" "$d/log" || { echo "$case.$side: the sanitizer's log has no 'ERROR SUMMARY: 0 errors'"; rm -rf "$d/trace"; return 1; }
+  fi
   python3 - "$d" "$out/$case.$side.json" <<'PY'
 import hashlib, json, os, sys
 d, dest = sys.argv[1:3]; native = json.load(open(d + "/native.json"))

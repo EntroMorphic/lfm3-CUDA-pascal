@@ -1,1 +1,1 @@
-rule 9 (2026-11-21, development machine): the key's shipping_source_sha256 entries: 10; found among the final shipping build's seed-1 clips (sp-v1/rule9-shipping-clips.sha256, 11 clips: the ten cases and tts-long-male unsplit): 10 of 10
+rule 9 (2026-11-21, development machine; tools/pascal/rule9_key_check.py KEY FINAL, case by case): rule 9: 10 of 10 cases' shipping clips equal the final build's. FINAL (the final build's seed-1 clips' SHA-256, sp-v1/rule9-shipping-clips.sha256 on the card) is not committed until the owner's verdicts are in (red-team-2 D4)

@@ -1,0 +1,5 @@
+length 256: position 1 equal to the Thor engine's in 1160 of 1160 windows; positions 2+ equal in 0.3% of values (information)
+length 257: position 1 equal to the Thor engine's in 1155 of 1155 windows; positions 2+ equal in 0.3% of values (information)
+length 4096: position 1 equal to the Thor engine's in 72 of 72 windows; positions 2+ equal in 0.8% of values (information)
+length 32768: position 1 equal to the Thor engine's in 9 of 9 windows; positions 2+ equal in 1.0% of values (information)
+POSITION 1 (text-correct-v2 rule 4) PASS

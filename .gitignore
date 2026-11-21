@@ -20,4 +20,5 @@ outputs/
 /reference/
 
 # The target machine's addresses (see tools/pascal/target.env.example)
-tools/pascal/target.env
+tools/pascal/target.env*
+!tools/pascal/target.env.example

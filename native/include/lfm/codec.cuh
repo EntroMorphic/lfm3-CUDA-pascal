@@ -323,7 +323,8 @@ class Decoder {
     stream_ = s;
   }
 
-  // Device bytes the decoder holds: the codec checkpoint (encoder included) and its own buffers.
+  // Device bytes the decoder uses: the codec checkpoint (encoder included; shared by every decoder built from the same
+  // loaded checkpoint, so a sum over decoders counts it once per decoder) and its own buffers.
   size_t device_bytes() const {
     size_t n = weights_->device_bytes() + basis_.bytes() + codes_.bytes() + latents_.bytes() + quantized_.bytes() +
                embedded_.bytes() + hidden_.bytes() + normed_.bytes() + mixed_.bytes() + projected_.bytes() +

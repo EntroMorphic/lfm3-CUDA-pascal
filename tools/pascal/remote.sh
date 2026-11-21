@@ -9,6 +9,8 @@
 # COMMAND runs with bash -l as uid 1000 in /workspace/lfm3-CUDA-pascal (this repository). Next to it:
 # /workspace/models (checkpoints), /workspace/data, /workspace/build (build outputs; never synced or deleted).
 # The exit status is COMMAND's. A sync whose tree hash differs between the two ends fails before anything runs.
+# Only what git does not ignore is synced (outputs/, the owner's listening sets and keys among what is not), and the
+# main tree is not synced while a detached job (a NAME.log without its NAME.rc) is running from it.
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 repo=$(cd "$here/../.." && pwd)
@@ -23,8 +25,8 @@ ssh_opts=(-o BatchMode=yes -o ServerAliveInterval=30 -o ConnectTimeout=15)
 # What is not part of the synced tree: these paths at the top of the repository, and these names at any depth. The
 # same lists drive rsync and both tree hashes. The hash covers the contents of regular files (the tree has no
 # symbolic links); it is of the working tree, so the line printed after a sync also says which commit that is.
-excludes_top=(.git reference build tools/pascal/target.env)
-excludes_any=(__pycache__ .pytest_cache '*.pyc')
+excludes_top=(.git reference build native/build outputs .vscode .idea tools/pascal/target.env)
+excludes_any=(__pycache__ .pytest_cache '*.pyc' '*.swp' .DS_Store '*.safetensors' '*.bf16')
 
 on_host() {  # runs "$1" in a shell on the GPU host, stdin passed through
   ssh "${ssh_opts[@]}" -p "$PASCAL_JUMP_PORT" "$PASCAL_JUMP" \
@@ -40,8 +42,27 @@ tree_hash_cmd() {
   echo "find . \\( ${prune[*]} \\) -prune -o -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1"
 }
 
+# Every file git ignores must be in the excludes above: refuse otherwise (a new ignored path would be synced).
+check_ignored() {
+  local left
+  left=$(cd "$repo" && git ls-files -oi --exclude-standard --directory | grep -vE \
+    '^(\.git|reference|build|native/build|outputs|\.vscode|\.idea)/|^tools/pascal/target\.env$|(^|/)(__pycache__|\.pytest_cache)/|\.(pyc|swp|safetensors|bf16)$|(^|/)\.DS_Store$' || true)
+  [ -z "$left" ] || { printf 'remote.sh: git-ignored but not excluded from the sync:\n%s\n' "$left" >&2; exit 2; }
+}
+
+# A detached job reads the main tree while it runs: no sync of it until every job has its .rc.
+check_no_job() {
+  [ "$name" = lfm3-CUDA-pascal ] || return 0
+  local running
+  running=$(on_host "cd $PASCAL_HOST_WORKSPACE/build/jobs 2>/dev/null || exit 0; for l in *.log; do [ -e \"\$l\" ] || continue; [ -e \"\${l%.log}.rc\" ] || echo \"\${l%.log}\"; done" </dev/null)
+  [ -z "$running" ] || { echo "remote.sh: job(s) still running from the main tree, not syncing: $running" >&2; exit 2; }
+}
+
+synced=""
 sync() {
   local rs=() e cmd local_hash remote_hash mode commit
+  check_ignored
+  check_no_job
   for e in "${excludes_top[@]}"; do rs+=(--exclude "/$e"); done
   for e in "${excludes_any[@]}"; do rs+=(--exclude "$e"); done
   commit=$(cd "$repo" && git rev-parse --short HEAD 2>/dev/null || echo "no commit")
@@ -55,7 +76,8 @@ sync() {
     local_hash=$(cd "$repo" && eval "$cmd")
     remote_hash=$(on_host "mkdir -p $PASCAL_HOST_WORKSPACE/build && cd $PASCAL_HOST_WORKSPACE/$name && $cmd" </dev/null)
     if [ "$local_hash" = "$remote_hash" ] && [ ${#local_hash} -eq 64 ]; then
-      echo "remote.sh: synced, tree sha256 $local_hash (both ends); $commit" >&2; return 0
+      synced="tree sha256 $local_hash; $commit"
+      echo "remote.sh: synced, $synced (both ends)" >&2; return 0
     fi
     echo "remote.sh: tree differs after rsync $mode (local=$local_hash remote=$remote_hash)" >&2
   done
@@ -71,8 +93,10 @@ run() {
 
 detach() {  # NAME COMMAND: survives this connection; NAME.rc appears when it ends
   local name=$1 jobs=$PASCAL_HOST_WORKSPACE/build/jobs
-  on_host "mkdir -p $jobs && test ! -e $jobs/$name.log" </dev/null || { echo "remote.sh: job $name exists" >&2; exit 2; }
-  printf '%s\n' "$2" | on_host "cat > $jobs/$name.sh"
+  [[ $name =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || { echo "remote.sh: job name must be [A-Za-z0-9._-]" >&2; exit 2; }
+  on_host "mkdir -p $jobs && test ! -e $jobs/$name.log && test ! -e $jobs/$name.rc" </dev/null || { echo "remote.sh: job $name exists" >&2; exit 2; }
+  # The job's first line: the tree it was started on (the sync just done).
+  printf '%s\n' "echo $(printf '%q' "remote.sh: $synced")" "$2" | on_host "cat > $jobs/$name.sh"
   on_host "nohup sh -c 'sudo lxc exec $PASCAL_CONTAINER --user 1000 --group 1000 --cwd /workspace/$name_repo --env HOME=/home/ubuntu -- bash -l /workspace/build/jobs/$name.sh </dev/null > $jobs/$name.log 2>&1; echo \$? > $jobs/$name.rc' > /dev/null 2>&1 &" </dev/null
   echo "remote.sh: started $name; log /workspace/build/jobs/$name.log" >&2
 }
@@ -80,7 +104,10 @@ detach() {  # NAME COMMAND: survives this connection; NAME.rc appears when it en
 case "${1:-}" in
   sync) sync ;;
   run)  [ $# -eq 2 ] || { echo "usage: remote.sh run 'COMMAND'" >&2; exit 2; }; sync; run "$2" ;;
-  detach) [ $# -eq 3 ] || { echo "usage: remote.sh detach NAME 'COMMAND'" >&2; exit 2; }; sync; detach "$2" "$3" ;;
+  detach) [ $# -eq 3 ] || { echo "usage: remote.sh detach NAME 'COMMAND'" >&2; exit 2; }
+          # the job scripts cd to /workspace/lfm3-CUDA-pascal: a job from another tree would run the main tree's tools
+          [ "$name" = lfm3-CUDA-pascal ] || { echo "remote.sh: detach runs from the main tree only (PASCAL_TREE unset)" >&2; exit 2; }
+          sync; detach "$2" "$3" ;;
   exec) [ $# -eq 2 ] || { echo "usage: remote.sh exec 'COMMAND'" >&2; exit 2; }; run "$2" ;;
   *) sed -n '2,11p' "${BASH_SOURCE[0]}" >&2; exit 2 ;;
 esac

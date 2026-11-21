@@ -15,6 +15,8 @@ client does):
   capacity  one unsplit prompt of ~4,000 tokens with max_new_tokens 1,536: over the
             chunk's 4,096 (kSpeechCapacity)                                            400 invalid_request
   clips     65 audio clips of 0.1 s (kSpeechMaxClips 64)                               400 invalid_request
+            (and first the same request with 64 clips, which must answer 200: so the count is what refuses the 65;
+            red-team-2 D6, as every exception is a 400 invalid_request)
   body      a body of 4 MiB + 1 with no image part (kMaxBody)                            413 body_limit
   body-16   a declared Content-Length of 16 MiB + 1 (kMaxSpeechBody), headers only       413 body_limit
   queue     with the speech rows busy and the queue full (queue_size requests waiting),
@@ -124,6 +126,12 @@ try:
     refused("capacity", (400, "invalid_request"), speech(dict(messages=[{"role": "system", "content": TTS},
             {"role": "user", "content": " ".join(["lighthouse keeper"] * 1400)}], mode="audio", max_new_tokens=1536, seed=1,
             split=False)))
+    clips64 = speech(dict(messages=[{"role": "system", "content": "Perform ASR in English."},
+            {"role": "user", "content": [{"type": "audio", "audio": clip(0.1)} for _ in range(64)]}], mode="text",
+            max_new_tokens=16, seed=0))
+    report["clips_64"] = dict(status=clips64[0], error=clips64[1].get("error"))
+    ok &= clips64[0] == 200
+    print(f"rule 13 clips-64 control: {clips64[0]} (expected 200):", "ok" if clips64[0] == 200 else "FAIL", flush=True)
     refused("clips", (400, "invalid_request"), speech(dict(messages=[{"role": "system", "content": "Perform ASR in English."},
             {"role": "user", "content": [{"type": "audio", "audio": clip(0.1)} for _ in range(65)]}], mode="text",
             max_new_tokens=16, seed=0)))

@@ -80,14 +80,17 @@ struct Problem {
   float* workspace = nullptr;
   size_t workspace_size = 0;  // bytes
   // Use the prefill kernel whatever m is: for a block of rows of a larger prefill, whose last block may have
-  // 8 rows or fewer. Every output then has the arithmetic it has when the prefill is one call.
+  // 8 rows or fewer. Every output then has the arithmetic it has when the prefill is one call. The parity build
+  // sets it only where the Thor engine made one call (the MLP's blocks, which this port added); its attention and
+  // scorer tiles are the Thor engine's own, whose short last tile takes the decode kernels.
   bool wide = false;
   // Which part of the model this product belongs to (kSite*), for experiments that give parts of the model different
   // prefill arithmetic (validation/prefill-arithmetic-v1). It never changes what the default builds compute.
   int site = 0;
   // The prompt position of row 0, for a product whose rows are the positions of a text prompt; -1 for any other
   // product (the default). The prefill kernel gives position 0 the tensor-core arithmetic (see the top of this
-  // file), so only the text runner's prefill sets this; a block of a prompt's rows carries its first position.
+  // file), so only the text runner (its prefill and the scorer's logit tiles) sets this; a block of a prompt's rows
+  // carries its first position.
   int row0 = -1;
   // Set by this file only, on the launch that recomputes position 0 over the plain kernel's result: an output the
   // plain kernel left non-finite is kept (the tensor-core model does not cover infinities and NaN).
@@ -872,10 +875,10 @@ __global__ void __launch_bounds__(kWideTX * TY) wide_once_kernel(Problem p) {
 }
 #endif
 
-// The prefill tiles. Plain kernel: 8 x 4 outputs per thread. Exact kernel: 2 x 2 (measured on the GTX 1080: it is
-// bound by its arithmetic, not its loads, and larger patches run slower). The block's height follows the row count
-// so that a short prefill computes fewer rows of padding; the smallest block is 4 patches high, so the launch that
-// recomputes position 0 alone computes 8 rows for one (its cost is PLAN's first item for phase 2).
+// The prefill tiles of the old plain kernel (8 x 4 outputs per thread; built only with -DLFM_GEMM_WIDE2=0: the plain
+// kernel is wide2_kernel, below) and of the exact kernel (2 x 2: measured on the GTX 1080, it is bound by its
+// arithmetic, not its loads, and larger patches run slower). The block's height follows the row count so that a
+// short prefill computes fewer rows of padding. Position 0 is recomputed by launch_first_row_model, one row.
 // LFM_GEMM_WIDE_RM / _RN override the old plain kernel's patch (used only with -DLFM_GEMM_WIDE2=0) and LFM_GEMM_MODEL_RM / _RN the exact
 // kernel's, for measurement.
 #ifndef LFM_GEMM_WIDE_RM

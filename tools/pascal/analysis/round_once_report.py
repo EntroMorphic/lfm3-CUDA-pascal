@@ -3,6 +3,7 @@ over the whole window, and its mean |NLL - NLL_FP32| per token.
     python3 tools/pascal/analysis/round_once_report.py LENGTH NAME=FILE...     (one NAME must be fp32)
 Each FILE needs its .meta.json beside it (as the scorers write it): the length it records must be LENGTH and every
 file must have scored the same windows, or the positions would not be the ones the columns are named for."""
+import hashlib
 import json, sys
 import numpy as np
 L = int(sys.argv[1]); files = dict(a.split("=", 1) for a in sys.argv[2:])
@@ -12,6 +13,8 @@ def load(path):
     meta = json.load(open(path[:-len(".f32")] + ".meta.json"))
     if meta["length"] != L: sys.exit(f"{path}: scored windows of {meta['length']} tokens, not {L}")
     windows.add(meta["windows_sha256"])
+    if "nll_sha256" in meta and hashlib.sha256(open(path, "rb").read()).hexdigest() != meta["nll_sha256"]:
+        sys.exit(f"{path}: not the file its .meta.json records (nll_sha256)")  # red-team-2 C9
     x = np.fromfile(path, dtype=np.float32).astype(np.float64)
     if x.size % (L - 1) or not np.isfinite(x).all(): sys.exit(f"{path}: not whole windows of {L - 1} finite values")
     return x.reshape(-1, L - 1)
