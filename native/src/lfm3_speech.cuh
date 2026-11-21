@@ -177,9 +177,11 @@ class Batch {
     // every row's mask defined from the start: the greedy pick reads all rows (a frame row's pick is unused)
     cuda_check(cudaMemset(suppress_dev_.p, 0, size_t(rows) * runner.s.vocabulary));
     dec_.defer_head = true;  // the head only on steps with a text pick (validation/speech-speed-v1)
+    // One codec checkpoint for every row (Pascal port, speech-v1: each row loaded its own 147 MB copy)
+    const auto codec_weights = std::make_shared<lfm::Safetensors>(model_dir + "/audio_tokenizer/model.safetensors");
     for (int r = 0; r < rows; ++r) {
       streams_.push_back(std::make_unique<CodecStream>());
-      codecs_.push_back(std::make_unique<lfm::codec::Decoder>(model_dir + "/audio_tokenizer", 12));
+      codecs_.push_back(std::make_unique<lfm::codec::Decoder>(codec_weights, 12));
       codecs_.back()->set_stream(streams_.back()->s);
     }
   }

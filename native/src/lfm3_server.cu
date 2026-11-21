@@ -7,13 +7,17 @@
 //                      [--max-sessions N] [--queue-size N] [--handlers N] [--speech-rows N] [--image-cache-mb N]
 // --image-cache-mb (0..65536, default 512; 0: none): validation/image-cache-v1's budget for each side's image cache (the
 // front end's token counts, the engine's encoder rows on the GPU), keyed by an image's full bytes
-// --speech-rows (1..16, the most validated; default 8): /speech requests generated at once in the engine's speech batch
-// (validation/speech-batch-v1); more wait in the queue (--queue-size of them). Without --handlers, the server takes
+// --speech-rows (1..16, the most validated; default 1 on the GTX 1080, validation/speech-v1 rule 12: with text at its
+// limits, one row is what fits in 7,740 MiB; the reference's default was 8): /speech requests generated at once in the
+// engine's speech batch (validation/speech-batch-v1); more wait in the queue (--queue-size of them).
+// --total-capacity: default 32,768 (serve-v1 rule 11), or kSpeechTotalCapacity when the engine serves speech (speech-v1
+// rule 12: the speech weights and one row leave room for that much). Without --handlers, the server takes
 // max(8, 2 x speech rows) handlers: at most half of them stream at once (Service::speech_stream), so every row can.
 // The bearer token comes from --token-file (an owned mode-0600 file), or LFM3_SERVER_TOKEN, or else the default file
 // ~/.config/liquid-lfm3/token ($XDG_CONFIG_HOME/liquid-lfm3/token), created with a random token on first start and
 // reused after; tools/lfm3_token.py reads the same file for clients. --port 0
-// picks a free port. Once listening, one line {"ready":true,"port":N} is written to stdout. SIGTERM or
+// picks a free port. Once listening, one line {"ready":true,"port":N,"total_capacity":N,"speech_rows":N} is written to
+// stdout (speech_rows 0: speech not served). SIGTERM or
 // SIGINT stops admission, cancels running generations at their next token boundary, and exits 0; a
 // second signal exits at once (status 1). An engine call longer than --engine-timeout (default 300 s,
 // the Python worker client's) fails the server closed: every request then gets 503; restart it.
@@ -27,6 +31,9 @@
 #include <pthread.h>
 
 namespace {
+// validation/speech-v1 rule 12: the largest multiple of 1,024 at which serve-v1 rule 11's configurations, scaled, pass
+// beside one speech row on the GTX 1080 (sp-dev10).
+constexpr int kSpeechTotalCapacity=31744;
 
 class CoreBackend final : public lfm::http::Backend {
  public:
@@ -86,7 +93,7 @@ int main(int argc,char** argv) try {
   if(argc<3 || argc%2!=1 || std::string(argv[1])!="--experimental")
     throw std::runtime_error("usage: liquid-lfm3-server --experimental MODEL_DIRECTORY [--token-file FILE] [--port N] ...");
   const std::string directory=argv[2];
-  std::string token_path;int port=8080,speech_rows=8;
+  std::string token_path;int port=8080,speech_rows=1;
   lfm::http::Settings settings;
   std::set<std::string> seen;
   for(int i=3;i<argc;i+=2) {
@@ -123,6 +130,10 @@ int main(int argc,char** argv) try {
 
   CoreBackend backend(directory);
   backend.core().set_speech_rows(speech_rows);
+  if(!seen.count("--total-capacity") && backend.core().speech_supported()) {
+    settings.total_capacity=kSpeechTotalCapacity;
+    settings.validate();
+  }
   backend.core().set_image_cache_mb(settings.image_cache_mb);
   lfm::http::Policy policy;
   policy.vocabulary=backend.core().vocabulary();
@@ -151,7 +162,8 @@ int main(int argc,char** argv) try {
     sigwait(&signals,&received);
     std::_Exit(1);
   });
-  std::cout<<"{\"ready\":true,\"port\":"<<server->port()<<"}\n"<<std::flush;
+  std::cout<<"{\"ready\":true,\"port\":"<<server->port()<<",\"total_capacity\":"<<settings.total_capacity
+           <<",\"speech_rows\":"<<policy.speech_rows<<"}\n"<<std::flush;
   server->serve();
   // Admission is closed: fail queued work, cancel running generations at their next token boundary,
   // wait for the engine owner, then give handlers one socket timeout to deliver their replies.

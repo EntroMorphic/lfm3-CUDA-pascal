@@ -18,6 +18,9 @@ the reference's speed rounds set no quality gate).
 Decision 9 (PLAN, 2026-11-20). The owner, on where the speech scorer runs: "Let's run it on the GTX while the GTX is
 free." Whisper large-v3 at the reference's pinned revision runs on the card, never while the engine runs.
 
+Decision 10 (PLAN, 2026-11-20, after development 11). The owner, on the reference checks' timing limits: record them,
+do not judge them (see the amendment under rule 11).
+
 ## Seen before the rules were set
 
 - **What does not compile for `sm_61`** (`nvcc` on `native/apps/lfm3_speech.cu`, 2026-11-20): the speech batch
@@ -52,6 +55,35 @@ free." Whisper large-v3 at the reference's pinned revision runs on the card, nev
   environment (`tools/pascal/setup_asr.sh`: torch 2.7.1 for CUDA 12.6, whose kernels include `sm_60`, Transformers
   5.22.1); the weights at the reference's pinned revision. A 64 x 64 FP16 product ran on the card; nothing has been
   transcribed.
+
+## Development (after the rules were set)
+
+Records in `records/` (the `dev*.sh` scripts here say what each run did).
+
+- **The codec checkpoint, shared** (development 9). Every row of the speech batch built its own codec decoder, and each
+  loaded its own copy of the codec checkpoint (147 MB; harmless on Thor's unified memory). On the card that made each
+  row cost about 245 MiB: the CLI ran out of memory past 12 rows, and through the server no number of rows passed
+  rule 12. Now one checkpoint is loaded and shared by the rows' decoders (`lfm/codec.cuh`, a constructor taking the
+  loaded checkpoint; `lfm3_speech.cuh`); the weights are only read, and each decoder keeps its own buffers. Host code
+  only. Both builds give the same 15 rule-3 WAVs byte for byte as before; the CLI's 41 concurrent requests at 8, 12
+  and 16 rows equal their alone runs, at 5,933, 6,287 and 6,703 MiB. A row now costs about 102 MiB.
+- **Rule 12's outcome** (developments 8 to 10, `tools/pascal/speech_memory.py`). With text at its limits, 8 rows peak
+  at 8,073 MiB, and even one row exceeds the limit at a total capacity of 32,768 (`/generate_batch` on 4,096 + 28,672:
+  7,745 MiB). Lowered as the rule says: one speech row, and the total capacity to 31,744, where every configuration
+  (scaled) passes beside one row (the batch at 7,693 MiB). Each 1,024 tokens of capacity is about 52 MiB, so each
+  further row would cost about 2,048 tokens of capacity; the owner kept the rule as written (2026-11-20, "Let's roll
+  with it as is"). The server defaults to `--speech-rows 1` and, when it serves speech, `--total-capacity 31744`
+  (32,768 without speech, as serve-v1 measured); its ready line reports both
+  (`{"ready":true,"port":N,"total_capacity":31744,"speech_rows":1}`). `--speech-rows` still accepts 1 to 16; more rows
+  than one fit beside smaller text sessions, not beside text at its limits.
+- **`/generate_batch` and speech.** A batch is an exclusive job: the server lets the running speech rows finish before
+  it runs (`lfm3_http.hpp`, `speech_first`). So that configuration of rule 12 cannot run beside generating rows; the
+  check counts it when the rows ran first, their batch still resident.
+- **Adaptations to the card** (rule 11, copies in `tools/pascal/` with their whole diffs):
+  `check_lfm3_audio_in_server.py` runs every `lfm3-speech` reference before the server starts (a second copy of the
+  model does not fit); `check_lfm3_speech_batch_server.py` runs its alone server as the same binary with
+  `--speech-rows 1` (there is no older single-request server) and gives `--speech-rows 8` to the servers that relied on
+  the reference's default of 8.
 
 ## Rules
 
@@ -108,6 +140,18 @@ Judged on the final phase 4 tree. "Parity build" and "shipping build" as in deci
     `check_lfm3_audio_in_server.py`, each against the same build's `lfm3-speech` (a served reply equals the CLI's,
     streamed equals whole, batched equals alone). Adaptations to the card, if any, as in serve-v1: a copy in
     `tools/pascal/` with its whole diff.
+
+    *Amendment (decision 10, owner, 2026-11-20, after development runs).* On the shipping build every output of the
+    five checks was exact (development 11), and three failed only by time, on limits set for Thor:
+    `check_lfm3_speech_server.py`'s worst case (512 chunks, 6,144 frames: 488 s against 240 s; its text control
+    then got 404 because the control's session sat idle past the 300 s session timeout), `check_lfm3_speech_stream.py`'s
+    no-gaps rule (the 14 interleaved cases, 0.3 to 1.4 s stalled each: interleaved runs a little slower than real
+    time on the card; TTS never stalls), and `check_lfm3_speech_batch_server.py`'s first audio under load (median
+    1.16 s against 1.0 s) and real time at 8 rows (one stall in one of 8 streams). The parity build is about three
+    times slower. Rule 11 is judged on everything but timing: `tools/pascal/judge_speech_server.py` reads each
+    check's report, applies its own criteria without the timing terms, and records every timing limit with its
+    figure. `tools/pascal/check_lfm3_speech_server.py` runs the server with `--session-idle-timeout 3600` and a
+    3,600 s client deadline on the worst cases, so its text control tests text rather than the idle timeout.
 12. Memory at the limits. Through the server: serve-v1 rule 11's five text configurations with every speech row
     generating at the same time, and audio in at the request limits. Peak device memory at most 7,740 MiB. If not,
     the default speech rows are lowered to the largest number at which every configuration passes; if one row does
@@ -118,7 +162,7 @@ Judged on the final phase 4 tree. "Parity build" and "shipping build" as in deci
 14. Memory safety: `compute-sanitizer` memcheck on `lfm3-speech` (one TTS case, one interleaved, one audio in, both
     builds): 0 errors, outputs identical to the plain run's.
 
-Not judged: speed. Recorded: the real-time factor of each case through the CLI, and through the server with 1 and 8
+Not judged: speed (nor, by decision 10, the reference checks' timing limits). Recorded: the real-time factor of each case through the CLI, and through the server with 1 and 8
 rows.
 
 ## Predictions

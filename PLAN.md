@@ -65,6 +65,14 @@ must not change.
    - *Build:* the batch decoder runs on `lfm::gemm`'s prefill kernel at every row count; vision stays out until
      phase 5 (`LFM3_VISION=0`).
 
+10. **Speech serving's timing** (2026-11-20, after phase 4's development runs; [speech-v1](validation/speech-v1/),
+    rule 11 amended). The reference's speech server checks carry Thor's timing limits (a 240 s worst case, no gaps in
+    a streamed player, first audio within 1.0 s under load). On the GTX 1080 every output of those checks is exact,
+    and some limits are missed by time alone. They are recorded, not judged (the owner chose this over lowering the
+    speech limits or failing the phase on them). Memory at the limits also set the server's defaults: one speech row,
+    and a total capacity of 31,744 tokens when speech is served (rule 12 as written; the owner: "Let's roll with it
+    as is").
+
 ## The constraint
 
 | | MiB |

@@ -200,7 +200,13 @@ class Decoder {
   // `codec_dir` holds the codec's model.safetensors (audio_tokenizer/). Calls decode at most `max_chunk_frames`
   // frames at a time.
   Decoder(const std::string& codec_dir, int max_chunk_frames)
-      : weights_(std::make_shared<Safetensors>(codec_dir + "/model.safetensors")), max_frames_(max_chunk_frames) {
+      : Decoder(std::make_shared<Safetensors>(codec_dir + "/model.safetensors"), max_chunk_frames) {}
+  // The checkpoint loaded once and shared by several decoders (Pascal port: the speech batch's rows, which each loaded
+  // their own copy, 147 MB apiece, on Thor's unified memory). The weights are only read; every decoder keeps its own
+  // buffers, caches and aligned copies, so each computes exactly what a decoder with its own checkpoint computes.
+  Decoder(std::shared_ptr<Safetensors> weights, int max_chunk_frames)
+      : weights_(std::move(weights)), max_frames_(max_chunk_frames) {
+    if (!weights_) throw std::runtime_error("codec: no checkpoint");
     if (max_chunk_frames < 1) throw std::runtime_error("codec: max_chunk_frames must be positive");
     const size_t rows = size_t(max_chunk_frames) * kStack;
     codes_ = DeviceArray<int32_t>(size_t(max_chunk_frames) * kCodebooks);
