@@ -1,0 +1,1 @@
+{"input_ids": [1, 2, 3], "teacher_ids": [], "max_new_tokens": 0, "capacity": 512, "trace_logits_only": true, "trace_directory": "/workspace/build/rt2-serve-text-only/worker/replacement/trace"}

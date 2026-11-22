@@ -1,0 +1,277 @@
+{
+ "build": "parity",
+ "builds": [
+  "/workspace/build/parity-v38",
+  "/workspace/build/parity-v35",
+  "/workspace/build/parity-s4"
+ ],
+ "ref_builds": [
+  "/workspace/build/parity-s1"
+ ],
+ "refs": "/workspace/build/sp-refs-parity-s1",
+ "judged": {
+  "reports of these builds": true,
+  "speech-server": true,
+  "speech-stream": true,
+  "audio-in-server": true,
+  "speech-concurrent": true,
+  "batch-server": true
+ },
+ "recorded_timing": {
+  "speech-server": {
+   "worst case budget (limit 240 s)": 2274.3,
+   "worst case large-cap (limit 240 s)": 382.3
+  },
+  "speech-stream": {
+   "first_audio": {
+    "tts": {
+     "median": 2.6386545679997653,
+     "max": 3.2050479240133427,
+     "n": 25
+    },
+    "interleaved": {
+     "median": 3.6362726874940563,
+     "max": 4.327312885026913,
+     "n": 14
+    }
+   },
+   "first_audio_pass": false,
+   "stalled_cases": {
+    "il-fridge-s1": [
+     26,
+     40.2972
+    ],
+    "il-fridge-s2": [
+     26,
+     40.5729
+    ],
+    "il-fridge-s3": [
+     27,
+     41.9343
+    ],
+    "il-reflective-s1": [
+     20,
+     28.6309
+    ],
+    "il-reflective-s2": [
+     27,
+     41.0433
+    ],
+    "il-reflective-s3": [
+     30,
+     45.1607
+    ],
+    "il-study-s1": [
+     22,
+     32.6588
+    ],
+    "il-study-s2": [
+     18,
+     26.1712
+    ],
+    "il-study-s3": [
+     24,
+     36.7743
+    ],
+    "tts-fox-female-s1": [
+     3,
+     2.4641
+    ],
+    "tts-fox-female-s2": [
+     3,
+     2.6264
+    ],
+    "tts-fox-female-s3": [
+     3,
+     2.7851
+    ],
+    "tts-fox-male-s1": [
+     3,
+     2.7854
+    ],
+    "tts-fox-male-s2": [
+     3,
+     2.9297
+    ],
+    "tts-fox-male-s3": [
+     3,
+     2.1415
+    ],
+    "tts-long-male-s1": [
+     39,
+     40.9422
+    ],
+    "tts-long-male-s2": [
+     41,
+     42.1079
+    ],
+    "tts-long-male-s3": [
+     40,
+     42.3774
+    ],
+    "tts-museum-female-s1": [
+     12,
+     11.2101
+    ],
+    "tts-museum-female-s2": [
+     12,
+     11.5342
+    ],
+    "tts-museum-female-s3": [
+     12,
+     10.8938
+    ],
+    "tts-museum-male-s1": [
+     12,
+     10.8903
+    ],
+    "tts-museum-male-s2": [
+     12,
+     11.2101
+    ],
+    "tts-museum-male-s3": [
+     11,
+     10.7032
+    ],
+    "tts-numbers-female-s1": [
+     9,
+     8.2937
+    ],
+    "tts-numbers-female-s2": [
+     9,
+     7.952
+    ],
+    "tts-numbers-female-s3": [
+     8,
+     7.7905
+    ],
+    "tts-numbers-male-s1": [
+     9,
+     8.7635
+    ],
+    "tts-numbers-male-s2": [
+     9,
+     7.9686
+    ],
+    "tts-numbers-male-s3": [
+     9,
+     8.6144
+    ],
+    "lighthouse-split-s1": [
+     39,
+     40.9383
+    ],
+    "bread-split-s1": [
+     35,
+     36.8899
+    ],
+    "budget-truncated-s1": [
+     388,
+     415.9118
+    ],
+    "numbers-normalized-s1": [
+     20,
+     21.5202
+    ],
+    "spoken-q0": [
+     10,
+     13.9814
+    ],
+    "spoken-q1": [
+     11,
+     16.162
+    ],
+    "spoken-q2": [
+     12,
+     16.8013
+    ],
+    "spoken-q3": [
+     6,
+     9.0546
+    ],
+    "spoken-q4": [
+     7,
+     9.0815
+    ]
+   },
+   "no_gaps_pass": false,
+   "cancel_delay": 2.1040502039832063,
+   "cancel_pass": false,
+   "cost_ratio": 1.0006842271273377,
+   "cost_pass": true
+  },
+  "audio-in-server": {
+   "asr-joined-90s (limit 240 s)": 62.31
+  },
+  "batch-server": {
+   "first_audio_under_load_median": 3.1764966549817473,
+   "first_audio_pass": false,
+   "stalls": {
+    "8": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     40,
+     41
+    ],
+    "12": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     40,
+     41,
+     41,
+     12,
+     12,
+     12
+    ],
+    "16": [
+     3,
+     3,
+     3,
+     3,
+     3,
+     3,
+     40,
+     41,
+     41,
+     12,
+     12,
+     12,
+     12,
+     12,
+     12,
+     9
+    ],
+    "7 tts + 5 spoken joining": [
+     3,
+     3,
+     3,
+     3,
+     4,
+     3,
+     39,
+     10,
+     11,
+     12,
+     6,
+     7
+    ]
+   },
+   "real_time_8_pass": false,
+   "largest_n_without_gaps": 0,
+   "text_under_load": {
+    "latency": 23.28,
+    "running_rows_finished_after": 123.54,
+    "identical": true
+   }
+  }
+ },
+ "rule11_pass": true
+}

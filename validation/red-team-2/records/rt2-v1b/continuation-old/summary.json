@@ -1,0 +1,17 @@
+{
+ "expect": "old",
+ "watchdog": {
+  "seed_consumed": 970,
+  "status": 503,
+  "seconds": 300.1,
+  "reused_tokens": null,
+  "consumed_tokens": null,
+  "error": "worker_unavailable",
+  "health_status": 503,
+  "health": {
+   "ready": false,
+   "gpu_batching": false
+  }
+ },
+ "server_exit": 0
+}

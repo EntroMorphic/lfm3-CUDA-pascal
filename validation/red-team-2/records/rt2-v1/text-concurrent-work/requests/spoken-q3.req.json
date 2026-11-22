@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Respond with interleaved text and audio."}, {"role": "user", "content": [{"type": "audio", "audio": "/workspace/build/sp-refs-text-s1/audio-in-listen/q3-16k.wav"}]}], "mode": "interleaved", "max_new_tokens": 1024, "seed": 1}

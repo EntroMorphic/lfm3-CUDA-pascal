@@ -1,0 +1,19 @@
+remote.sh: tree sha256 36ac334ccfaeea929f706d93c212d72d3f024ac06874360e474df920d82a4faa; 69433d2
++ date
+Sat Nov 21 18:57:04 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/rt2-dev4
++ M=/workspace/models/LFM3-Omni-2B
++ '[' -e /workspace/build/rt2-dev4 ']'
++ mkdir -p /workspace/build/rt2-dev4
++ /workspace/build/venv-asr/bin/python tools/pascal/batch_budget.py /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev4/batch 29696
+B1 rc=1
++ echo 'B1 rc=1'
++ grep -E 'batch budget|BATCH|Error' /workspace/build/rt2-dev4/batch.log
+batch budget greedy: generated [4096, 4096] (4095 paired steps), 99.2 s (limit 240 s)
+    raise AssertionError((path, status, decoded))
+AssertionError: ('/generate_batch', 503, {'error': 'worker_unavailable'})
++ pkill -TERM -f liquid-lfm3-server
++ date
+Sat Nov 21 19:04:03 MST 2026

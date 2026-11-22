@@ -1,0 +1,440 @@
+remote.sh: tree sha256 f7c9dbf9fe12d3d790826c01db807b94485a74cff70cddd12909f92ba6482843; 396c578
++ date
+Sat Nov 21 13:51:19 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/rt2-dev1
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -e /workspace/build/rt2-dev1 ']'
++ mkdir -p /workspace/build/rt2-dev1
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-v36
+build parity-v36 rc=0
++ echo 'build parity-v36 rc=0'
++ tools/pascal/build_speech.sh text-v36
+build text-v36 rc=0
++ echo 'build text-v36 rc=0'
++ grep -h warnings /workspace/build/rt2-dev1/build-parity-v36.log /workspace/build/rt2-dev1/build-text-v36.log
+liquid-lfm3: warnings 0, sha256 851fae4f8b75e53601df5e574d6fad2da463a21f1dfbf5f637ba5428fdc6e5cf, 4667664 bytes
+lfm3-score: warnings 0, sha256 093447466dabf9827659c99d26e20cb5bf1a97646b837c5c9a3de36d361637b1, 4528824 bytes
+lfm3-speech: warnings 0, sha256 0794497c6cf3310deb6d2c23f02608ee37effa29c036ce04227214cdc4c2e96d, 6084864 bytes
+liquid-lfm3-worker: warnings 0, sha256 abde44600b473c17c53a1495990430be9a0651365f287947ccea7d6f608d0428, 6011064 bytes
+liquid-lfm3-server: warnings 0, sha256 f60a57c566cc1432e8afc6fc1a207938fb5f5f00b23dc1082efc0131b28cf87b, 6539592 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
+liquid-lfm3: warnings 0, sha256 5f41b8a0a545daf69332a797a07ca56dd498348affbd64978f69111603e4fe25, 4142280 bytes
+lfm3-score: warnings 0, sha256 040c10e0e87ca9362ea571e6952c0c670643e0410e765749aa50276776cc4f6a, 4010784 bytes
+lfm3-speech: warnings 0, sha256 fcc6c1ba56199509eef2a9799f44351f28f19f3d9f36f56851fed6d29fee2e05, 5567672 bytes
+liquid-lfm3-worker: warnings 0, sha256 fcfabd9310383092089f42a86e9d9cee27b326ed186cb83380abda0af12b7a0a, 5489560 bytes
+liquid-lfm3-server: warnings 0, sha256 92a5e4d60f8e99c3f52ea008633da82402dda87b872e65fce63967c47afdb534, 6022616 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ mkdir -p /workspace/build/rt2-dev1/e1
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v36/liquid-lfm3
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/liquid-lfm3.text.txt
+device code liquid-lfm3 text-v36 against text-v35 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3 text-v36 against text-v35 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v36/liquid-lfm3
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/liquid-lfm3.parity.txt
++ echo 'device code liquid-lfm3 parity-v36 against parity-v35 rc=0 99 and 99 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v36/lfm3-score
+device code liquid-lfm3 parity-v36 against parity-v35 rc=0 99 and 99 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v35/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/lfm3-score.text.txt
++ echo 'device code lfm3-score text-v36 against text-v35 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v36/lfm3-score
+device code lfm3-score text-v36 against text-v35 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/parity-v35/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/lfm3-score.parity.txt
++ echo 'device code lfm3-score parity-v36 against parity-v35 rc=0 100 and 100 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v36/lfm3-speech
+device code lfm3-score parity-v36 against parity-v35 rc=0 100 and 100 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v35/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/lfm3-speech.text.txt
++ echo 'device code lfm3-speech text-v36 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v36/lfm3-speech
+device code lfm3-speech text-v36 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/parity-v35/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/lfm3-speech.parity.txt
++ echo 'device code lfm3-speech parity-v36 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v36/liquid-lfm3-worker
+device code lfm3-speech parity-v36 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/liquid-lfm3-worker.text.txt
+device code liquid-lfm3-worker text-v36 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3-worker text-v36 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v36/liquid-lfm3-worker
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/liquid-lfm3-worker.parity.txt
++ echo 'device code liquid-lfm3-worker parity-v36 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v36/liquid-lfm3-server
+device code liquid-lfm3-worker parity-v36 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/liquid-lfm3-server.text.txt
+device code liquid-lfm3-server text-v36 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3-server text-v36 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v36/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
+++ head -1 /workspace/build/rt2-dev1/e1/liquid-lfm3-server.parity.txt
++ echo 'device code liquid-lfm3-server parity-v36 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
+device code liquid-lfm3-server parity-v36 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ rm -f /workspace/build/rt2-dev1/e1/a.sass /workspace/build/rt2-dev1/e1/b.sass
++ python3 - /workspace/build/rt2-dev1/a1
++ for k in text parity
++ for v in v35 v36
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v35-p129
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v35-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p129.request.json /workspace/build/rt2-dev1/a1/text-v35-p129
++ /workspace/build/text-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v35-p129/request.json /workspace/build/rt2-dev1/a1/text-v35-p129/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v35-p129/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v35-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v35-p136
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v35-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p136.request.json /workspace/build/rt2-dev1/a1/text-v35-p136
++ /workspace/build/text-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v35-p136/request.json /workspace/build/rt2-dev1/a1/text-v35-p136/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v35-p136/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v35-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v35-p137
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v35-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p137.request.json /workspace/build/rt2-dev1/a1/text-v35-p137
++ /workspace/build/text-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v35-p137/request.json /workspace/build/rt2-dev1/a1/text-v35-p137/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v35-p137/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v35-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v35-p300
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v35-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p300.request.json /workspace/build/rt2-dev1/a1/text-v35-p300
++ /workspace/build/text-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v35-p300/request.json /workspace/build/rt2-dev1/a1/text-v35-p300/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v35-p300/trace
++ sha256sum
++ cut -c1-16
+++ sort -n
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v35-p300/trace
++ for v in v35 v36
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v36-p129
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v36-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p129.request.json /workspace/build/rt2-dev1/a1/text-v36-p129
++ /workspace/build/text-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v36-p129/request.json /workspace/build/rt2-dev1/a1/text-v36-p129/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v36-p129/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v36-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v36-p136
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v36-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p136.request.json /workspace/build/rt2-dev1/a1/text-v36-p136
++ /workspace/build/text-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v36-p136/request.json /workspace/build/rt2-dev1/a1/text-v36-p136/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v36-p136/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v36-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v36-p137
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v36-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p137.request.json /workspace/build/rt2-dev1/a1/text-v36-p137
++ /workspace/build/text-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v36-p137/request.json /workspace/build/rt2-dev1/a1/text-v36-p137/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v36-p137/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v36-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/text-v36-p300
++ mkdir -p /workspace/build/rt2-dev1/a1/text-v36-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p300.request.json /workspace/build/rt2-dev1/a1/text-v36-p300
++ /workspace/build/text-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/text-v36-p300/request.json /workspace/build/rt2-dev1/a1/text-v36-p300/native.json
++ cd /workspace/build/rt2-dev1/a1/text-v36-p300/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/text-v36-p300/trace
++ for L in 129 136 137 300
+++ cat /workspace/build/rt2-dev1/a1/text-v35-p129/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/text-v36-p129/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/text-v35-p129/logits.sha /workspace/build/rt2-dev1/a1/text-v36-p129/logits.sha
+++ echo same
++ echo 'A1 text p129: v35 842d8261f513d2d0 v36 842d8261f513d2d0 same'
++ for L in 129 136 137 300
+A1 text p129: v35 842d8261f513d2d0 v36 842d8261f513d2d0 same
+++ cat /workspace/build/rt2-dev1/a1/text-v35-p136/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/text-v36-p136/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/text-v35-p136/logits.sha /workspace/build/rt2-dev1/a1/text-v36-p136/logits.sha
+++ echo same
++ echo 'A1 text p136: v35 99ca55991ffbcc75 v36 99ca55991ffbcc75 same'
++ for L in 129 136 137 300
+A1 text p136: v35 99ca55991ffbcc75 v36 99ca55991ffbcc75 same
+++ cat /workspace/build/rt2-dev1/a1/text-v35-p137/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/text-v36-p137/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/text-v35-p137/logits.sha /workspace/build/rt2-dev1/a1/text-v36-p137/logits.sha
+++ echo same
++ echo 'A1 text p137: v35 6da7f865965abd6d v36 6da7f865965abd6d same'
++ for L in 129 136 137 300
+A1 text p137: v35 6da7f865965abd6d v36 6da7f865965abd6d same
+++ cat /workspace/build/rt2-dev1/a1/text-v35-p300/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/text-v36-p300/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/text-v35-p300/logits.sha /workspace/build/rt2-dev1/a1/text-v36-p300/logits.sha
+++ echo same
++ echo 'A1 text p300: v35 4a888cd4f12ef709 v36 4a888cd4f12ef709 same'
++ for k in text parity
++ for v in v35 v36
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v35-p129
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v35-p129
+A1 text p300: v35 4a888cd4f12ef709 v36 4a888cd4f12ef709 same
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p129.request.json /workspace/build/rt2-dev1/a1/parity-v35-p129
++ /workspace/build/parity-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v35-p129/request.json /workspace/build/rt2-dev1/a1/parity-v35-p129/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v35-p129/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v35-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v35-p136
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v35-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p136.request.json /workspace/build/rt2-dev1/a1/parity-v35-p136
++ /workspace/build/parity-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v35-p136/request.json /workspace/build/rt2-dev1/a1/parity-v35-p136/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v35-p136/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v35-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v35-p137
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v35-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p137.request.json /workspace/build/rt2-dev1/a1/parity-v35-p137
++ /workspace/build/parity-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v35-p137/request.json /workspace/build/rt2-dev1/a1/parity-v35-p137/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v35-p137/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v35-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v35-p300
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v35-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p300.request.json /workspace/build/rt2-dev1/a1/parity-v35-p300
++ /workspace/build/parity-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v35-p300/request.json /workspace/build/rt2-dev1/a1/parity-v35-p300/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v35-p300/trace
++ sha256sum
++ cut -c1-16
+++ sort -n
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v35-p300/trace
++ for v in v35 v36
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v36-p129
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v36-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p129.request.json /workspace/build/rt2-dev1/a1/parity-v36-p129
++ /workspace/build/parity-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v36-p129/request.json /workspace/build/rt2-dev1/a1/parity-v36-p129/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v36-p129/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v36-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v36-p136
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v36-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p136.request.json /workspace/build/rt2-dev1/a1/parity-v36-p136
++ /workspace/build/parity-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v36-p136/request.json /workspace/build/rt2-dev1/a1/parity-v36-p136/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v36-p136/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v36-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v36-p137
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v36-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p137.request.json /workspace/build/rt2-dev1/a1/parity-v36-p137
++ /workspace/build/parity-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v36-p137/request.json /workspace/build/rt2-dev1/a1/parity-v36-p137/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v36-p137/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v36-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/rt2-dev1/a1/parity-v36-p300
++ mkdir -p /workspace/build/rt2-dev1/a1/parity-v36-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev1/a1/p300.request.json /workspace/build/rt2-dev1/a1/parity-v36-p300
++ /workspace/build/parity-v36/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/a1/parity-v36-p300/request.json /workspace/build/rt2-dev1/a1/parity-v36-p300/native.json
++ cd /workspace/build/rt2-dev1/a1/parity-v36-p300/trace
++ sha256sum
++ cut -c1-16
+++ ls 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/rt2-dev1/a1/parity-v36-p300/trace
++ for L in 129 136 137 300
+++ cat /workspace/build/rt2-dev1/a1/parity-v35-p129/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/parity-v36-p129/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/parity-v35-p129/logits.sha /workspace/build/rt2-dev1/a1/parity-v36-p129/logits.sha
+++ echo same
+A1 parity p129: v35 3428437ac7f7e78b v36 3428437ac7f7e78b same
++ echo 'A1 parity p129: v35 3428437ac7f7e78b v36 3428437ac7f7e78b same'
++ for L in 129 136 137 300
+++ cat /workspace/build/rt2-dev1/a1/parity-v35-p136/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/parity-v36-p136/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/parity-v35-p136/logits.sha /workspace/build/rt2-dev1/a1/parity-v36-p136/logits.sha
+++ echo DIFFER
++ echo 'A1 parity p136: v35 ad8a193fccab11f7 v36 665669da8e808de5 DIFFER'
+A1 parity p136: v35 ad8a193fccab11f7 v36 665669da8e808de5 DIFFER
++ for L in 129 136 137 300
+++ cat /workspace/build/rt2-dev1/a1/parity-v35-p137/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/parity-v36-p137/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/parity-v35-p137/logits.sha /workspace/build/rt2-dev1/a1/parity-v36-p137/logits.sha
+++ echo same
++ echo 'A1 parity p137: v35 6f2c27c5397fe410 v36 6f2c27c5397fe410 same'
+A1 parity p137: v35 6f2c27c5397fe410 v36 6f2c27c5397fe410 same
++ for L in 129 136 137 300
+++ cat /workspace/build/rt2-dev1/a1/parity-v35-p300/logits.sha
+++ cat /workspace/build/rt2-dev1/a1/parity-v36-p300/logits.sha
+++ cmp -s /workspace/build/rt2-dev1/a1/parity-v35-p300/logits.sha /workspace/build/rt2-dev1/a1/parity-v36-p300/logits.sha
+++ echo same
++ echo 'A1 parity p300: v35 321b5734d842d00c v36 321b5734d842d00c same'
+A1 parity p300: v35 321b5734d842d00c v36 321b5734d842d00c same
++ /workspace/build/venv-asr/bin/python tools/pascal/batch_budget.py /workspace/build/text-v36/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev1/batch
++ echo 'B1 rc=1'
++ tail -2 /workspace/build/rt2-dev1/batch.log
+B1 rc=1
+    raise AssertionError((path, status, decoded))
+AssertionError: ('/generate_batch', 400, {'error': 'invalid_request'})
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in 1:30720 8:16384 16:2048
++ r=1
++ t=30720
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-v36/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/rt2-dev1/memory-1 7740 30720
+D1 rows 1 total 30720 rc=1
++ echo 'D1 rows 1 total 30720 rc=1'
++ grep -E '^rule 12|^SPEECH' /workspace/build/rt2-dev1/memory-1.log
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5147 MiB (382 samples): ok
+rule 12 one-30720 with 1 speech: text [200] in 27.6 s, speech [200] (overlapped True), peak 7215 MiB (493 samples): ok
+rule 12 3840+26880 with 1 speech: text [200, 200] in 28.6 s, speech [200] (overlapped True), peak 7605 MiB (488 samples): ok
+rule 12 1920+28800 with 1 speech: text [200, 200] in 29.8 s, speech [200] (overlapped True), peak 7611 MiB (493 samples): ok
+rule 12 15360+15360 with 1 speech: text [200, 200] in 25.7 s, speech [200] (overlapped True), peak 7265 MiB (476 samples): ok
+rule 12 batch-3840+26880 with 1 speech: text [200] in 93.3 s, speech [200] (overlapped True), peak 7615 MiB (489 samples): ok
+rule 12 audio-in-one-30720 with 0 speech and 3 audio in: text [200] in 25.9 s, speech [] (overlapped True), peak 7759 MiB (281 samples): FAIL
+SPEECH MEMORY (rule 12, 1 rows) FAIL
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in 1:30720 8:16384 16:2048
++ r=8
++ t=16384
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-v36/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 8 /workspace/data/librispeech/wav /workspace/build/rt2-dev1/memory-8 7740 16384
++ echo 'D1 rows 8 total 16384 rc=0'
++ grep -E '^rule 12|^SPEECH' /workspace/build/rt2-dev1/memory-8.log
+D1 rows 8 total 16384 rc=0
+rule 12 speech-only with 8 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 5869 MiB (614 samples): ok
+rule 12 one-16384 with 8 speech: text [200] in 14.8 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6979 MiB (666 samples): ok
+rule 12 2048+14336 with 8 speech: text [200, 200] in 18.6 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7369 MiB (667 samples): ok
+rule 12 1024+15360 with 8 speech: text [200, 200] in 18.8 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7101 MiB (667 samples): ok
+rule 12 8192+8192 with 8 speech: text [200, 200] in 17.7 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6997 MiB (663 samples): ok
+rule 12 batch-2048+14336 with 8 speech: text [200] in 134.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7375 MiB (665 samples): ok
+rule 12 audio-in-one-16384 with 7 speech and 3 audio in: text [200] in 14.2 s, speech [200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7523 MiB (679 samples): ok
+SPEECH MEMORY (rule 12, 8 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in 1:30720 8:16384 16:2048
++ r=16
++ t=2048
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-v36/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 16 /workspace/data/librispeech/wav /workspace/build/rt2-dev1/memory-16 7740 2048
++ echo 'D1 rows 16 total 2048 rc=1'
++ grep -E '^rule 12|^SPEECH' /workspace/build/rt2-dev1/memory-16.log
+D1 rows 16 total 2048 rc=1
+rule 12 speech-only with 16 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6701 MiB (861 samples): ok
+rule 12 one-2048 with 16 speech: text [200] in 5.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7227 MiB (872 samples): ok
+rule 12 256+1792 with 16 speech: text [200, 200] in 10.3 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7169 MiB (873 samples): ok
+rule 12 128+1920 with 16 speech: text [200, 200] in 10.3 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7197 MiB (873 samples): ok
+rule 12 1024+1024 with 16 speech: text [200, 200] in 10.3 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7047 MiB (874 samples): ok
+rule 12 batch-256+1792 with 16 speech: text [200] in 182.2 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7171 MiB (872 samples): ok
+rule 12 audio-in-one-2048 with 15 speech and 3 audio in: text [200] in 5.1 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7771 MiB (883 samples): FAIL
+SPEECH MEMORY (rule 12, 16 rows) FAIL
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ date
+Sat Nov 21 14:54:25 MST 2026

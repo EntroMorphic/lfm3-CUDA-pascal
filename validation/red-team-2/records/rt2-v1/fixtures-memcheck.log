@@ -1,0 +1,8 @@
+binary 91b97312cdef10c4d1e35bd513bdada1b899cc68abd78a4acae797cfbb7715e3  tree 713e9aafa52213da (gemm.cuh)
+baseline: ids MATCH (16), runs one run, reset ok, input 34 tokens, prefill 6.852 s, decode 3.323 s / 15 calls
+  text: "Yes, reflective recursion is widely considered a core feature of human cognition. It refers"
+arithmetic: ids MATCH (2), runs one run, reset ok, input 31 tokens, prefill 6.855 s, decode 0.223 s / 1 calls
+  text: "42"
+window257: ids MATCH (4), runs one run, reset ok, input 257 tokens, prefill 10.532 s, decode 0.710 s / 3 calls
+single: ids MATCH (4), runs one run, reset ok, input 1 tokens, prefill 0.221 s, decode 0.645 s / 3 calls
+FIXTURES PASS

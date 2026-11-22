@@ -1,0 +1,2 @@
+batch budget: sessions 6144 + 23552, prompts [78, 19335]; prefill 13.1 s; 4095 steps (199 paired; generated [4096, 200]) in 66.8 s (16.32 ms each); worst case 13.1 + 4095 steps = 79.9 s (limit 240 s); 4,097 refused {'error': 'invalid_request'}; health ready True
+BATCH BUDGET FAIL

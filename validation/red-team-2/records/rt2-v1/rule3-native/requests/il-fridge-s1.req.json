@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Respond with interleaved text and audio."}, {"role": "user", "content": "Explain step by step how a refrigerator keeps food cold."}], "mode": "interleaved", "max_new_tokens": 2048, "seed": 1, "split": false}

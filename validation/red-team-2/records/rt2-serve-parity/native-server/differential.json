@@ -1,0 +1,226 @@
+{
+ "python": [
+  {
+   "path": "/sessions",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"capacity\":1024,\"gpu_batching\":false}"
+  },
+  {
+   "path": "/sessions",
+   "status": 200,
+   "body": "{\"session_id\":\"@1@\",\"capacity\":1024,\"gpu_batching\":false}"
+  },
+  {
+   "path": "/sessions",
+   "status": 429,
+   "body": "{\"error\":\"session_quota\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes—essentially \\\"thinking about thinking.\\\" This capacity underlies metacognition, self-awareness, planning, and learning. In philosophy and psychology, it's often described as a hallmark of higher-order cognition, distinguishing human thought from simpler, automatic processes.\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267,7641,5491,302,1994,40657,22,810,10834,310,278,4477,310,2038,836,734,589,1562,10846,20,14708,20,309,22722,6394,923,393,21280,496,116376,836,6416,2426,969,7113,989,51877,1326,406,33552,20,2014,21,50698,6860,20,7891,20,309,2980,22,529,13259,309,18348,20,435,589,1991,4524,405,267,11416,4654,302,3084,28418,40657,20,53375,1994,3714,487,32568,20,21655,6394,22,124900],\"reused_tokens\":0,\"consumed_tokens\":119,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@1@\",\"text\":\"Cobalt.\",\"generated_ids\":[43,682,1868,22,124900],\"reused_tokens\":0,\"consumed_tokens\":35,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Reflective recursion is the cognitive ability to think about one's own thoughts, beliefs, and reasoning, forming a foundational feature of human cognition.\",\"generated_ids\":[9405,896,474,91506,355,278,10753,4477,310,2038,836,734,589,1562,10846,20,14708,20,309,22722,20,16246,267,88746,5491,302,1994,40657,22,124900],\"reused_tokens\":119,\"consumed_tokens\":167,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@1@\",\"text\":\"Cobalt.\",\"generated_ids\":[43,682,1868,22,124900],\"reused_tokens\":35,\"consumed_tokens\":57,\"do_sample\":true,\"seed\":42,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Le océan s'étend,\\nUne mer infinie et vaste,\\nIl murmure un secret.\",\"generated_ids\":[2487,11617,61789,274,12866,458,920,21553,4662,18710,381,626,60435,920,5486,7342,85,484,445,6654,22,124900],\"reused_tokens\":0,\"consumed_tokens\":44,\"do_sample\":true,\"seed\":7,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate_batch",
+   "status": 200,
+   "body": "{\"results\":[{\"session_id\":\"@0@\",\"text\":\"Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267,7641,5491,302,1994,40657,22,810,10834,310,278,4477,310,2038,836,734,589,1562,10846,20,14708,20,309,22722,6394],\"reused_tokens\":0,\"consumed_tokens\":65,\"do_sample\":false,\"seed\":0,\"gpu_batching\":true,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"length\",\"paired_decode_calls\":4},{\"session_id\":\"@1@\",\"text\":\"Cobalt.\",\"generated_ids\":[43,682,1868,22,124900],\"reused_tokens\":0,\"consumed_tokens\":35,\"do_sample\":true,\"seed\":3,\"gpu_batching\":true,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\",\"paired_decode_calls\":4}],\"gpu_batching\":true,\"paired_decode_calls\":4}"
+  },
+  {
+   "path": "/generate_batch",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/sessions/@0@/reset",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Yes, reflective recursion is widely considered a core feature of human cognition. It refers\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267,7641,5491,302,1994,40657,22,810,10834],\"reused_tokens\":0,\"consumed_tokens\":49,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"length\"}"
+  },
+  {
+   "path": "/sessions/@1@/cancel",
+   "status": 409,
+   "body": "{\"error\":\"generation_not_active\"}"
+  },
+  {
+   "path": "/sessions/@0@/close",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  },
+  {
+   "path": "/generate",
+   "status": 404,
+   "body": "{\"error\":\"unknown_session\"}"
+  },
+  {
+   "path": "/sessions/@1@/close",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  },
+  {
+   "path": "/sessions",
+   "status": 200,
+   "body": "{\"session_id\":\"@2@\",\"capacity\":300,\"gpu_batching\":false}"
+  },
+  {
+   "path": "/generate",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@2@\",\"text\":\"Yes, reflective recursion is widely considered a\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267],\"reused_tokens\":0,\"consumed_tokens\":41,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"length\"}"
+  },
+  {
+   "path": "/sessions/@2@/close",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  }
+ ],
+ "native": [
+  {
+   "path": "/sessions",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"capacity\":1024,\"gpu_batching\":false}"
+  },
+  {
+   "path": "/sessions",
+   "status": 200,
+   "body": "{\"session_id\":\"@1@\",\"capacity\":1024,\"gpu_batching\":false}"
+  },
+  {
+   "path": "/sessions",
+   "status": 429,
+   "body": "{\"error\":\"session_quota\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes—essentially \\\"thinking about thinking.\\\" This capacity underlies metacognition, self-awareness, planning, and learning. In philosophy and psychology, it's often described as a hallmark of higher-order cognition, distinguishing human thought from simpler, automatic processes.\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267,7641,5491,302,1994,40657,22,810,10834,310,278,4477,310,2038,836,734,589,1562,10846,20,14708,20,309,22722,6394,923,393,21280,496,116376,836,6416,2426,969,7113,989,51877,1326,406,33552,20,2014,21,50698,6860,20,7891,20,309,2980,22,529,13259,309,18348,20,435,589,1991,4524,405,267,11416,4654,302,3084,28418,40657,20,53375,1994,3714,487,32568,20,21655,6394,22,124900],\"reused_tokens\":0,\"consumed_tokens\":119,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@1@\",\"text\":\"Cobalt.\",\"generated_ids\":[43,682,1868,22,124900],\"reused_tokens\":0,\"consumed_tokens\":35,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Reflective recursion is the cognitive ability to think about one's own thoughts, beliefs, and reasoning, forming a foundational feature of human cognition.\",\"generated_ids\":[9405,896,474,91506,355,278,10753,4477,310,2038,836,734,589,1562,10846,20,14708,20,309,22722,20,16246,267,88746,5491,302,1994,40657,22,124900],\"reused_tokens\":119,\"consumed_tokens\":167,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@1@\",\"text\":\"Cobalt.\",\"generated_ids\":[43,682,1868,22,124900],\"reused_tokens\":35,\"consumed_tokens\":57,\"do_sample\":true,\"seed\":42,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Le océan s'étend,\\nUne mer infinie et vaste,\\nIl murmure un secret.\",\"generated_ids\":[2487,11617,61789,274,12866,458,920,21553,4662,18710,381,626,60435,920,5486,7342,85,484,445,6654,22,124900],\"reused_tokens\":0,\"consumed_tokens\":44,\"do_sample\":true,\"seed\":7,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\"}"
+  },
+  {
+   "path": "/generate_batch",
+   "status": 200,
+   "body": "{\"results\":[{\"session_id\":\"@0@\",\"text\":\"Yes, reflective recursion is widely considered a core feature of human cognition. It refers to the ability to think about one's own thoughts, beliefs, and reasoning processes\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267,7641,5491,302,1994,40657,22,810,10834,310,278,4477,310,2038,836,734,589,1562,10846,20,14708,20,309,22722,6394],\"reused_tokens\":0,\"consumed_tokens\":65,\"do_sample\":false,\"seed\":0,\"gpu_batching\":true,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"length\",\"paired_decode_calls\":4},{\"session_id\":\"@1@\",\"text\":\"Cobalt.\",\"generated_ids\":[43,682,1868,22,124900],\"reused_tokens\":0,\"consumed_tokens\":35,\"do_sample\":true,\"seed\":3,\"gpu_batching\":true,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"stop\",\"paired_decode_calls\":4}],\"gpu_batching\":true,\"paired_decode_calls\":4}"
+  },
+  {
+   "path": "/generate_batch",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/sessions/@0@/reset",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@0@\",\"text\":\"Yes, reflective recursion is widely considered a core feature of human cognition. It refers\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267,7641,5491,302,1994,40657,22,810,10834],\"reused_tokens\":0,\"consumed_tokens\":49,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"length\"}"
+  },
+  {
+   "path": "/sessions/@1@/cancel",
+   "status": 409,
+   "body": "{\"error\":\"generation_not_active\"}"
+  },
+  {
+   "path": "/sessions/@0@/close",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  },
+  {
+   "path": "/generate",
+   "status": 404,
+   "body": "{\"error\":\"unknown_session\"}"
+  },
+  {
+   "path": "/sessions/@1@/close",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  },
+  {
+   "path": "/sessions",
+   "status": 200,
+   "body": "{\"session_id\":\"@2@\",\"capacity\":300,\"gpu_batching\":false}"
+  },
+  {
+   "path": "/generate",
+   "status": 400,
+   "body": "{\"error\":\"invalid_request\"}"
+  },
+  {
+   "path": "/generate",
+   "status": 200,
+   "body": "{\"session_id\":\"@2@\",\"text\":\"Yes, reflective recursion is widely considered a\",\"generated_ids\":[12447,20,43709,91506,355,8586,3691,267],\"reused_tokens\":0,\"consumed_tokens\":41,\"do_sample\":false,\"seed\":0,\"gpu_batching\":false,\"cancelled\":false,\"cache_valid\":true,\"finish_reason\":\"length\"}"
+  },
+  {
+   "path": "/sessions/@2@/close",
+   "status": 200,
+   "body": "{\"ok\":true}"
+  }
+ ]
+}

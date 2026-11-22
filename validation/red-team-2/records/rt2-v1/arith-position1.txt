@@ -1,0 +1,13 @@
+plain: mean NLL 4.293430001 (perplexity 73.2172), 295808 tokens
+variant     minus plain   95% CI                       positions 1-16   17-64        slope vs plain NLL   tokens identical
+exact       -4.93e-04   [-6.15e-04, -3.74e-04]   -4.77e-04      -4.98e-04    -1.23e-04              0.1%
+rz          -1.10e-03   [-1.22e-03, -9.70e-04]   -3.02e-03      -4.58e-04    -5.78e-04              0.1%
+away        -6.91e-04   [-8.16e-04, -5.70e-04]   -2.48e-03      -9.64e-05    -4.67e-04              0.1%
+
+variant     position 1 alone   positions 2-64   95% CI
+exact       -4.760e-03         -4.251e-04       [-5.498e-04, -3.041e-04]
+rz          -4.407e-02         -4.163e-04       [-5.431e-04, -2.895e-04]
+away        -3.448e-02         -1.547e-04       [-2.818e-04, -3.043e-05]
+bosexact    -4.760e-03         -4.470e-04       [-5.689e-04, -3.286e-04]
+bosplain    +0.000e+00         -1.004e-04       [-2.273e-04, +2.576e-05]
+bosexact - exact, positions 2-64: -2.20e-05 [-1.47e-04, +1.04e-04]; position 1 equal value for value: True

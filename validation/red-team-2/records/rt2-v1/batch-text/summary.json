@@ -1,0 +1,75 @@
+{
+ "total_capacity": 32768,
+ "bound": 2048,
+ "engine_timeout": 300.0,
+ "sessions": [
+  3229,
+  29539
+ ],
+ "prefill_seconds": 20.76,
+ "cases": {
+  "greedy": {
+   "seconds": 61.4,
+   "generated": [
+    2048,
+    2048
+   ],
+   "paired": 2047,
+   "prompts": [
+    1115,
+    26129
+   ],
+   "unused": [
+    66,
+    1362
+   ],
+   "complete": true
+  },
+  "sampled": {
+   "seconds": 180.7,
+   "generated": [
+    2048,
+    2048
+   ],
+   "paired": 2047,
+   "prompts": [
+    1115,
+    26129
+   ],
+   "unused": [
+    66,
+    1362
+   ],
+   "complete": true
+  },
+  "sampled-continued": {
+   "seconds": 188.3,
+   "generated": [
+    2048,
+    2048
+   ],
+   "paired": 2047,
+   "prompts": [
+    1026,
+    27063
+   ],
+   "reused": [
+    92,
+    26129
+   ],
+   "continued": [
+    934,
+    934
+   ],
+   "complete": true
+  }
+ },
+ "complete": true,
+ "refusal_2049": {
+  "error": "invalid_request"
+ },
+ "health_ready": true,
+ "definite_fail": false,
+ "server_exit": 0,
+ "pass": true
+}

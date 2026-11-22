@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/workspace/lfm3-CUDA-pascal/tools/pascal/batch_budget.py", line 51, in <module>
+    t0 = time.monotonic(); r2 = client.call("POST", "/generate_batch", dict(requests=bodies)); wall = time.monotonic() - t0
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_native_server.py", line 67, in call
+    raise AssertionError((path, status, decoded))
+AssertionError: ('/generate_batch', 400, {'error': 'invalid_request'})

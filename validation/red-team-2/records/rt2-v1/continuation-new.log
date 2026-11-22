@@ -1,0 +1,5 @@
+continuation boundary: 1024 tokens after a cached 1,000: reused 1000 (expected 1000): ok
+continuation boundary: 1025 tokens after a cached 1,000: reused 0 (expected 0): ok
+continuation watchdog (new): seeded 970 tokens, then 200 in 23.9 s, reused 0, consumed 28882, error None; /health 200 {'ready': True, 'gpu_batching': False}: as expected
+CONTINUATION (new) PASS
+45.23 s

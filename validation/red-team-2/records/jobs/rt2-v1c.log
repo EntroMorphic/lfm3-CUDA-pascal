@@ -1,0 +1,61 @@
+remote.sh: tree sha256 233822cc04f88a22816b19a3a44fbaa2529bce900591b2c42d9ab9dc7443b9e3; 5ffbe8a
++ date
+Sun Nov 22 02:14:38 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/rt2-v1
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -d /workspace/build/rt2-v1 ']'
++ rm -rf /workspace/build/rt2-v1/parity-speech-server.json /workspace/build/rt2-v1/parity-audio-in-work
++ S=/workspace/build/parity-v38
++ R=/workspace/build/sp-refs-parity-s1
++ /usr/bin/time -f '%e s' /workspace/build/venv-asr/bin/python tools/pascal/check_lfm3_audio_in_server.py /workspace/build/parity-v38/liquid-lfm3-server /workspace/build/parity-v38/lfm3-speech /workspace/models/LFM3-Omni-2B /workspace/data/librispeech/wav /workspace/build/rt2-v1/parity-audio-in-work /workspace/build/rt2-v1/parity-audio-in-server.json
+++ grep -E 'PASS|FAIL' /workspace/build/rt2-v1/parity-audio-in-server.log
+++ tail -1
+parity-audio-in-server rc=0 repeat identical: True | text control identical: True | exit: 0 | PASS
++ echo 'parity-audio-in-server rc=0 repeat identical: True | text control identical: True | exit: 0 | PASS'
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ cp /workspace/build/sp-dev12/parity-speech-server.json /workspace/build/sp-dev12/parity-speech-stream.json /workspace/build/sp-dev12/parity-speech-concurrent.json /workspace/build/rt2-v1/
++ cp /workspace/build/sp-v1/parity-batch-server.json /workspace/build/rt2-v1/
++ python3 tools/pascal/judge_speech_server.py /workspace/build/rt2-v1 parity /workspace/build/parity-v38,/workspace/build/parity-v35,/workspace/build/parity-s4 /workspace/build/sp-refs-parity-s1 /workspace/build/parity-s1
+rule 11 parity reports of these builds: pass
+rule 11 parity speech-server: pass
+rule 11 parity speech-stream: pass
+rule 11 parity audio-in-server: pass
+rule 11 parity speech-concurrent: pass
+rule 11 parity batch-server: pass
+RULE 11 (parity, decision 10) PASS
++ echo 'speech-v1 rule 11 parity rc=0'
++ /workspace/build/venv-asr/bin/python tools/pascal/analysis/arith_report.py /workspace/build/arith-v1
+speech-v1 rule 11 parity rc=0
++ echo 'arith_report rc=0'
+arith_report rc=0
++ cmp /workspace/build/rt2-v1/arith-position1.txt validation/prefill-arithmetic-v1/arith-position1.txt
+arith-position1.txt: equal to the committed one
++ echo 'arith-position1.txt: equal to the committed one'
++ bash validation/red-team-2/job2.sh
++ grep -v '^+'
+Sun Nov 22 02:21:00 MST 2026
+4315d87622d9fd4fbeabc3b8ad13ea554430de163ae52fec0d6f0177d9e3047e  text-v37/liquid-lfm3-worker
+d633d92208265396b797eb1fca7753e3f7c15741eeebfb32f26629f3f18e2f18  text-v37/liquid-lfm3-server
+96ee45fc45e713951c38f37c60b61786202d654595fc349a8ca0da87b0589051  text-v38/liquid-lfm3-worker
+31cf82f127c72e1d3a44f5052d58f1fe4c02f58bf29ed5f010d838de8ff7612e  text-v38/liquid-lfm3-server
+continuation old (text-v37) rc=0
+continuation watchdog (old): seeded 970 tokens, then 503 in 300.1 s, reused None, consumed None, error worker_unavailable; /health 503 {'ready': False, 'gpu_batching': False}: as expected
+CONTINUATION (old) PASS
+continuation new (text-v38) rc=0
+continuation boundary: 1024 tokens after a cached 1,000: reused 1000 (expected 1000): ok
+continuation boundary: 1025 tokens after a cached 1,000: reused 0 (expected 0): ok
+continuation control: reused 970 of the seed's 970: ok
+continuation watchdog (new): seeded 970 tokens, then 200 in 23.9 s, reused 0, consumed 28882, error None; /health 200 {'ready': True, 'gpu_batching': False}: as expected
+CONTINUATION (new) PASS
+Sun Nov 22 02:27:04 MST 2026
++ date
+Sun Nov 22 02:27:04 MST 2026

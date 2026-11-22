@@ -1,0 +1,35 @@
+{
+ "expect": "new",
+ "boundary": {
+  "1024": {
+   "prompt": 2024,
+   "reused_tokens": 1000,
+   "expected": 1000,
+   "ok": true
+  },
+  "1025": {
+   "prompt": 2025,
+   "reused_tokens": 0,
+   "expected": 0,
+   "ok": true
+  }
+ },
+ "control": {
+  "reused_tokens": 970,
+  "seed_consumed": 970
+ },
+ "watchdog": {
+  "seed_consumed": 970,
+  "status": 200,
+  "seconds": 23.9,
+  "reused_tokens": 0,
+  "consumed_tokens": 28882,
+  "error": null,
+  "health_status": 200,
+  "health": {
+   "ready": true,
+   "gpu_batching": false
+  }
+ },
+ "server_exit": 0
+}

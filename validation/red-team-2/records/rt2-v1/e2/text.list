@@ -1,0 +1,11 @@
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-fridge-s1.req.json /workspace/build/rt2-v1/e2/text/il-fridge-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-reflective-s1.req.json /workspace/build/rt2-v1/e2/text/il-reflective-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-study-s1.req.json /workspace/build/rt2-v1/e2/text/il-study-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/rt2-v1/e2/text/tts-fox-female-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-male-s1.req.json /workspace/build/rt2-v1/e2/text/tts-fox-male-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-long-male-s1.req.json /workspace/build/rt2-v1/e2/text/tts-long-male-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-female-s1.req.json /workspace/build/rt2-v1/e2/text/tts-museum-female-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-male-s1.req.json /workspace/build/rt2-v1/e2/text/tts-museum-male-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-female-s1.req.json /workspace/build/rt2-v1/e2/text/tts-numbers-female-s1
+/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-male-s1.req.json /workspace/build/rt2-v1/e2/text/tts-numbers-male-s1
+/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s1.req.json /workspace/build/rt2-v1/e2/text-split/tts-long-male-s1

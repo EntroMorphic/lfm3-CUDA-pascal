@@ -1,0 +1,8 @@
+alone {"exit": 0, "wall_seconds": 542.2, "summary": null}
+alone vs reference: NONE GIVEN (the batches are compared with this binary alone only)
+conc4 {"exit": 0, "wall_seconds": 171.4, "summary": {"rows": 4, "requests": 41, "steps": 2238, "audio_seconds": 613.76, "wall_seconds": 163.3, "audio_per_wall_second": 3.75848}, "rows": 4, "stagger_seed": null, "identical": 41, "differ": [], "pass": true}
+conc8 {"exit": 0, "wall_seconds": 113.4, "summary": {"rows": 8, "requests": 41, "steps": 1254, "audio_seconds": 613.76, "wall_seconds": 105.249, "audio_per_wall_second": 5.83151}, "rows": 8, "stagger_seed": null, "identical": 41, "differ": [], "pass": true}
+conc8-staggered {"exit": 0, "wall_seconds": 138.6, "summary": {"rows": 8, "requests": 41, "steps": 1630, "audio_seconds": 613.76, "wall_seconds": 130.457, "audio_per_wall_second": 4.70469}, "rows": 8, "stagger_seed": "11", "identical": 41, "differ": [], "pass": true}
+conc16-staggered {"exit": 0, "wall_seconds": 139.5, "summary": {"rows": 16, "requests": 41, "steps": 1612, "audio_seconds": 613.76, "wall_seconds": 131.133, "audio_per_wall_second": 4.68045}, "rows": 16, "stagger_seed": "12", "identical": 41, "differ": [], "pass": true}
+CONCURRENT PASS
+1105.58 s

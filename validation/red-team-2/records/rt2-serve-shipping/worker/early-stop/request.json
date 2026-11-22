@@ -1,0 +1,1 @@
+{"input_ids": [124894, 124899, 23630, 207, 89056, 415, 2803, 22, 124900, 207, 124899, 5922, 207, 2992, 355, 229, 916, 2228, 229, 1197, 39, 41774, 21422, 22, 124900, 207, 124899, 63514, 207, 124901, 124902], "teacher_ids": [], "max_new_tokens": 16, "capacity": 512, "trace_logits_only": true, "trace_directory": "/workspace/build/rt2-serve-shipping/worker/early-stop/trace"}

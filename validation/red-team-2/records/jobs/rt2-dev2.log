@@ -1,0 +1,285 @@
+remote.sh: tree sha256 35293a8b01662bf2bcacececea0364dcf45e8c88598f202814fb5ca3f98f34e5; fc2271e
++ date
+Sat Nov 21 17:36:38 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/rt2-dev2
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ LIBRI=/workspace/data/librispeech/wav
++ '[' -e /workspace/build/rt2-dev2 ']'
++ mkdir -p /workspace/build/rt2-dev2
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-v37
++ echo 'build parity-v37 rc=0'
++ tools/pascal/build_speech.sh text-v37
+build parity-v37 rc=0
+build text-v37 rc=0
++ echo 'build text-v37 rc=0'
++ grep -h warnings /workspace/build/rt2-dev2/build-parity-v37.log /workspace/build/rt2-dev2/build-text-v37.log
+liquid-lfm3: warnings 0, sha256 500435d495ef7ca02f7e26e4a0304722b96139c8630ecc52e95f70c48d69fb12, 4667664 bytes
+lfm3-score: warnings 0, sha256 aa8a36e9a648b9431926f25856f94cf61de3adc7e4ce708239fed28fef57ec43, 4528824 bytes
+lfm3-speech: warnings 0, sha256 3150ebcec35f05cdc27ee6d5a47703914288713092e994ce29e65cdfd86a94c2, 6084864 bytes
+liquid-lfm3-worker: warnings 0, sha256 a3257ecd953dae8d521a0adc23e81f53d6ea32df1d911478194925a430fc57e6, 6011064 bytes
+liquid-lfm3-server: warnings 0, sha256 c745a2ef6d9225ada4c9f70b91bb9b56c62ef29f90cf49e8975472810f0e103f, 6539728 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
+liquid-lfm3: warnings 0, sha256 927798979187185849dd3baf896297943f08bc24d3090526464af784158da07f, 4142280 bytes
+lfm3-score: warnings 0, sha256 b3642846fe6685264a30736dc401b32c929dda0cf240659aff5ad81f1ad841bd, 4010784 bytes
+lfm3-speech: warnings 0, sha256 d1c23c62280a9e670fb5afefdbb00183542a7fc352ac1c96805dd1f580a017f9, 5567672 bytes
+liquid-lfm3-worker: warnings 0, sha256 4315d87622d9fd4fbeabc3b8ad13ea554430de163ae52fec0d6f0177d9e3047e, 5489560 bytes
+liquid-lfm3-server: warnings 0, sha256 d633d92208265396b797eb1fca7753e3f7c15741eeebfb32f26629f3f18e2f18, 6022464 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ mkdir -p /workspace/build/rt2-dev2/e1
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v37/liquid-lfm3
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/liquid-lfm3.text.txt
+device code liquid-lfm3 text-v37 against text-v35 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3 text-v37 against text-v35 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v37/liquid-lfm3
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/liquid-lfm3.parity.txt
+device code liquid-lfm3 parity-v37 against parity-v35 rc=0 99 and 99 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3 parity-v37 against parity-v35 rc=0 99 and 99 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v37/lfm3-score
++ cuobjdump -sass /workspace/build/text-v35/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/lfm3-score.text.txt
+device code lfm3-score text-v37 against text-v35 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code lfm3-score text-v37 against text-v35 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v37/lfm3-score
++ cuobjdump -sass /workspace/build/parity-v35/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/lfm3-score.parity.txt
+device code lfm3-score parity-v37 against parity-v35 rc=0 100 and 100 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code lfm3-score parity-v37 against parity-v35 rc=0 100 and 100 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v37/lfm3-speech
++ cuobjdump -sass /workspace/build/text-v35/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/lfm3-speech.text.txt
+device code lfm3-speech text-v37 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code lfm3-speech text-v37 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v37/lfm3-speech
++ cuobjdump -sass /workspace/build/parity-v35/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/lfm3-speech.parity.txt
++ echo 'device code lfm3-speech parity-v37 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v37/liquid-lfm3-worker
+device code lfm3-speech parity-v37 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/liquid-lfm3-worker.text.txt
+device code liquid-lfm3-worker text-v37 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3-worker text-v37 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v37/liquid-lfm3-worker
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/liquid-lfm3-worker.parity.txt
+device code liquid-lfm3-worker parity-v37 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3-worker parity-v37 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server
++ for k in text parity
++ cuobjdump -sass /workspace/build/text-v37/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v35/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/liquid-lfm3-server.text.txt
+device code liquid-lfm3-server text-v37 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3-server text-v37 against text-v35 rc=0 134 and 134 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ cuobjdump -sass /workspace/build/parity-v37/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/parity-v35/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
+++ head -1 /workspace/build/rt2-dev2/e1/liquid-lfm3-server.parity.txt
++ echo 'device code liquid-lfm3-server parity-v37 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
+device code liquid-lfm3-server parity-v37 against parity-v35 rc=0 140 and 140 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ rm -f /workspace/build/rt2-dev2/e1/a.sass /workspace/build/rt2-dev2/e1/b.sass
++ for r in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2 1
+ready line at 1 rows: {"ready":true,"port":48113,"total_capacity":29696,"speech_rows":1} exit 0 ok
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for r in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2 8
+ready line at 8 rows: {"ready":true,"port":43479,"total_capacity":15360,"speech_rows":8} exit 0 ok
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for r in 1 8 16
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2 16
+ready line at 16 rows: {"ready":true,"port":54091,"total_capacity":1024,"speech_rows":16} exit 0 ok
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ python3 - /workspace/build/rt2-dev2/a1
++ for v in v35 v37
++ for L in 129 136
++ d=/workspace/build/rt2-dev2/a1/v35-p129
++ mkdir -p /workspace/build/rt2-dev2/a1/v35-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev2/a1/p129.request.json /workspace/build/rt2-dev2/a1/v35-p129
++ /workspace/build/parity-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2/a1/v35-p129/request.json /workspace/build/rt2-dev2/a1/v35-p129/native.json
++ cd /workspace/build/rt2-dev2/a1/v35-p129/trace
++ shopt -s nullglob
++ f=(*probabilities.tile128*)
++ echo '11 files'
++ sha256sum 0.layers.10.self_attn.probabilities.tile128.bf16 0.layers.12.self_attn.probabilities.tile128.bf16 0.layers.14.self_attn.probabilities.tile128.bf16 0.layers.16.self_attn.probabilities.tile128.bf16 0.layers.18.self_attn.probabilities.tile128.bf16 0.layers.2.self_attn.probabilities.tile128.bf16 0.layers.20.self_attn.probabilities.tile128.bf16 0.layers.22.self_attn.probabilities.tile128.bf16 0.layers.4.self_attn.probabilities.tile128.bf16 0.layers.6.self_attn.probabilities.tile128.bf16 0.layers.8.self_attn.probabilities.tile128.bf16
++ cd /workspace/build/rt2-dev2/a1/v35-p129/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo '1 logits files'
++ sha256sum 0.logits.f32
++ rm -rf /workspace/build/rt2-dev2/a1/v35-p129/trace
++ for L in 129 136
++ d=/workspace/build/rt2-dev2/a1/v35-p136
++ mkdir -p /workspace/build/rt2-dev2/a1/v35-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev2/a1/p136.request.json /workspace/build/rt2-dev2/a1/v35-p136
++ /workspace/build/parity-v35/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2/a1/v35-p136/request.json /workspace/build/rt2-dev2/a1/v35-p136/native.json
++ cd /workspace/build/rt2-dev2/a1/v35-p136/trace
++ shopt -s nullglob
++ f=(*probabilities.tile128*)
++ echo '11 files'
++ sha256sum 0.layers.10.self_attn.probabilities.tile128.bf16 0.layers.12.self_attn.probabilities.tile128.bf16 0.layers.14.self_attn.probabilities.tile128.bf16 0.layers.16.self_attn.probabilities.tile128.bf16 0.layers.18.self_attn.probabilities.tile128.bf16 0.layers.2.self_attn.probabilities.tile128.bf16 0.layers.20.self_attn.probabilities.tile128.bf16 0.layers.22.self_attn.probabilities.tile128.bf16 0.layers.4.self_attn.probabilities.tile128.bf16 0.layers.6.self_attn.probabilities.tile128.bf16 0.layers.8.self_attn.probabilities.tile128.bf16
++ cd /workspace/build/rt2-dev2/a1/v35-p136/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo '1 logits files'
++ sha256sum 0.logits.f32
++ rm -rf /workspace/build/rt2-dev2/a1/v35-p136/trace
++ for v in v35 v37
++ for L in 129 136
++ d=/workspace/build/rt2-dev2/a1/v37-p129
++ mkdir -p /workspace/build/rt2-dev2/a1/v37-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev2/a1/p129.request.json /workspace/build/rt2-dev2/a1/v37-p129
++ /workspace/build/parity-v37/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2/a1/v37-p129/request.json /workspace/build/rt2-dev2/a1/v37-p129/native.json
++ cd /workspace/build/rt2-dev2/a1/v37-p129/trace
++ shopt -s nullglob
++ f=(*probabilities.tile128*)
++ echo '11 files'
++ sha256sum 0.layers.10.self_attn.probabilities.tile128.bf16 0.layers.12.self_attn.probabilities.tile128.bf16 0.layers.14.self_attn.probabilities.tile128.bf16 0.layers.16.self_attn.probabilities.tile128.bf16 0.layers.18.self_attn.probabilities.tile128.bf16 0.layers.2.self_attn.probabilities.tile128.bf16 0.layers.20.self_attn.probabilities.tile128.bf16 0.layers.22.self_attn.probabilities.tile128.bf16 0.layers.4.self_attn.probabilities.tile128.bf16 0.layers.6.self_attn.probabilities.tile128.bf16 0.layers.8.self_attn.probabilities.tile128.bf16
++ cd /workspace/build/rt2-dev2/a1/v37-p129/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo '1 logits files'
++ sha256sum 0.logits.f32
++ rm -rf /workspace/build/rt2-dev2/a1/v37-p129/trace
++ for L in 129 136
++ d=/workspace/build/rt2-dev2/a1/v37-p136
++ mkdir -p /workspace/build/rt2-dev2/a1/v37-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/rt2-dev2/a1/p136.request.json /workspace/build/rt2-dev2/a1/v37-p136
++ /workspace/build/parity-v37/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2/a1/v37-p136/request.json /workspace/build/rt2-dev2/a1/v37-p136/native.json
++ cd /workspace/build/rt2-dev2/a1/v37-p136/trace
++ shopt -s nullglob
++ f=(*probabilities.tile128*)
++ echo '11 files'
++ sha256sum 0.layers.10.self_attn.probabilities.tile128.bf16 0.layers.12.self_attn.probabilities.tile128.bf16 0.layers.14.self_attn.probabilities.tile128.bf16 0.layers.16.self_attn.probabilities.tile128.bf16 0.layers.18.self_attn.probabilities.tile128.bf16 0.layers.2.self_attn.probabilities.tile128.bf16 0.layers.20.self_attn.probabilities.tile128.bf16 0.layers.22.self_attn.probabilities.tile128.bf16 0.layers.4.self_attn.probabilities.tile128.bf16 0.layers.6.self_attn.probabilities.tile128.bf16 0.layers.8.self_attn.probabilities.tile128.bf16
++ cd /workspace/build/rt2-dev2/a1/v37-p136/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo '1 logits files'
++ sha256sum 0.logits.f32
++ rm -rf /workspace/build/rt2-dev2/a1/v37-p136/trace
++ for L in 129 136
++ python3 - /workspace/build/rt2-dev2/a1/v35-p129 /workspace/build/rt2-dev2/a1/v37-p129 129
+A1 parity p129: last tile's probability traces 11 and 11 files, 2 differ between v35 and v37; logits 1 and 1 files, identical
++ for L in 129 136
++ python3 - /workspace/build/rt2-dev2/a1/v35-p136 /workspace/build/rt2-dev2/a1/v37-p136 136
+A1 parity p136: last tile's probability traces 11 and 11 files, 11 differ between v35 and v37; logits 1 and 1 files, DIFFER
++ /workspace/build/venv-asr/bin/python tools/pascal/batch_budget.py /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev2/batch
++ echo 'B1 rc=1'
++ tail -2 /workspace/build/rt2-dev2/batch.log
+B1 rc=1
+batch budget: sessions 6144 + 23552, prompts [78, 19335]; prefill 13.1 s; 4095 steps (199 paired; generated [4096, 200]) in 66.8 s (16.32 ms each); worst case 13.1 + 4095 steps = 79.9 s (limit 240 s); 4,097 refused {'error': 'invalid_request'}; health ready True
+BATCH BUDGET FAIL
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in 1:29696 8:15360 16:1024
++ r=1
++ t=29696
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 1 /workspace/data/librispeech/wav /workspace/build/rt2-dev2/memory-1 7740 29696
++ echo 'rule 12 rows 1 total 29696 rc=0'
++ grep -E '^rule 12|^SPEECH' /workspace/build/rt2-dev2/memory-1.log
+rule 12 rows 1 total 29696 rc=0
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5147 MiB (382 samples): ok
+rule 12 one-29696 with 1 speech: text [200] in 26.8 s, speech [200] (overlapped True), peak 7163 MiB (490 samples): ok
+rule 12 3712+25984 with 1 speech: text [200, 200] in 27.7 s, speech [200] (overlapped True), peak 7501 MiB (485 samples): ok
+rule 12 1856+27840 with 1 speech: text [200, 200] in 28.6 s, speech [200] (overlapped True), peak 7505 MiB (489 samples): ok
+rule 12 14848+14848 with 1 speech: text [200, 200] in 24.9 s, speech [200] (overlapped True), peak 7213 MiB (473 samples): ok
+rule 12 batch-3712+25984 with 1 speech: text [200] in 92.2 s, speech [200] (overlapped True), peak 7511 MiB (485 samples): ok
+rule 12 audio-in-one-29696 with 0 speech and 3 audio in: text [200] in 24.7 s, speech [] (overlapped True), peak 7707 MiB (278 samples): ok
+SPEECH MEMORY (rule 12, 1 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in 1:29696 8:15360 16:1024
++ r=8
++ t=15360
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 8 /workspace/data/librispeech/wav /workspace/build/rt2-dev2/memory-8 7740 15360
++ echo 'rule 12 rows 8 total 15360 rc=0'
++ grep -E '^rule 12|^SPEECH' /workspace/build/rt2-dev2/memory-8.log
+rule 12 rows 8 total 15360 rc=0
+rule 12 speech-only with 8 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 5869 MiB (615 samples): ok
+rule 12 one-15360 with 8 speech: text [200] in 13.9 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6927 MiB (661 samples): ok
+rule 12 1920+13440 with 8 speech: text [200, 200] in 17.8 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7293 MiB (663 samples): ok
+rule 12 960+14400 with 8 speech: text [200, 200] in 17.9 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7061 MiB (664 samples): ok
+rule 12 7680+7680 with 8 speech: text [200, 200] in 17.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6945 MiB (660 samples): ok
+rule 12 batch-1920+13440 with 8 speech: text [200] in 133.3 s, speech [200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7299 MiB (662 samples): ok
+rule 12 audio-in-one-15360 with 7 speech and 3 audio in: text [200] in 13.4 s, speech [200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7471 MiB (677 samples): ok
+SPEECH MEMORY (rule 12, 8 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ for rt in 1:29696 8:15360 16:1024
++ r=16
++ t=1024
++ /workspace/build/venv-asr/bin/python tools/pascal/speech_memory.py /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B 16 /workspace/data/librispeech/wav /workspace/build/rt2-dev2/memory-16 7740 1024
+rule 12 rows 16 total 1024 rc=0
++ echo 'rule 12 rows 16 total 1024 rc=0'
++ grep -E '^rule 12|^SPEECH' /workspace/build/rt2-dev2/memory-16.log
+rule 12 speech-only with 16 speech: text [] in 0.0 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6701 MiB (861 samples): ok
+rule 12 one-1024 with 16 speech: text [200] in 4.5 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6873 MiB (867 samples): ok
+rule 12 256+768 with 16 speech: text [200, 200] in 9.7 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6865 MiB (869 samples): ok
+rule 12 256+768 with 16 speech: text [200, 200] in 9.6 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6865 MiB (869 samples): ok
+rule 12 512+512 with 16 speech: text [200, 200] in 9.6 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6839 MiB (869 samples): ok
+rule 12 batch-256+768 with 16 speech: text [200] in 181.3 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 6865 MiB (867 samples): ok
+rule 12 audio-in-one-1024 with 15 speech and 3 audio in: text [200] in 4.5 s, speech [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200] (overlapped True), peak 7417 MiB (881 samples): ok
+SPEECH MEMORY (rule 12, 16 rows) PASS
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ date
+Sat Nov 21 18:40:18 MST 2026

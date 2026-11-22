@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Perform ASR in English."}, {"role": "user", "content": [{"type": "audio", "audio": "/workspace/data/librispeech/wav/121-123859-0002.wav"}]}], "mode": "text", "max_new_tokens": 512, "seed": 0}

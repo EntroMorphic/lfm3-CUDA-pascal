@@ -1,0 +1,172 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+{
+ "status": "passed",
+ "binaries_sha256": {
+  "liquid-lfm3-server": "5c399f983dc9a8417dd9978c290e53b77cb1abd6143c7f6e30569ef90665d4a4",
+  "liquid-lfm3-worker": "7e8ddf3cd0e90b2d472de4d20952d14065a43948d3be6ac2898c0b726de9b009"
+ },
+ "sources_sha256": {
+  "check_lfm3_native_server.py": "abeb9b0804c4bf1ef95f864db36da58f4abcf6fba562e288fedb0cbd3b53e839",
+  "lfm3_server.py": "6619a409b3b1508d32ca4a02dcd6696e8315f8e59af655c3efb999d427edd675",
+  "lfm3_worker_client.py": "dcbfd5d7de36c2dd5768f98f39d0972a652cf66bed7c05be622030ea89727f17"
+ },
+ "startup_seconds": 0.6832801959826611,
+ "stage": "shutdown",
+ "control_text_sha256": "05a79c460bbfb3719f7e866d4ea9f67b0f41daa401c67e9403ad9a43e17d479c",
+ "bounded_admission_rounds": [
+  {
+   "round": 0,
+   "statuses": [
+    200,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    200
+   ],
+   "post_contention_both_sessions_exact": true
+  },
+  {
+   "round": 1,
+   "statuses": [
+    409,
+    409,
+    409,
+    409,
+    200,
+    409,
+    409,
+    200
+   ],
+   "post_contention_both_sessions_exact": true
+  },
+  {
+   "round": 2,
+   "statuses": [
+    200,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    200
+   ],
+   "post_contention_both_sessions_exact": true
+  }
+ ],
+ "cancellation_attempts": [
+  {
+   "delay_seconds": 0.25,
+   "cancel_status": 202,
+   "generated": 3,
+   "cancelled": true
+  }
+ ],
+ "partial_text": "Yes, reflective",
+ "batch_cancellation_attempts": [
+  {
+   "delay_seconds": 0.3,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 0.15,
+   "cancel_status": 202,
+   "generated": 0,
+   "cancelled": true
+  },
+  {
+   "delay_seconds": 0.5,
+   "cancel_status": 202,
+   "generated": 4,
+   "cancelled": true
+  }
+ ],
+ "extreme_sampling": [
+  {
+   "sampling": {
+    "do_sample": true,
+    "temperature": 1e-300,
+    "seed": 1
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "temperature": 1000000.0,
+    "seed": 2
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "repetition_penalty": 1e+300,
+    "seed": 3
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "top_p": 1e-300,
+    "seed": 4
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "min_p": 1,
+    "seed": 5
+   },
+   "generated": 8
+  },
+  {
+   "sampling": {
+    "do_sample": true,
+    "top_k": 128000,
+    "seed": 6
+   },
+   "generated": 8
+  }
+ ],
+ "differential": {
+  "requests": 22,
+  "mismatches": [],
+  "statuses": [
+   200,
+   200,
+   429,
+   200,
+   400,
+   400,
+   200,
+   200,
+   200,
+   200,
+   200,
+   400,
+   200,
+   200,
+   409,
+   200,
+   404,
+   200,
+   200,
+   400,
+   200,
+   200
+  ]
+ },
+ "shutdown": {
+  "exit_status": 0,
+  "seconds": 0.2138718239730224,
+  "partial_tokens": 53
+ }
+}

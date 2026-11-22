@@ -1,0 +1,1 @@
+lighthouse-split-s1 {"status": 200, "wav_identical": true, "wav_bytes": 1835564, "reference_bytes": 1835564, "chunks": 5, "all_chunks_ended_by_eos": true, "audio_seconds": 38.24, "generate_seconds": 76.51461575100001, "wall_seconds": 80.18, "pass": true}

@@ -1,0 +1,255 @@
+{
+  "limit_mib": 7740,
+  "speech_rows": 1,
+  "total_capacity": 29696,
+  "configurations": [
+    {
+      "name": "speech-only",
+      "capacities": [],
+      "speech": [
+        {
+          "start": -20.0,
+          "status": 200,
+          "end": 68.7,
+          "error": null,
+          "frames": 1460,
+          "audio_seconds": 116.8,
+          "truncated": false
+        }
+      ],
+      "prompts": [],
+      "statuses": [],
+      "peak_mib": 5147,
+      "samples": 383,
+      "sampler_errors": 0,
+      "text_seconds": 0.0,
+      "audio_in": [],
+      "speech_overlapped_text": true,
+      "ok": true
+    },
+    {
+      "name": "one-29696",
+      "capacities": [
+        29696
+      ],
+      "speech": [
+        {
+          "start": -20.0,
+          "status": 200,
+          "end": 94.0,
+          "error": null,
+          "frames": 1460,
+          "audio_seconds": 116.8,
+          "truncated": false
+        }
+      ],
+      "prompts": [
+        29657
+      ],
+      "statuses": [
+        200
+      ],
+      "peak_mib": 7163,
+      "samples": 492,
+      "sampler_errors": 0,
+      "text_seconds": 27.3,
+      "audio_in": [],
+      "speech_overlapped_text": true,
+      "ok": true
+    },
+    {
+      "name": "3712+25984",
+      "capacities": [
+        3712,
+        25984
+      ],
+      "speech": [
+        {
+          "start": -20.0,
+          "status": 200,
+          "end": 92.8,
+          "error": null,
+          "frames": 1460,
+          "audio_seconds": 116.8,
+          "truncated": false
+        }
+      ],
+      "prompts": [
+        3638,
+        25933
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "peak_mib": 7501,
+      "samples": 487,
+      "sampler_errors": 0,
+      "text_seconds": 28.1,
+      "audio_in": [],
+      "speech_overlapped_text": true,
+      "ok": true
+    },
+    {
+      "name": "1856+27840",
+      "capacities": [
+        1856,
+        27840
+      ],
+      "speech": [
+        {
+          "start": -20.0,
+          "status": 200,
+          "end": 93.7,
+          "error": null,
+          "frames": 1460,
+          "audio_seconds": 116.8,
+          "truncated": false
+        }
+      ],
+      "prompts": [
+        1776,
+        27795
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "peak_mib": 7505,
+      "samples": 491,
+      "sampler_errors": 0,
+      "text_seconds": 29.0,
+      "audio_in": [],
+      "speech_overlapped_text": true,
+      "ok": true
+    },
+    {
+      "name": "14848+14848",
+      "capacities": [
+        14848,
+        14848
+      ],
+      "speech": [
+        {
+          "start": -20.0,
+          "status": 200,
+          "end": 89.7,
+          "error": null,
+          "frames": 1460,
+          "audio_seconds": 116.8,
+          "truncated": false
+        }
+      ],
+      "prompts": [
+        14810,
+        14810
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "peak_mib": 7213,
+      "samples": 473,
+      "sampler_errors": 0,
+      "text_seconds": 25.0,
+      "audio_in": [],
+      "speech_overlapped_text": true,
+      "ok": true
+    },
+    {
+      "name": "batch-3712+25984",
+      "capacities": [
+        3712,
+        25984
+      ],
+      "speech": [
+        {
+          "start": -20.0,
+          "status": 200,
+          "end": 68.6,
+          "error": null,
+          "frames": 1460,
+          "audio_seconds": 116.8,
+          "truncated": false
+        }
+      ],
+      "prompts": [
+        3638,
+        25933
+      ],
+      "statuses": [
+        200
+      ],
+      "gpu_batching": true,
+      "peak_mib": 7511,
+      "samples": 485,
+      "sampler_errors": 0,
+      "text_seconds": 92.4,
+      "audio_in": [],
+      "speech_overlapped_text": true,
+      "ok": true
+    },
+    {
+      "name": "audio-in-one-29696",
+      "capacities": [
+        29696
+      ],
+      "speech": [],
+      "prompts": [
+        29657
+      ],
+      "statuses": [
+        200
+      ],
+      "peak_mib": 7707,
+      "samples": 277,
+      "sampler_errors": 0,
+      "text_seconds": 24.8,
+      "audio_in": [
+        {
+          "start": 24.8,
+          "status": 200,
+          "end": 31.3,
+          "error": null,
+          "frames": 0,
+          "audio_seconds": 0.0,
+          "truncated": false
+        },
+        {
+          "start": 31.3,
+          "status": 200,
+          "end": 37.8,
+          "error": null,
+          "frames": 0,
+          "audio_seconds": 0.0,
+          "truncated": false
+        },
+        {
+          "start": 37.8,
+          "status": 200,
+          "end": 44.3,
+          "error": null,
+          "frames": 0,
+          "audio_seconds": 0.0,
+          "truncated": false
+        }
+      ],
+      "speech_overlapped_text": true,
+      "ok": true
+    }
+  ],
+  "status": "passed",
+  "before_mib": 4247,
+  "before_samples": 9,
+  "calibration": {
+    "tokens_at_1": 61,
+    "tokens_at_11": 551
+  },
+  "clip": {
+    "bytes": 3142656,
+    "seconds": 98.206625,
+    "pcm_budget_bytes": 3142612
+  },
+  "last_peak_mib": 7707,
+  "server_exit": 0
+}

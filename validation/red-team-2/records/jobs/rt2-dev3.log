@@ -1,0 +1,19 @@
+remote.sh: tree sha256 ebfdf80120fa14d9e87cbbabe27b3084758ccbba4dcd937903a3cd702b2ed2e5; ef1d0fd plus uncommitted changes
++ date
+Sat Nov 21 18:42:46 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/rt2-dev3
++ M=/workspace/models/LFM3-Omni-2B
++ '[' -e /workspace/build/rt2-dev3 ']'
++ mkdir -p /workspace/build/rt2-dev3
++ /workspace/build/venv-asr/bin/python tools/pascal/batch_budget.py /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev3/batch 29696
++ echo 'B1 rc=1'
++ tail -3 /workspace/build/rt2-dev3/batch.log
+B1 rc=1
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_native_server.py", line 67, in call
+    raise AssertionError((path, status, decoded))
+AssertionError: ('/generate_batch', 400, {'error': 'invalid_request'})
++ pkill -TERM -f liquid-lfm3-server
++ date
+Sat Nov 21 18:43:07 MST 2026

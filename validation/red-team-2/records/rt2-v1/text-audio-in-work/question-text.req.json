@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Answer questions about the provided audio clip."}, {"role": "user", "content": [{"type": "audio", "audio": "/workspace/data/librispeech/wav/1089-134686-0000.wav"}, {"type": "text", "text": "What is the speaker describing?"}]}], "mode": "text", "max_new_tokens": 256, "seed": 0}

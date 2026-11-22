@@ -1,7 +1,8 @@
 # red-team-2: the code this project wrote, end to end, after phase 4
 
-Status: **eight review rounds; the last found nothing to fix (rule 5). The verification run is under way**
-(2026-11-21). The owner: "let's red-team the code end-to-end. Remediate
+Status: **passed** (2026-11-22). Eight review rounds, the last finding nothing to fix; every finding fixed, or left
+to the owner with the reason (below); the verification passes every rule. Two findings changed recorded results:
+speech-v1 rule 12 (the default capacity is now 29,696) and text-correct-v2 rule 2 (its compact-windows leg, run now). The owner: "let's red-team the code end-to-end. Remediate
 findings, verify, and iterate until pristine." Rules and predictions committed before the first review.
 
 ## Scope and method
@@ -256,3 +257,30 @@ tool afterwards (`job2.sh`).
 Round 8, one review of that change, **found nothing to fix**: the old server's reply after the watchdog is 503
 `worker_unavailable` at about 300 s, the control's continuation (about 912 tokens) is within the cap and reuses the
 seed, and the long one (about 27,900) is not.
+
+## Verification
+
+`job.sh` (tree `0efc905`; builds `text-v38`, `parity-v38`, and `text-v38s`, the text-only server), stopped by the
+owner's leave once the shipping build's speech-v1 rule 11 was judged ("Let's optimize for time without sacrificing
+quality"), then `job3.sh` (tree `5ffbe8a`) and its `job2.sh`. Logs: `records/jobs/rt2-v1*.log`; records
+`records/rt2-v1/`, `rt2-v1b/`, `rt2-serve-*`, the development runs' `rt2-dev*/` (`SHA256SUMS` over all). Not
+committed, for rule 9's blindness: the shipping build's per-case speech reports and E2 speech outputs (on the card).
+Host suite on `0efc905`: `records/host-suite-0efc905.txt`.
+
+| # | Rule | Result |
+|---|---|---|
+| 1 | Every finding fixed, not holding, or the owner's | **Pass.** Every finding of eight rounds fixed, or listed for the owner below with why |
+| 2 | A finding in what a binary computes reproduced on the old binary and not the new | **Pass.** A1: the parity build's last attention tile changed (prompt 136 at capacity 4,097: every layer's trace and the logits; development 2 and the verification), the shipping build unchanged. B1: at 4,096 a lane a sampled batch failed the server closed (development 4); at 2,048, greedy 59.7 and 61.4 s, sampled 178.7 and 180.7 s, sampled after a 934-token continuation 187.9 and 188.3 s on the speech and text-only servers (limit 240), 2,049 refused. R5-1: the old server (`text-v37`), continued by 27,912 tokens, failed closed (503 `worker_unavailable` at 300.1 s, `/health` not ready); the new one prefilled in full in 23.9 s and served; the cap's boundary exact (1,024 continued, 1,025 not); within it the seed reused. D1: rule 12 failed with the full clip at the old defaults (development 1) and passes at the new (below). B2, B4: host checks of startup, by the host suite and the ready lines |
+| 3 | Nothing recorded changes, or what does is run again | **Pass.** Device code of all fourteen binaries identical to v35's (and the text-only build's to serve-v1's `text-v34`) function for function. Text: parity gate 7,826 of 7,826; fixtures pass with compact windows unset and 1, and under memcheck (0 errors). The scorer: v38 byte-identical to v35 at 256, 257 and 4,096, both builds. Speech: speech-v1 rule 3, 16 of 16 Thor clips and the rendering 15 of 15, on `parity-v38`; E2 byte-identical, 10 shipping seed-1 cases, the split lighthouse, 19 LibriSpeech utterances each build. speech-v1 rule 12 at the new defaults: ready lines 29,696 / 15,360 / 1,024 at 1 / 8 / 16 rows; peaks 7,707, 7,471 and 7,417 MiB (limit 7,740). Rule 13 on both builds, with the 64-clip control (200). Rule 11: the shipping build's five checks on `text-v38` (decision 10: every judged criterion; timing recorded as in speech-v1: worst case 494 s, first audio 0.93 s, the same 14 interleaved streams with gaps, first audio under load 1.18 s); the parity build: audio in on `parity-v38`, the other four carried (`job3.sh`: device code identical; their text sessions are of 1,024 tokens, single turns, no batch; `/speech` on the 4,096-token speech runner, outside the session ledger; the defaults and startup checks shared host code, run on the shipping server). serve-v1 rules 3 to 9, every stage, on the shipping, parity and text-only builds; serve-v1 rule 10 (paired decode) passes. C1: text-v6's own binary (hash checked) passes the fixtures with compact windows on. C10: the position-1 tables from the card's files equal the committed ones |
+| 4 | Gate, fixtures, speech-v1 rule 3, host suite | **Pass** (above); host suite 2,402 passed, 5 skipped, 1 needing Transformers 5.x (the same failure as every phase; the ten more passes are this round's tests) |
+| 5 | The last round finds nothing to fix | **Pass.** Round 8 |
+
+### Predictions against the measurements
+
+- Most findings were in the tooling: **held in part.** Of round 1's 50, 23 were in the tools, 13 in the engine and
+  server, the rest in documents and hygiene; the later rounds' were mostly in the tools written to verify the fixes.
+- Some in the server and speech host code: **held**, and more than predicted: two ways an ordinary request could fail
+  the server closed (B1, R5-1), both in imported code the Thor engine shares.
+- No recorded result changes: **missed.** speech-v1 rule 12 failed once its audio-in clip was at the request limit,
+  and its default changed; text-correct-v2 rule 2 had a leg its run never made (it passes now). The outputs every
+  phase judged are byte-identical.

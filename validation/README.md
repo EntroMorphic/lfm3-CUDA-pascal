@@ -20,7 +20,7 @@ and records sit beside it. [docs/validation.md](../docs/validation.md) describes
 | [speed-v1](speed-v1/) | 2 | Phase 2's bar (closed with rule 12 failed) |
 | [serve-v1](serve-v1/) | 3 | Text serving: the reference's server checks on both builds (passed) |
 | [speech-v1](speech-v1/) | 4 | Speech out and audio in (13 of 14 rules; the owner's listening pending) |
-| [red-team-2](red-team-2/) | 4 | Review of the code of phases 1 to 4, end to end |
+| [red-team-2](red-team-2/) | 4 | Review of the code of phases 1 to 4, end to end (passed) |
 
 Imported from the Thor engine (inputs and records its rules and tools use, unchanged):
 [speech-e2e-v1](speech-e2e-v1/) (the speech prompts), [speech-normalize-v1](speech-normalize-v1/) (text normalization),

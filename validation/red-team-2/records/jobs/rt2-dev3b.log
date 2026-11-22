@@ -1,0 +1,18 @@
+remote.sh: tree sha256 3991cf903a82a6ff7c5abbf76ceefd0903f1b9dba263eb8d148d3e19e4dbc2b0; f8367a3
++ date
+Sat Nov 21 18:44:21 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/rt2-dev3
++ M=/workspace/models/LFM3-Omni-2B
++ mkdir -p /workspace/build/rt2-dev3
++ '[' -e /workspace/build/rt2-dev3/batch2 ']'
++ /workspace/build/venv-asr/bin/python tools/pascal/batch_budget.py /workspace/build/text-v37/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/rt2-dev3/batch2 29696
+B1 rc=0
++ echo 'B1 rc=0'
++ tail -3 /workspace/build/rt2-dev3/batch2.log
+batch budget: sessions 6144 + 23552, prompts [1982, 19391]; the two prefills 14.4 s; the worst case, generated [4096, 4096] (4095 paired steps), 98.1 s (limit 240 s); 4,097 refused {'error': 'invalid_request'}; health ready True
+BATCH BUDGET PASS
++ pkill -TERM -f liquid-lfm3-server
++ date
+Sat Nov 21 18:46:18 MST 2026

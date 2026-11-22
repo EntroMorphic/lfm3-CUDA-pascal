@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Perform TTS in American English using a male voice."}, {"role": "user", "content": "On March 3rd, 2024, the museum reopened after a two-year renovation; visitors could finally see the restored murals, which date back nearly four hundred years."}], "mode": "audio", "max_new_tokens": 512, "seed": 1, "split": false}

@@ -1,0 +1,81 @@
+{
+  "steps": 600,
+  "cases": [
+    {
+      "capacity": 4097,
+      "prompt": 3400,
+      "chunks": 19,
+      "paired_decode_calls": 581,
+      "expected_paired_decode_calls": 581,
+      "lanes": [
+        {
+          "session": "A",
+          "steps": 600,
+          "ids_equal": true,
+          "unequal_traces": [],
+          "unequal_count": 0,
+          "ok": true
+        },
+        {
+          "session": "B",
+          "steps": 600,
+          "ids_equal": true,
+          "unequal_traces": [],
+          "unequal_count": 0,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "capacity": 8192,
+      "prompt": 7500,
+      "chunks": 19,
+      "paired_decode_calls": 581,
+      "expected_paired_decode_calls": 581,
+      "lanes": [
+        {
+          "session": "A",
+          "steps": 600,
+          "ids_equal": true,
+          "unequal_traces": [],
+          "unequal_count": 0,
+          "ok": true
+        },
+        {
+          "session": "B",
+          "steps": 600,
+          "ids_equal": true,
+          "unequal_traces": [],
+          "unequal_count": 0,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "capacity": 28672,
+      "prompt": 28000,
+      "chunks": 19,
+      "paired_decode_calls": 581,
+      "expected_paired_decode_calls": 581,
+      "lanes": [
+        {
+          "session": "A",
+          "steps": 600,
+          "ids_equal": true,
+          "unequal_traces": [],
+          "unequal_count": 0,
+          "ok": true
+        },
+        {
+          "session": "B",
+          "steps": 600,
+          "ids_equal": true,
+          "unequal_traces": [],
+          "unequal_count": 0,
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "status": "passed"
+}

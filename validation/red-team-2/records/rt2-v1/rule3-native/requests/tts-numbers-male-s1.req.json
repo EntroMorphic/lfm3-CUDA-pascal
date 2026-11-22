@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "Perform TTS in American English using a male voice."}, {"role": "user", "content": "Your flight leaves at 7:45 in the morning from gate 22, and the total fare comes to 389 dollars and 50 cents."}], "mode": "audio", "max_new_tokens": 512, "seed": 1, "split": false}

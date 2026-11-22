@@ -1,0 +1,3 @@
+continuation watchdog (old): seeded 970 tokens, then 503 in 300.1 s, reused None, consumed None, error worker_unavailable; /health 503 {'ready': False, 'gpu_batching': False}: as expected
+CONTINUATION (old) PASS
+302.40 s

@@ -3,7 +3,7 @@
 Status: **rule run done: rules 1 to 8 and 10 to 14 pass on the final tree; rule 9, the owner's listening, pending**
 (2026-11-21). **Then red-team-2 found rule 12's audio-in clip 11 s short of the request limit: with the full clip,
 30,720 peaks at 7,759 MiB, so rule 12 failed; the default capacity is lowered as the rule says (29,696; 7,707 MiB),
-and the rules the change reaches are run again there ([red-team-2](../red-team-2/)).** The rules were set (2026-11-20) before any speech output of this engine had been generated on the
+and the rules the change reaches were run again there and pass ([red-team-2](../red-team-2/)).** The rules were set (2026-11-20) before any speech output of this engine had been generated on the
 card.
 
 Phase 4's exit gate (PLAN): "the reference's speech rounds: word error rate against HF, and listening". Decision 9

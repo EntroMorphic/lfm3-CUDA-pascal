@@ -1,0 +1,6 @@
+batch budget greedy: generated [2048, 2048] (2047 paired steps), 61.4 s (limit 240 s)
+batch budget sampled: generated [2048, 2048] (2047 paired steps), 180.7 s (limit 240 s)
+batch budget sampled-continued: reused [92, 26129], continued [934, 934] tokens; generated [2048, 2048] (2047 paired steps), 188.3 s (limit 240 s)
+batch budget: sessions 3229 + 29539; the two prefills 20.8 s; 2,049 refused {'error': 'invalid_request'}; health ready True
+BATCH BUDGET PASS
+475.34 s

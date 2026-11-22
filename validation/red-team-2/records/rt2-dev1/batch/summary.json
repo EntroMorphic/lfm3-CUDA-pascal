@@ -1,0 +1,7 @@
+{
+ "total_capacity": 30720,
+ "bound": 4096,
+ "engine_timeout": 300.0,
+ "server_exit": 0,
+ "pass": false
+}

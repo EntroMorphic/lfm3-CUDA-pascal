@@ -1,0 +1,29 @@
+{
+ "total_capacity": 29696,
+ "bound": 4096,
+ "engine_timeout": 300.0,
+ "sessions": [
+  6144,
+  23552
+ ],
+ "prompts": [
+  78,
+  19335
+ ],
+ "prefill_seconds": 13.13,
+ "batch_seconds": 79.94,
+ "paired_decode_calls": 199,
+ "generated": [
+  4096,
+  200
+ ],
+ "steps": 4095,
+ "ms_per_step": 16.32,
+ "worst_case_seconds": 79.9,
+ "refusal_4097": {
+  "error": "invalid_request"
+ },
+ "health_ready": true,
+ "server_exit": 0,
+ "pass": false
+}

@@ -1,0 +1,1 @@
+{"messages": [{"role": "user", "content": [{"type": "audio", "audio": "/workspace/data/librispeech/wav/4446-2275-0004.wav"}, {"type": "audio", "audio": "/workspace/data/librispeech/wav/1580-141084-0005.wav"}, {"type": "text", "text": "Who are the two speakers talking about? Answer briefly."}]}], "mode": "text", "max_new_tokens": 256, "seed": 0}
