@@ -489,8 +489,10 @@ struct Settings {
   // at most one slice (16 tokens: about 0.26 s on Thor); while rows run, a slice is one token.
   int text_slice = 16;
   // validation/image-cache-v1: the image caches' budget in MiB (each side's: the front end's token counts here, the
-  // engine's encoder rows on the GPU); 0: no caching
-  int image_cache_mb = 512;
+  // engine's encoder rows on the GPU); 0: no caching. 32 on the GTX 1080 (the reference's 512): the engine's side is
+  // device memory, and beside the vision encoder's scratch at the largest image (about 436 MiB) the card has room for
+  // little more (validation/images-v1 rule 7); 32 MiB keeps four full-size images or about 25 benchmark-size ones
+  int image_cache_mb = 32;
   void validate() const {
     const auto in = [](long long v, long long lo, long long hi) { return v >= lo && v <= hi; };
     if (!in(max_sessions, 1, 2) || !in(total_capacity, 2, 32768) || !in(queue_size, 1, 64) || !in(handlers, 1, 128) ||

@@ -21,6 +21,11 @@
 // kFp32, the CUDA-core path of images-v1, remains). Only the output is rounded to BF16, the language model's input. The rotary angle is the model's as HF
 // defines it (float32 position times float32 inverse frequency); its cosine and sine, and the rotation, in FP64,
 // rounded once. Attention: exact softmax per query (running maximum, FP32 sums), keys in a fixed order.
+// This port (the GTX 1080, sm_61) has no tensor cores: the encoder computes on the CUDA cores in FP32 (kFp32, the path
+// of images-v1 rule 2), its default here; kX1 and kX2 are compiled only with LFM3_VISION_TENSOR_CORES=1.
+#ifndef LFM3_VISION_TENSOR_CORES
+#define LFM3_VISION_TENSOR_CORES 0
+#endif
 #include <lfm/fp32_ops.cuh>
 #include <lfm/gemm.cuh>
 #include <lfm/model_config.hpp>
@@ -44,10 +49,12 @@ namespace lfm3_vision {
 // stream are FP32 in every mode.
 struct Precision {
   enum Mode { kFp32, kX1, kX2 };
-  // the default: images-speed-v1 rule 1 (x2 on all 31 images, error 0.023-0.112 of HF BF16's, as FP32's)
-  Mode linear = kX2, attention = kX2;
+  // the default: images-speed-v1 rule 1 (x2 on all 31 images, error 0.023-0.112 of HF BF16's, as FP32's); without
+  // tensor cores, kFp32
+  Mode linear = LFM3_VISION_TENSOR_CORES ? kX2 : kFp32, attention = LFM3_VISION_TENSOR_CORES ? kX2 : kFp32;
   static Mode parse(const std::string& s) {
     if (s == "fp32") return kFp32;
+    if (!LFM3_VISION_TENSOR_CORES) throw std::runtime_error("vision precision: this build has fp32 only: " + s);
     if (s == "x1") return kX1;
     if (s == "x2") return kX2;
     throw std::runtime_error("vision precision must be fp32, x1 or x2: " + s);
@@ -163,6 +170,7 @@ __global__ void __launch_bounds__(kAttnQueries) attention(const float* q, const 
   for (int d = 0; d < 64; ++d) out[(size_t(query) * heads + h) * 64 + d] = __fdiv_rn(acc[d], total);
 }
 // ---- the tensor-core paths (validation/images-speed-v1) ----
+#if LFM3_VISION_TENSOR_CORES
 // A float as BF16 parts: hi = bf16(v); lo = bf16(v - hi) (x2), so hi + lo holds v to about 2^-16 of it.
 __device__ __forceinline__ void split_bf16(float v, bf16& hi, bf16& lo) {
   hi = __float2bfloat16_rn(v);
@@ -396,6 +404,7 @@ __global__ void __launch_bounds__(32 * kTcWarps) attention_tc(const float* q, co
     }
   }
 }
+#endif  // LFM3_VISION_TENSOR_CORES
 __global__ void add(float* x, const float* y, size_t n) {
   const size_t i = size_t(blockIdx.x) * blockDim.x + threadIdx.x;
   if (i < n) x[i] = __fadd_rn(x[i], y[i]);
@@ -509,11 +518,16 @@ class Encoder {
     for (int i = 0; i < 16; ++i) inv_freq_[i] = 1.0f / std::pow(float(theta_), float(2 * i) / 32.0f);
     // the tensor-core attention's dynamic shared memory (above the 48 KB default), on the device this Encoder runs on
     // (set per Encoder, not once per process: a function attribute belongs to the device it is set on)
+#if LFM3_VISION_TENSOR_CORES
     if (cudaFuncSetAttribute(kernels::attention_tc<2>, cudaFuncAttributeMaxDynamicSharedMemorySize,
                              kernels::tc_shared_bytes<2>()) != cudaSuccess ||
         cudaFuncSetAttribute(kernels::attention_tc<1>, cudaFuncAttributeMaxDynamicSharedMemorySize,
                              kernels::tc_shared_bytes<1>()) != cudaSuccess)
       throw std::runtime_error("vision attention: cannot configure shared memory");
+#else
+    if (precision_.linear != Precision::kFp32 || precision_.attention != Precision::kFp32)
+      throw std::runtime_error("vision precision: this build has fp32 only");
+#endif
   }
 
   // Encodes one image (pixel_values: [N][1536], N = grid_h * grid_w, in merge-block order) into `out` (device,
@@ -637,6 +651,7 @@ class Encoder {
       f::linear(x, W, bias, y, rows, out, in);
       return;
     }
+#if LFM3_VISION_TENSOR_CORES
     const int parts = precision_.linear == Precision::kX2 ? 2 : 1;
     const size_t a = size_t(rows) * parts * in, c = size_t(rows) * out;
     if (scratch16_[0].n < a) scratch16_[0] = f::DeviceArray<bf16>(a);
@@ -647,7 +662,9 @@ class Encoder {
     p.c = nullptr, p.c_f32 = target;
     lfm::gemm::run(p);
     if (bias) kernels::add_bias<<<f::blocks(c), 256>>>(target, bias, c, out, y);
+#endif
   }
+#if LFM3_VISION_TENSOR_CORES
   // [W | W] for the split multiply, built on first use and kept
   const bf16* doubled(const bf16* W, int rows, int in) {
     auto it = doubled_.find(W);
@@ -657,6 +674,7 @@ class Encoder {
     }
     return it->second.p;
   }
+#endif
   // Bidirectional attention over the image's n tokens (scale 1/8): the CUDA-core kernel, or K and V split once into
   // the tensor-core kernel's tile layouts, then the kernel.
   void attend(const float* q, const float* k, const float* v, float* out, int n) {
@@ -667,6 +685,7 @@ class Encoder {
                                                                                         kKvHeads, 0.125f);
       return;
     }
+#if LFM3_VISION_TENSOR_CORES
     const int parts = precision_.attention == Precision::kX2 ? 2 : 1, npad = (n + kTcKeys - 1) / kTcKeys * kTcKeys;
     const size_t each = size_t(kKvHeads) * npad * parts * 64;
     for (int i : {1, 2})
@@ -679,6 +698,7 @@ class Encoder {
     else
       attention_tc<1><<<grid, 32 * kTcWarps, tc_shared_bytes<1>()>>>(q, scratch16_[1].p, scratch16_[2].p, out, n, npad,
                                                                      kHeads, kKvHeads, 0.125f);
+#endif
   }
   static std::string layer(int i) { return "model.vision_tower.layers." + std::to_string(i) + "."; }
   const bf16* w(const std::string& name) const { return weights_->at(name).device_data; }

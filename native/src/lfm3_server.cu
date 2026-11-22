@@ -5,7 +5,7 @@
 //   liquid-lfm3-server --experimental MODEL_DIRECTORY [--token-file FILE] [--port N] [--request-timeout S]
 //                      [--socket-timeout S] [--session-idle-timeout S] [--engine-timeout S] [--total-capacity N]
 //                      [--max-sessions N] [--queue-size N] [--handlers N] [--speech-rows N] [--image-cache-mb N]
-// --image-cache-mb (0..65536, default 512; 0: none): validation/image-cache-v1's budget for each side's image cache (the
+// --image-cache-mb (0..65536, default 32 on the GTX 1080, the reference's 512, validation/images-v1 rule 7; 0: none): validation/image-cache-v1's budget for each side's image cache (the
 // front end's token counts, the engine's encoder rows on the GPU), keyed by an image's full bytes
 // --speech-rows (1..16, the most validated; default 1 on the GTX 1080, validation/speech-v1 rule 12: with text at its
 // limits at a total capacity of 32,768, not even one row fits in 7,740 MiB, so the total capacity is lowered (below);

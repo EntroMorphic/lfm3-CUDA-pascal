@@ -12,7 +12,11 @@ as long as the 4 MiB body allows (LibriSpeech utterances joined, the last cut to
 transcribed, 64 new tokens) sent three
 times in turn, while ROWS - 1 speech rows generate; it counts only if every audio request succeeded while the session
 was open, and every speech row was still running when the last one ended. (Red-team review: the earlier version sent
-the clip with the speech load, 20 s before the text session existed, so the two were never resident together.) Whole-card memory every 0.2 s (nvidia-smi);
+the clip with the speech load, 20 s before the text session existed, so the two were never resident together.) With
+IMAGES=1 (validation/images-v1 rule 7) a last configuration, images at the limits: as audio in, the clip once, then
+IMAGES_N (5) distinct full-size images in turn (2,048 x 1,024 noise PNGs: the most pixels the front end keeps, 2,048
+tokens each, so the encoder's scratch is at its largest and the image cache, 8 MiB an image, overflows the 32 MiB
+default), text mode, 16 new tokens. Whole-card memory every 0.2 s (nvidia-smi);
 every request must succeed (200) and every configuration's peak must be at most LIMIT MiB. First, for the record, the
 speech rows alone (no text session). /generate_batch is an exclusive job: the server drains the speech rows before it
 runs (lfm3_http.hpp, speech_first), so that configuration cannot overlap speech; it counts when every speech request
@@ -25,6 +29,10 @@ on an engine error, 503 worker_unavailable) fails with the peak sampled until th
 import base64
 import io
 import json
+import os
+import random
+import struct
+import zlib
 import subprocess
 import sys
 import threading
@@ -92,6 +100,18 @@ def long_clip():
 def text(repeats): return [dict(role="user", content=PARAGRAPH * repeats)]
 
 
+def noise_png(seed, width=2048, height=1024):  # an 8-bit RGB PNG of noise (filter 0), the same bytes on every machine
+    rng = random.Random(seed)
+    raw = b"".join(b"\x00" + rng.randbytes(width * 3) for _ in range(height))
+    chunk = lambda kind, data: struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw, 1)) + chunk(b"IEND", b""))
+
+
+IMAGES = os.environ.get("IMAGES") == "1"
+IMAGES_N = int(os.environ.get("IMAGES_N", "5"))
+
+
 server = NativeServer(server_path, checkpoint, out, "server", None, "--speech-rows", rows, "--total-capacity", total)
 client = Client(server.port, server.token, records)
 failed = False
@@ -138,7 +158,7 @@ try:
     report["clip"] = dict(bytes=len(clip), seconds=(len(clip) - 44) / 32000, pcm_budget_bytes=CLIP_BUDGET)
     assert len(clip) - 44 == CLIP_BUDGET
 
-    def run_configuration(name, capacities, batch=False, speech_rows=rows, audio_in=False):
+    def run_configuration(name, capacities, batch=False, speech_rows=rows, audio_in=False, images=False):
         global failed
         speech = [dict(messages=LIGHTHOUSE, mode="audio", max_new_tokens=1536, seed=k + 1)
                   for k in range(speech_rows)]
@@ -146,6 +166,10 @@ try:
                                     {"role": "user", "content": [{"type": "audio", "audio": base64.b64encode(clip).decode()},
                                                                  {"type": "text", "text": "Transcribe the audio."}]}],
                           mode="text", max_new_tokens=64, seed=1)
+        image_bodies = [dict(messages=[{"role": "user", "content": [
+                            {"type": "image", "image": base64.b64encode(noise_png(k + 1)).decode()},
+                            {"type": "text", "text": "Describe the image."}]}], mode="text", max_new_tokens=16, seed=1)
+                        for k in range(IMAGES_N)] if images else []
         audio = []
         sampler = Sampler(); entry = dict(name=name, capacities=capacities, speech=len(speech), prompts=[], statuses=[])
         results = [dict() for _ in speech]
@@ -172,6 +196,9 @@ try:
             if audio_in:  # the session still open and filled: the clip, three times in turn
                 for k in range(3):
                     audio.append(dict()); post_speech(audio_body, audio[-1], 0)
+            if images:  # the session still open and filled: the clip once, then each image in turn
+                for body in [audio_body] + image_bodies:
+                    audio.append(dict()); post_speech(body, audio[-1], 0)
             last_end = time.monotonic()
             for s in sids: client.call("POST", f"/sessions/{s}/close", {})
             [t.join() for t in threads]
@@ -185,13 +212,14 @@ try:
         if batch: overlapped = all(r.get("end", text_end) < text_end for r in results[:speech_rows])  # drained, then the batch
         entry["speech_overlapped_text"] = overlapped
         ok = all(s == 200 for s in entry["statuses"]) and all(r["status"] == 200 for r in results) and overlapped and \
-            (not audio_in or (len(audio) == 3 and all(r["status"] == 200 and text_end <= r["start"] and r["end"] <= last_end
-                                                      for r in audio))) and \
+            (not (audio_in or images) or (len(audio) == (3 if audio_in else 1 + IMAGES_N) and all(
+                r["status"] == 200 and text_end <= r["start"] and r["end"] <= last_end for r in audio))) and \
             entry["peak_mib"] <= limit and entry["samples"] >= 5 and entry["peak_mib"] > report["before_mib"] and \
             len(entry["prompts"]) == len(capacities) and all(p >= c - 33 - 2 * b for p, c in zip(entry["prompts"], capacities))
         if batch: ok = ok and entry.get("gpu_batching") is True
         entry["ok"] = ok; failed |= not ok; report["configurations"].append(entry)
-        print(f"rule 12 {name} with {len(speech)} speech{' and 3 audio in' if audio_in else ''}: text {entry['statuses']} in {entry['text_seconds']} s, speech "
+        extra = ' and 3 audio in' if audio_in else f' and 1 audio in, {IMAGES_N} images' if images else ''
+        print(f"rule 12 {name} with {len(speech)} speech{extra}: text {entry['statuses']} in {entry['text_seconds']} s, speech "
               f"{[r['status'] for r in results]} (overlapped {overlapped}), peak {entry['peak_mib']} MiB "
               f"({entry['samples']} samples): {'ok' if ok else 'FAIL'}", flush=True)
 
@@ -202,6 +230,7 @@ try:
     configurations += [(("+".join(map(str, pc)), pc), {}) for i, pc in enumerate(pairs) if pc not in pairs[:i]]
     configurations += [(("batch-" + "+".join(map(str, pair(4096))), pair(4096)), dict(batch=True)),
                        ((f"audio-in-one-{total}", [total]), dict(speech_rows=rows - 1, audio_in=True))]
+    if IMAGES: configurations.append(((f"images-one-{total}", [total]), dict(speech_rows=rows - 1, images=True)))
     for args, kw in configurations:
         try:
             run_configuration(*args, **kw)

@@ -86,10 +86,11 @@ Images are decoded two at a time across all requests; a request with images wait
 refused 429 `frontend_busy` as a text request meeting a busy front end is (504 `frontend_deadline` if its deadline
 passes while waiting; a request whose client has gone stops waiting, 499 `client_gone`).
 An image sent again (the same bytes, the same base64 text) is not decoded or encoded again while it stays in the
-server's image caches (`--image-cache-mb N`, default 512 MiB for each of the front end's and the engine's caches,
+server's image caches (`--image-cache-mb N`, default 32 MiB on the GTX 1080 for each of the front end's and the
+engine's caches (the reference's 512: the engine's is device memory, [images-v1](../validation/images-v1/) rule 7),
 least recently used first; `0` disables them). The replies are identical either way; only their speed differs, which
 tells a client whether the image was sent recently by anyone (the Thor engine's SECURITY.md discusses this; it is not
-part of this repository, whose builds have no image input).
+part of this repository).
 
 Reply: `text`, `audio_wav_base64` (24 kHz 16-bit mono WAV), `audio_seconds`, `frames`, `chunks`, `seed`, `cancelled`,
 `truncated`, `prefill_seconds`, `generate_seconds`.
