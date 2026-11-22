@@ -34,9 +34,9 @@ ok = False
 try:
     # The prompts are a list of k numbers from 1,000, one a line, and an instruction to go on counting, so that greedy
     # decoding goes on (a long prose prompt with the same instruction stopped after 200 tokens, development 2). Every
-    # four-digit line costs the same 3 tokens. With five- and six-digit lists the long lane stopped after 38 and 66
+    # four-digit line costs the same 3 tokens. With six- and five-digit lists the long lane stopped after 66 and 38
     # tokens (developments 9 and 10), so four digits it is, at most 8,699 lines (300 more for the continued case): at
-    # a total of 32,768 the long lane's prompt stops about 1,500 tokens short of its session (R5-2), which the summary
+    # a total of 32,768 the long lane's prompt stops about 1,360 tokens short of its session (R5-2), which the summary
     # records (unused).
     INSTRUCTION = "\nContinue this list: count upward from where it ends, one number per line, and do not stop."
     def numbers(start, k):
@@ -120,7 +120,10 @@ finally:
     report["pass"] = bool(ok and report["server_exit"] == 0)
     (out / "summary.json").write_text(json.dumps(report, indent=1) + "\n")
 # A lane that stopped early leaves no verdict, unless a definite failure (over the limit even so, the refusal, health)
+why = [f"{n}: " + ("a lane stopped before 2,048" if c["generated"] != [LIMIT, LIMIT] else
+                    f"the continuation not as planned (reused {c.get('reused')}, continued {c.get('continued')})")
+       for n, c in report.get("cases", {}).items() if not c["complete"]]
 verdict = "PASS" if report["pass"] else "FAIL" if report.get("definite_fail", True) or report["server_exit"] != 0 \
-    else "INCONCLUSIVE (a lane stopped before 2,048)"
+    else "INCONCLUSIVE (" + "; ".join(why) + ")"
 print("BATCH BUDGET", verdict)
 sys.exit(0 if report["pass"] else 2 if verdict.startswith("INCONCLUSIVE") else 1)

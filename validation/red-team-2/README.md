@@ -1,7 +1,6 @@
 # red-team-2: the code this project wrote, end to end, after phase 4
 
-Status: **four review rounds done and their findings fixed; a fifth round, then the verification run, to follow**
-(2026-11-21). The owner: "let's red-team the code end-to-end. Remediate
+Status: **six review rounds done and their findings fixed; the verification run to follow** (2026-11-21). The owner: "let's red-team the code end-to-end. Remediate
 findings, verify, and iterate until pristine." Rules and predictions committed before the first review.
 
 ## Scope and method
@@ -139,8 +138,8 @@ paths that advertise what they cannot serve, documents, and hygiene. Fixes: comm
   sort and softmax), both lanes 2,048 tokens: **181.5 s**; greedy 62.3 s. The refusal of 2,049 is checked on the
   final build (v37 allows 4,096). (5: temperature 0.5 with a repetition penalty of 1.05, a lane ended at 92 tokens;
   6 and 7: temperature 0.05 and `top_p` 0.98, a penalty of 1.01 and none, both at 71.)
-- **Developments 9 to 11** (round 5's fixes; `text-v37`'s server, which continues without a cap, so the continued
-  case's timing is the cap's worst). The continued case: each lane's cached prompt continued by 934 tokens (the
+- **Developments 9 to 11** (round 5's fixes; `text-v37`'s server, which continues without a cap; each lane continued
+  934 tokens, so the cap's own worst, 1,024, is about 2 to 3 s more at the measured rates). The continued case: each lane's cached prompt continued by 934 tokens (the
   reply, 300 more numbers and the instruction; reused 92 and 23,330), then 2,048 sampled. Six- and five-digit lists
   (9, 10) let the long lane stop early in the full-prefill cases (66 and 38 tokens); five-digit lists completed the
   continued case, 192.0 s. 11, four-digit lists (at most 8,699 lines), every case to the end: greedy **61.3 s**,
@@ -212,7 +211,12 @@ Not changed, because each is the owner's to decide:
    case padded to the same length and size (the key checking the unpadded audio).
 2. **Published history** (R2B-5, E10). The provenance files' home-directory paths, redacted in the tree, remain in
    the published history, as do the withheld hashes. Removing them means rewriting history and force-pushing `main`.
-3. **Historical job scripts** (C7, D10). They print a comparison whatever the step before returned; they are left as
+3. **The continuation cap** (R5-1, R6-3): a departure from the Thor engine's server. A continuation of a cached
+   prefix by more than 1,024 tokens is now a full prefill, so it gives a new session's output rather than the
+   token-by-token one, and costs a prefill of the whole prompt (28.6 s at 32,763 tokens on the shipping build; on
+   the parity build, the validation build, 429 s, past the engine timeout, which for a large session it was not
+   before). Made under the instruction to remediate; the owner may prefer another bound.
+4. **Historical job scripts** (C7, D10). They print a comparison whatever the step before returned; they are left as
    the record of what ran (every log shows those steps at rc 0), and the new jobs gate their lines.
 
 ## Round 5
@@ -221,6 +225,19 @@ One independent review of round 4's fixes and the verification job.
 
 | # | Finding | Fix |
 |---|---|---|
-| R5-1 | A request that continues a session's cached prefix is forwarded a token at a time inside one engine call (op generate's `text_begin`, and each batch lane), bounded only by the session's capacity: about 18,000 continued tokens (17 ms each near 32K) pass the 300 s engine timeout and fail the server closed, through an ordinary `/generate` (imported code; the Thor engine has the same exposure) | A cached prefix is continued by at most 1,024 tokens (`SessionLedger::set_max_continuation`, set by the worker); a longer continuation is a full prefill, as for a new session. **A departure from the Thor engine's server:** a continuation of more than 1,024 tokens now gives a new session's output, not the token-by-token one (which on this card fails closed beyond about 17,000). The reference's checks continue by a few tokens and are unaffected. `batch_budget.py` measures the batch with both lanes continuing (development 9) |
-| R5-2 | `batch_budget.py` would have failed its own assertion at a total of 32,768 (four-digit lists end at 8,999 lines) | Six-digit lists, also 3 tokens a line |
+| R5-1 | A request that continues a session's cached prefix is forwarded a token at a time inside one engine call (op generate's `text_begin`, and each batch lane), bounded only by the session's capacity: about 18,000 continued tokens (17 ms each near 32K) pass the 300 s engine timeout and fail the server closed, through an ordinary `/generate` (imported code; the Thor engine has the same exposure) | A cached prefix is continued by at most 1,024 tokens (`SessionLedger::set_max_continuation`, set by the worker); a longer continuation is a full prefill, as for a new session. **A departure from the Thor engine's server:** a continuation of more than 1,024 tokens now gives a new session's output, not the token-by-token one (which on this card fails closed beyond about 17,000). The reference's checks continue by at most about 120 tokens and are unaffected. `batch_budget.py` measures the batch with both lanes continuing (development 11); `continuation_check.py` shows the failure on the old server and the boundary and the fix on the new (verification) |
+| R5-2 | `batch_budget.py` would have failed its own assertion at a total of 32,768 (four-digit lists end at 8,999 lines) | Four-digit lists capped at 8,699 lines, the long lane's unused room recorded (about 1,360 tokens at 32,768): six- and five-digit lists, also 3 tokens a line, let the long lane stop early (developments 9 and 10) |
 | R5-3 | A figure (99 s for 98.1), a key's name, the sampler-cost claim, developments 5 to 7's settings | Corrected |
+
+## Round 6
+
+One independent review of round 5's fixes. Nothing in what either build computes; the cap covers every path that
+continues a cached prefix (only `text_begin` and the batch's lanes), its boundary is exact (1,024 continued, 1,025 a
+full prefill), and no reference check continues by more than about 120 tokens.
+
+| # | Finding | Fix |
+|---|---|---|
+| R6-1 | Nothing in the verification ran R5-1's fix on the card: the batch's continued case is under the cap, so the job would pass with the cap removed | `continuation_check.py`: the boundary through the worker (1,024 reused, 1,025 not), and the failure itself through the server, on the old binary (expected to fail closed) and the new (a full prefill, serving after) |
+| R6-2 | This README's status and R5-2 fix, the development cited for the continued case, a count in `batch_budget.py` (1,500 for about 1,360) and its developments' order, the "cap's worst" claim (934, not 1,024, continued), the development scripts' headers | Corrected |
+| R6-3 | The cap is a departure from the Thor engine's server, recorded only in a fix row; on the parity build a full prefill near capacity passes the engine timeout, so the cap turns a long continuation of a large session (about 25,000 cached tokens and 1,025 new) into that failure there | Listed for the owner, below |
+| R6-4 | `batch_budget.py` named an early stop as the cause of any inconclusive case | It names each case's cause |

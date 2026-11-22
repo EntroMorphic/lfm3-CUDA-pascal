@@ -167,6 +167,10 @@ done
 # B1: the batch bound, measured on both shipping servers (the speech server at 29,696; the text-only one at 32,768)
 run batch-speech-server $PY tools/pascal/batch_budget.py $B/text-v38/liquid-lfm3-server $M $O/batch-speech 29696
 run batch-text-server $PY tools/pascal/batch_budget.py $B/text-v38s/liquid-lfm3-server $M $O/batch-text 32768
+# R5-1 (rule 2): a long continuation of a cached prefix, on the old server (text-v37, no cap: it should fail closed at
+# the engine timeout) and the new one (a full prefill, the server serving after); and the cap's boundary on the worker
+run continuation-old $PY tools/pascal/continuation_check.py $B/text-v37/liquid-lfm3-worker $B/text-v37/liquid-lfm3-server $M $O/continuation-old old
+run continuation-new $PY tools/pascal/continuation_check.py $B/text-v38/liquid-lfm3-worker $B/text-v38/liquid-lfm3-server $M $O/continuation-new new
 
 # speech-v1 rule 13, both builds (with the 64-clip control)
 for b in text parity; do $PY tools/pascal/speech_limits.py $B/$b-v38/liquid-lfm3-server $M $O/limits-$b > $O/limits-$b.log 2>&1
