@@ -96,6 +96,18 @@ int main(int argc, char** argv) {
         l.reset("A");
         auto empty = l.inspect("A");
         assert(empty.transcript.empty() && empty.consumed.empty() && !empty.cache_valid);
+    } else if (mode == "continuation") {
+        // set_max_continuation (red-team-2 R5-1): a cached prefix is reused only when at most n tokens follow it
+        Ledger l(1, 32); l.create("A", 32); l.set_max_continuation(2);
+        auto seed = [&] { auto t = l.begin("A", {1, 2}, 3); t.commit({3, 4, 5}, {1, 2, 3, 4}); };
+        seed();
+        auto two = l.begin("A", {1, 2, 3, 4, 7, 8}, 1);  // 2 after the cached 4: reused
+        assert(!two.plan().full_prefill && two.plan().reuse_tokens == 4);
+        two.abort();
+        seed();
+        auto three = l.begin("A", {1, 2, 3, 4, 7, 8, 9}, 1);  // 3: a full prefill
+        assert(three.plan().full_prefill && three.plan().reuse_tokens == 0);
+        three.abort();
     } else if (mode == "invalid_commit") {
         Ledger l(1, 16); l.create("A", 16);
         { auto t = l.begin("A", {1}, 1); t.commit({2}, {1}); }
@@ -175,7 +187,7 @@ def session_exe(tmp_path_factory):
     return exe
 
 
-@pytest.mark.parametrize("case", ["admission", "isolation", "prefix", "invalid_commit",
+@pytest.mark.parametrize("case", ["admission", "isolation", "prefix", "continuation", "invalid_commit",
                                   "lifetime", "boundary"])
 def test_text_sessions(session_exe, case):
     subprocess.run([str(session_exe), case], check=True)

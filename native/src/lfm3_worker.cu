@@ -308,6 +308,11 @@ class WorkerCore {
   WorkerCore(const std::string& model_directory,const std::string& trace_root,bool trace_root_requested,int cancellation_fd)
     : directory(model_directory),sampling_trace_root(trace_root),cancellation(cancellation_fd),
       cancellation_enabled(cancellation_fd>=0) {
+    // A continuation of a cached prefix is forwarded a token at a time inside one engine call (op generate, text_begin
+    // and generate_batch), which the server's watchdog bounds: at most kMaxContinuation tokens are continued, a longer
+    // one is a full prefill (validation/red-team-2 R5-1: about 17 ms a token near 32K on the GTX 1080, so 18,000
+    // continued tokens passed the 300 s engine timeout and failed the server closed).
+    ledger.set_max_continuation(kMaxContinuation);
     // validation/image-cache-v1 C3: what the engine's image cache holds, published for the in-process front end
 #ifdef LFM3_WORKER_MEDIA
     image_cache_.set_observer([](const std::string& key,bool kept) {lfm::image::shared_held_images().kept(key,kept);});
@@ -654,6 +659,7 @@ class WorkerCore {
   // Speech (#2, lfm3_speech.cuh): one request at a time on its own runner (capacity kSpeechCapacity per chunk),
   // sharing the loaded weights; created on first use. Same loop as lfm3-speech (run_chunks), so the same bytes.
   static constexpr int kSpeechCapacity=4096;
+  static constexpr std::size_t kMaxContinuation=1024;  // tokens continued after a cached prefix (constructor)
   // Decode steps per request, across all its chunks (lfm3_speech::run_chunks): bounds its worst-case time under the
   // default engine timeout (validation/speech-server-v1: ~40 frames/s measured with locked clocks, ~34 assumed).
   static constexpr size_t kSpeechStepBudget=6144;

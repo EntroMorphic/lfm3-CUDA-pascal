@@ -44,6 +44,7 @@ private:
     };
     struct State {
         std::size_t max_sessions, token_budget, reserved = 0;
+        std::size_t max_continuation = std::numeric_limits<std::size_t>::max();
         std::uint64_t next_ticket = 1;
         std::map<std::string, Entry> entries;
         State(std::size_t n, std::size_t b) : max_sessions(n), token_budget(b) {}
@@ -150,6 +151,10 @@ public:
         : state_(std::make_shared<State>(max_sessions, token_budget)) {
         if (!max_sessions || !token_budget) throw std::invalid_argument("zero admission limit");
     }
+    // A cached prefix is reused only when what follows it is at most n tokens; a longer continuation is a full
+    // prefill. The worker forwards a continuation a token at a time inside one engine call, which the server's watchdog
+    // bounds (lfm3_worker.cu, validation/red-team-2 R5-1). Default: no limit, as imported.
+    void set_max_continuation(std::size_t n) { state_->max_continuation = n; }
     SessionLedger(const SessionLedger&) = delete;
     SessionLedger& operator=(const SessionLedger&) = delete;
     SessionLedger(SessionLedger&&) = delete;
@@ -182,6 +187,7 @@ public:
         // No rollback/truncation assumption and no implicit saved-logits cache.
         // At least one prompt token must be forwarded to produce next logits.
         if (entry.value.cache_valid && !old.empty() && old.size() < prompt.size() &&
+            prompt.size() - old.size() <= state_->max_continuation &&
             std::equal(old.begin(), old.end(), prompt.begin())) {
             plan.reuse_tokens = old.size();
             plan.full_prefill = false;

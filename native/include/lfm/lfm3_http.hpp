@@ -101,7 +101,7 @@ inline constexpr double kSpeechMinEngineTimeout = 300;  // seconds; /speech is r
 // by engine_timeout (a call past it fails the service closed). /generate is sliced and /speech runs a step a call;
 // the batch is bounded instead: at most kBatchMaxNewTokens new tokens a lane (larger: 400), and refused (501
 // batching_unavailable) when engine_timeout is below kBatchMinEngineTimeout, which the bound was measured against. On
-// the GTX 1080 (validation/red-team-2), two lanes filling the total capacity took 99 s for 4,096 tokens greedy, but
+// the GTX 1080 (validation/red-team-2), two lanes filling the total capacity took 98 s for 4,096 tokens greedy, but
 // sampled with top_k 0 the host sorts the whole vocabulary at every step of every lane, and 4,096 ran past 300 s: the
 // bound is 2,048, whose worst case, greedy and sampled, is measured there.
 inline constexpr int kBatchMaxNewTokens = 2048;
@@ -2005,7 +2005,7 @@ class Service {
     return out;
   }
 
-  // A kText job leaves the queue: checks, then op text_begin (the prefill, one call). Cancelled before it starts,
+  // A kText job leaves the queue: checks, then op text_begin (the prefill, or a continuation of the session's cached prefix of at most the worker's kMaxContinuation tokens, one call). Cancelled before it starts,
   // the session is reset instead, as before. A failure fails the service closed (any engine refusal does).
   void begin_text(const std::shared_ptr<Job>& job) {
     const auto& request = *job->text;
