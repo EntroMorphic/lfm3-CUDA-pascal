@@ -1,7 +1,9 @@
 # speech-v1: phase 4's bar
 
 Status: **rule run done: rules 1 to 8 and 10 to 14 pass on the final tree; rule 9, the owner's listening, pending**
-(2026-11-21). The rules were set (2026-11-20) before any speech output of this engine had been generated on the
+(2026-11-21). **Then red-team-2 found rule 12's audio-in clip 11 s short of the request limit: with the full clip,
+30,720 peaks at 7,759 MiB, so rule 12 failed; the default capacity is lowered as the rule says (29,696; 7,707 MiB),
+and the rules the change reaches are run again there ([red-team-2](../red-team-2/)).** The rules were set (2026-11-20) before any speech output of this engine had been generated on the
 card.
 
 Phase 4's exit gate (PLAN): "the reference's speech rounds: word error rate against HF, and listening". Decision 9
@@ -243,7 +245,7 @@ decision 11 are marked *carried*, with the development run they come from.
 | 9 | Listening (C3) | the owner | **Pending:** the owner's blind verdicts. The set's ten shipping clips are byte-identical to the final build's seed-1 clips (10 of 10 of the key's hashes, checked without revealing A/B: `rule9-key-check.txt`) |
 | 10 | Audio in, against HF | carried (development 3) | **Pass.** Shipping 2.601% against HF's 2.606%: difference −0.006 points, paired-bootstrap 95% interval −0.030 to +0.017 (limit +0.25); 13 utterances better, 13 worse (`carried/rule10.json`) |
 | 11 | The reference's speech server checks | audio-in and batch-server rerun; the other three carried (developments 11 and 12) | **Pass** on both builds by decision 10 (`text-rule11.json`, `parity-rule11.json`): every judged criterion holds, the reports are of these builds, every case ran. The two batch-server checks report FAIL on their own verdict by timing terms only (first audio under load, real time at 8 rows); see below |
-| 12 | Memory at the limits | rerun at 1 row; 8 and 16 rows carried (development 15) | **Pass.** Ready line with the defaults: `{"total_capacity":30720,"speech_rows":1}`. At one row and 30,720 every configuration passes, highest 7,697 MiB (audio in at its limits beside the filled text session); the five text configurations 7,215 to 7,615 MiB; limit 7,740. 8 rows at 16,384: highest 7,461 MiB; 16 rows at 2,048: 7,709 MiB (`memory.log`, `carried/memory-rows*.log`) |
+| 12 | Memory at the limits | rerun at 1 row; 8 and 16 rows carried (development 15) | **Superseded (red-team-2 D1): the audio-in clip was 86.9 s, the request allows 98.2 s; with it, 1 row at 30,720 peaks at 7,759 MiB and 16 rows at 2,048 at 7,771, both over. The defaults are now 29,696, 2,048 less a row, at least 1,024 (7,707, 7,471 and 7,417 MiB at 1, 8 and 16 rows).** As recorded then: **Pass.** Ready line with the defaults: `{"total_capacity":30720,"speech_rows":1}`. At one row and 30,720 every configuration passes, highest 7,697 MiB (audio in at its limits beside the filled text session); the five text configurations 7,215 to 7,615 MiB; limit 7,740. 8 rows at 16,384: highest 7,461 MiB; 16 rows at 2,048: 7,709 MiB (`memory.log`, `carried/memory-rows*.log`) |
 | 13 | Past the limits | rerun | **Pass** on both builds: text, chunks, prompt, capacity and clips 400 `invalid_request`; body (4 MiB + 1) and declared 16 MiB + 1 413 `body_limit`; one over the queue 429 `queue_full`, the five held requests 200; the controls (text and speech) identical before and after (`limits-*.log`) |
 | 14 | Memory safety | carried (development 13) | **Pass.** `compute-sanitizer` memcheck, one TTS, one interleaved, one audio-in case on each build: 0 errors, outputs 3 of 3 identical to the plain run's (`carried/rule14/`, `development/jobs/speech-dev13.log`) |
 

@@ -112,3 +112,55 @@ paths that advertise what they cannot serve, documents, and hygiene. Fixes: comm
 | E9 | Links to a `validation/README.md` that did not exist, and to a round not imported | The index written; the link replaced |
 | E13 | `speed-v1/dev19.sh` compiled a test never committed | A note: a development experiment not adopted, which no result depends on (its log on the card) |
 | E14 | PLAN linked "liquid-CUDA" to an organisation; a document cited a workspace path | Reworded |
+
+## Development runs
+
+- **Development 1** (`dev1.sh`, tree `396c578`; builds `text-v36`, `parity-v36`). Device code of all ten binaries
+  identical to v35's. The CLI at capacity 4,097, 16 teacher-forced steps: the shipping build unchanged at prompts 129,
+  136, 137 and 300; the parity build changed at 136 (a last tile of 8 rows) and not at 137 or 300 (none), nor at 129.
+  speech-v1 rule 12 with the clip at the request limit: one row at 30,720 peaked at **7,759 MiB, over the 7,740 limit**
+  (the audio-in configuration; every other configuration as recorded), 8 rows at 16,384 at 7,523, 16 rows at 2,048 at
+  **7,771, over**. `batch_budget.py` failed by its own fault (its small session could not hold 4,096 new tokens).
+- **Development 2** (`dev2.sh`, tree `fc2271e`; `text-v37`, `parity-v37`): the defaults lowered as rule 12 says, to
+  29,696 at one row, 2,048 less for each further row, at least 1,024; ready lines at 1, 8 and 16 rows as designed.
+  Rule 12 at those defaults passes: 7,707 MiB at one row (the audio-in configuration), 7,471 at 8 rows, 7,417 at 16.
+  A1 in the attention itself (the parity build's probabilities of the last tile, v37 against v35): at 136, 11 of 11
+  layers' traces differ and so do the logits; at 129, 2 of 11 differ and the logits do not (a 1-row tile's
+  difference rounds away by the logits). The batch: one lane stopped at 200 tokens, so the worst case was not
+  reached; extrapolated, 80 s against the 240 s limit. The prompts are now lists of numbers to continue
+  (development 3).
+
+## Round 2: the fixes reviewed
+
+Two independent reviews of commit `396c578` (R2A: engine and server; R2B: tools and documents). Fixes: `fc2271e`.
+
+| # | Finding | Fix |
+|---|---|---|
+| R2A-1 | The new native test of the batch bound could not fail: its sessions of 1,024 refused 4,097 tokens by capacity, and its 4,096 case failed for the same reason | Its own test on sessions of 8,192, where only the bound refuses; each assertion fails with its fix removed (checked by the round 3 reviewer) |
+| R2A-2, R2B-3 | The bound holds only at the default engine timeout; `--engine-timeout 60` let a legal batch fail the server closed | The native server refuses the batch (501 `batching_unavailable`) under 300 s, as `/speech`; the Python server, the reference's check harness here, states that its worker deadline is the caller's |
+| R2A-3 | The Python server's `/generate` is one engine call too, unbounded | Stated: on this card it is the reference's check harness, not the served path |
+| R2A-4 | A comment said only the MLP blocks set `wide` in the parity build; the batch's projections do too | Corrected |
+| R2A-5 | A5's change has no effect (a multi-row call always starts at cursor 0) | Recorded as cosmetic |
+| R2A-6 | The default handler count followed the speech rows when speech is not served | 8 then |
+| R2A-7 | The new `LFM_FP32_STAGED` check accepted `1+0` | The worker's three-way paste |
+| R2B-1, R2B-2 | `batch_budget.py` could not pass (the small session), its refusal case could not show the bound, and its rate ignored a lane's single steps | Rewritten; then made to judge the worst case itself (round 3) |
+| R2B-4 | One listening-set clip's hash remained in a committed development log | Withheld there too |
+| R2B-5 | The withheld hashes and the provenance paths remain in the published history | For the owner (below) |
+| R2B-6 | The ignored-file check named directories holding an ignored file, blocking syncs of new rounds | File by file; a git failure stops the sync |
+| R2B-7 | `arith_report.py`'s new table shared one generator with the old, so its intervals did not reproduce | Each interval its own generator; four intervals' last digits in prefill-arithmetic-v1 moved, no reading changed |
+| R2B-8 | `dev1.sh`'s A1 hashing repeated C3's empty-input fault | The verification job counts the files (17 each) |
+| R2B-9 to 15 | The license holder misquoted; B2 missing from the server documentation; `serve_gates.sh` made its output before checking `STAGES`; a comment; `remote.sh`'s usage and job-name order; `position1_check.py` not comparing windows | Fixed |
+
+## Round 3
+
+One independent review of `fc2271e`. Nothing in what either build computes. Fixes: this commit.
+
+| # | Finding | Fix |
+|---|---|---|
+| R3-1 | The listening set can still be unblinded from public records: development 5's ASR records, rule 14's records and the reference's HF records give each case's clip duration (and rule 14's the fox clip's codec codes), and every pair differs in length | For the owner (below) |
+| R3-2 | The batch bound was measured on one server; the parity server is slower and the text-only server's total is 32,768 | Both shipping servers measured in the verification; the parity build is the validation build, whose single prefill near capacity alone (about 430 s, serve-v1) is past the default engine timeout for `/generate` as for the batch: stated |
+| R3-3, R3-4 | `batch_budget.py` left the small lane 2,000 tokens short, and could pass on an extrapolation from 25% of the steps | Both lanes filled; the call itself is the worst case, both lanes 4,096 tokens, or inconclusive |
+| R3-5 | Development 1's failure was recorded nowhere but a commit message; PLAN and speech-v1 still said rule 12 passed | This section; speech-v1's status and rule 12 row, PLAN |
+| R3-6 | `git ls-files` quotes unusual paths, which the ignored-file patterns then miss (fails safe) | `core.quotePath=false` |
+| R3-7 | `dev2.sh`'s A1 lines had no expectation | The verification job states it |
+| R3-8 | The handler comment; two identical configurations at a total of 1,024; a trailing blank line | Fixed |

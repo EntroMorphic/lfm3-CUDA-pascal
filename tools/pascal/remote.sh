@@ -46,7 +46,8 @@ tree_hash_cmd() {
 # Every file git ignores must be in the excludes above: refuse otherwise (a new ignored path would be synced).
 check_ignored() {  # every ignored file by its own path (red-team-2 R2B-6: --directory also named directories that hold one)
   local all left
-  all=$(cd "$repo" && git ls-files -oi --exclude-standard) || { echo "remote.sh: git ls-files failed" >&2; exit 2; }
+  # unquoted paths (core.quotePath=false), so a name with other characters still matches the patterns below
+  all=$(cd "$repo" && git -c core.quotePath=false ls-files -oi --exclude-standard) || { echo "remote.sh: git ls-files failed" >&2; exit 2; }
   left=$(printf '%s\n' "$all" | grep -vE \
     '^(reference|build|native/build|outputs|\.vscode|\.idea)/|^tools/pascal/target\.env$|(^|/)(__pycache__|\.pytest_cache)/|\.(pyc|swp|safetensors|bf16)$|(^|/)\.DS_Store$|^$' || true)
   [ -z "$left" ] || { printf 'remote.sh: git-ignored but not excluded from the sync:\n%s\n' "$left" >&2; exit 2; }

@@ -47,7 +47,7 @@ liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B request.json result.js
 liquid-lfm3-server --experimental /workspace/models/LFM3-Omni-2B --port 8080
 ```
 
-The server's API, and its defaults on this card (one speech row, a total text capacity of 30,720 tokens when it
+The server's API, and its defaults on this card (one speech row, a total text capacity of 29,696 tokens when it
 serves speech): [docs/server-api.md](docs/server-api.md).
 
 ## Layout

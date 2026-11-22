@@ -30,8 +30,9 @@ ok = False
 try:
     # The prompts are a list of numbers, 1 to k, one a line, and an instruction to go on counting, so that greedy
     # decoding goes on (a long prose prompt with the same instruction stopped after 200 tokens, development 2).
-    def text(k, count=True):
-        body = "\n".join(str(i) for i in range(1, k + 1))
+    def text(k, count=True):  # k four-digit numbers from 1,000, so every line costs the same (8,999 at most)
+        assert k <= 8999
+        body = "\n".join(str(i) for i in range(1000, 1000 + k))
         return [dict(role="user", content=body + ("\nContinue this list: count upward from where it ends, one number per "
                                                   "line, and do not stop." if count else ""))]
     sid = client.call("POST", "/sessions", dict(capacity=8192))["session_id"]
@@ -40,10 +41,10 @@ try:
         client.call("POST", f"/sessions/{sid}/reset", {})
         n[k] = client.call("POST", "/generate", dict(session_id=sid, messages=text(k), max_new_tokens=1))["consumed_tokens"]
     client.call("POST", f"/sessions/{sid}/close", {})
-    per = (n[1100] - n[100]) / 1000  # tokens per number, near the long lane's (numbers of 4 and 5 digits cost more)
+    per = (n[1100] - n[100]) / 1000  # tokens per line, every line alike
     small, large = 6144, total - 6144
     sids = [client.call("POST", "/sessions", dict(capacity=c))["session_id"] for c in (small, large)]
-    fill = [int((c - LIMIT - 256 - (n[100] - 100 * per)) // (per * 1.15)) for c in (small, large)]  # prompt + 4,096 fit
+    fill = [int((c - LIMIT - 64 - (n[100] - 100 * per)) // per) for c in (small, large)]  # prompt + 4,096 just fit
     bodies = [dict(session_id=sid_, messages=text(k, True), max_new_tokens=1) for sid_, k in zip(sids, fill)]
     t0 = time.monotonic(); r1 = client.call("POST", "/generate_batch", dict(requests=bodies)); prefill = time.monotonic() - t0
     for s in sids: client.call("POST", f"/sessions/{s}/reset", {})

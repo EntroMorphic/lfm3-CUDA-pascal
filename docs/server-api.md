@@ -14,8 +14,8 @@ Memory decides two defaults (validation/speech-v1 rule 12, peak at most 7,740 Mi
 
 - `--speech-rows` (1–16) defaults to **1**: one `/speech` generates at a time and the rest wait in the queue.
 - `--total-capacity`, the tokens all text sessions may hold together, defaults to **32,768** without speech and, when
-  the server serves speech, to **30,720** at one speech row, 2,048 less for each further row, never below 2,048 (8
-  rows: 16,384; 16 rows: 2,048). An explicit `--total-capacity` is the operator's: larger values with speech were not
+  the server serves speech, to **29,696** at one speech row, 2,048 less for each further row, never below 1,024 (8
+  rows: 15,360; 15 and 16 rows: 1,024). An explicit `--total-capacity` is the operator's: larger values with speech were not
   measured to fit, and running out of device memory fails the server closed (503 to everything; restart it).
 - Speech is served only with `--engine-timeout` at least 300 s, and not with `LFM3_COMPACT_WINDOWS=1` or
   `LFM3_LOSSLESS=1` in the environment (measurement switches the speech engine cannot run with); otherwise `/speech`

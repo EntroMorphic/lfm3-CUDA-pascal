@@ -14,8 +14,8 @@
 // --total-capacity: default 32,768 (serve-v1 rule 11), or, when the engine serves speech, kSpeechTotalCapacity less
 // kSpeechCapacityPerRow for each speech row past the first, at least kSpeechMinTotalCapacity (speech-v1 rule 12: the
 // speech weights, one row and audio in at its limit leave room for 29,696; a row costs about 102 MiB, 1,024 tokens of
-// capacity about 52 MiB). Without --handlers, the server takes
-// max(8, 2 x speech rows) handlers: at most half of them stream at once (Service::speech_stream), so every row can.
+// capacity about 52 MiB). Without --handlers, the server takes max(8, 2 x speech rows) handlers when it serves speech
+// (8 when it does not): at most half of them stream at once (Service::speech_stream), so every row can.
 // The bearer token comes from --token-file (an owned mode-0600 file), or LFM3_SERVER_TOKEN, or else the default file
 // ~/.config/liquid-lfm3/token ($XDG_CONFIG_HOME/liquid-lfm3/token), created with a random token on first start and
 // reused after; tools/lfm3_token.py reads the same file for clients. --port 0
