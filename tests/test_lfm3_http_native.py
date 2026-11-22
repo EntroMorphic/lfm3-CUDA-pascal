@@ -436,11 +436,11 @@ def test_handler_saturation_closes_without_work(harness_binary):
 
 def test_generate_batch_bound(harness_binary):
     """lfm3_http.hpp kBatchMaxNewTokens and kBatchMinEngineTimeout (red-team-2 B1): a batch is one engine call. On
-    sessions large enough that only the bound can refuse it, 4,097 new tokens a lane is refused (400) and 4,096 is not;
+    sessions large enough that only the bound can refuse it, 2,049 new tokens a lane is refused (400) and 2,048 is not;
     under a 300 s engine timeout the batch is refused (501), and text still serves."""
     with running(harness_binary) as h:
-        lanes = [dict(session_id=session(h, 8192), messages=MESSAGES, max_new_tokens=4096) for _ in range(2)]
-        assert h.call("POST", "/generate_batch", {"requests": [lanes[0], dict(lanes[1], max_new_tokens=4097)]}) == (
+        lanes = [dict(session_id=session(h, 8192), messages=MESSAGES, max_new_tokens=2048) for _ in range(2)]
+        assert h.call("POST", "/generate_batch", {"requests": [lanes[0], dict(lanes[1], max_new_tokens=2049)]}) == (
             400, {"error": "invalid_request"})
         assert h.call("POST", "/generate_batch", {"requests": lanes})[0] == 200
     with running(harness_binary, "--engine-timeout", "299") as h:

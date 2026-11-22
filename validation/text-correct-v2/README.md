@@ -51,7 +51,7 @@ Tree `48502422…`, commit `c791102` (the job: `job.sh`, its log: `records/job.l
 | Rule | Result |
 |---|---|
 | 1. Build | **PASS**: 0 warnings; C and C++ runtime only |
-| 2. Tokens, determinism, reset | **PASS**: the Thor pins' ids on all four fixtures, two runs identical, reset ok; with compact windows off and on |
+| 2. Tokens, determinism, reset | **PASS**: the Thor pins' ids on all four fixtures, two runs identical, reset ok; with compact windows unset. (Red-team-2 C1: this job never ran the `LFM3_COMPACT_WINDOWS=1` leg, which the rule names; red-team-2's verification runs it on `text-v6`'s own binary, [red-team-2](../red-team-2/).) |
 | 3. Identity with the experiment | **PASS**: 256 `c47912b0…`, 257 `75430bb6…`, byte-identical to the experiment hybrid's files |
 | 4. Position 0 is the Thor engine's | **PASS**: the NLL at position 1 equals the Thor engine's value for value in 1,160 of 1,160, 1,155 of 1,155, 72 of 72 and 9 of 9 windows |
 | 5. Perplexity, original bar | **PASS**: "equal" at all four lengths |

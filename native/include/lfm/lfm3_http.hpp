@@ -101,9 +101,10 @@ inline constexpr double kSpeechMinEngineTimeout = 300;  // seconds; /speech is r
 // by engine_timeout (a call past it fails the service closed). /generate is sliced and /speech runs a step a call;
 // the batch is bounded instead: at most kBatchMaxNewTokens new tokens a lane (larger: 400), and refused (501
 // batching_unavailable) when engine_timeout is below kBatchMinEngineTimeout, which the bound was measured against. On
-// the GTX 1080 the worst case, two lanes filling the total capacity, then 4,095 paired steps, is measured in
-// validation/red-team-2.
-inline constexpr int kBatchMaxNewTokens = 4096;
+// the GTX 1080 (validation/red-team-2), two lanes filling the total capacity took 99 s for 4,096 tokens greedy, but
+// sampled with top_k 0 the host sorts the whole vocabulary at every step of every lane, and 4,096 ran past 300 s: the
+// bound is 2,048, whose worst case, greedy and sampled, is measured there.
+inline constexpr int kBatchMaxNewTokens = 2048;
 inline constexpr double kBatchMinEngineTimeout = 300;  // seconds
 inline constexpr int kAudioOutToken = 125032;
 // The text of a /speech request's messages (audio aside), checked before normalization and the split: the step budget

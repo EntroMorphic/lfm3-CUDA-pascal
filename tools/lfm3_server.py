@@ -455,12 +455,12 @@ class Service:
         for item in bodies:
             self._validate_generation(item)
         # The batch is one engine call (prefill and every step), bounded by the worker's deadline (its client's,
-        # 300 s by default): as the native server (lfm3_http.hpp kBatchMaxNewTokens), at most 4,096 new tokens a lane.
+        # 300 s by default): as the native server (lfm3_http.hpp kBatchMaxNewTokens), at most 2,048 new tokens a lane.
         # On the GTX 1080 this server is the reference's check harness, not the served path: its /generate is one
         # engine call too, unbounded, where liquid-lfm3-server slices it, and its worker deadline is the caller's to
         # set (the native server also refuses the batch under a 300 s engine timeout).
-        if any(item["max_new_tokens"] > 4096 for item in bodies):
-            raise ValueError("batch max_new_tokens above 4096")
+        if any(item["max_new_tokens"] > 2048 for item in bodies):
+            raise ValueError("batch max_new_tokens above 2048")
         sids = [item["session_id"] for item in bodies]
         if sids[0] == sids[1]:
             raise ValueError("duplicate batch session")

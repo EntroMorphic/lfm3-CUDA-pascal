@@ -22,7 +22,9 @@ Judged (each check's own criteria, the timing terms left out):
 Recorded, not judged: speech-server's 240 s worst-case limit; stream's first audio (TTS median <= 1.0 s, max <= 1.5 s;
 interleaved median <= 1.5 s), no gaps, cancel delay <= 1.0 s, stream cost <= 1.03; audio-in's 240 s on the 90 s clip;
 batch-server's first audio under load (median <= 1.0 s) and real time at 8 (no gaps).
-    python3 tools/pascal/judge_speech_server.py DIR PREFIX BUILDS REFS_DIR
+    python3 tools/pascal/judge_speech_server.py DIR PREFIX BUILDS REFS_DIR [REF_BUILDS]
+REF_BUILDS (comma-separated, optional; red-team-2 R4-15): builds that may have made the references but whose reports are
+not accepted (their lfm3-speech counts only for REFS_DIR's lfm3-speech.sha256).
 """
 import hashlib
 import json
@@ -30,8 +32,9 @@ import math
 import sys
 from pathlib import Path
 
-if len(sys.argv) != 5: sys.exit(__doc__)
+if len(sys.argv) not in (5, 6): sys.exit(__doc__)
 d, prefix, builds, refs = Path(sys.argv[1]), sys.argv[2], [Path(x) for x in sys.argv[3].split(",")], Path(sys.argv[4])
+ref_builds = [Path(x) for x in sys.argv[5].split(",")] if len(sys.argv) == 6 else []
 load = lambda name: json.loads((d / f"{prefix}-{name}.json").read_text())
 sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
 servers = {sha(b / "liquid-lfm3-server") for b in builds if (b / "liquid-lfm3-server").exists()}
@@ -41,7 +44,7 @@ verdict["reports of these builds"] = all(load(n).get("server_sha256") in servers
                                          ("speech-server", "speech-stream", "audio-in-server", "batch-server")) and \
     load("batch-server").get("reference_server_sha256") in servers and \
     load("audio-in-server").get("speech_sha256") in speeches and load("speech-concurrent").get("speech_sha256") in speeches and \
-    (refs / "lfm3-speech.sha256").read_text().split()[0] in speeches
+    (refs / "lfm3-speech.sha256").read_text().split()[0] in speeches | {sha(b / "lfm3-speech") for b in ref_builds}
 
 s = load("speech-server")
 verdict["speech-server"] = len(s["cases"]) == 5 and all(c["pass"] for c in s["cases"].values()) and \
@@ -85,7 +88,7 @@ timing["batch-server"] = dict(first_audio_under_load_median=b["first_audio_under
                               largest_n_without_gaps=b["largest_n_without_gaps"],
                               text_under_load=b["text_under_load"])
 
-report = dict(build=prefix, builds=[str(b) for b in builds], refs=str(refs), judged=verdict, recorded_timing=timing, rule11_pass=all(verdict.values()))
+report = dict(build=prefix, builds=[str(b) for b in builds], ref_builds=[str(b) for b in ref_builds], refs=str(refs), judged=verdict, recorded_timing=timing, rule11_pass=all(verdict.values()))
 (d / f"{prefix}-rule11.json").write_text(json.dumps(report, indent=1) + "\n")
 for k, v in verdict.items(): print(f"rule 11 {prefix} {k}: {'pass' if v else 'FAIL'}")
 print(f"RULE 11 ({prefix}, decision 10)", "PASS" if report["rule11_pass"] else "FAIL")

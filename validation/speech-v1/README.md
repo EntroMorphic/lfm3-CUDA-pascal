@@ -90,9 +90,11 @@ committed with the results).
   31,744 (development 14). At 30,720 every configuration passes beside one row (the highest, that audio-in
   configuration, 7,697 MiB; development 15). Each 1,024 tokens of capacity is about 52 MiB and a row about 102 MiB,
   so each further row takes 2,048 tokens from the default, down to 2,048: 8 rows at 16,384 pass (7,461 MiB at the
-  highest) and 16 rows at 2,048 pass (7,709 MiB). The server defaults to `--speech-rows 1` and, when it serves speech,
-  a total capacity of 30,720 (32,768 without speech, as serve-v1 measured); its ready line reports both
-  (`{"ready":true,"port":N,"total_capacity":30720,"speech_rows":1}`). An explicit `--total-capacity` is the
+  highest) and 16 rows at 2,048 pass (7,709 MiB). The server defaulted to `--speech-rows 1` and, when it serves
+  speech, a total capacity of 30,720 (32,768 without speech, as serve-v1 measured); its ready line reports both
+  (`{"ready":true,"port":N,"total_capacity":30720,"speech_rows":1}`). *Superseded by red-team-2 (D1): that audio-in
+  configuration's clip was 11 s short of the request limit; with the full clip the defaults are 29,696 at one row,
+  2,048 less a row, at least 1,024.* An explicit `--total-capacity` is the
   operator's.
 - **`/generate_batch` and speech.** A batch is an exclusive job: the server lets the running speech rows finish before
   it runs (`lfm3_http.hpp`, `speech_first`). So that configuration of rule 12 cannot run beside generating rows; the

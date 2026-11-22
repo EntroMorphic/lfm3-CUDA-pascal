@@ -1,11 +1,11 @@
 """red-team-2 B1: /generate_batch is one engine call, bounded by the engine timeout (300 s), so a lane's max_new_tokens
-is bounded (lfm3_http.hpp kBatchMaxNewTokens, 4,096). This measures the worst case through liquid-lfm3-server with its
-defaults: two sessions filling the total capacity (one just large enough for a short prompt and 4,096 new tokens, the
-other the rest), each prompt filled so that 4,096 new tokens just fit, so the batch ends with the capacity full; the
+is bounded (lfm3_http.hpp kBatchMaxNewTokens, 2,048). This measures the worst case through liquid-lfm3-server with its
+defaults: two sessions filling the total capacity (one just large enough for a short prompt and 2,048 new tokens, the
+other the rest), each prompt filled so that 2,048 new tokens just fit, so the batch ends with the capacity full; the
 prompts are lists of numbers the model is asked to continue without stopping. Twice: greedy, and sampled by the host
 sampler's slowest path. The worst case is each call's own wall time, measured, not extrapolated: both lanes must
-generate all 4,096 tokens (4,095 paired steps), or the run is inconclusive (exit 2) unless it has already failed. Before it, for the record, the same batch with 1 new token a lane
-(the two prefills). Also checks the bound: on short prompts, where only the bound can refuse it, 4,097 is refused (400),
+generate all 2,048 tokens (2,047 paired steps), or the run is inconclusive (exit 2) unless it has already failed. Before it, for the record, the same batch with 1 new token a lane
+(the two prefills). Also checks the bound: on short prompts, where only the bound can refuse it, 2,049 is refused (400),
 and the server is still serving afterwards (/health ready). Passes if the call takes at most 80% of the engine timeout
 (the margin the reference set for /speech's worst case, lfm3_http.hpp) and the refusal is as stated. The parity build
 is not measured here: it is the validation build, whose single prefill near capacity alone takes about 430 s
@@ -22,7 +22,7 @@ from check_lfm3_native_server import NativeServer, Client  # noqa: E402
 
 server_path, checkpoint, out = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
 total = int(sys.argv[4]) if len(sys.argv) > 4 else 29696
-LIMIT, ENGINE_TIMEOUT, STEPS = 4096, 300.0, 4095
+LIMIT, ENGINE_TIMEOUT, STEPS = 2048, 300.0, 2047
 out.mkdir(parents=True, exist_ok=False)
 records, report = [], dict(total_capacity=total, bound=LIMIT, engine_timeout=ENGINE_TIMEOUT)
 server = NativeServer(server_path, checkpoint, out, "server", None)
@@ -44,10 +44,10 @@ try:
     client.call("POST", f"/sessions/{sid}/close", {})
     per = (n[1100] - n[100]) / 1000  # tokens per line, every line alike
     base = n[100] - 100 * per  # the template's tokens
-    small = int(LIMIT + 64 + base + 20 * per) + 1  # a short prompt (20 lines) and 4,096 new tokens; the rest to the other
+    small = int(LIMIT + 64 + base + 20 * per) + 1  # a short prompt (20 lines) and 2,048 new tokens; the rest to the other
     large = total - small
     sids = [client.call("POST", "/sessions", dict(capacity=c))["session_id"] for c in (small, large)]
-    fill = [int((c - LIMIT - 64 - base) // per) for c in (small, large)]  # prompt + 4,096 just fit
+    fill = [int((c - LIMIT - 64 - base) // per) for c in (small, large)]  # prompt + 2,048 just fit
     bodies = [dict(session_id=sid_, messages=text(k), max_new_tokens=1) for sid_, k in zip(sids, fill)]
     t0 = time.monotonic(); client.call("POST", "/generate_batch", dict(requests=bodies)); prefill = time.monotonic() - t0
     # The host's token choice is part of the call: greedy, and the sampler's slowest path (do_sample with top_k 0 sorts
@@ -64,7 +64,7 @@ try:
                            complete=generated == [LIMIT, LIMIT] and r["paired_decode_calls"] == STEPS)
         print(f"batch budget {name}: generated {generated} ({r['paired_decode_calls']} paired steps), {wall:.1f} s "
               f"(limit {0.8 * ENGINE_TIMEOUT:.0f} s)", flush=True)
-    # The bound alone refuses: short prompts on the reset sessions, where 4,097 new tokens fit the small one's capacity.
+    # The bound alone refuses: short prompts on the reset sessions, where 2,049 new tokens fit the small one's capacity.
     for s in sids: client.call("POST", f"/sessions/{s}/reset", {})
     short = [dict(session_id=sids[0], messages=text(10), max_new_tokens=LIMIT + 1),
              dict(session_id=sids[1], messages=text(10), max_new_tokens=8)]
@@ -77,7 +77,7 @@ try:
     report.update(sessions=[small, large], prefill_seconds=round(prefill, 2), cases=cases, complete=complete,
                   refusal_4097=refused, health_ready=health.get("ready"), definite_fail=definite_fail)
     ok = complete and not definite_fail
-    print(f"batch budget: sessions {small} + {large}; the two prefills {prefill:.1f} s; 4,097 refused {refused}; "
+    print(f"batch budget: sessions {small} + {large}; the two prefills {prefill:.1f} s; 2,049 refused {refused}; "
           f"health ready {health.get('ready')}", flush=True)
 finally:
     report["server_exit"] = server.stop()
@@ -85,6 +85,6 @@ finally:
     (out / "summary.json").write_text(json.dumps(report, indent=1) + "\n")
 # A lane that stopped early leaves no verdict, unless a definite failure (over the limit even so, the refusal, health)
 verdict = "PASS" if report["pass"] else "FAIL" if report.get("definite_fail", True) or report["server_exit"] != 0 \
-    else "INCONCLUSIVE (a lane stopped before 4,096)"
+    else "INCONCLUSIVE (a lane stopped before 2,048)"
 print("BATCH BUDGET", verdict)
 sys.exit(0 if report["pass"] else 2 if verdict.startswith("INCONCLUSIVE") else 1)

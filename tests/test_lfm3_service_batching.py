@@ -86,7 +86,7 @@ def test_bad_second_lane_no_native_no_lease_leak(service, kind):
     elif kind == "count":
         body["requests"][1]["max_new_tokens"] = True
     elif kind == "batch-count":  # above the batch's bound (lfm3_server.py; lfm3_http.hpp kBatchMaxNewTokens)
-        body["requests"][1]["max_new_tokens"] = 4097
+        body["requests"][1]["max_new_tokens"] = 2049
     elif kind == "messages":
         body["requests"][1]["messages"] = [{"role": "invalid", "content": "bad"}]
     else:

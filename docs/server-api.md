@@ -38,7 +38,7 @@ The authoritative contract is the comment above each handler in `native/include/
 |---|---|---|
 | `POST /sessions` | `{"capacity": 4096}` | Creates a session with its own KV cache (2 to the total capacity, which all sessions share); returns `session_id` |
 | `POST /generate` | `{"session_id", "messages": [...], "max_new_tokens", "sampling": {...}}` | Generates on the session, reusing its cached prefix |
-| `POST /generate_batch` | `{"requests": [A, B]}` | Two sessions decoded together on the GPU; at most 4,096 `max_new_tokens` a lane (the batch is one engine call, bounded by the engine timeout; 501 `batching_unavailable` with `--engine-timeout` under 300 s) |
+| `POST /generate_batch` | `{"requests": [A, B]}` | Two sessions decoded together on the GPU; at most 2,048 `max_new_tokens` a lane (the batch is one engine call, bounded by the engine timeout; 501 `batching_unavailable` with `--engine-timeout` under 300 s) |
 | `POST /sessions/ID/reset` | `{}` | Clears the session's cache |
 | `POST /sessions/ID/close` | `{}` | Releases the session |
 | `POST /sessions/ID/cancel` | `{}` | Cancels a running generation at its next token (202) |
