@@ -137,7 +137,8 @@ paths that advertise what they cannot serve, documents, and hygiene. Fixes: comm
   the bound is lowered to 2,048. 5 to 7: at 2,048, greedy 61.9 s; sampled runs ended one lane early (at 92 and 71
   tokens: a near tie with the end of the turn, sampled where greedy is not). 8: sampled with `top_p` 0.5 (the same
   sort and softmax), both lanes 2,048 tokens: **181.5 s**; greedy 62.3 s. The refusal of 2,049 is checked on the
-  final build (v37 allows 4,096).
+  final build (v37 allows 4,096). (5: temperature 0.5 with a repetition penalty of 1.05, a lane ended at 92 tokens;
+  6 and 7: temperature 0.05 and `top_p` 0.98, a penalty of 1.01 and none, both at 71.)
 
 ## Round 2: the fixes reviewed
 
@@ -207,3 +208,13 @@ Not changed, because each is the owner's to decide:
    the published history, as do the withheld hashes. Removing them means rewriting history and force-pushing `main`.
 3. **Historical job scripts** (C7, D10). They print a comparison whatever the step before returned; they are left as
    the record of what ran (every log shows those steps at rc 0), and the new jobs gate their lines.
+
+## Round 5
+
+One independent review of round 4's fixes and the verification job.
+
+| # | Finding | Fix |
+|---|---|---|
+| R5-1 | A request that continues a session's cached prefix is forwarded a token at a time inside one engine call (op generate's `text_begin`, and each batch lane), bounded only by the session's capacity: about 18,000 continued tokens (17 ms each near 32K) pass the 300 s engine timeout and fail the server closed, through an ordinary `/generate` (imported code; the Thor engine has the same exposure) | A cached prefix is continued by at most 1,024 tokens (`SessionLedger::set_max_continuation`, set by the worker); a longer continuation is a full prefill, as for a new session. **A departure from the Thor engine's server:** a continuation of more than 1,024 tokens now gives a new session's output, not the token-by-token one (which on this card fails closed beyond about 17,000). The reference's checks continue by a few tokens and are unaffected. `batch_budget.py` measures the batch with both lanes continuing (development 9) |
+| R5-2 | `batch_budget.py` would have failed its own assertion at a total of 32,768 (four-digit lists end at 8,999 lines) | Six-digit lists, also 3 tokens a line |
+| R5-3 | A figure (99 s for 98.1), a key's name, the sampler-cost claim, developments 5 to 7's settings | Corrected |

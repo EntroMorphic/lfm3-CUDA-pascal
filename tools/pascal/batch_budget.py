@@ -32,14 +32,15 @@ server = NativeServer(server_path, checkpoint, out, "server", None)
 client = Client(server.port, server.token, records)
 ok = False
 try:
-    # The prompts are a list of k numbers from 100,000, one a line, and an instruction to go on counting, so that greedy
+    # The prompts are a list of k numbers from 10,000, one a line, and an instruction to go on counting, so that greedy
     # decoding goes on (a long prose prompt with the same instruction stopped after 200 tokens, development 2). Every
-    # six-digit line costs the same 3 tokens (four-digit ones ran out at 8,999 lines, short of a 32,768 total: R5-2).
+    # five-digit line costs the same 3 tokens (four-digit ones ran out at 8,999 lines, short of a 32,768 total: R5-2;
+    # with six-digit ones the long lane stopped after 66 tokens, development 9).
     INSTRUCTION = "\nContinue this list: count upward from where it ends, one number per line, and do not stop."
     def numbers(start, k):
-        assert 100000 <= start and start + k <= 1000000
+        assert 10000 <= start and start + k <= 100000
         return "\n".join(str(i) for i in range(start, start + k))
-    def text(k, count=True): return [dict(role="user", content=numbers(100000, k) + (INSTRUCTION if count else ""))]
+    def text(k, count=True): return [dict(role="user", content=numbers(10000, k) + (INSTRUCTION if count else ""))]
     sid = client.call("POST", "/sessions", dict(capacity=8192))["session_id"]
     n = {}
     for k in (100, 1100):
@@ -82,7 +83,7 @@ try:
     r0 = client.call("POST", "/generate_batch", dict(requests=seeded))
     req = [dict(session_id=sid_, max_new_tokens=LIMIT, sampling=SAMPLED,
                 messages=text(k) + [dict(role="assistant", content=x["text"]),
-                                    dict(role="user", content=numbers(100000 + k, 300) + INSTRUCTION)])
+                                    dict(role="user", content=numbers(10000 + k, 300) + INSTRUCTION)])
            for sid_, k, x in zip(sids, first, r0["results"])]
     t0 = time.monotonic(); r = client.call("POST", "/generate_batch", dict(requests=req)); wall = time.monotonic() - t0
     generated = [len(x["generated_ids"]) for x in r["results"]]
