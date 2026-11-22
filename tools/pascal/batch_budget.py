@@ -32,15 +32,18 @@ server = NativeServer(server_path, checkpoint, out, "server", None)
 client = Client(server.port, server.token, records)
 ok = False
 try:
-    # The prompts are a list of k numbers from 10,000, one a line, and an instruction to go on counting, so that greedy
+    # The prompts are a list of k numbers from 1,000, one a line, and an instruction to go on counting, so that greedy
     # decoding goes on (a long prose prompt with the same instruction stopped after 200 tokens, development 2). Every
-    # five-digit line costs the same 3 tokens (four-digit ones ran out at 8,999 lines, short of a 32,768 total: R5-2;
-    # with six-digit ones the long lane stopped after 66 tokens, development 9).
+    # four-digit line costs the same 3 tokens. With five- and six-digit lists the long lane stopped after 38 and 66
+    # tokens (developments 9 and 10), so four digits it is, at most 8,699 lines (300 more for the continued case): at
+    # a total of 32,768 the long lane's prompt stops about 1,500 tokens short of its session (R5-2), which the summary
+    # records (unused).
     INSTRUCTION = "\nContinue this list: count upward from where it ends, one number per line, and do not stop."
     def numbers(start, k):
-        assert 10000 <= start and start + k <= 100000
+        assert 1000 <= start and start + k <= 10000
         return "\n".join(str(i) for i in range(start, start + k))
-    def text(k, count=True): return [dict(role="user", content=numbers(10000, k) + (INSTRUCTION if count else ""))]
+    MAX_LINES = 8699
+    def text(k, count=True): return [dict(role="user", content=numbers(1000, min(k, MAX_LINES)) + (INSTRUCTION if count else ""))]
     sid = client.call("POST", "/sessions", dict(capacity=8192))["session_id"]
     n = {}
     for k in (100, 1100):
@@ -70,8 +73,9 @@ try:
         req = [dict(b, max_new_tokens=LIMIT, **({"sampling": sampling} if sampling else {})) for b in bodies]
         t0 = time.monotonic(); r = client.call("POST", "/generate_batch", dict(requests=req)); wall = time.monotonic() - t0
         generated = [len(x["generated_ids"]) for x in r["results"]]
-        cases[name] = dict(seconds=round(wall, 1), generated=generated, paired=r["paired_decode_calls"],
-                           prompts=[x["consumed_tokens"] - len(x["generated_ids"]) + 1 for x in r["results"]],
+        prompts = [x["consumed_tokens"] - len(x["generated_ids"]) + 1 for x in r["results"]]
+        cases[name] = dict(seconds=round(wall, 1), generated=generated, paired=r["paired_decode_calls"], prompts=prompts,
+                           unused=[c - p_ - LIMIT for c, p_ in zip((small, large), prompts)],
                            complete=generated == [LIMIT, LIMIT] and r["paired_decode_calls"] == STEPS)
         print(f"batch budget {name}: generated {generated} ({r['paired_decode_calls']} paired steps), {wall:.1f} s "
               f"(limit {0.8 * ENGINE_TIMEOUT:.0f} s)", flush=True)
@@ -83,7 +87,7 @@ try:
     r0 = client.call("POST", "/generate_batch", dict(requests=seeded))
     req = [dict(session_id=sid_, max_new_tokens=LIMIT, sampling=SAMPLED,
                 messages=text(k) + [dict(role="assistant", content=x["text"]),
-                                    dict(role="user", content=numbers(10000 + k, 300) + INSTRUCTION)])
+                                    dict(role="user", content=numbers(1000 + min(k, MAX_LINES), 300) + INSTRUCTION)])
            for sid_, k, x in zip(sids, first, r0["results"])]
     t0 = time.monotonic(); r = client.call("POST", "/generate_batch", dict(requests=req)); wall = time.monotonic() - t0
     generated = [len(x["generated_ids"]) for x in r["results"]]
