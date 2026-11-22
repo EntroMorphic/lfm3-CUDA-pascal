@@ -4,6 +4,7 @@
 # reusing the seed). Same builds (text-v37, text-v38); the rest of the verification is job.sh's.
 set -x; date; cd /workspace/lfm3-CUDA-pascal; B=/workspace/build; O=$B/rt2-v1b; M=/workspace/models/LFM3-Omni-2B; PY=$B/venv-asr/bin/python
 [ -e $O ] && { echo "$O exists"; exit 2; }; mkdir -p $O
+for b in text-v37 text-v38; do (cd $B/$b && sha256sum liquid-lfm3-worker liquid-lfm3-server) | sed "s#  #  $b/#"; done | tee $O/binaries.sha256
 clean() { pkill -TERM -f liquid-lfm3-server; for i in $(seq 120); do pgrep -f liquid-lfm3-server >/dev/null || return 0; sleep 1; done; pkill -KILL -f liquid-lfm3-server; sleep 5; }
 for v in old:v37 new:v38; do e=${v%%:*}; b=text-${v##*:}
   $PY tools/pascal/continuation_check.py $B/$b/liquid-lfm3-worker $B/$b/liquid-lfm3-server $M $O/continuation-$e $e > $O/continuation-$e.log 2>&1

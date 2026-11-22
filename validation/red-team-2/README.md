@@ -1,6 +1,7 @@
 # red-team-2: the code this project wrote, end to end, after phase 4
 
-Status: **six review rounds done and their findings fixed; the verification run to follow** (2026-11-21). The owner: "let's red-team the code end-to-end. Remediate
+Status: **eight review rounds; the last found nothing to fix (rule 5). The verification run is under way**
+(2026-11-21). The owner: "let's red-team the code end-to-end. Remediate
 findings, verify, and iterate until pristine." Rules and predictions committed before the first review.
 
 ## Scope and method
@@ -241,3 +242,17 @@ full prefill), and no reference check continues by more than about 120 tokens.
 | R6-2 | This README's status and R5-2 fix, the development cited for the continued case, a count in `batch_budget.py` (1,500 for about 1,360) and its developments' order, the "cap's worst" claim (934, not 1,024, continued), the development scripts' headers | Corrected |
 | R6-3 | The cap is a departure from the Thor engine's server, recorded only in a fix row; on the parity build a full prefill near capacity passes the engine timeout, so the cap turns a long continuation of a large session (about 25,000 cached tokens and 1,025 new) into that failure there | Listed for the owner, below |
 | R6-4 | `batch_budget.py` named an early stop as the cause of any inconclusive case | It names each case's cause |
+
+## Rounds 7 and 8
+
+Round 7, one review of round 6's fixes, found nothing that would let the verification print a false pass, and two
+small things in `continuation_check.py`: its verdict on the old server accepted any fail-closed, not only the
+watchdog's (R7-1), and a comment on that server's exit status was wrong (R7-2). Now the old server must answer 503
+`worker_unavailable` after at least 295 s (a full prefill of the prompt takes about 30 s, so only the continuation
+can take that long), and the new server first shows a continuation within the cap reusing the whole seed. The
+verification job had started (`job.sh`, tree `0efc905`), so its two continuation steps run again with the tightened
+tool afterwards (`job2.sh`).
+
+Round 8, one review of that change, **found nothing to fix**: the old server's reply after the watchdog is 503
+`worker_unavailable` at about 300 s, the control's continuation (about 912 tokens) is within the cap and reuses the
+seed, and the long one (about 27,900) is not.
