@@ -6,9 +6,11 @@ a longer continuation is a full prefill. Two parts.
     must be 0, a full prefill). EXPECT new only; an old worker reuses both.
   watchdog (SERVER: liquid-lfm3-server with its defaults, over HTTP): a session of 29,696 seeded with about 1,000 tokens,
     then a /generate whose messages continue it by about 28,000 (the old worker forwards them a token at a time inside
-    one engine call, about 17 ms each). EXPECT old: the call does not answer 200 and /health is then not ready (the
-    server failed closed at the 300 s engine timeout). EXPECT new: 200, reused_tokens 0 (a full prefill), within
-    240 s, and /health ready.
+    one engine call, about 17 ms each). EXPECT old: the call answers 503 worker_unavailable after at least 295 s, and
+    /health is then not ready (the server failed closed at the 300 s engine timeout; a full prefill of the whole
+    prompt takes about 30 s, so only the continuation can take that long). EXPECT new: first, on the same seed, a
+    continuation within the cap (about 900 tokens) reuses the whole seed; then the long one answers 200 with
+    reused_tokens 0 (a full prefill) within 240 s, and /health is ready.
     python3 tools/pascal/continuation_check.py WORKER SERVER CHECKPOINT OUTPUT EXPECT(old|new)
 """
 import json
@@ -54,6 +56,16 @@ try:
     sid = client.call("POST", "/sessions", dict(capacity=29696))["session_id"]
     seed_messages = [dict(role="user", content=numbers(10000, 320))]
     seed = client.call("POST", "/generate", dict(session_id=sid, messages=seed_messages, max_new_tokens=1))
+    if expect == "new":  # the control: within the cap the same messages' prefix is reused (so the long one is the cap's)
+        short = client.call("POST", "/generate", dict(session_id=sid, max_new_tokens=1, messages=seed_messages + [
+            dict(role="assistant", content=seed["text"]), dict(role="user", content=numbers(10320, 300))]))
+        report["control"] = dict(reused_tokens=short.get("reused_tokens"), seed_consumed=seed.get("consumed_tokens"))
+        good_control = short.get("reused_tokens") == seed.get("consumed_tokens")
+        ok &= good_control
+        print(f"continuation control: reused {short.get('reused_tokens')} of the seed's {seed.get('consumed_tokens')}: "
+              f"{'ok' if good_control else 'FAIL'}", flush=True)
+        client.call("POST", f"/sessions/{sid}/reset", {})
+        seed = client.call("POST", "/generate", dict(session_id=sid, messages=seed_messages, max_new_tokens=1))
     messages = seed_messages + [dict(role="assistant", content=seed["text"]),
                                 dict(role="user", content=numbers(10320, 9300))]
     t0 = time.monotonic()
@@ -67,7 +79,7 @@ try:
                               reused_tokens=reply.get("reused_tokens"), consumed_tokens=reply.get("consumed_tokens"),
                               error=reply.get("error"), health_status=hstatus, health=health)
     if expect == "old":
-        good = status != 200 and health.get("ready") is False
+        good = status == 503 and reply.get("error") == "worker_unavailable" and seconds >= 295 and health.get("ready") is False
     else:
         good = status == 200 and reply.get("reused_tokens") == 0 and seconds <= 240 and health.get("ready") is True
     ok &= good
@@ -78,7 +90,7 @@ finally:
     report["server_exit"] = server.stop()
     (out / "summary.json").write_text(json.dumps(report, indent=1) + "\n")
     (out / "records.json").write_text(json.dumps(records, indent=1)[:1_000_000] + "\n")
-# the old server failed closed exits 1 (cleanup failed); only the new one must exit 0
+# the old server's exit status is not judged; the new one must exit 0
 ok &= expect == "old" or report["server_exit"] == 0
 print(f"CONTINUATION ({expect})", "PASS" if ok else "FAIL")
 sys.exit(0 if ok else 1)
