@@ -1,6 +1,7 @@
 # red-team-2: the code this project wrote, end to end, after phase 4
 
-Status: **rules set; reviews to follow** (2026-11-21). The owner: "let's red-team the code end-to-end. Remediate
+Status: **four review rounds done and their findings fixed; a fifth round, then the verification run, to follow**
+(2026-11-21). The owner: "let's red-team the code end-to-end. Remediate
 findings, verify, and iterate until pristine." Rules and predictions committed before the first review.
 
 ## Scope and method
@@ -64,7 +65,7 @@ paths that advertise what they cannot serve, documents, and hygiene. Fixes: comm
 | A2, A4 | Comments on the position-0 launch (8 rows; it is one), on who sets `row0`, and on the scorer's `wide` | Corrected |
 | A3 | `LFM_FP32_STAGED=on` built as 0 (red-team-1's R1 failure, in a switch added later) | The value must paste to a listed digit |
 | A5 | `linear_block` passed `row0` = the block's first row, right only because a multi-row call starts at cursor 0 | `cursor + first` |
-| B1 | `/generate_batch` runs both lanes, prefill and every step, as one engine call; a lane may ask for up to its session's capacity of new tokens, and past `--engine-timeout` (300 s) the watchdog fails the server closed. About 14,000 steps exceed it on this card (imported code; the Thor engine has the same exposure) | At most 4,096 `max_new_tokens` a lane, refused 400 before any lease is taken, in the native server and the Python one alike; the worst case measured (verification) |
+| B1 | `/generate_batch` runs both lanes, prefill and every step, as one engine call; a lane may ask for up to its session's capacity of new tokens, and past `--engine-timeout` (300 s) the watchdog fails the server closed. About 14,000 steps exceed it on this card (imported code; the Thor engine has the same exposure) | A bound on `max_new_tokens` a lane, refused 400 before any lease is taken, in the native server and the Python one alike: 4,096 here, lowered to 2,048 in round 4 (R4-1); the worst case measured (developments 3 to 8, and the verification) |
 | B2 | With `LFM3_COMPACT_WINDOWS=1` or `LFM3_LOSSLESS=1` in its environment the server advertised speech and failed closed at the first `/speech` | Speech is then not served (and the defaults are those without speech) |
 | B3, E5-E8 | `docs/server-api.md` was the Thor engine's: ready line, `--speech-rows` default 8, a `capacity: 32768` example the speech build refuses, images described as served, a `SECURITY.md` not in this repository | A section for this port: which build serves what, the defaults and why, the bound on the batch |
 | B4 | With `--engine-timeout` below 300 the ready line said speech was served and the capacity was lowered for it, while every `/speech` got 501 | Both follow what is served |
@@ -129,6 +130,14 @@ paths that advertise what they cannot serve, documents, and hygiene. Fixes: comm
   difference rounds away by the logits). The batch: one lane stopped at 200 tokens, so the worst case was not
   reached; extrapolated, 80 s against the 240 s limit. The prompts are now lists of numbers to continue
   (development 3).
+- **Developments 3 to 8** (`dev3.sh` to `dev8.sh`, on `text-v37`'s server; `batch_budget.py` as it was then). 3:
+  the batch's worst case at 4,096 a lane, greedy, both lanes to the end with the capacity full: **98.1 s** (limit
+  240). 4 (round 4's R4-1): the same sampled (`do_sample`, `top_k` 0: the host sorts the whole vocabulary at every
+  step of every lane) ran past the 300 s engine timeout, and **the server failed closed** (503 `worker_unavailable`);
+  the bound is lowered to 2,048. 5 to 7: at 2,048, greedy 61.9 s; sampled runs ended one lane early (at 92 and 71
+  tokens: a near tie with the end of the turn, sampled where greedy is not). 8: sampled with `top_p` 0.5 (the same
+  sort and softmax), both lanes 2,048 tokens: **181.5 s**; greedy 62.3 s. The refusal of 2,049 is checked on the
+  final build (v37 allows 4,096).
 
 ## Round 2: the fixes reviewed
 
@@ -164,3 +173,37 @@ One independent review of `fc2271e`. Nothing in what either build computes. Fixe
 | R3-6 | `git ls-files` quotes unusual paths, which the ignored-file patterns then miss (fails safe) | `core.quotePath=false` |
 | R3-7 | `dev2.sh`'s A1 lines had no expectation | The verification job states it |
 | R3-8 | The handler comment; two identical configurations at a total of 1,024; a trailing blank line | Fixed |
+
+## Round 4
+
+One independent review of round 3's fixes and of the verification job before it ran.
+
+| # | Finding | Fix |
+|---|---|---|
+| R4-1 | `batch_budget.py` measured greedy only; sampled, the host's sort of the whole vocabulary at every step of every lane costs about 25 ms each, so a sampled batch at 4,096 a lane could pass the engine timeout | Measured on the card: it did (development 4, the server failed closed). The bound is 2,048; the tool measures greedy and sampled, both lanes to the end (181.5 s sampled, development 8) |
+| R4-2 | The job's A1 lines checked only one side's file count | Each side |
+| R4-3 | The text-only build (`build_serve.sh`), which the documents ship, had no device-code comparison and no serving checks | Both in the job (against serve-v1's `text-v34`) |
+| R4-4 | The job's speech-v1 rule 3 left out the rendering clause | Added |
+| R4-5 | E2 lines dropped their exit status, and took stems from the outputs found | From the request list, with the status |
+| R4-6 | `batch_budget.py` called a definite failure inconclusive when a lane stopped early | A failure is FAIL |
+| R4-7, R4-8, R4-9 | This README lacked development 3, the owner's section and a current status; text-correct-v2 still said "off and on"; speech-v1's development text still stated 30,720 as the default | Fixed |
+| R4-10 | Two more records give the shipping clips' durations and sizes (the stream and server checks' reports); the verification would add more | Added to the owner's decision below; the verification's per-case reports are kept on the card, not committed, until the verdicts |
+| R4-11 | `arith_report.py` would have run under a Python without numpy | The checks' Python |
+| R4-12 | The job's second fixtures run deleted the first's records; text-v6's hash printed, not checked | Copied out; checked |
+| R4-13 | `batch_budget.py`: a comment; the small session larger than needed; the server's total not checked against TOTAL | The first two fixed (the large lane now takes the rest); the third not: creating the two sessions shows the server holds at least TOTAL, and the job passes each server's default |
+| R4-14 | `git ls-files` still quotes names with `"`, `\` or control characters | NUL-separated |
+| R4-15 | The judge accepted reports from the build that made the references | Reports only from the build judged; the references' builds a separate argument |
+
+## For the owner
+
+Not changed, because each is the owner's to decide:
+
+1. **Rule 9's blindness** (D4, R3-1, R4-10). The withheld hashes are out of the tree but in its published history
+   (`834bc1c` and earlier), and public records give every listening clip's duration (development 5's ASR records,
+   rule 14's, rule 11's reports, the reference's HF records), with every pair of a case differing in length. The set
+   is blind only so long as the listener does not consult them. The alternative: rebuild the set with both clips of a
+   case padded to the same length and size (the key checking the unpadded audio).
+2. **Published history** (R2B-5, E10). The provenance files' home-directory paths, redacted in the tree, remain in
+   the published history, as do the withheld hashes. Removing them means rewriting history and force-pushing `main`.
+3. **Historical job scripts** (C7, D10). They print a comparison whatever the step before returned; they are left as
+   the record of what ran (every log shows those steps at rc 0), and the new jobs gate their lines.
