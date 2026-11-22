@@ -51,12 +51,12 @@ try:
     bodies = [dict(session_id=sid_, messages=text(k), max_new_tokens=1) for sid_, k in zip(sids, fill)]
     t0 = time.monotonic(); client.call("POST", "/generate_batch", dict(requests=bodies)); prefill = time.monotonic() - t0
     # The host's token choice is part of the call: greedy, and the sampler's slowest path (do_sample with top_k 0 sorts
-    # the whole vocabulary on the host at every step of every lane; top_p and a repetition penalty on top; red-team-2 R4-1).
-    # near-greedy, so that the count goes on as greedily (temperature 0.5 ended a lane after 92 tokens, development 5); the
-    # sort over the whole vocabulary costs the same at any temperature
-    # no repetition penalty: counting repeats every digit, and a penalty pushed a lane to end its turn after 71 tokens
-    # (development 6); its cost, a pass over the tokens already generated, is small beside the sort
-    SAMPLED = dict(do_sample=True, temperature=0.05, top_k=0, top_p=0.98, seed=7)
+    # the whole vocabulary on the host at every step of every lane; red-team-2 R4-1).
+    # The sampled path's cost is the sort and the softmax over the whole vocabulary (every lane, every step), whatever
+    # the parameters; top_p 0.5 at temperature 0.05 then keeps the top token unless it holds less than half the mass,
+    # so the count goes on as greedily (temperature 0.5 and 0.05 with top_p 0.98 ended a lane after 92 and 71 tokens,
+    # developments 5 to 7, at a near tie with the end of the turn).
+    SAMPLED = dict(do_sample=True, temperature=0.05, top_k=0, top_p=0.5, seed=7)
     cases = {}
     for name, sampling in (("greedy", None), ("sampled", SAMPLED)):
         for s in sids: client.call("POST", f"/sessions/{s}/reset", {})
