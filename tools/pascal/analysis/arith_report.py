@@ -27,10 +27,18 @@ if len(names) == 5 and (D / "exact" / "nll-pascal-65.f32").exists():
     print(f"\nsum of the five single-site differences {total:+.2e}; exact {(load('exact') - plain).mean():+.2e}")
 if (D / "nohead" / "nll-pascal-65.f32").exists() and (D / "head" / "nll-pascal-65.f32").exists():
     print(f"head + nohead {(load('head') - plain).mean() + (load('nohead') - plain).mean():+.2e}")
-# The README's table (red-team-2 C10: its "Position 1 alone" and "Positions 2-64" columns had no committed tool).
-# Position 1 is column 0 (predicted from [BOS] alone); positions 2-64 are columns 1-63, with their window bootstrap.
+# The README's tables (red-team-2 C10: its "Position 1 alone" and "Positions 2-64" columns, and the bosexact table, had
+# no committed tool). Position 1 is column 0 (predicted from [BOS] alone); positions 2-64 are columns 1-63. Each
+# interval here is a window bootstrap with its own generator, default_rng(0), so each reproduces on its own.
+def ci0(x, n=10000):
+    r = np.random.default_rng(0); idx = r.integers(0, x.size, size=(n, x.size)); m = x[idx].mean(axis=1)
+    return np.quantile(m, 0.025), np.quantile(m, 0.975)
 print("\nvariant     position 1 alone   positions 2-64   95% CI")
-for v in ("exact", "rz", "away"):
+for v in ("exact", "rz", "away", "bosexact", "bosplain"):
     if not (D / v / "nll-pascal-65.f32").exists(): continue
-    d = load(v) - plain; lo, hi = ci(d[:, 1:].mean(axis=1))
-    print(f"{v:10s}  {d[:, 0].mean():+.2e}          {d[:, 1:].mean():+.2e}        [{lo:+.2e}, {hi:+.2e}]")
+    d = load(v) - plain; lo, hi = ci0(d[:, 1:].mean(axis=1))
+    print(f"{v:10s}  {d[:, 0].mean():+.3e}         {d[:, 1:].mean():+.3e}       [{lo:+.3e}, {hi:+.3e}]")
+if all((D / v / "nll-pascal-65.f32").exists() for v in ("exact", "bosexact")):
+    e, b = load("exact"), load("bosexact"); d = (b - e)[:, 1:].mean(axis=1); lo, hi = ci0(d)
+    print(f"bosexact - exact, positions 2-64: {d.mean():+.2e} [{lo:+.2e}, {hi:+.2e}]; position 1 equal value for value: "
+          f"{bool(np.all(b[:, 0] == e[:, 0]))}")

@@ -477,3 +477,4 @@ def test_invalid_group_shape(service, body):
     with pytest.raises(ValueError):
         service.generate_batch(body)
     assert not service.worker.groups
+

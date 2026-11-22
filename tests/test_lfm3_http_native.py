@@ -434,6 +434,21 @@ def test_handler_saturation_closes_without_work(harness_binary):
         assert h.call("GET", "/health", auth=False)[0] == 200
 
 
+def test_generate_batch_bound(harness_binary):
+    """lfm3_http.hpp kBatchMaxNewTokens and kBatchMinEngineTimeout (red-team-2 B1): a batch is one engine call. On
+    sessions large enough that only the bound can refuse it, 4,097 new tokens a lane is refused (400) and 4,096 is not;
+    under a 300 s engine timeout the batch is refused (501), and text still serves."""
+    with running(harness_binary) as h:
+        lanes = [dict(session_id=session(h, 8192), messages=MESSAGES, max_new_tokens=4096) for _ in range(2)]
+        assert h.call("POST", "/generate_batch", {"requests": [lanes[0], dict(lanes[1], max_new_tokens=4097)]}) == (
+            400, {"error": "invalid_request"})
+        assert h.call("POST", "/generate_batch", {"requests": lanes})[0] == 200
+    with running(harness_binary, "--engine-timeout", "299") as h:
+        lanes = [dict(session_id=session(h), messages=MESSAGES, max_new_tokens=4) for _ in range(2)]
+        assert h.call("POST", "/generate_batch", {"requests": lanes}) == (501, {"error": "batching_unavailable"})
+        assert generate(h, lanes[0]["session_id"], 2)[0] == 200
+
+
 def test_generate_batch(harness_binary):
     with running(harness_binary, "--token-delay-ms", "20") as h:
         a, b = session(h), session(h)
@@ -447,11 +462,9 @@ def test_generate_batch(harness_binary):
             assert result["session_id"] == lane["session_id"] and len(result["generated_ids"]) == lane["max_new_tokens"]
             assert result["gpu_batching"] is True and result["paired_decode_calls"] == 6
         assert body["results"][1]["do_sample"] is True and body["results"][1]["seed"] == 9
-        for requests in ([lanes[0]], [lanes[0], lanes[0]], lanes + lanes[:1], [lanes[0], dict(lanes[1], max_new_tokens=0)],
-                         [lanes[0], dict(lanes[1], max_new_tokens=4097)]):  # kBatchMaxNewTokens
+        for requests in ([lanes[0]], [lanes[0], lanes[0]], lanes + lanes[:1], [lanes[0], dict(lanes[1], max_new_tokens=0)]):
             assert h.call("POST", "/generate_batch", {"requests": requests}) == (400, {"error": "invalid_request"})
         assert h.call("POST", "/generate_batch", {"requests": lanes, "x": 1}) == (400, {"error": "invalid_request"})
-        assert h.call("POST", "/generate_batch", {"requests": [dict(lane, max_new_tokens=4096) for lane in lanes]})[0] == 200
         assert h.call("POST", "/generate_batch", {"requests": [lanes[0], dict(lanes[1], session_id="Z" * 32)]}) == (
             404, {"error": "unknown_session"})
         # A busy peer refuses the whole group without touching either lease.

@@ -50,7 +50,7 @@ text-s1 tts-long-male-s3 rc=0 30.76 s 4521968 KiB
 987530cf7536ad44b7ed1390aa3626f63c94471d2158d09ea632bd3a21851b3c  parity-s1-split/tts-long-male-s1.wav
 8f82bf209271000fde6de0e216147ab34075f9923934f9ca020d78377e9d77ad  parity-s1-split/tts-long-male-s2.wav
 79bbb97cde8a79092452646f32ae02bad5fc0b1032ffd71f69b804caadd10ea9  parity-s1-split/tts-long-male-s3.wav
-997dd1e3f4efe4b4df495e8b90b0075e8ad5663976d87b520b4411a92980d17b  text-s1-split/tts-long-male-s1.wav
+<sha256 withheld until the rule 9 verdicts: red-team-2 D4>  text-s1-split/tts-long-male-s1.wav
 07018d95702b7611c55eb1d988ae828ec943089ded6dbef77402861b42714a25  text-s1-split/tts-long-male-s2.wav
 408f9c8b25ca35a6ee6ad4111af56433699ce7c8a70af60ebc9e50178cc43396  text-s1-split/tts-long-male-s3.wav
 + date

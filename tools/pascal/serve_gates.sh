@@ -15,6 +15,8 @@ set -uo pipefail
 tag=${1:?TAG}; name=${2:?OUT}; control=${3:?CONTROL}
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd); T=$repo/tools; I=$repo/validation/serve-v1/inputs
 B=/workspace/build; N=$B/$tag; out=$B/$name; CK=/workspace/models/LFM3-Omni-2B
+ALL_STAGES="sampling worker grouped-worker server cancellation http-cancellation http-batch native-server"
+for s in ${STAGES:-}; do [[ " $ALL_STAGES " == *" $s "* ]] || { echo "unknown stage $s (stages: $ALL_STAGES)"; exit 2; }; done
 test ! -e "$out" || { echo "exists: $out"; exit 2; }; mkdir -p "$out"
 for f in liquid-lfm3 liquid-lfm3-worker liquid-lfm3-server text-sampling-oracle; do test -x "$N/$f" || { echo "missing $N/$f"; exit 2; }; done
 (cd "$N" && sha256sum liquid-lfm3 liquid-lfm3-worker liquid-lfm3-server text-sampling-oracle) > "$out/binaries.sha256"
@@ -39,8 +41,6 @@ REQ=$I/generation-request.json; LONG=$I/decode_into32768.request.json; O=$out
 PY=${PY:-/workspace/build/venv-ref/bin/python}; "$PY" -m pip freeze > "$out/python-freeze.txt" || exit 2
 export LFM_ALLOCATION_METRICS=1
 failed=0; ran=0; : > "$out/status.txt"
-ALL_STAGES="sampling worker grouped-worker server cancellation http-cancellation http-batch native-server"
-for s in ${STAGES:-}; do [[ " $ALL_STAGES " == *" $s "* ]] || { echo "unknown stage $s (stages: $ALL_STAGES)"; exit 2; }; done
 # STAGES (optional, space-separated stage names): run only those (speech-v1 decision 11: the stages whose binaries changed)
 run() { local s=$1; shift; [ -n "${STAGES:-}" ] && [[ " $STAGES " != *" $s "* ]] && return 0
   ran=$((ran + 1)); local t0=$(date +%s); "$PY" "$@" > "$out/$s.log" 2>&1; local rc=$?

@@ -13,7 +13,7 @@
 // (validation/speech-batch-v1); more wait in the queue (--queue-size of them).
 // --total-capacity: default 32,768 (serve-v1 rule 11), or, when the engine serves speech, kSpeechTotalCapacity less
 // kSpeechCapacityPerRow for each speech row past the first, at least kSpeechMinTotalCapacity (speech-v1 rule 12: the
-// speech weights, one row and audio in at its limit leave room for 30,720; a row costs about 102 MiB, 1,024 tokens of
+// speech weights, one row and audio in at its limit leave room for 29,696; a row costs about 102 MiB, 1,024 tokens of
 // capacity about 52 MiB). Without --handlers, the server takes
 // max(8, 2 x speech rows) handlers: at most half of them stream at once (Service::speech_stream), so every row can.
 // The bearer token comes from --token-file (an owned mode-0600 file), or LFM3_SERVER_TOKEN, or else the default file
@@ -35,13 +35,15 @@
 
 namespace {
 // validation/speech-v1 rule 12: the largest multiple of 1,024 at which serve-v1 rule 11's configurations, scaled, pass
-// beside one speech row on the GTX 1080 (sp-dev10).
-constexpr int kSpeechTotalCapacity=30720;
+// beside one speech row on the GTX 1080, audio in at the request limit (a 98 s clip) among them: 29,696
+// (validation/red-team-2: with the clip the rule run used, 87 s, 30,720 had passed; with the full clip it peaks at
+// 7,759 MiB).
+constexpr int kSpeechTotalCapacity=29696;
 // Each further speech row (red-team review: more rows beside the one-row default could exhaust the card and fail the
-// service closed), down to kSpeechMinTotalCapacity at 15 and 16 rows (measured at 8 and 16 rows, validation/speech-v1
-// development 15).
+// service closed), down to kSpeechMinTotalCapacity at 15 and 16 rows (measured at 1, 8 and 16 rows,
+// validation/red-team-2).
 constexpr int kSpeechCapacityPerRow=2048;
-constexpr int kSpeechMinTotalCapacity=2048;
+constexpr int kSpeechMinTotalCapacity=1024;
 
 class CoreBackend final : public lfm::http::Backend {
  public:
@@ -141,6 +143,7 @@ int main(int argc,char** argv) try {
   // Speech is served when the engine supports it and the engine timeout is one /speech accepts (lfm3_http.hpp
   // kSpeechMinEngineTimeout); the default capacity and the ready line follow what is served.
   const bool speech_served=backend.core().speech_supported() && settings.engine_timeout>=lfm::http::kSpeechMinEngineTimeout;
+  if(!seen.count("--handlers") && !speech_served) settings.handlers=8;  // the default above assumed speech rows
   if(!seen.count("--total-capacity") && speech_served) {
     settings.total_capacity=std::max(kSpeechMinTotalCapacity,kSpeechTotalCapacity-kSpeechCapacityPerRow*(speech_rows-1));
     settings.validate();

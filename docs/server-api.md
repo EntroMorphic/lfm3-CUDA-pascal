@@ -17,8 +17,9 @@ Memory decides two defaults (validation/speech-v1 rule 12, peak at most 7,740 Mi
   the server serves speech, to **30,720** at one speech row, 2,048 less for each further row, never below 2,048 (8
   rows: 16,384; 16 rows: 2,048). An explicit `--total-capacity` is the operator's: larger values with speech were not
   measured to fit, and running out of device memory fails the server closed (503 to everything; restart it).
-- Speech is served only with `--engine-timeout` at least 300 s; below it `/speech` gets 501 and the defaults are those
-  without speech.
+- Speech is served only with `--engine-timeout` at least 300 s, and not with `LFM3_COMPACT_WINDOWS=1` or
+  `LFM3_LOSSLESS=1` in the environment (measurement switches the speech engine cannot run with); otherwise `/speech`
+  gets 501 and the defaults are those without speech.
 
 - Loopback only. Once listening it prints one line, `{"ready":true,"port":N,"total_capacity":N,"speech_rows":N}`
   (`--port 0` picks a free port; `speech_rows` 0: speech not served).
@@ -37,7 +38,7 @@ The authoritative contract is the comment above each handler in `native/include/
 |---|---|---|
 | `POST /sessions` | `{"capacity": 4096}` | Creates a session with its own KV cache (2 to the total capacity, which all sessions share); returns `session_id` |
 | `POST /generate` | `{"session_id", "messages": [...], "max_new_tokens", "sampling": {...}}` | Generates on the session, reusing its cached prefix |
-| `POST /generate_batch` | `{"requests": [A, B]}` | Two sessions decoded together on the GPU; at most 4,096 `max_new_tokens` a lane (the batch is one engine call, bounded by the engine timeout) |
+| `POST /generate_batch` | `{"requests": [A, B]}` | Two sessions decoded together on the GPU; at most 4,096 `max_new_tokens` a lane (the batch is one engine call, bounded by the engine timeout; 501 `batching_unavailable` with `--engine-timeout` under 300 s) |
 | `POST /sessions/ID/reset` | `{}` | Clears the session's cache |
 | `POST /sessions/ID/close` | `{}` | Releases the session |
 | `POST /sessions/ID/cancel` | `{}` | Cancels a running generation at its next token (202) |

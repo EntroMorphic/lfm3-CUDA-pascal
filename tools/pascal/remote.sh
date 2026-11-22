@@ -10,7 +10,8 @@
 # /workspace/models (checkpoints), /workspace/data, /workspace/build (build outputs; never synced or deleted).
 # The exit status is COMMAND's. A sync whose tree hash differs between the two ends fails before anything runs.
 # Only what git does not ignore is synced (outputs/, the owner's listening sets and keys among what is not), and the
-# main tree is not synced while a detached job (a NAME.log without its NAME.rc) is running from it.
+# main tree is not synced while a detached job (a NAME.log without its NAME.rc) is running from it (a job that died
+# without its .rc, say at a reboot, blocks syncs until its .rc is written by hand).
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 repo=$(cd "$here/../.." && pwd)
@@ -43,10 +44,11 @@ tree_hash_cmd() {
 }
 
 # Every file git ignores must be in the excludes above: refuse otherwise (a new ignored path would be synced).
-check_ignored() {
-  local left
-  left=$(cd "$repo" && git ls-files -oi --exclude-standard --directory | grep -vE \
-    '^(\.git|reference|build|native/build|outputs|\.vscode|\.idea)/|^tools/pascal/target\.env$|(^|/)(__pycache__|\.pytest_cache)/|\.(pyc|swp|safetensors|bf16)$|(^|/)\.DS_Store$' || true)
+check_ignored() {  # every ignored file by its own path (red-team-2 R2B-6: --directory also named directories that hold one)
+  local all left
+  all=$(cd "$repo" && git ls-files -oi --exclude-standard) || { echo "remote.sh: git ls-files failed" >&2; exit 2; }
+  left=$(printf '%s\n' "$all" | grep -vE \
+    '^(reference|build|native/build|outputs|\.vscode|\.idea)/|^tools/pascal/target\.env$|(^|/)(__pycache__|\.pytest_cache)/|\.(pyc|swp|safetensors|bf16)$|(^|/)\.DS_Store$|^$' || true)
   [ -z "$left" ] || { printf 'remote.sh: git-ignored but not excluded from the sync:\n%s\n' "$left" >&2; exit 2; }
 }
 
@@ -107,7 +109,8 @@ case "${1:-}" in
   detach) [ $# -eq 3 ] || { echo "usage: remote.sh detach NAME 'COMMAND'" >&2; exit 2; }
           # the job scripts cd to /workspace/lfm3-CUDA-pascal: a job from another tree would run the main tree's tools
           [ "$name" = lfm3-CUDA-pascal ] || { echo "remote.sh: detach runs from the main tree only (PASCAL_TREE unset)" >&2; exit 2; }
+          [[ $2 =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || { echo "remote.sh: job name must be [A-Za-z0-9._-]" >&2; exit 2; }
           sync; detach "$2" "$3" ;;
   exec) [ $# -eq 2 ] || { echo "usage: remote.sh exec 'COMMAND'" >&2; exit 2; }; run "$2" ;;
-  *) sed -n '2,11p' "${BASH_SOURCE[0]}" >&2; exit 2 ;;
+  *) sed -n '2,14p' "${BASH_SOURCE[0]}" >&2; exit 2 ;;
 esac

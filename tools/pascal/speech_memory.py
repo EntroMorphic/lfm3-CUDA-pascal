@@ -18,7 +18,7 @@ speech rows alone (no text session). /generate_batch is an exclusive job: the se
 runs (lfm3_http.hpp, speech_first), so that configuration cannot overlap speech; it counts when every speech request
 ended before the batch did (the speech batch, created at the first request and kept, is resident while the batch runs).
 TOTAL (default 32,768) is the server's --total-capacity; the configurations are scaled to it (serve-v1 rule 11: each
-pair's smaller session c * TOTAL // 32,768, the larger the rest; the single session TOTAL). A configuration whose call is refused (the worker gone: the service fails closed
+pair's smaller session c * TOTAL // 32,768, at least 256, the larger the rest; the single session TOTAL). A configuration whose call is refused (the worker gone: the service fails closed
 on an engine error, 503 worker_unavailable) fails with the peak sampled until then, and the run stops there.
     python3 tools/pascal/speech_memory.py SERVER CHECKPOINT ROWS LIBRI_WAV_DIR OUTPUT [LIMIT=7740] [TOTAL=32768]
 """
@@ -195,7 +195,8 @@ try:
               f"{[r['status'] for r in results]} (overlapped {overlapped}), peak {entry['peak_mib']} MiB "
               f"({entry['samples']} samples): {'ok' if ok else 'FAIL'}", flush=True)
 
-    def pair(c): return [c * total // 32768, total - c * total // 32768]
+    def pair(c):  # the smaller session at least 256 tokens, so its prompt and 32 new tokens fit at small totals (1,024)
+        small = max(256, c * total // 32768); return [small, total - small]
     configurations = [(("speech-only", []), {}), ((f"one-{total}", [total]), {})]
     configurations += [(("+".join(map(str, pair(c))), pair(c)), {}) for c in (4096, 2048, 16384)]
     configurations += [(("batch-" + "+".join(map(str, pair(4096))), pair(4096)), dict(batch=True)),

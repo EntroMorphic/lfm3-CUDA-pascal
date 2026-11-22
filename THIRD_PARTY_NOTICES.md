@@ -1,8 +1,8 @@
 # Third-party notices
 
 This repository, lfm3-CUDA-pascal, is a port of liquid-CUDA (the Thor engine, imported at its commit `e2f8b7f`) and
-keeps its MIT license and copyright ([LICENSE](LICENSE): the liquid-CUDA contributors; this port's changes are under the
-same terms). It vendors or ports the following code, each under its own license.
+keeps its MIT license and copyright ([LICENSE](LICENSE): "Liquid Blackwell Inference Engine contributors"; this port's
+changes are under the same terms). It vendors or ports the following code, each under its own license.
 Provenance (sources, hashes, signatures, local patches) is recorded in
 [native/third_party/README.md](native/third_party/README.md).
 

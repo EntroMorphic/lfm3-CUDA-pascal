@@ -98,8 +98,8 @@ equal the Thor engine's byte for byte (`nll-native-gemm-256.f32` `692a3f9f…`, 
 | Variant | Minus `plain`, all 64 positions | 95% CI | Position 1 alone | Positions 2-64 | 95% CI |
 |---|---:|---|---:|---:|---|
 | `exact` | −4.93e-04 | [−6.15e-04, −3.74e-04] | −4.76e-03 | −4.25e-04 | [−5.50e-04, −3.04e-04] |
-| `rz` | −1.10e-03 | [−1.22e-03, −9.70e-04] | −4.41e-02 | −4.16e-04 | [−5.44e-04, −2.86e-04] |
-| `away` | −6.91e-04 | [−8.16e-04, −5.70e-04] | −3.45e-02 | −1.55e-04 | [−2.82e-04, −3.2e-05] |
+| `rz` | −1.10e-03 | [−1.22e-03, −9.70e-04] | −4.41e-02 | −4.16e-04 | [−5.43e-04, −2.90e-04] |
+| `away` | −6.91e-04 | [−8.16e-04, −5.70e-04] | −3.45e-02 | −1.55e-04 | [−2.82e-04, −3.0e-05] |
 
 - **Prediction 1 (consistency): holds.** `exact` − `plain` is −4.93e-04, inside [−8.0e-04, −2.5e-04], and equal to
   what the Thor engine minus this engine showed on positions 1-64 of the longer windows (−4.9e-04, −5.6e-04).
@@ -156,9 +156,15 @@ comes from the arithmetic of the other 64 rows.
 | Variant | Positions 2-64, minus `plain` | 95% CI | Position 1 |
 |---|---:|---|---|
 | `exact` (all 65 rows) | −4.25e-04 | [−5.50e-04, −3.04e-04] | −4.760e-03 |
-| `bosexact` (row 0 only) | −4.47e-04 | [−5.64e-04, −3.23e-04] | −4.760e-03, equal to `exact` value for value |
+| `bosexact` (row 0 only) | −4.47e-04 | [−5.69e-04, −3.29e-04] | −4.760e-03, equal to `exact` value for value |
 
-`bosexact` − `exact` on positions 2-64: −2.2e-05 [−1.48e-04, +1.04e-04].
+`bosexact` − `exact` on positions 2-64: −2.2e-05 [−1.47e-04, +1.04e-04].
+
+(Red-team-2 C10: the position-1 and positions 2-64 columns of both tables had no committed tool; they are now
+`tools/pascal/analysis/arith_report.py`'s second part, `arith-position1.txt`, each interval with its own generator.
+The means are unchanged; four intervals' last digits moved, from the earlier figures' random streams: `rz`
+[−5.44e-04, −2.86e-04], `away`'s upper bound −3.2e-05, `bosexact` [−5.64e-04, −3.23e-04], `bosexact` − `exact`'s
+lower bound −1.48e-04. No reading changes.)
 
 Prediction 1 holds. Giving the tensor-core arithmetic to the [BOS] row alone, one row in 65, reproduces the whole
 difference between the two arithmetics; the arithmetic of the other 64 rows adds nothing detectable.

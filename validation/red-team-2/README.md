@@ -48,3 +48,67 @@ finds nothing to fix.
 - Most findings are in the tooling, as in red-team-1: ways a check could pass when it should not.
 - Some are in the server and speech host code that phases 3 and 4 changed (defaults, limits, refusals).
 - No finding changes a recorded result: the outputs every phase judged stay byte-identical.
+
+## Findings and what was done (round 1)
+
+Five reviews (A to E) found 50. None was found in what the shipping build computes. One was in what the parity
+build computes (A1), one could shut the server down (B1), one may change a result recorded as passed (D1), and one
+result recorded as passed was never shown by its run (C1); the rest are tools that could pass without showing, server
+paths that advertise what they cannot serve, documents, and hygiene. Fixes: commit `396c578`.
+
+**Engine and server**
+
+| # | Finding | Fix |
+|---|---|---|
+| A1 | The parity build stopped being the Thor engine's arithmetic above 4,096 tokens of capacity: red-team-1's F1/F2 fix (a last attention tile, or scorer tile, of 1 to 8 rows takes the prefill kernel) was applied to both builds, but the Thor engine sends such tiles to its decode kernels, and in the parity build the prefill kernel is the tensor-core model. No gate saw it: the pins run at 4,096 or less | In the parity build, attention and scorer tiles do not pass `wide` (the Thor engine's tiles); the MLP's blocks, which this port added to what the Thor engine ran as one call, keep it. The shipping build is unchanged |
+| A2, A4 | Comments on the position-0 launch (8 rows; it is one), on who sets `row0`, and on the scorer's `wide` | Corrected |
+| A3 | `LFM_FP32_STAGED=on` built as 0 (red-team-1's R1 failure, in a switch added later) | The value must paste to a listed digit |
+| A5 | `linear_block` passed `row0` = the block's first row, right only because a multi-row call starts at cursor 0 | `cursor + first` |
+| B1 | `/generate_batch` runs both lanes, prefill and every step, as one engine call; a lane may ask for up to its session's capacity of new tokens, and past `--engine-timeout` (300 s) the watchdog fails the server closed. About 14,000 steps exceed it on this card (imported code; the Thor engine has the same exposure) | At most 4,096 `max_new_tokens` a lane, refused 400 before any lease is taken, in the native server and the Python one alike; the worst case measured (verification) |
+| B2 | With `LFM3_COMPACT_WINDOWS=1` or `LFM3_LOSSLESS=1` in its environment the server advertised speech and failed closed at the first `/speech` | Speech is then not served (and the defaults are those without speech) |
+| B3, E5-E8 | `docs/server-api.md` was the Thor engine's: ready line, `--speech-rows` default 8, a `capacity: 32768` example the speech build refuses, images described as served, a `SECURITY.md` not in this repository | A section for this port: which build serves what, the defaults and why, the bound on the batch |
+| B4 | With `--engine-timeout` below 300 the ready line said speech was served and the capacity was lowered for it, while every `/speech` got 501 | Both follow what is served |
+| B5, E3 | A build directory reused by the other build script kept that script's records beside the new binaries; `mkdir -p "$out" && cd "$out"` under `set -e` carried on in the current directory when `/workspace` was missing (reproduced: records written into the repository) | Each script removes both scripts' records; the two commands separate |
+| B6, B7, B8, E12 | A codec memory figure counted the shared checkpoint once per decoder; refusals named the wrong cause (`LIQUID_LFM3_NATIVE_GEMM` in a text-only build, "this checkpoint" when the build has no vision); stale comments on the speech-row default and the text-only build | Reworded |
+
+**Tools: a pass without showing**
+
+| # | Finding | Fix |
+|---|---|---|
+| D1 | speech-v1 rule 12's "audio in at the request limits" ran an 86.9 s clip; the 4 MiB body holds 98.2 s of 16 kHz 16-bit audio, the densest format the server takes. The encoder's scratch grows with the clip, and the recorded margin was 43 MiB | The clip fills the body (asserted); rule 12 measured again at 1, 8 and 16 rows (verification) |
+| D2 | Two of rule 11's five checks were carried from development 11 and 12, run on servers whose default capacity has since changed; the judge accepts any listed build's hash | Rerun on the final servers (verification) |
+| D3 | `serve_gates.sh` with a mistyped `STAGES` ran nothing and printed PASS (reproduced) | Unknown stages refused; no stage run fails |
+| D6 | Every exception is a 400 `invalid_request`, so rule 13's 65-clip refusal did not show the count refused it | A 64-clip request must answer 200 first |
+| D7 | `speech_memory.py`'s idle sample was taken before the weights loaded (2 MiB), so "peak above idle" could not fail | Sampled after the warm requests, at least 3 samples and above 1 GiB |
+| D10, C7 | Job scripts copy carried records, or print a comparison, whatever the step before returned | Not changed in the scripts that ran (each is the record of what ran, and every log shows the steps' rc=0); the verification job gates each result on its step |
+| C1 | text-correct-v2 rule 2 recorded fixtures "with compact windows off and on"; its job never ran the "on" leg on `text-v6` | Run now on `text-v6`'s binary (verification); the README corrected |
+| C2 | `speed_report.py X X` passed every relative rule (reproduced) | Refuses one directory twice, one binary twice, fewer than 3 runs, a median not its runs'; the three recorded reports reproduce unchanged |
+| C3, C4 | `verify_memory.sh`: rule 4 hashed every trace file and, with no logits files, compared two empty inputs; its self-comparison guard compared strings, so `ppl/` or `./ppl` deleted the reference and compared a file with itself (both reproduced) | Logits files only, none fails; paths resolved before anything is removed |
+| C8 | `boundary_sweep.sh` judged the sanitizer by its exit code and deleted its log; `run_text_fixtures.sh` missed a sanitizer behind `env` | Both read the sanitizer's own summary; the sweep keeps the log |
+| C9 | `round_once_report.py` did not check a file against its recorded hash; `arith_report.py` read no metadata and accepted non-finite values | Both check |
+| C10 | text-correct-v2 rule 4 (position 1 equal to the Thor engine's in 1,160, 1,155, 72 and 9 windows) and prefill-arithmetic-v1's position-1 columns had no committed tool | `analysis/position1_check.py` reproduces rule 4 from the committed NLL files and the Thor engine's (hash-checked): all windows equal (`text-correct-v2/records/position1.txt`); `arith_report.py` prints the position-1 columns (verification) |
+| C12 | `remote.sh detach` checked only `NAME.log`, and took any name | Both files; `[A-Za-z0-9._-]` |
+| nit | `arith_experiment.sh` let a caller's `EXTRA_FLAGS` into its plain build | Unset |
+
+**Privacy, blindness, provenance**
+
+| # | Finding | Fix |
+|---|---|---|
+| C6 | `remote.sh` synced git-ignored files: `outputs/`, with the owner's listening set and its key, was on the card's host | Removed from the host (no other copy found there); the sync excludes every ignored path and refuses to run if git ignores anything it does not exclude |
+| C5 | A job started from another tree (`PASCAL_TREE`) ran the main tree's tools, and a sync during a job changed its tools under it; the job log did not say which tree it ran | Detach refuses another tree; no sync while a job runs; the job's first line is its tree's hash and commit |
+| C11 | Only the exact `target.env` was ignored; an editor's copy would be committed | `target.env*` ignored, the example kept |
+| D4 | The listening set's shipping clips are byte-identical to the final build's, whose hashes were committed: hashing A.wav and B.wav names the shipping side | The hashes out of the tree (still in its history, commit `834bc1c`); `rule9_key_check.py` checks case by case and prints a count only. Also: `tts-long-male`'s shipping clip is split by sentence and HF's is not, as in listening-c3-v1 (the rule as set) |
+| D8, D9 | The rule 9 check was not committed; a comment misdescribed rule 6's clips | Committed; corrected |
+| D5 | PLAN said the parity build's audio in matched the Thor engine's "word for word (2,620 utterances)": shown are the corpus's error count and the 19 committed transcripts | Reworded |
+| E10 | Two provenance files held the owner's home directory path | Redacted in the tree (still in its history, from the import) |
+| E11 | The notices named the Thor repository only; the checkpoint's `config.json` sits in some records | Both stated |
+
+**For a newcomer**
+
+| # | Finding | Fix |
+|---|---|---|
+| E1 | The README was one line | Written: goal, status, the two builds, building, running, layout |
+| E2, E4 | `docs/building.md` described only the Thor engine's CMake build (`sm_110`, CUDA 13), which cannot build for this card | A section for this port; CMake stated as the Thor engine's (not made to build for `sm_61`: the build scripts are the validated path) |
+| E9 | Links to a `validation/README.md` that did not exist, and to a round not imported | The index written; the link replaced |
+| E13 | `speed-v1/dev19.sh` compiled a test never committed | A note: a development experiment not adopted, which no result depends on (its log on the card) |
+| E14 | PLAN linked "liquid-CUDA" to an organisation; a document cited a workspace path | Reworded |

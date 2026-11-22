@@ -25,6 +25,7 @@ for L in (256, 257, 4096, 32768):
     t = (thor / f"nll-native-gemm-{L}.f32").read_bytes()
     tmeta = json.loads((thor / f"nll-native-gemm-{L}.meta.json").read_text())
     assert hashlib.sha256(t).hexdigest() == tmeta["nll_sha256"], f"{L}: the Thor engine's file is not the one its meta records"
+    assert tmeta.get("windows_sha256") == meta["windows_sha256"], f"{L}: the two scored different windows"
     b = np.frombuffer(t, dtype=np.float32)
     assert a.size == b.size and a.size % (L - 1) == 0, f"{L}: sizes {a.size}, {b.size}"
     a, b = a.reshape(-1, L - 1), b.reshape(-1, L - 1)

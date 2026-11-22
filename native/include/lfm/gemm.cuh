@@ -80,9 +80,10 @@ struct Problem {
   float* workspace = nullptr;
   size_t workspace_size = 0;  // bytes
   // Use the prefill kernel whatever m is: for a block of rows of a larger prefill, whose last block may have
-  // 8 rows or fewer. Every output then has the arithmetic it has when the prefill is one call. The parity build
-  // sets it only where the Thor engine made one call (the MLP's blocks, which this port added); its attention and
-  // scorer tiles are the Thor engine's own, whose short last tile takes the decode kernels.
+  // 8 rows or fewer. Every output then has the arithmetic it has when the prefill is one call. In the parity build the
+  // text runner sets it for the MLP's blocks (this port's; the Thor engine made one call), not for its attention and
+  // scorer tiles (the Thor engine's own, whose short last tile takes the decode kernels); the batch's projections set
+  // it at every row count (lfm3_batch.cuh), as the Thor engine's batch always takes its tiled kernel.
   bool wide = false;
   // Which part of the model this product belongs to (kSite*), for experiments that give parts of the model different
   // prefill arithmetic (validation/prefill-arithmetic-v1). It never changes what the default builds compute.
