@@ -49,6 +49,8 @@ template<class T> struct Buffer {
   Buffer(const Buffer&) = delete;
   Buffer& operator=(const Buffer&) = delete;
 };
+// A part of a Buffer (Runner::operand), used as its own buffer.
+template<class T> struct View { T* p = nullptr; };
 __global__ void embed(const bf16* weights, const int* ids, bf16* out, int rows, int width) {
   const size_t i = size_t(blockIdx.x) * blockDim.x + threadIdx.x;
   if (i < size_t(rows) * width) out[i] = weights[size_t(ids[i / width]) * width + i % width];
@@ -365,7 +367,11 @@ class Runner {
 #ifndef LFM3_NATIVE_GEMM
   cublasHandle_t blas = nullptr;
 #endif
-  Buffer<bf16> hidden, normalized, projected, operated, updated, q, k, v, gates, attended, gated, a, b, act;
+  // A layer's operator is a convolution or an attention, never both, so their per-row buffers share `operand`
+  // (a convolution: projected, operated; an attention: q, k, v, attended, gated). Each is used only within its
+  // layer: nothing in one is read after the next layer begins. The kernels and their arithmetic are unchanged.
+  Buffer<bf16> hidden, normalized, operand, updated, gates, a, b, act;
+  View<bf16> projected, operated, q, k, v, attended, gated;
   Buffer<LFM3_LOGIT> logits;
   Buffer<int> positions, tokens;
   Buffer<unsigned char> workspace;
@@ -389,14 +395,21 @@ class Runner {
   bool trace_logits_only = false;
   int step = 0, cursor = 0;
 
+  // `operand`'s parts each start on a 256-byte boundary, as a buffer of their own would.
+  static size_t aligned(size_t elements) { return (elements+127)/128*128; }
+  static size_t operand_elements(const lfm::RuntimeShape& s) {
+    const size_t c=s.context;
+    const size_t convolution=aligned(c*3*s.hidden)+aligned(c*s.hidden);
+    const size_t attention=3*aligned(c*s.hidden)+2*aligned(c*s.kv_width());
+    return convolution>attention?convolution:attention;
+  }
   Runner(const std::string& directory, lfm::ModelConfig cfg,
          std::shared_ptr<lfm::Safetensors> shared_weights = {})
       : config(cfg), s(cfg.shape), weights(shared_weights?std::move(shared_weights):
           std::make_shared<lfm::Safetensors>(directory + "/model.safetensors")),
         hidden(size_t(s.context)*s.hidden), normalized(size_t(s.context)*s.hidden),
-        projected(size_t(s.context)*3*s.hidden), operated(size_t(s.context)*s.hidden), updated(size_t(s.context)*s.hidden),
-        q(size_t(s.context)*s.hidden), k(size_t(s.context)*s.kv_width()), v(size_t(s.context)*s.kv_width()),
-        gates(size_t(s.context)*s.query_heads), attended(size_t(s.context)*s.hidden), gated(size_t(s.context)*s.hidden),
+        operand(operand_elements(s)), updated(size_t(s.context)*s.hidden),
+        gates(size_t(s.context)*s.query_heads),
         a(size_t(mlp_block_rows(s.context))*s.mlp), b(size_t(mlp_block_rows(s.context))*s.mlp),
         act(size_t(mlp_block_rows(s.context))*s.mlp), logits(s.vocabulary),
 #ifdef LFM3_NATIVE_GEMM
@@ -408,6 +421,10 @@ class Runner {
         probability_buffer(lfm::text::attention_scratch_elements(s.context,s.query_heads)),
 #endif
         pointer_a(s.query_heads),pointer_b(s.query_heads),pointer_c(s.query_heads) {
+    const size_t c=s.context;
+    projected.p=operand.p; operated.p=projected.p+aligned(c*3*s.hidden);
+    q.p=operand.p; k.p=q.p+aligned(c*s.hidden); v.p=k.p+aligned(c*s.kv_width());
+    attended.p=v.p+aligned(c*s.kv_width()); gated.p=attended.p+aligned(c*s.hidden);
     // Validate the complete selected text schema before launching any forward kernels.
     weight("embed_tokens.weight", {s.vocabulary, s.hidden}); weight("embedding_norm.weight", {s.hidden});
     for (int i = 0; i < s.layers; ++i) {
