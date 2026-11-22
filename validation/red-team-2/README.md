@@ -139,6 +139,12 @@ paths that advertise what they cannot serve, documents, and hygiene. Fixes: comm
   sort and softmax), both lanes 2,048 tokens: **181.5 s**; greedy 62.3 s. The refusal of 2,049 is checked on the
   final build (v37 allows 4,096). (5: temperature 0.5 with a repetition penalty of 1.05, a lane ended at 92 tokens;
   6 and 7: temperature 0.05 and `top_p` 0.98, a penalty of 1.01 and none, both at 71.)
+- **Developments 9 to 11** (round 5's fixes; `text-v37`'s server, which continues without a cap, so the continued
+  case's timing is the cap's worst). The continued case: each lane's cached prompt continued by 934 tokens (the
+  reply, 300 more numbers and the instruction; reused 92 and 23,330), then 2,048 sampled. Six- and five-digit lists
+  (9, 10) let the long lane stop early in the full-prefill cases (66 and 38 tokens); five-digit lists completed the
+  continued case, 192.0 s. 11, four-digit lists (at most 8,699 lines), every case to the end: greedy **61.3 s**,
+  sampled **180.8 s**, sampled after the continuation **192.0 s**; limit 240.
 
 ## Round 2: the fixes reviewed
 
