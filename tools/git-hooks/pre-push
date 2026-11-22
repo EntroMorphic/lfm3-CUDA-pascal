@@ -1,0 +1,10 @@
+#!/bin/sh
+# Refuse a push carrying a commit, not yet on the remote, that adds private data (tools/git-hooks/private_scan.py).
+# Every commit the push would send is checked, not only the branch's tip: a file added and later deleted is still
+# in the history.
+remote="$1"; zero=0000000000000000000000000000000000000000
+scan="$(git rev-parse --show-toplevel)/tools/git-hooks/private_scan.py"
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue  # a deletion sends nothing
+  python3 "$scan" commits "$local_sha" --not "--remotes=$remote" || exit 1
+done

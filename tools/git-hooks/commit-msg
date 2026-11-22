@@ -1,0 +1,3 @@
+#!/bin/sh
+# Refuse a commit message holding private data (tools/git-hooks/private_scan.py).
+exec python3 "$(git rev-parse --show-toplevel)/tools/git-hooks/private_scan.py" message "$1"

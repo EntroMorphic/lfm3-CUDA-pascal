@@ -40,6 +40,10 @@ Each writes `/workspace/build/TAG/` with the binaries, their SHA-256, the flags 
 addresses from `tools/pascal/target.env` (not committed; see `target.env.example`). `native/CMakeLists.txt` is the
 Thor engine's and targets `sm_110` only.
 
+`git config core.hooksPath tools/git-hooks` (once per clone) makes git refuse a commit or push that would add
+private data to the history: the patterns in `tools/pascal/private-patterns` (not committed), the addresses in
+`target.env`, and the listening sets' clip hashes ([tools/git-hooks/private_scan.py](tools/git-hooks/private_scan.py)).
+
 ## Running
 
 ```bash
@@ -56,6 +60,7 @@ serves speech): [docs/server-api.md](docs/server-api.md).
 |---|---|
 | `native/` | The engine (CUDA C++, header-only modules in `native/include/lfm/`) |
 | `tools/pascal/` | This port's build, sync, measurement and judging tools |
+| `tools/git-hooks/` | Git hooks that keep private data out of the history (see Building) |
 | `tools/`, `tests/`, `audit/` | The Thor engine's tools, host tests and engineering notes, as imported (some changed; `git diff fc130a3`) |
 | `validation/` | Every validation round: its rules (set before the data), job scripts and records ([index](validation/README.md)) |
 | `docs/` | The Thor engine's documents, with notes where this port differs |

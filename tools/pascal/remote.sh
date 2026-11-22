@@ -26,7 +26,7 @@ ssh_opts=(-o BatchMode=yes -o ServerAliveInterval=30 -o ConnectTimeout=15)
 # What is not part of the synced tree: these paths at the top of the repository, and these names at any depth. The
 # same lists drive rsync and both tree hashes. The hash covers the contents of regular files (the tree has no
 # symbolic links); it is of the working tree, so the line printed after a sync also says which commit that is.
-excludes_top=(.git reference build native/build outputs .vscode .idea tools/pascal/target.env)
+excludes_top=(.git reference build native/build outputs .vscode .idea tools/pascal/target.env tools/pascal/private-patterns)
 excludes_any=(__pycache__ .pytest_cache '*.pyc' '*.swp' .DS_Store '*.safetensors' '*.bf16')
 
 on_host() {  # runs "$1" in a shell on the GPU host, stdin passed through
@@ -50,7 +50,7 @@ check_ignored() {  # every ignored file by its own path (red-team-2 R2B-6: --dir
   all=$(cd "$repo" && git ls-files -oi --exclude-standard -z | tr '\0' '\n'; exit "${PIPESTATUS[0]}") ||
     { echo "remote.sh: git ls-files failed" >&2; exit 2; }
   left=$(printf '%s\n' "$all" | grep -vE \
-    '^(reference|build|native/build|outputs|\.vscode|\.idea)/|^tools/pascal/target\.env$|(^|/)(__pycache__|\.pytest_cache)/|\.(pyc|swp|safetensors|bf16)$|(^|/)\.DS_Store$|^$' || true)
+    '^(reference|build|native/build|outputs|\.vscode|\.idea)/|^tools/pascal/(target\.env|private-patterns)$|(^|/)(__pycache__|\.pytest_cache)/|\.(pyc|swp|safetensors|bf16)$|(^|/)\.DS_Store$|^$' || true)
   [ -z "$left" ] || { printf 'remote.sh: git-ignored but not excluded from the sync:\n%s\n' "$left" >&2; exit 2; }
 }
 

@@ -22,3 +22,6 @@ outputs/
 # The target machine's addresses (see tools/pascal/target.env.example)
 tools/pascal/target.env*
 !tools/pascal/target.env.example
+
+# Private strings the git hooks refuse (tools/git-hooks/private_scan.py); never committed
+tools/pascal/private-patterns
