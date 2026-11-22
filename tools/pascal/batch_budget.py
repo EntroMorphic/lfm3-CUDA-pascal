@@ -54,7 +54,9 @@ try:
     # the whole vocabulary on the host at every step of every lane; top_p and a repetition penalty on top; red-team-2 R4-1).
     # near-greedy, so that the count goes on as greedily (temperature 0.5 ended a lane after 92 tokens, development 5); the
     # sort over the whole vocabulary costs the same at any temperature
-    SAMPLED = dict(do_sample=True, temperature=0.05, top_k=0, top_p=0.98, repetition_penalty=1.01, seed=7)
+    # no repetition penalty: counting repeats every digit, and a penalty pushed a lane to end its turn after 71 tokens
+    # (development 6); its cost, a pass over the tokens already generated, is small beside the sort
+    SAMPLED = dict(do_sample=True, temperature=0.05, top_k=0, top_p=0.98, seed=7)
     cases = {}
     for name, sampling in (("greedy", None), ("sampled", SAMPLED)):
         for s in sids: client.call("POST", f"/sessions/{s}/reset", {})

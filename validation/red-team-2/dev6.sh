@@ -1,4 +1,4 @@
-# red-team-2 development 6 (tools/pascal/remote.sh detach rt2-dev6 'bash validation/red-team-2/dev5.sh'): the batch's
+# red-team-2 development 6 (tools/pascal/remote.sh detach rt2-dev6 'bash validation/red-team-2/dev6.sh'): the batch's
 # worst case at the lowered bound, sampled near-greedy, 2,048 new tokens a lane, greedy and sampled (development 4: sampled at 4,096 ran past
 # the engine timeout and the server failed closed), on text-v37's server. Its timing only: v37 still allows 4,096, so
 # the refusal of 2,049 is not expected here (the verification checks it on v38).
