@@ -37,6 +37,29 @@ test: `text-v39`, `parity-v39`, `text-v39s`, from the same tree but for this cha
 The serving checks are not rerun: host code outside `Runner`'s allocation is unchanged, and rule 2 holds the
 kernels.
 
-## Results
+## Results (2026-11-22, job `mem-v2`, tree `bfd8ca1`)
 
-Pending.
+**All four rules met**, rule 1 with a correction to its wording. Records: [records/](records/) (`mem-v2.log` is the
+whole job).
+
+| Rule | Result |
+|---|---|
+| 1. Build | All three build. The speech builds: 0 warnings. The text-only worker: 6 warnings (#177-D, speech constants unused when speech is compiled out), the same list as `text-v38s` and every text-only build since serve-v1; the rule's "0 warnings" was wrong for that binary, and the change adds none |
+| 2. Device code | Identical to v38's, function for function, in all fourteen binaries (`e1/`) |
+| 3. Outputs | Parity gate 7,826 of 7,826. Fixtures pass with compact windows unset and 1, and under memcheck. Scorer byte-identical at 256, 257 and 4,096, both builds. Above 4,096: the logits of all four prompts identical, both builds. Speech: 16 of 16 Thor clips and the rendering 15 of 15 (`parity-v39`); the shipping seed-1 clips, the split lighthouse and the 19 LibriSpeech utterances on both builds identical to speech-v1's. Paired decode passes |
+| 4. Memory | Rule 12 passes; highest peak **7,243 MiB** (limit 7,357; 497 below the card's 7,740) |
+
+Peaks (MiB), one speech row, 29,696 in all; computed saving 462 (the text runners' 29,696 tokens and the speech
+runner's 4,096, at 14 KiB a token):
+
+| Configuration | red-team-2 (v38) | v39 | Saved |
+|---|---:|---:|---:|
+| speech only | 5,147 | 5,091 | 56 |
+| one session of 29,696 | 7,163 | 6,699 | 464 |
+| 3,712 + 25,984 | 7,501 | 7,027 | 474 |
+| 1,856 + 27,840 | 7,505 | 7,033 | 472 |
+| 14,848 + 14,848 | 7,213 | 6,745 | 468 |
+| batch on 3,712 + 25,984 | 7,511 | 7,037 | 474 |
+| audio in beside one session of 29,696 | 7,707 | 7,243 | 464 |
+
+Every saving within 12 MiB of the computed one. The defaults are unchanged: the room is kept for images (phase 5).

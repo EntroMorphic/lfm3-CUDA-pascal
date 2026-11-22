@@ -1,0 +1,7 @@
+capacity 4097 prompt 3400: lane A: 600 steps, ids equal, traces equal: ok
+capacity 4097 prompt 3400: lane B: 600 steps, ids equal, traces equal: ok
+capacity 8192 prompt 7500: lane A: 600 steps, ids equal, traces equal: ok
+capacity 8192 prompt 7500: lane B: 600 steps, ids equal, traces equal: ok
+capacity 28672 prompt 28000: lane A: 600 steps, ids equal, traces equal: ok
+capacity 28672 prompt 28000: lane B: 600 steps, ids equal, traces equal: ok
+PAIRED DECODE (rule 10) PASS

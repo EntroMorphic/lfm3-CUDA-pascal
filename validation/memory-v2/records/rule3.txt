@@ -1,0 +1,17 @@
+rule 3 il-fridge-s1 (listening-c3-v1): equal
+rule 3 il-reflective-s1 (listening-c3-v1): equal
+rule 3 il-study-s1 (listening-c3-v1): equal
+rule 3 tts-fox-female-s1 (listening-c3-v1): equal
+rule 3 tts-fox-male-s1 (listening-c3-v1): equal
+rule 3 tts-long-male-s1 (listening-c3-v1): equal
+rule 3 tts-museum-female-s1 (listening-c3-v1): equal
+rule 3 tts-museum-male-s1 (listening-c3-v1): equal
+rule 3 tts-numbers-female-s1 (listening-c3-v1): equal
+rule 3 tts-numbers-male-s1 (listening-c3-v1): equal
+rule 3 tts-long-male-s1 (listening-split-v1): equal
+rule 3 probe-other-long-s1 (listening-split-v1): equal
+rule 3 tts-long-male-s2 (listening-split-v1): equal
+rule 3 probe-other-long-s2 (listening-split-v1): equal
+rule 3 tts-long-male-s3 (listening-split-v1): equal
+rule 3 probe-other-long-s3 (listening-split-v1): equal
+rule 3: 16 of 16 clips (15 runs) equal to the Thor engine's

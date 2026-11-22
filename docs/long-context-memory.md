@@ -1,5 +1,8 @@
 # Memory per token, and how far context can go in 8 GB
 
+Status (2026-11-22): [memory-v2](../validation/memory-v2/) also shares a layer's convolution and attention buffers
+(of the hidden-width buffers and the convolution projection below, 30 KiB a token become 16).
+
 Status (2026-11-18): the two changes under "Changes that keep the arithmetic" **are built and measured**
 ([memory-v1](../validation/memory-v1/), [long-decode-v1](../validation/long-decode-v1/)); the compact window
 buffers are on by default above 4,096 tokens of capacity. The first table and "At 32,768 tokens" describe the
