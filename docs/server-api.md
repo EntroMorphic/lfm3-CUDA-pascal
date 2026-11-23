@@ -7,10 +7,9 @@
 | Build | Text | `/speech` (speech out, audio in) | Images |
 |---|---|---|---|
 | `tools/pascal/build_serve.sh` (`-DLFM3_TEXT_ONLY=1`) | yes | 501 `speech_unsupported` | 501 |
-| `tools/pascal/build_speech.sh` (`-DLFM3_TEXT_ONLY=0 -DLFM3_VISION=0`) | yes | yes | 501 `image_input_unsupported` |
+| `tools/pascal/build_speech.sh` (`-DLFM3_TEXT_ONLY=0 -DLFM3_VISION=1`) | yes | yes | yes, in `/speech` ([images-v1](../validation/images-v1/)) |
 
-No build here has a vision encoder (phase 5), so what this page says about images applies to the Thor engine only.
-Memory decides two defaults (validation/speech-v1 rule 12, peak at most 7,740 MiB of the card's 8 GiB):
+Memory decides three defaults (validation/speech-v1 rule 12, peak at most 7,740 MiB of the card's 8 GiB):
 
 - `--speech-rows` (1–16) defaults to **1**: one `/speech` generates at a time and the rest wait in the queue.
 - `--total-capacity`, the tokens all text sessions may hold together, defaults to **32,768** without speech and, when
@@ -20,6 +19,7 @@ Memory decides two defaults (validation/speech-v1 rule 12, peak at most 7,740 Mi
 - Speech is served only with `--engine-timeout` at least 300 s, and not with `LFM3_COMPACT_WINDOWS=1` or
   `LFM3_LOSSLESS=1` in the environment (measurement switches the speech engine cannot run with); otherwise `/speech`
   gets 501 and the defaults are those without speech.
+- `--image-cache-mb` defaults to **32** (the Thor engine's 512): the engine's image cache is device memory (below).
 
 - Loopback only. Once listening it prints one line, `{"ready":true,"port":N,"total_capacity":N,"speech_rows":N}`
   (`--port 0` picks a free port; `speech_rows` 0: speech not served).
@@ -28,6 +28,9 @@ Memory decides two defaults (validation/speech-v1 rule 12, peak at most 7,740 Mi
   `tools/lfm3_token.py` reads the same place for clients.
 - Bodies are at most 4 MiB, parsed strictly: duplicate keys, non-finite numbers, invalid UTF-8, nesting over 64 and
   unknown fields are refused with a 400 naming the problem.
+- At most `--handlers` (default 8) connections are served at once. One more is answered `429 connection_limit` at
+  once, without its request being read (this port; the Thor engine closes it without a reply, which a client sees as
+  a reset); retry it. Past 64 such refusals at once, connections are closed.
 - `SIGTERM` stops admission, cancels running generations at their next token, and exits 0.
 
 The authoritative contract is the comment above each handler in `native/include/lfm/lfm3_http.hpp`.

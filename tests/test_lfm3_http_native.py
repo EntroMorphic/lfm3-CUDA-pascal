@@ -422,12 +422,18 @@ def test_engine_failure_is_fatal(harness_binary, operation):
         assert h.call("POST", "/sessions", {"capacity": 1}) == (400, {"error": "invalid_request"})
 
 
-def test_handler_saturation_closes_without_work(harness_binary):
+def test_handler_saturation_refuses_without_work(harness_binary):
+    """Past --handlers a connection is answered 429 connection_limit without its request being read (lfm3_http.hpp
+    Server::refuse_loop; the Thor engine closed it without a reply, a reset to the client): with no request at all,
+    with a request, and with a 4 MiB body still being sent; the held connection and the server serve on."""
+    limit = (429, {"error": "connection_limit"})
     with running(harness_binary, "--handlers", "1", "--socket-timeout", "2") as h:
         with socket.create_connection(("127.0.0.1", h.port), timeout=10) as hold:
             hold.sendall(b"GET /health HTTP/1.0\r\n")
             time.sleep(0.3)
-            assert h.raw(b"GET /health HTTP/1.0\r\n\r\n", timeout=5) == b""
+            assert parse_response(h.raw(b"", timeout=5)) == limit
+            assert parse_response(h.raw(b"GET /health HTTP/1.0\r\n\r\n", timeout=5)) == limit
+            assert h.call("POST", "/speech", raw=b"x" * (4 << 20), timeout=10) == limit
             hold.sendall(b"\r\n")
             assert parse_response(hold.recv(65536))[0] == 200
         time.sleep(0.2)

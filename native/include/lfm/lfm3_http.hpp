@@ -2499,8 +2499,12 @@ class Connection {
   size_t pos_ = 0;
 };
 
-// LocalHTTPServer: literal IPv4 loopback only, a bounded number of concurrent handlers, and on
-// saturation no thread, parsing, authentication or admission work (the connection is closed).
+// LocalHTTPServer: literal IPv4 loopback only, a bounded number of concurrent handlers, and on saturation no handler
+// thread, parsing, authentication or admission work. A connection past the handlers is answered 429 connection_limit
+// (this port; the Thor engine and tools/lfm3_server.py close it without a reply, which a client sees as a reset): one
+// refuser thread, made with the server, writes that fixed reply without reading the request, then discards what the
+// client still sends (so it can finish sending and read the reply) until it closes, kRefuseDrain passes or
+// kRefuseDrainBytes have come, and closes. At most kRefuseHeld connections are refused at once; past them, closed.
 class Server {
  public:
   Server(Service& service, std::string token, int port) : service_(service), token_(std::move(token)) {
@@ -2523,12 +2527,22 @@ class Server {
     ::getsockname(listener_, reinterpret_cast<sockaddr*>(&address), &size);
     port_ = ntohs(address.sin_port);
     if (::pipe2(wake_, O_CLOEXEC | O_NONBLOCK) != 0) { ::close(listener_); throw std::runtime_error("pipe failed"); }
+    refuser_ = std::thread([this] { refuse_loop(); });
   }
   ~Server() {
+    {
+      std::lock_guard g(refuse_lock_);
+      refuse_stop_ = true;
+    }
+    refuse_cv_.notify_all();
+    refuser_.join();
     if (listener_ >= 0) ::close(listener_);
     ::close(wake_[0]);
     ::close(wake_[1]);
   }
+  static constexpr int kRefuseHeld = 64;
+  static constexpr auto kRefuseDrain = std::chrono::seconds(2);
+  static constexpr size_t kRefuseDrainBytes = kMaxSpeechFrame;
   int port() const { return port_; }
 
   // Accepts until stop(). Running handlers continue; see drain().
@@ -2542,7 +2556,7 @@ class Server {
       if (fd < 0) continue;
       {
         std::lock_guard g(lock_);
-        if (active_ >= service_.settings().handlers) { ::close(fd); continue; }
+        if (active_ >= service_.settings().handlers) { refuse(fd); continue; }
         ++active_;
       }
       try {
@@ -2578,6 +2592,74 @@ class Server {
   }
 
  private:
+  // A connection past the handlers: to the refuser, or closed when it holds kRefuseHeld already.
+  void refuse(int fd) {
+    {
+      std::lock_guard g(refuse_lock_);
+      if (!refuse_stop_ && refuse_held_ < kRefuseHeld) {
+        ++refuse_held_;
+        refused_.push_back(fd);
+        fd = -1;
+      }
+    }
+    if (fd >= 0) ::close(fd);
+    else refuse_cv_.notify_one();
+  }
+  void refuse_loop() {
+    static const std::string reply = [] {
+      const std::string body = error_body("connection_limit");
+      return std::string("HTTP/1.0 429 ") + reason_phrase(429) +
+             "\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: " + std::to_string(body.size()) +
+             "\r\nCache-Control: no-store\r\nConnection: close\r\n\r\n" + body;
+    }();
+    struct Held { int fd; Clock::time_point until; size_t drained; };
+    std::vector<Held> held;
+    std::vector<char> sink(65536);
+    const auto finish = [&](size_t i) {
+      ::close(held[i].fd);
+      held[i] = held.back();
+      held.pop_back();
+      std::lock_guard g(refuse_lock_);
+      --refuse_held_;
+    };
+    for (;;) {
+      std::deque<int> fresh;
+      {
+        std::unique_lock g(refuse_lock_);
+        if (held.empty()) refuse_cv_.wait(g, [&] { return refuse_stop_ || !refused_.empty(); });
+        if (refuse_stop_) {
+          fresh.swap(refused_);
+          g.unlock();
+          for (const int fd : fresh) ::close(fd);
+          for (const auto& h : held) ::close(h.fd);
+          return;
+        }
+        fresh.swap(refused_);
+      }
+      for (const int fd : fresh) {
+        ::fcntl(fd, F_SETFL, ::fcntl(fd, F_GETFL) | O_NONBLOCK);
+        // the reply fits an empty socket's send buffer; whatever does not go now is not retried
+        [[maybe_unused]] const auto n = ::send(fd, reply.data(), reply.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
+        ::shutdown(fd, SHUT_WR);
+        held.push_back({fd, Clock::now() + kRefuseDrain, 0});
+      }
+      std::vector<pollfd> p;
+      for (const auto& h : held) p.push_back({h.fd, POLLIN, 0});
+      if (!p.empty() && ::poll(p.data(), nfds_t(p.size()), 50) < 0)
+        for (auto& x : p) x.revents = 0;  // EINTR (or worse): only the deadlines this round
+      const auto now = Clock::now();
+      for (size_t i = held.size(); i-- > 0;) {
+        bool done = now >= held[i].until;
+        if (!done && (p[i].revents & (POLLIN | POLLHUP | POLLERR))) {
+          const auto r = ::recv(held[i].fd, sink.data(), sink.size(), MSG_DONTWAIT);
+          if (r > 0) done = (held[i].drained += size_t(r)) >= kRefuseDrainBytes;
+          else done = r == 0 || (errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR);
+        }
+        if (done) finish(i);
+      }
+    }
+  }
+
   Service& service_;
   std::string token_;
   int listener_ = -1, port_ = 0;
@@ -2585,6 +2667,12 @@ class Server {
   std::mutex lock_;
   std::condition_variable idle_;
   int active_ = 0;
+  std::mutex refuse_lock_;
+  std::condition_variable refuse_cv_;
+  std::deque<int> refused_;   // guarded by refuse_lock_
+  int refuse_held_ = 0;       // guarded by refuse_lock_: queued or being drained
+  bool refuse_stop_ = false;  // guarded by refuse_lock_
+  std::thread refuser_;
 };
 
 }  // namespace lfm::http
