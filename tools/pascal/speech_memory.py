@@ -14,7 +14,8 @@ times in turn, while ROWS - 1 speech rows generate; it counts only if every audi
 was open, and every speech row was still running when the last one ended. (Red-team review: the earlier version sent
 the clip with the speech load, 20 s before the text session existed, so the two were never resident together.) With
 IMAGES=1 (validation/images-v1 rule 7) a last configuration, images at the limits: as audio in, the clip once, then
-IMAGES_N (5) distinct full-size images in turn (2,048 x 1,024 noise PNGs: the most pixels the front end keeps, 2,048
+IMAGES_N (5) distinct full-size images in turn, then the clip again (the encoder's scratch is kept, so the clip after
+the images is the worst case; images-v1 development 1) (2,048 x 1,024 noise PNGs: the most pixels the front end keeps, 2,048
 tokens each, so the encoder's scratch is at its largest and the image cache, 8 MiB an image, overflows the 32 MiB
 default), text mode, 16 new tokens. Whole-card memory every 0.2 s (nvidia-smi);
 every request must succeed (200) and every configuration's peak must be at most LIMIT MiB. First, for the record, the
@@ -197,13 +198,14 @@ try:
                 for k in range(3):
                     audio.append(dict()); post_speech(audio_body, audio[-1], 0)
             if images:  # the session still open and filled: the clip once, then each image in turn
-                for body in [audio_body] + image_bodies:
+                for body in [audio_body] + image_bodies + [audio_body]:
                     audio.append(dict()); post_speech(body, audio[-1], 0)
             last_end = time.monotonic()
             for s in sids: client.call("POST", f"/sessions/{s}/close", {})
             [t.join() for t in threads]
         finally:
             entry["peak_mib"] = sampler.done(); entry["samples"] = len(sampler.rows); entry["sampler_errors"] = sampler.errors
+            entry["series_mib"] = sampler.rows  # every 0.2 s sample, in order
             report["last_peak_mib"] = entry["peak_mib"]
         entry["text_seconds"] = round(text_end - text_start, 1)
         entry["speech"] = [dict(r, start=round(r["start"] - text_start, 1), end=round(r["end"] - text_start, 1)) for r in results]
@@ -212,13 +214,13 @@ try:
         if batch: overlapped = all(r.get("end", text_end) < text_end for r in results[:speech_rows])  # drained, then the batch
         entry["speech_overlapped_text"] = overlapped
         ok = all(s == 200 for s in entry["statuses"]) and all(r["status"] == 200 for r in results) and overlapped and \
-            (not (audio_in or images) or (len(audio) == (3 if audio_in else 1 + IMAGES_N) and all(
+            (not (audio_in or images) or (len(audio) == (3 if audio_in else 2 + IMAGES_N) and all(
                 r["status"] == 200 and text_end <= r["start"] and r["end"] <= last_end for r in audio))) and \
             entry["peak_mib"] <= limit and entry["samples"] >= 5 and entry["peak_mib"] > report["before_mib"] and \
             len(entry["prompts"]) == len(capacities) and all(p >= c - 33 - 2 * b for p, c in zip(entry["prompts"], capacities))
         if batch: ok = ok and entry.get("gpu_batching") is True
         entry["ok"] = ok; failed |= not ok; report["configurations"].append(entry)
-        extra = ' and 3 audio in' if audio_in else f' and 1 audio in, {IMAGES_N} images' if images else ''
+        extra = ' and 3 audio in' if audio_in else f' and the clip, {IMAGES_N} images, the clip' if images else ''
         print(f"rule 12 {name} with {len(speech)} speech{extra}: text {entry['statuses']} in {entry['text_seconds']} s, speech "
               f"{[r['status'] for r in results]} (overlapped {overlapped}), peak {entry['peak_mib']} MiB "
               f"({entry['samples']} samples): {'ok' if ok else 'FAIL'}", flush=True)

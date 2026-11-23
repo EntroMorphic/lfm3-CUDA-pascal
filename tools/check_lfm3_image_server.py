@@ -5,7 +5,9 @@ conversations, text mode, 128 new tokens), each image part's path replaced by th
 client sends them. Per request, the server's reply text, unstreamed and streamed, must equal lfm3-speech's for the
 same conversation exactly (the same engine path: the server decodes, preprocesses and encodes as lfm3-speech does).
 Then the same requests at once (concurrent rows) must give the same texts again.
-Usage: check_lfm3_image_server.py SERVER MODEL_DIR ROUND_DIR OUT_JSON   (ROUND_DIR: vision_e2e_round.sh's output)
+Usage: check_lfm3_image_server.py SERVER MODEL_DIR ROUND_DIR OUT_JSON [SERVER_ARG...]   (ROUND_DIR: vision_e2e_round.sh's
+output; SERVER_ARGs go to the server, e.g. --handlers 16: the server closes connections beyond --handlers, 8 by
+default, at once, and the 11 requests are sent together; validation/images-v1, this port)
 """
 import base64
 import json
@@ -36,13 +38,13 @@ def streamed_text(events):
     return text, done[0] if done else None
 
 
-def main(server_bin, model, round_dir, out_json):
+def main(server_bin, model, round_dir, out_json, *server_args):
     rd = Path(round_dir)
     cases = {p.stem: (as_client(json.loads(p.read_text())), json.loads((rd / "out" / f"{p.stem}.json").read_text())["text"])
              for p in sorted((rd / "req").glob("*.json"))}
     rows, ok = {}, True
     with tempfile.TemporaryDirectory() as scratch:
-        s = Server(server_bin, model, scratch)
+        s = Server(server_bin, model, scratch, server_args)
         try:
             for name, (body, want) in cases.items():
                 status, reply = s.post(body)
@@ -84,6 +86,6 @@ def main(server_bin, model, round_dir, out_json):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
+    if len(sys.argv) < 5:
         sys.exit(__doc__)
     sys.exit(main(*sys.argv[1:]))
