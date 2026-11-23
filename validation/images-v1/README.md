@@ -112,5 +112,14 @@ season, an election, a statue); the Thor engine's replies to them are the same, 
 
 **For the owner.**
 1. The image cache's default is 32 MiB here, Thor's 512 (rule 7: 51 MiB to spare with it).
-2. The server closes a connection beyond `--handlers` without a reply (`lfm3_http.hpp`, `Server::serve`): a client
-   sending its ninth request at once sees a reset, not a 429 or 503. The Thor engine's code, unchanged here.
+2. ~~The server closes a connection beyond `--handlers` without a reply~~ **Remedied (owner, 2026-11-23: "Let's
+   remediate #2").** A connection past `--handlers` is answered `429 connection_limit` without its request being
+   read (`lfm3_http.hpp`, `Server::refuse_loop`: one refuser thread made with the server; it writes the fixed reply,
+   discards what the client still sends for up to 2 s or the largest request so the client can read it, then closes;
+   at most 64 at once, past them closed as before). No handler thread, parsing, authentication or admission work on
+   saturation, as before. The Thor engine and `tools/lfm3_server.py` still close without a reply. Host test
+   `test_handler_saturation_refuses_without_work` (no request, a request, a 4 MiB body in flight; plain, ASan+UBSan,
+   TSan) passes; `test_lfm3_http_native.py` and `test_lfm3_server_sockets.py` 97 passed, 2 skipped (as before). On the
+   card (`job3.sh`, `records/remedy-2/`): `text-v41`'s device code identical to `text-v40`'s in all six binaries, and
+   rule 6's server check at the defaults (8 handlers), where `job.sh`'s had stopped, passes: every concurrent reply
+   equal, the connections past the eight answered 429 and retried.

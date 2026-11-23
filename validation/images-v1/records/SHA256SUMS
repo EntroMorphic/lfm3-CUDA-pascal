@@ -39,6 +39,17 @@ fd2370bd0211261ae2671c83a57ac13b71124aec26e5a2314a37b89b0ddf4d62  ./memory/memor
 4bbe7ef0b91fa512a7c61acb0cace7369cb92220f7e12baa03cfbf042edb3652  ./memory/memory-1.summary.json
 41caac5426a8c267d1aeb500493116356bfbb199d56f6114b539c3db596f1792  ./native.jsonl.gz
 28deca32380db5e5e70709b4dde7415149be572dae82849b512a919b4d5ee977  ./paired.log
+edc34827bc60ca28ddd91d6ce20c1e6206834e2b661e4e07d47dd6e92e38b4da  ./remedy-2/build-text-v41.log
+0461e865b85e777fb8ac8d5f093e2d522bf27ad182053ba4f44ce0ab10f400df  ./remedy-2/e1/lfm3-score.txt
+ee835c4eb57727468245abdb37c29d8bb278cb2197d0f5e8ab53430cca758f50  ./remedy-2/e1/lfm3-speech.txt
+e15cd42eadca8fc1de7ddb77e79cbc793b4b45aa08903a8b4e028ae5aa235c1e  ./remedy-2/e1/lfm3-vision-check.txt
+ee835c4eb57727468245abdb37c29d8bb278cb2197d0f5e8ab53430cca758f50  ./remedy-2/e1/liquid-lfm3-server.txt
+a70b3c7d238a66d083628751c68e0a9490f68aad3fc9db5e43e3cd6a034be52a  ./remedy-2/e1/liquid-lfm3.txt
+ee835c4eb57727468245abdb37c29d8bb278cb2197d0f5e8ab53430cca758f50  ./remedy-2/e1/liquid-lfm3-worker.txt
+612b3af1aa238cdb1745138ea0bd0379c6451a8e295595d9ddc067adf37f0975  ./remedy-2/image-server.json
+951410cd8e9a73e2cbc01d2c049f5b9d6f3a716dcb7b51875a6010e940d43f11  ./remedy-2/image-server.log
+c49322c474e18e8af8e227b05551d5f378bb8018ce545cdf7bed6681d342fee0  ./remedy-2/img-v1c.log
+39d78043e5acb60ad9494a1500189ce9498e23666b588ec934a5919d323e90e3  ./remedy-2/img-v1c.sh
 425fcbe0b240b4c90286cb48476a71b26b0fb2d8e0b0b24102d30a50c4de47bf  ./rule3-native.txt
 2d0c9d871f2652bfa1dd5868a73767ab31ca457c490a8763d2622cbb9ac813a1  ./rule3.txt
 33a9a420fcda93965d39656365003d80fa5411efefcee2b55d672686ac031c09  ./rule4b.json

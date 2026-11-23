@@ -1,0 +1,73 @@
+remote.sh: tree sha256 9ee1173abd02ab329d2a5164a71b6c755a815b4419468b9ba8f5195a5ba7938e; 33a85a3
++ date
+Mon Nov 23 16:34:21 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/img-v1c
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ '[' -e /workspace/build/img-v1c ']'
++ mkdir -p /workspace/build/img-v1c/e1
++ tools/pascal/build_speech.sh text-v41
++ echo 'build text-v41 rc=0'
++ grep -h warnings /workspace/build/img-v1c/build-text-v41.log
+build text-v41 rc=0
+liquid-lfm3: warnings 0, sha256 8d43682f253923fd46c630833351ec3781239fd22f5ade09e4c463b5998b271e, 4142280 bytes
+lfm3-score: warnings 0, sha256 ce2eec6be991f697224363ff6720f425c5de8ba44a8182e726d25d6e35f828cd, 4010784 bytes
+lfm3-speech: warnings 0, sha256 2cfc277f0bf6bcb35d5803bef45ec9b1384aceb2c71b25439693be5215c47f8e, 5866472 bytes
+liquid-lfm3-worker: warnings 0, sha256 1296f6c80eb1bd28666f700271050c9221b6a177c7d440bcedd5787901ee0c82, 5784464 bytes
+liquid-lfm3-server: warnings 0, sha256 b5ec4662300cdd049369c8a72a8e931797bbab845f9f88807e9934cf85ad98cb, 6326264 bytes
+lfm3-vision-check: warnings 0, sha256 1c4c7e60f85d6027a25c739966b25e62c137dcb87f6135a076de565c1fa20898, 4093048 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ cuobjdump -sass /workspace/build/text-v41/liquid-lfm3
++ cuobjdump -sass /workspace/build/text-v40/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/img-v1c/e1/a.sass /workspace/build/img-v1c/e1/b.sass
+++ head -1 /workspace/build/img-v1c/e1/liquid-lfm3.txt
+device code liquid-lfm3 text-v41 against text-v40 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3 text-v41 against text-v40 rc=0 93 and 93 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ cuobjdump -sass /workspace/build/text-v41/lfm3-score
++ cuobjdump -sass /workspace/build/text-v40/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/img-v1c/e1/a.sass /workspace/build/img-v1c/e1/b.sass
+++ head -1 /workspace/build/img-v1c/e1/lfm3-score.txt
+device code lfm3-score text-v41 against text-v40 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code lfm3-score text-v41 against text-v40 rc=0 94 and 94 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ cuobjdump -sass /workspace/build/text-v41/lfm3-speech
++ cuobjdump -sass /workspace/build/text-v40/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/img-v1c/e1/a.sass /workspace/build/img-v1c/e1/b.sass
+++ head -1 /workspace/build/img-v1c/e1/lfm3-speech.txt
++ echo 'device code lfm3-speech text-v41 against text-v40 rc=0 142 and 142 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ cuobjdump -sass /workspace/build/text-v41/liquid-lfm3-worker
+device code lfm3-speech text-v41 against text-v40 rc=0 142 and 142 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v40/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/img-v1c/e1/a.sass /workspace/build/img-v1c/e1/b.sass
+++ head -1 /workspace/build/img-v1c/e1/liquid-lfm3-worker.txt
+device code liquid-lfm3-worker text-v41 against text-v40 rc=0 142 and 142 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code liquid-lfm3-worker text-v41 against text-v40 rc=0 142 and 142 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ cuobjdump -sass /workspace/build/text-v41/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v40/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/img-v1c/e1/a.sass /workspace/build/img-v1c/e1/b.sass
+++ head -1 /workspace/build/img-v1c/e1/liquid-lfm3-server.txt
++ echo 'device code liquid-lfm3-server text-v41 against text-v40 rc=0 142 and 142 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ cuobjdump -sass /workspace/build/text-v41/lfm3-vision-check
+device code liquid-lfm3-server text-v41 against text-v40 rc=0 142 and 142 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v40/lfm3-vision-check
++ python3 validation/speed-v1/sass_compare.py /workspace/build/img-v1c/e1/a.sass /workspace/build/img-v1c/e1/b.sass
+++ head -1 /workspace/build/img-v1c/e1/lfm3-vision-check.txt
+device code lfm3-vision-check text-v41 against text-v40 rc=0 89 and 89 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'device code lfm3-vision-check text-v41 against text-v40 rc=0 89 and 89 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ rm -f /workspace/build/img-v1c/e1/a.sass /workspace/build/img-v1c/e1/b.sass
++ /workspace/build/venv-asr/bin/python tools/check_lfm3_image_server.py /workspace/build/text-v41/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/img-v1/e2e /workspace/build/img-v1c/image-server.json
+++ grep -E '^concurrent' /workspace/build/img-v1c/image-server.log
+++ cut -c1-400
+++ tail -1 /workspace/build/img-v1c/image-server.log
++ echo 'rule 6 server (defaults: 8 handlers) rc=0 concurrent {'\''cherry'\'': True, '\''china'\'': True, '\''flower'\'': True, '\''gray'\'': True, '\''mirror'\'': True, '\''noise'\'': True, '\''rgba'\'': True, '\''small'\'': True, '\''tall'\'': True, '\''two'\'': True, '\''wide'\'': True} 429 retries {'\''tall'\'': 47, '\''wide'\'': 76, '\''two'\'': 96, '\''noise'\'': 122, '\''mirror'\'': 13, '\''cherry'\'': 43} IMAGE SERVER PASS'
+rule 6 server (defaults: 8 handlers) rc=0 concurrent {'cherry': True, 'china': True, 'flower': True, 'gray': True, 'mirror': True, 'noise': True, 'rgba': True, 'small': True, 'tall': True, 'two': True, 'wide': True} 429 retries {'tall': 47, 'wide': 76, 'two': 96, 'noise': 122, 'mirror': 13, 'cherry': 43} IMAGE SERVER PASS
++ pkill -TERM -f liquid-lfm3-server
++ date
+Mon Nov 23 16:43:54 MST 2026
