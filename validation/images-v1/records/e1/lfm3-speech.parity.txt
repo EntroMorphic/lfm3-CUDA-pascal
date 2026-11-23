@@ -1,0 +1,9 @@
+148 and 140 functions; removed as expected: 8; only in one otherwise: 0; same name, different code: 0
+   removed: _ZN11lfm3_vision7kernels10layer_normEPKfPK13__nv_bfloat16S5_Pfiif
+   removed: _ZN11lfm3_vision7kernels12axial_rotaryEPfPK7double2ii
+   removed: _ZN11lfm3_vision7kernels12spatial_convEPKfS2_PK13__nv_bfloat16Pfiii
+   removed: _ZN11lfm3_vision7kernels3addEPfPKfm
+   removed: _ZN11lfm3_vision7kernels4gateEPKfPfii
+   removed: _ZN11lfm3_vision7kernels4geluEPfm
+   removed: _ZN11lfm3_vision7kernels7to_bf16EPKfP13__nv_bfloat16m
+   removed: _ZN11lfm3_vision7kernels9attentionEPKfS2_S2_Pfiiif

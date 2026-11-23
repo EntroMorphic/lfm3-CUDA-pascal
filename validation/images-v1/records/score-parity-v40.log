@@ -1,0 +1,6 @@
+length 256: {"engine": "native", "length": 256, "windows": 64, "scored_tokens": 16320, "mean_nll": 3.256766669, "perplexity": 25.965446, "seconds": 195.74}
+  peak device memory 4405 MiB, wall 196.5 s, nll sha256 d68bbdff04f9dd4c
+length 257: {"engine": "native", "length": 257, "windows": 64, "scored_tokens": 16384, "mean_nll": 3.273936283, "perplexity": 26.415112, "seconds": 211.476}
+  peak device memory 4413 MiB, wall 212.3 s, nll sha256 620375c532cf92a2
+length 4096: {"engine": "native", "length": 4096, "windows": 2, "scored_tokens": 8190, "mean_nll": 2.692277762, "perplexity": 14.765269, "seconds": 106.951}
+  peak device memory 4973 MiB, wall 107.8 s, nll sha256 618627c511c32036

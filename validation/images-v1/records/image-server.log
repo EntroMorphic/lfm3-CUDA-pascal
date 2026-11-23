@@ -1,0 +1,160 @@
+cherry {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+china {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+flower {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+gray {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+mirror {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+noise {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+rgba {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+small {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+tall {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+two {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+wide {'status': 200, 'unstreamed_equal': True, 'stream_status': 200, 'streamed_equal': True}
+Exception in thread Thread-10 (one):
+Exception in thread Thread-9 (one):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/urllib/request.py", line 1344, in do_open
+  File "/usr/lib/python3.12/urllib/request.py", line 1344, in do_open
+Exception in thread Thread-11 (one):
+Traceback (most recent call last):
+    h.request(req.get_method(), req.selector, req.data, headers,
+  File "/usr/lib/python3.12/urllib/request.py", line 1344, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+  File "/usr/lib/python3.12/http/client.py", line 1365, in request
+  File "/usr/lib/python3.12/http/client.py", line 1365, in request
+    h.request(req.get_method(), req.selector, req.data, headers,
+  File "/usr/lib/python3.12/http/client.py", line 1365, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    self._send_request(method, url, body, headers, encode_chunked)
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.12/http/client.py", line 1411, in _send_request
+  File "/usr/lib/python3.12/http/client.py", line 1411, in _send_request
+  File "/usr/lib/python3.12/http/client.py", line 1411, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    self.endheaders(body, encode_chunked=encode_chunked)
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.12/http/client.py", line 1360, in endheaders
+  File "/usr/lib/python3.12/http/client.py", line 1360, in endheaders
+  File "/usr/lib/python3.12/http/client.py", line 1360, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.12/http/client.py", line 1159, in _send_output
+  File "/usr/lib/python3.12/http/client.py", line 1159, in _send_output
+  File "/usr/lib/python3.12/http/client.py", line 1159, in _send_output
+    self.send(chunk)
+    self.send(chunk)
+  File "/usr/lib/python3.12/http/client.py", line 1084, in send
+  File "/usr/lib/python3.12/http/client.py", line 1084, in send
+    self.send(chunk)
+    self.sock.sendall(data)
+    self.sock.sendall(data)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+  File "/usr/lib/python3.12/http/client.py", line 1084, in send
+Traceback (most recent call last):
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.sock.sendall(data)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+    self._target(*self._args, **self._kwargs)
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_image_server.py", line 62, in one
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_image_server.py", line 62, in one
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_image_server.py", line 62, in one
+    got[name] = s.post(body)
+                ^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_speech_stream.py", line 93, in post
+    got[name] = s.post(body)
+                ^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_speech_stream.py", line 93, in post
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    got[name] = s.post(body)
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+                ^^^^^^^^^^^^
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_speech_stream.py", line 93, in post
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+    response = self._open(req, data)
+    result = self._call_chain(self.handle_open, protocol, protocol +
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               ^^^^^^^^^^^^^^^^^^^^^
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+  File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1373, in http_open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1347, in do_open
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1373, in http_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 32] Broken pipe>
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1347, in do_open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 32] Broken pipe>
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1373, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1347, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 32] Broken pipe>
+Traceback (most recent call last):
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_image_server.py", line 89, in <module>
+    sys.exit(main(*sys.argv[1:]))
+             ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/lfm3-CUDA-pascal/tools/check_lfm3_image_server.py", line 73, in main
+    status, reply = got[name]
+                    ~~~^^^^^^
+KeyError: 'tall'

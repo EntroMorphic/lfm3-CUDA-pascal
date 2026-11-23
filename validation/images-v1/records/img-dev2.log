@@ -1,0 +1,14 @@
+remote.sh: tree sha256 7f0a8947a9eb4e7591b79f2d8983447dc3ee917bcc88b61ec7205af2c3aa0975; 242b17b plus uncommitted changes
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ M=/workspace/models/LFM3-Omni-2B
++ O=/workspace/build/img-dev2
++ mkdir -p /workspace/build/img-dev2
++ /workspace/build/venv-asr/bin/python - /workspace/build/text-v40/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/img-dev2
+idle 2 MiB
+image 1: 6.8 s, after 5543 MiB; {'prompt_tokens': None, 'consumed_tokens': None, 'prefill_seconds': 4.696313031, 'generate_seconds': 0.888983933, 'truncated': False} text: 'The image is a plain, uniform field of gray with no discernible objects,' keys: ['audio_seconds', 'audio_wav_base64', 'cancelled', 'chunks', 'frames', 'generate_seconds', 'mode', 'normalize', 'prefill_seconds', 'sample_rate', 'seed', 'split', 'text', 'truncated']
+image 2: 6.1 s, after 5543 MiB; {'prompt_tokens': None, 'consumed_tokens': None, 'prefill_seconds': 4.731579793, 'generate_seconds': 0.889492496, 'truncated': False} text: 'The image is a plain, uniform field of gray with no discernible objects,' keys: ['audio_seconds', 'audio_wav_base64', 'cancelled', 'chunks', 'frames', 'generate_seconds', 'mode', 'normalize', 'prefill_seconds', 'sample_rate', 'seed', 'split', 'text', 'truncated']
+image 3: 6.1 s, after 5543 MiB; {'prompt_tokens': None, 'consumed_tokens': None, 'prefill_seconds': 4.73289775, 'generate_seconds': 0.889649755, 'truncated': False} text: 'The image is a plain, uniform field of gray with no discernible objects,' keys: ['audio_seconds', 'audio_wav_base64', 'cancelled', 'chunks', 'frames', 'generate_seconds', 'mode', 'normalize', 'prefill_seconds', 'sample_rate', 'seed', 'split', 'text', 'truncated']
+image 4: 6.1 s, after 5543 MiB; {'prompt_tokens': None, 'consumed_tokens': None, 'prefill_seconds': 4.761049514, 'generate_seconds': 0.889810449, 'truncated': False} text: 'The image is a plain, uniform field of gray with no discernible objects,' keys: ['audio_seconds', 'audio_wav_base64', 'cancelled', 'chunks', 'frames', 'generate_seconds', 'mode', 'normalize', 'prefill_seconds', 'sample_rate', 'seed', 'split', 'text', 'truncated']
+image 5: 6.2 s, after 5543 MiB; {'prompt_tokens': None, 'consumed_tokens': None, 'prefill_seconds': 4.773559591, 'generate_seconds': 0.889528885, 'truncated': False} text: 'The image is a plain, uniform field of gray with no discernible objects,' keys: ['audio_seconds', 'audio_wav_base64', 'cancelled', 'chunks', 'frames', 'generate_seconds', 'mode', 'normalize', 'prefill_seconds', 'sample_rate', 'seed', 'split', 'text', 'truncated']
+server exit 0

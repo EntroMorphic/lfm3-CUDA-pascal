@@ -21,6 +21,7 @@ and records sit beside it. [docs/validation.md](../docs/validation.md) describes
 | [serve-v1](serve-v1/) | 3 | Text serving: the reference's server checks on both builds (passed) |
 | [speech-v1](speech-v1/) | 4 | Speech out and audio in (13 of 14 rules; the owner's listening pending) |
 | [red-team-2](red-team-2/) | 4 | Review of the code of phases 1 to 4, end to end (passed) |
+| [images-v1](images-v1/) | 5 | Image input: the vision encoder in FP32, its accuracy, MMStar and POPE against HF, memory (passed) |
 | [memory-v2](memory-v2/) | 5 | A layer's convolution and attention buffers shared: 464 MiB freed at the speech server's defaults, the same outputs |
 
 Imported from the Thor engine (inputs and records its rules and tools use, unchanged):

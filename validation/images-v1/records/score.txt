@@ -1,0 +1,20 @@
+== /workspace/build/img-v1/hf-bf16.jsonl
+MMStar  n=1500  accuracy 59.27%  unanswered 14
+  parse rules: leading letter 822, last line 653, none 14, one letter 8, answer is 2, option text 1
+POPE adversarial  n=3000  acc 86.40  F1 86.63  P 85.18  R 88.13  yes 51.7%  unparsed 0
+POPE popular      n=3000  acc 88.80  F1 88.72  P 89.32  R 88.13  yes 49.3%  unparsed 0
+POPE random       n=3000  acc 92.13  F1 91.81  P 95.80  R 88.13  yes 46.0%  unparsed 0
+POPE all          n=9000  acc 89.11  F1 89.00  P 89.89  R 88.13  yes 49.0%  unparsed 0
+== /workspace/build/img-v1/native.jsonl
+MMStar  n=1500  accuracy 58.93%  unanswered 23
+  parse rules: leading letter 820, last line 645, none 23, one letter 7, answer is 3, option text 2
+POPE adversarial  n=3000  acc 86.23  F1 86.48  P 84.95  R 88.07  yes 51.8%  unparsed 0
+POPE popular      n=3000  acc 88.77  F1 88.70  P 89.26  R 88.13  yes 49.4%  unparsed 0
+POPE random       n=3000  acc 92.10  F1 91.77  P 95.73  R 88.13  yes 46.0%  unparsed 0
+POPE all          n=9000  acc 89.03  F1 88.93  P 89.77  R 88.11  yes 49.1%  unparsed 0
+env differs in: attn, batch, build, cuda, device, dtype, engine, lfm3_speech_sha256, load_seconds, machine, max_new_tokens, mode, pillow, prompts, torch, torchvision, transformers
+== B against A
+mmstar: n=1500  same answer 1405  same reply text 1152  same generated_ids 1152
+  right->wrong 36  wrong->right 31  difference -0.33 points, 95% CI [-1.40, +0.73]
+pope: n=9000  same answer 8981  same reply text 8981  same generated_ids 8981
+  right->wrong 13  wrong->right 6  difference -0.08 points, 95% CI [-0.18, +0.01]

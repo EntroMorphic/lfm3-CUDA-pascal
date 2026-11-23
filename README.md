@@ -13,7 +13,7 @@ validates the result separately. [PLAN.md](PLAN.md) gives the goal, the owner's 
 | 2 | Speed | closed with one of 14 rules failed ([speed-v1](validation/speed-v1/)) |
 | 3 | Text serving | passed ([serve-v1](validation/serve-v1/)) |
 | 4 | Speech | 13 of 14 rules pass; the owner's blind listening pending ([speech-v1](validation/speech-v1/)) |
-| 5 | Images | not started: no build here has image input |
+| 5 | Images | passed ([images-v1](validation/images-v1/)) |
 
 ## Two builds
 
@@ -31,7 +31,7 @@ The builds run in a container on the card's machine, with CUDA 12.9 (`nvcc` 12.9
 ```bash
 tools/pascal/build_text.sh TAG     # liquid-lfm3 (text CLI), lfm3-score (perplexity scorer)
 tools/pascal/build_serve.sh TAG    # and the text-only server: liquid-lfm3-worker, liquid-lfm3-server
-tools/pascal/build_speech.sh TAG   # and lfm3-speech, with the server and worker built with speech
+tools/pascal/build_speech.sh TAG   # and lfm3-speech, with the server and worker built with speech and images
 EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL tools/pascal/build_speech.sh TAG-parity   # the parity build
 ```
 

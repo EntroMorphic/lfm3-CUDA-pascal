@@ -10,8 +10,9 @@
 
 The builds are the scripts in `tools/pascal/`, not CMake: `build_text.sh TAG` (`liquid-lfm3`, `lfm3-score`),
 `build_serve.sh TAG` (and the text-only `liquid-lfm3-worker` and `liquid-lfm3-server`, `-DLFM3_TEXT_ONLY=1`) and
-`build_speech.sh TAG` (and `lfm3-speech`, with the worker and server built with speech, `-DLFM3_TEXT_ONLY=0
--DLFM3_VISION=0`). Each writes `/workspace/build/TAG/` with the binaries, their SHA-256, the flags, the toolchain and
+`build_speech.sh TAG` (and `lfm3-speech`, with the worker and server built with speech and images, `-DLFM3_TEXT_ONLY=0
+-DLFM3_VISION=1`, and `lfm3-vision-check`; `VISION=0` leaves images out; the vision encoder computes in FP32 on the
+CUDA cores, [images-v1](../validation/images-v1/)). Each writes `/workspace/build/TAG/` with the binaries, their SHA-256, the flags, the toolchain and
 the hashes of every source; `EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL` gives the parity build (PLAN decision 4; on the
 Thor engine "parity" meant the cuBLAS build below, which this port does not build). The checkpoint is expected at
 `/workspace/models/LFM3-Omni-2B`. `tools/pascal/remote.sh` syncs this repository to the card's machine and runs the

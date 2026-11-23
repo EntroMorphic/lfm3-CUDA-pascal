@@ -1,0 +1,9 @@
+liquid-lfm3: warnings 0, sha256 2b991fd2c4c4390ff01b91c755edb2f17b46f94b7a09e00febb99eba62cfc11b, 4667664 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-score: warnings 0, sha256 3d67e952b6886d1fa90c0f028aed323ac76663c61d02c858ddcfb1040b0397df, 4528952 bytes
+  links: /lib64/ld-linux-x86-64.so.2 libc.so.6 libgcc_s.so.1 libm.so.6 libstdc++.so.6 linux-vdso.so.1 
+lfm3-speech: warnings 0, sha256 bf20d9585647f27777a654b6412a39a1374eb31a316d6c7ec807760fbc442fcb, 6383664 bytes
+liquid-lfm3-worker: warnings 0, sha256 2365dbd2b5c8e570988f41834d7d7e0f40b10a1e38312ff79ee444c1411d6850, 6305536 bytes
+liquid-lfm3-server: warnings 0, sha256 d61204eaacca93b3bed88e5b82739f2c49d150e7913cc4b1a37ed8205da520f0, 6832928 bytes
+lfm3-vision-check: warnings 0, sha256 5e2805fd6da54a62569d37ba6204d542b7a8517cbc8e16f78b57f17e6c1e6cff, 4605648 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes

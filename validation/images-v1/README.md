@@ -74,6 +74,43 @@ held-out MMStar images' dumps are on Thor only and are not used.
 
 Reported, not gated: encode time per image by size, the benchmark's wall time, and how many replies equal HF BF16's.
 
-## Results
+## Results (2026-11-22/23; jobs `img-v1`, tree `242b17b`, and `img-v1b`, tree `499dc40`)
 
-Pending.
+**All eight rules met.** Three were completed by `job2.sh` after errors of mine in `job.sh`, recorded below. Records:
+[records/](records/) (`img-v1.log` and `img-v1b.log` are the two jobs whole).
+
+| Rule | Result |
+|---|---|
+| 1. Build | `text-v40` and `parity-v40`: every binary 0 warnings |
+| 2. Nothing else changes | Device code identical to v39 in all ten binaries, `lfm3-speech`, the worker and the server with exactly the eight `lfm3_vision::kernels` added (`e1/`). Parity gate 7,826 of 7,826; fixtures (compact unset and 1, memcheck); scorer byte-identical at 256, 257 and 4,096 and the logits above 4,096, both builds; speech-v1 rule 3 16 of 16 Thor clips and the rendering 15 of 15; shipping, split and LibriSpeech speech identical to speech-v1's; paired decode passes |
+| 3. Encoder accuracy | **Pass on all 11.** Relative error to HF FP32 1.65e-3 to 1.67e-3 (the BF16 rounding of the output), 0.028 to 0.076 of HF BF16's; minimum token cosine 0.9999983 to 0.9999985 (HF BF16's 0.633 to 0.992). Every figure equal, to the digits printed, to the Thor engine's `kFp32` encoder's (`thor-fp32-compare/`) |
+| 4. Understanding | **Pass.** POPE: native 89.03 (F1 88.93) against HF BF16's 89.11 (89.00), difference -0.08 points, 95% CI [-0.18, +0.01]; 8,981 of 9,000 replies identical. MMStar: agreement with HF FP32's answers **96.00%** against HF BF16's 93.87% (+2.13 points, 95% CI [+0.87, +3.40]); 1,264 replies identical to FP32's (HF BF16: 1,169). Accuracy 58.93% (HF BF16 59.27, FP32 59.07); unanswered 23 (HF BF16 14) |
+| 5. Front end | **1,930 of 1,930** images: decoded pixels, grid, token count and pixel values equal HF's record |
+| 6. Server and refusals | The 11 conversations: prompts equal HF's and pixel values byte-identical to HF's (all 11, `e2e/`); through the server, unstreamed, streamed and concurrent, every reply equal to `lfm3-speech`'s (`image-server-h16.json`). Host image tests: 93 passed (`host-image-tests.txt`) |
+| 7. Memory | **Pass:** highest peak **7,689 MiB** (limit 7,740): the clip at its limit after five full-size images beside the filled 29,696-token session. Every other configuration as memory-v2 (7,243 at most) |
+| 8. Sanitizers | memcheck on `small`, `two` and `cherry`: 0 errors, every stage identical to the plain run |
+
+POPE per split (native / HF BF16): adversarial 86.23 / 86.40, popular 88.77 / 88.80, random 92.10 / 92.13; yes-ratio
+49.1% / 49.0%.
+
+**The errors and what was run again** (`job2.sh`, after `job.sh`; `job.sh` unchanged as the record of what ran):
+- Rule 3: `job.sh` ran the stage comparison with the container's `python3`, which has no numpy, so nothing was compared
+  (the encoder's runs had completed and written every stage). Compared again on those outputs with the venv's Python.
+- Rule 6: `job.sh`'s server check sent the 11 requests at once to a server that takes 8 connections (`--handlers`,
+  default 8) and closes any beyond them at once; three were cut off and the check stopped on them. Its sequential part
+  (each case unstreamed and streamed) had passed. Run again with `--handlers 16`: every concurrent reply equal (front
+  end refusals retried as before: 429 `frontend_busy`, up to 120 times, as the Thor engine's record also shows).
+- Rule 7: `job.sh`'s image configuration sent the audio clip before the images and peaked at 7,243 MiB, the audio-in
+  configuration's figure. Development 1 (`dev/dev1.sh`, `img-dev2.log`): the vision encoder's scratch and the cache,
+  about 452 MiB, stay resident once a full-size image has been encoded, so the worst case is the clip after the
+  images (estimated 7,695). Measured with the clip again after them: 7,689.
+
+**Reported, not gated.** Encode time on the GTX 1080 (FP32): 280 patches 0.07 s, 1,040 patches 0.27 s, 2 images of
+1,040 0.53 s, 7,920 patches (the largest case) 3.3 s. The 10,500 benchmark items in 5.1 hours (`lfm3-speech --batch`,
+one at a time). Of the 11 conversations, the replies to `noise`, `tall` and `wide` are off the image (a football
+season, an election, a statue); the Thor engine's replies to them are the same, nearly word for word: the model's.
+
+**For the owner.**
+1. The image cache's default is 32 MiB here, Thor's 512 (rule 7: 51 MiB to spare with it).
+2. The server closes a connection beyond `--handlers` without a reply (`lfm3_http.hpp`, `Server::serve`): a client
+   sending its ninth request at once sees a reset, not a 429 or 503. The Thor engine's code, unchanged here.

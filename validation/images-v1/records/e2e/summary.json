@@ -1,0 +1,112 @@
+{
+ "cherry": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "This is a close\u2011up (macro) photograph of a cluster of fresh white blossoms\u2014most likely cherry or plum flowers\u2014growing on a dark, textured brown branch that cuts diagonally across the frame. The flowers are in sharp focus, showing their five rounded white petals, the small pink\u2011tinged tips at the center, and the radiating stamens tipped with bright orange\u2011yellow anthers. At the heart of the cluster is a tight grouping of young green leaves, a couple of which have turned a reddish\u2011brown, indicating new growth. The background is rendered as a soft, creamy blur",
+  "hf_fp32_reply": "This is a close\u2011up (macro) photograph of a cluster of fresh white blossoms\u2014most likely cherry or plum flowers\u2014growing on a dark, textured brown branch that cuts diagonally across the frame. The flowers are in sharp focus, showing their five rounded white petals, the small pink\u2011tinged tips at the center, and the radiating stamens tipped with bright orange\u2011yellow anthers. At the heart of the cluster is a tight grouping of young green leaves, a couple of which have turned a reddish\u2011brown, indicating new growth. The background is rendered as a soft, creamy blur",
+  "same_prefix_chars": 563,
+  "identical": true,
+  "encode_seconds": 3.24938,
+  "prefill_seconds": 4.54644
+ },
+ "china": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "This image shows a multi\u2011story traditional Chinese pavilion (a pagoda\u2011style temple tower) set on a hillside, with a large body of water and a hazy shoreline visible in the background. The tower is built in the classic Chinese style: red\u2011painted wooden columns and walls, green\u2011glazed tiled roofs with upturned eaves, and a small golden finial (urn) at the very top. It has several stacked levels, each ringed by open colonnades with rows of windows, and a lower roof section peeks out at the base. The structure is framed by green trees in the",
+  "hf_fp32_reply": "This image shows a multi\u2011story traditional Chinese pavilion (a pagoda\u2011style temple tower) set on a hillside, with a wide body of water and a hazy island visible in the background. The tower is built in the classic Chinese style: red\u2011painted wooden columns and walls, green\u2011glazed tiled roofs with upturned eaves, and a small golden finial (urn) at the very top. It has several stacked levels, each ringed by open colonnades with rows of windows, and a lower roof section peeks out at the base. The structure is framed by green trees in the",
+  "same_prefix_chars": 116,
+  "identical": false,
+  "encode_seconds": 0.260656,
+  "prefill_seconds": 0.608587
+ },
+ "flower": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "This is a **dahlia** \u2014 specifically a large, round, pom\u2011pom\u2011like bloom with many overlapping, petal\u2011shaped florets arranged in concentric rings (the classic \"ball\" dahlia form). The color is a soft **peach / apricot\u2011orange**, with a slightly deeper orange toward the center of the flower.",
+  "hf_fp32_reply": "This is a **dahlia** \u2014 specifically a round, pom\u2011pom\u2011like bloom with many overlapping, petal\u2011shaped florets arranged in concentric rings, which is the classic form of a dahlia. The color is a soft **peach / apricot (orange\u2011peach)**, with a slightly deeper orange toward the center of the flower.",
+  "same_prefix_chars": 38,
+  "identical": false,
+  "encode_seconds": 0.261875,
+  "prefill_seconds": 0.611516
+ },
+ "gray": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "This black\u2011and\u2011white photograph shows a multi\u2011story traditional Chinese pavilion (tower) perched on a wooded hillside, with a wide river and a hazy far shore\u2014including a large boat\u2014stretching out behind it. The structure has several tiers of curved, tiled roofs, each level ringed by open colonnades with rows of windows and decorative brackets, and it is capped by a small rounded finial at the peak. Leafy trees frame the building on both the left and right edges, and the foreground is filled with out\u2011of\u2011focus foliage, giving the impression that",
+  "hf_fp32_reply": "This black\u2011and\u2011white photograph shows a multi\u2011story traditional Chinese pavilion (tower) perched on a wooded hillside, with a wide river and a hazy far shore\u2014including a large boat\u2014stretching out behind it. The structure has several tiers of curved, tiled roofs, each level ringed by columns and open verandas with rows of windows, and it is capped by a small rounded finial at the peak. Leafy trees frame the building on both the left and right edges, and the foreground is filled with dense foliage, while the background dissolves into a soft, overcast",
+  "same_prefix_chars": 284,
+  "identical": false,
+  "encode_seconds": 0.263263,
+  "prefill_seconds": 0.613215
+ },
+ "mirror": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "This is a wide, panoramic landscape photograph taken at sunset (or sunrise), centered on a calm lake whose glassy surface acts like a mirror, doubling the colors of the sky above.\n\n**Sky:** The upper portion of the frame is a smooth gradient of twilight\u2014deep, cool blue at the top fading through soft lavender and pale pink into a vivid band of orange and red right at the horizon. Scattered across the sky are thin, wispy clouds, most concentrated on the right side, tinted with pink and purple hues by the low sun. Faint, diagonal streaks (likely contrails",
+  "hf_fp32_reply": "",
+  "same_prefix_chars": 0,
+  "identical": false,
+  "encode_seconds": 3.2473,
+  "prefill_seconds": 4.56795
+ },
+ "noise": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "The 2019\u201320 UAE Pro League season was the 45th season of the UAE Pro League, the top tier of the UAE football league system. The season began on 1 October 2019 and ended on 29 May 2020. Al Ain were the defending champions.",
+  "hf_fp32_reply": "",
+  "same_prefix_chars": 0,
+  "identical": false,
+  "encode_seconds": 0.303642,
+  "prefill_seconds": 0.674385
+ },
+ "rgba": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "This is a close-up, macro-style photograph of a single, fully opened flower head\u2014most likely a dahlia\u2014set against a softly blurred background of deep teal-green leaves. The flower is the clear focal point, rendered in crisp focus so that every petal can be seen in detail. Its petals are arranged in neat, concentric rings that spiral inward toward the center, creating a layered, pom-pom-like texture. The color is a warm peach-to-orange, with the outer petals appearing a slightly paler, more luminous orange and the inner petals deepening to a richer, more saturated orange near",
+  "hf_fp32_reply": "",
+  "same_prefix_chars": 0,
+  "identical": false,
+  "encode_seconds": 0.263427,
+  "prefill_seconds": 0.613811
+ },
+ "small": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "The Jade Pagoda (Chinese: \u7389\u5854; pinyin: Y\u00f9 T\u01ce; Wade\u2013Giles: Y\u00fc-Ta; literally \"Jade Tower\") is a pagoda in the city of Nanjing, Jiangsu, China. It is located on the north bank of the Yangtze River, on the east side of the historic city wall, and is one of the most famous landmarks in Nanjing. The pagoda was built in 1875, and is the largest pagoda in China. It is a UNESCO World Heritage Site.",
+  "hf_fp32_reply": "The Jade Pagoda (Chinese: \u7389\u5854; pinyin: Y\u00f9 T\u01ce; Wade\u2013Giles: Y\u00fc-Ta; literally \"Jade Tower\") is a pagoda in the city of Nanjing, Jiangsu, China. It is located on the north bank of the Yangtze River, on the east side of the historic city wall, and is one of the most famous landmarks in Nanjing. The pagoda was built in 1875, and is the largest pagoda in China. It is a UNESCO World Heritage Site.",
+  "same_prefix_chars": 391,
+  "identical": true,
+  "encode_seconds": 0.0677081,
+  "prefill_seconds": 0.320607
+ },
+ "tall": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "The 2024 New Zealand general election was held on 14 October 2024. It was the 73rd general election to the New Zealand Parliament, and the election was triggered by the resignation of the previous Prime Minister, Jacinda Ardern, who had been in office since 2017. The election was won by the National Party, which won 52 of the 120 seats in the House of Representatives, the largest majority in the history of the election. The National Party's victory was the first since 1996, and the first since 1990 that the National Party had won a majority in the House of",
+  "hf_fp32_reply": "",
+  "same_prefix_chars": 0,
+  "identical": false,
+  "encode_seconds": 0.0806147,
+  "prefill_seconds": 0.335135
+ },
+ "two": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "The two images differ in almost every aspect of subject, setting, color, and composition:\n\n1. **Subject / main focus**\n   - *Image 1:* A large, multi\u2011tiered traditional Chinese pavilion (a pagoda\u2011style building with red walls, green\u2011tiled curved roofs, and a golden finial) standing on a hillside.\n   - *Image 2:* A single, close\u2011up flower \u2014 a peach/orange dahlia \u2014 with a second flower partially visible at the bottom edge.\n\n2. **Setting / background**\n   - *Image 1:* An outdoor scenic view",
+  "hf_fp32_reply": "The two images differ in almost every aspect of subject, setting, and composition:\n\n1. **Main subject**\n   - *Image 1:* A large, multi\u2011tiered traditional Chinese pavilion (a pagoda\u2011style building with red walls, green\u2011tiled curved roofs, and a golden finial on top).\n   - *Image 2:* A single, close\u2011up flower \u2014 a peach/orange dahlia \u2014 with a second partially visible bloom at the bottom edge.\n\n2. **Setting / background**\n   - *Image 1:* An outdoor scenic view of a body of water (a lake",
+  "same_prefix_chars": 66,
+  "identical": false,
+  "encode_seconds": 0.52424,
+  "prefill_seconds": 0.996189
+ },
+ "wide": {
+  "prompt_equal": true,
+  "pixel_values_equal": true,
+  "reply": "The Tian Tan Buddha (Chinese: \u5929\u575b\u4f5b, literally \"Heavenly Buddha\") is a large bronze statue of the Buddha, located in the Temple of Heaven (Tiantan) in Beijing, China. The statue is 26.4 meters (86.6 feet) tall and weighs 62.5 tons (138,000 pounds). The statue was completed in 1776 and is the largest bronze statue in the world. The statue is located in the center of the Temple of Heaven, which is a traditional Chinese temple complex built in the early 17th century. The Temple of Heaven is the most important imperial",
+  "hf_fp32_reply": "",
+  "same_prefix_chars": 0,
+  "identical": false,
+  "encode_seconds": 0.0886818,
+  "prefill_seconds": 0.342897
+ }
+}

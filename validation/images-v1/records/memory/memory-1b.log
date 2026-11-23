@@ -1,0 +1,9 @@
+rule 12 speech-only with 1 speech: text [] in 0.0 s, speech [200] (overlapped True), peak 5091 MiB (383 samples): ok
+rule 12 one-29696 with 1 speech: text [200] in 27.2 s, speech [200] (overlapped True), peak 6699 MiB (492 samples): ok
+rule 12 3712+25984 with 1 speech: text [200, 200] in 28.1 s, speech [200] (overlapped True), peak 7027 MiB (487 samples): ok
+rule 12 1856+27840 with 1 speech: text [200, 200] in 28.9 s, speech [200] (overlapped True), peak 7033 MiB (490 samples): ok
+rule 12 14848+14848 with 1 speech: text [200, 200] in 25.0 s, speech [200] (overlapped True), peak 6745 MiB (473 samples): ok
+rule 12 batch-3712+25984 with 1 speech: text [200] in 92.4 s, speech [200] (overlapped True), peak 7037 MiB (485 samples): ok
+rule 12 audio-in-one-29696 with 0 speech and 3 audio in: text [200] in 24.7 s, speech [] (overlapped True), peak 7243 MiB (278 samples): ok
+rule 12 images-one-29696 with 0 speech and the clip, 5 images, the clip: text [200] in 24.6 s, speech [] (overlapped True), peak 7689 MiB (381 samples): ok
+SPEECH MEMORY (rule 12, 1 rows) PASS

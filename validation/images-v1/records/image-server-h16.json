@@ -1,0 +1,90 @@
+{
+ "passed": true,
+ "cases": {
+  "cherry": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "china": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "flower": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "gray": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "mirror": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "noise": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "rgba": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "small": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "tall": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "two": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "wide": {
+   "status": 200,
+   "unstreamed_equal": true,
+   "stream_status": 200,
+   "streamed_equal": true,
+   "concurrent_equal": true
+  },
+  "_concurrent_429_retries": {
+   "tall": 75,
+   "wide": 57,
+   "noise": 120,
+   "two": 96,
+   "mirror": 19,
+   "cherry": 43
+  }
+ }
+}
