@@ -17,6 +17,14 @@
 #else
 #include <cublas_v2.h>
 #endif
+// continuation-v1: a cached prefix is continued in one call, every new row computed as a prefill of the whole prompt
+// computes it (Runner::extend). The shipping build only: the parity build continues a token at a time, as the Thor
+// engine does, and the cuBLAS build is not ported.
+#if defined(LFM3_NATIVE_GEMM) && !defined(LFM_GEMM_TENSOR_CORE_MODEL)
+#define LFM3_PREFILL_CONTINUATION 1
+#else
+#define LFM3_PREFILL_CONTINUATION 0
+#endif
 #include <algorithm>
 #include <cerrno>
 #include <cstdlib>
@@ -394,6 +402,10 @@ class Runner {
   std::string trace;
   bool trace_logits_only = false;
   int step = 0, cursor = 0;
+  // In extend(): the length of the whole prompt this call's rows complete (cursor + rows); 0 in any other call.
+  int continued_prompt = 0;
+  // The row count a launch's shape is chosen for: this call's, or in extend() the whole prompt's, as its prefill.
+  int shape_rows(int rows) const { return continued_prompt ? continued_prompt : rows; }
 
   // `operand`'s parts each start on a 256-byte boundary, as a buffer of their own would.
   static size_t aligned(size_t elements) { return (elements+127)/128*128; }
@@ -556,6 +568,7 @@ class Runner {
 #ifdef LFM3_NATIVE_GEMM
     auto problem=lfm::gemm::linear(x,w(name),out,rows,input,output);
     problem.site=site_of(name); problem.row0=cursor;  // row 0 is prompt position `cursor` (0 in a prefill)
+    problem.wide=continued_prompt>8;  // extend(): the prefill kernel whatever this call's row count, as the prefill
     lfm::gemm::run(problem);
 #else
     float alpha=1, beta=0;
@@ -565,15 +578,18 @@ class Runner {
       CUBLAS_COMPUTE_32F,CUBLAS_GEMM_DEFAULT_TENSOR_OP));
 #endif
   }
-  void normalize(const bf16* x, const std::string& weight_name, bf16* out, int rows, int width) {
-    norm<<<rows,norm_threads(rows,width)>>>(x,w(weight_name),out,width,s.epsilon);
+  // `per_row` vectors of `width` for each of `rows` rows (the attention's per-head norms: one per head).
+  void normalize(const bf16* x, const std::string& weight_name, bf16* out, int rows, int width, int per_row=1) {
+    norm<<<rows*per_row,norm_threads(shape_rows(rows)*per_row,width)>>>(x,w(weight_name),out,width,s.epsilon);
   }
   // `key_cache`/`value_cache` hold `stride` positions per head, slot 0 being absolute position `origin`.
   void attention_tile(int layer,int rows,int window,int first,int total_rows,
                       const bf16* key_cache,const bf16* value_cache,int stride,int origin) {
     // Dynamic sliding cache returns only its last window for one-token decode.
     // Masking a larger product is mathematically equivalent, but not BF16-equivalent.
-    const auto range=lfm::text::attention_key_range(s.context,cursor,total_rows,first,rows,window);
+    const auto range=continued_prompt
+      ? lfm::text::prefill_key_range(s.context,continued_prompt,cursor+first,rows,window)
+      : lfm::text::attention_key_range(s.context,cursor,total_rows,first,rows,window);
     const int key_start=range.begin;
     const int end=range.span();
 #ifdef LFM3_NATIVE_GEMM
@@ -587,7 +603,7 @@ class Runner {
     // in the Thor engine has no `wide`); so its arithmetic stays the Thor engine's above 4,096 tokens of capacity.
     const bool wide=false;
 #else
-    const bool wide=total_rows>8;  // the whole prefill's kernel, also for a last tile of 1-8 rows
+    const bool wide=shape_rows(total_rows)>8;  // the whole prefill's kernel, also for a last tile of 1-8 rows
 #endif
     for(int h0=0;h0<s.query_heads;h0+=group) {
       const size_t kv=size_t(h0/(s.query_heads/s.kv_heads))*stride*s.head_dim;
@@ -636,9 +652,13 @@ class Runner {
 #endif
   }
   void attention(int layer,int rows,int window,const bf16* key_cache,const bf16* value_cache,int stride,int origin) {
+    // Tiles start at multiples of `tile` from position 0 (a prefill's: from its first row; extend()'s: its first
+    // tile ends where the prefill's tile holding its first row ends).
     const int tile=lfm::text::scratch_rows(s.context);
-    for(int first=0;first<rows;first+=tile)
-      attention_tile(layer,std::min(tile,rows-first),window,first,rows,key_cache,value_cache,stride,origin);
+    for(int first=0,n;first<rows;first+=n) {
+      n=std::min(tile-(cursor+first)%tile,rows-first);
+      attention_tile(layer,n,window,first,rows,key_cache,value_cache,stride,origin);
+    }
   }
   // Moves `n` positions of every KV head from slot `from` of `source` (`source_stride` positions per head) to slot
   // `to` of `target` (`target_stride` per head). The ranges do not overlap when source and target are one buffer.
@@ -657,6 +677,26 @@ class Runner {
     }
     auto& held=slots[layer];
     const int stride=kv_stride[layer];
+    if(continued_prompt) {
+      // extend(): as a prefill, through the full-length pair: the held positions [base, cursor) and this call's at
+      // their absolute positions. A tile's span may begin before `base` (the prefill tile's earliest query's window);
+      // those keys are masked for every row here, and zeroed so their products add exact zeros (the pair's
+      // unwritten or stale bits there are not, and could be NaN).
+      const int first_rows=std::min(lfm::text::scratch_rows(s.context)-cursor%lfm::text::scratch_rows(s.context),rows);
+      const int low=lfm::text::prefill_key_range(s.context,continued_prompt,cursor,first_rows,window).begin;
+      for(int h=0;h<s.kv_heads && low<held.base;++h) {
+        const size_t at=(size_t(h)*s.context+low)*s.head_dim, n=size_t(held.base-low)*s.head_dim*sizeof(bf16);
+        cuda_check(cudaMemset(window_keys->p+at,0,n)); cuda_check(cudaMemset(window_values->p+at,0,n));
+      }
+      move_slots(window_keys->p,s.context,held.base,keys[layer]->p,stride,0,held.count);
+      move_slots(window_values->p,s.context,held.base,values[layer]->p,stride,0,held.count);
+      scatter<<<grid(size_t(rows)*s.kv_width()),256>>>(k.p,v.p,window_keys->p,window_values->p,rows,s.kv_heads,s.head_dim,s.context,cursor);
+      attention(layer,rows,window,window_keys->p,window_values->p,s.context,0);
+      const auto keep=held.extend(cursor,rows);
+      move_slots(keys[layer]->p,stride,keep.to,window_keys->p,s.context,keep.from,keep.n);
+      move_slots(values[layer]->p,stride,keep.to,window_values->p,s.context,keep.from,keep.n);
+      return;
+    }
     if(cursor==0) {
       scatter<<<grid(size_t(rows)*s.kv_width()),256>>>(k.p,v.p,window_keys->p,window_values->p,rows,s.kv_heads,s.head_dim,s.context,0);
       attention(layer,rows,window,window_keys->p,window_values->p,s.context,0);
@@ -688,6 +728,21 @@ class Runner {
     forward(input);
     return greedy_choice;
   }
+#if LFM3_PREFILL_CONTINUATION
+  // continuation-v1: `input` follows the cached positions [0, cursor); one call, every row computed as a prefill of
+  // the whole prompt (cursor + input.size() positions) computes it on the same cache: the same kernels, launch shapes,
+  // tiles and key spans (shape_rows, prefill_key_range). So the logits are the whole prompt's prefill's when the cache
+  // holds what that prefill puts there (continuation-v1 rule 1); after decoded positions, the prefill's arithmetic on
+  // that cache. Text only (no injected media). Costs what the prefill's last input.size() rows cost. (A template so
+  // that a program that never calls it, like the CLI, compiles nothing for it.)
+  template <class Tokens = std::vector<int>>
+  std::vector<float> extend(const Tokens& input) {
+    if(cursor<1 || input.empty() || input.size()>size_t(s.context-cursor)) throw std::runtime_error("invalid continuation");
+    struct Clear { int& n; ~Clear() { n=0; } } clear{continued_prompt};
+    continued_prompt=cursor+int(input.size());
+    return forward(input);
+  }
+#endif
   const unsigned char* greedy_blocked=nullptr;
   int greedy_live=0, greedy_choice=-1;
   std::unique_ptr<Buffer<int>> choice;
@@ -697,8 +752,8 @@ class Runner {
   // modality's features into its own placeholders; with each modality's features in prompt order, the same rows).
   std::vector<float> forward(const std::vector<int>& input, const bf16* injected, const std::vector<int>& placeholders) {
     const int rows = input.size();
-    if (rows < 1 || rows > s.context-cursor || (cursor && rows != 1))
-      throw std::runtime_error("only empty-cache prefill or single-token decode within capacity is supported");
+    if (rows < 1 || rows > s.context-cursor || (cursor && rows != 1 && continued_prompt != cursor+rows))
+      throw std::runtime_error("only empty-cache prefill, extend() or single-token decode within capacity is supported");
     for (int id : input) if (id < 0 || id >= s.vocabulary) throw std::runtime_error("invalid token");
     std::vector<int> pos(rows);
     for(int t=0;t<rows;++t) pos[t]=cursor+t;
@@ -725,6 +780,10 @@ class Runner {
         linear(p+"conv.in_proj.weight",normalized.p,projected.p,rows,s.hidden,3*s.hidden);
         dump(p+"conv.in_proj",projected.p,size_t(rows)*3*s.hidden);
         if(cursor==0) lfm::lfm3::convolution7_prefill<<<grid(size_t(rows)*s.hidden),256>>>(projected.p,w(p+"conv.conv.weight"),states[layer]->p,operated.p,1,rows,s.hidden);
+        else if(continued_prompt) {
+          lfm::lfm3::convolution7_continue<<<grid(size_t(rows)*s.hidden),256>>>(projected.p,w(p+"conv.conv.weight"),states[layer]->p,operated.p,rows,s.hidden);
+          lfm::lfm3::convolution7_continue_state<<<grid(s.hidden),256>>>(projected.p,states[layer]->p,rows,s.hidden);
+        }
         else lfm::lfm3::convolution7<<<grid(s.hidden),256>>>(projected.p,w(p+"conv.conv.weight"),states[layer]->p,operated.p,s.hidden,1);
         dump(p+"conv.product",operated.p,size_t(rows)*s.hidden);
         linear(p+"conv.out_proj.weight",operated.p,updated.p,rows,s.hidden,s.hidden);
@@ -733,8 +792,8 @@ class Runner {
         linear(at+"q_proj.weight",normalized.p,q.p,rows,s.hidden,s.hidden);
         linear(at+"k_proj.weight",normalized.p,k.p,rows,s.hidden,s.kv_width());
         linear(at+"v_proj.weight",normalized.p,v.p,rows,s.hidden,s.kv_width());
-        normalize(q.p,at+"q_norm.weight",q.p,rows*s.query_heads,s.head_dim);
-        normalize(k.p,at+"k_norm.weight",k.p,rows*s.kv_heads,s.head_dim);
+        normalize(q.p,at+"q_norm.weight",q.p,rows,s.head_dim,s.query_heads);
+        normalize(k.p,at+"k_norm.weight",k.p,rows,s.head_dim,s.kv_heads);
         rotary_from_frequencies<<<grid(size_t(rows)*s.hidden/2),256>>>(q.p,positions.p,frequencies[layer]->p,rows,s.query_heads,s.head_dim,spec.rotary_pairs);
         rotary_from_frequencies<<<grid(size_t(rows)*s.kv_width()/2),256>>>(k.p,positions.p,frequencies[layer]->p,rows,s.kv_heads,s.head_dim,spec.rotary_pairs);
         dump(at+"q_rotary",q.p,size_t(rows)*s.hidden); dump(at+"k_rotary",k.p,size_t(rows)*s.kv_width());
@@ -746,7 +805,7 @@ class Runner {
         linear(at+"o_proj.weight",gated.p,updated.p,rows,s.hidden,s.hidden);
       }
       dump(p+"operator",updated.p,size_t(rows)*s.hidden);
-      norm<<<rows,norm_threads(rows,s.hidden)>>>(updated.p,w(p+"post_operator_norm.weight"),hidden.p,s.hidden,s.epsilon,hidden.p);
+      norm<<<rows,norm_threads(shape_rows(rows),s.hidden)>>>(updated.p,w(p+"post_operator_norm.weight"),hidden.p,s.hidden,s.epsilon,hidden.p);
       dump(p+"residual",hidden.p,size_t(rows)*s.hidden);
       normalize(hidden.p,p+"ffn_norm.weight",normalized.p,rows,s.hidden);
       dump(p+"ffn_norm",normalized.p,size_t(rows)*s.hidden);
@@ -771,7 +830,7 @@ class Runner {
         project(p+"feed_forward.w2.weight",act.p,updated.p+size_t(first)*s.hidden,s.mlp,s.hidden);
       }
       dump(p+"feed_forward",updated.p,size_t(rows)*s.hidden);
-      norm<<<rows,norm_threads(rows,s.hidden)>>>(updated.p,w(p+"post_ffn_norm.weight"),hidden.p,s.hidden,s.epsilon,hidden.p);
+      norm<<<rows,norm_threads(shape_rows(rows),s.hidden)>>>(updated.p,w(p+"post_ffn_norm.weight"),hidden.p,s.hidden,s.epsilon,hidden.p);
       dump(p+"output",hidden.p,size_t(rows)*s.hidden);
     }
     normalize(hidden.p,"embedding_norm.weight",normalized.p,rows,s.hidden);

@@ -219,9 +219,16 @@ void generate_batch(const lfm::Json& request,int rpc_id,const std::string& direc
       if(lane.done) continue;
       if(!reuse) {
         session.last_scores=session.runner->forward(lane.input);session.consumed=lane.input;
-      } else for(size_t j=lane.reused;j<lane.input.size();++j) {
-        poll();if(lane.done) break;
-        session.last_scores=session.runner->forward({lane.input[j]});session.consumed.push_back(lane.input[j]);
+      } else {
+#if LFM3_PREFILL_CONTINUATION
+        session.last_scores=session.runner->extend(std::vector<int>(lane.input.begin()+lane.reused,lane.input.end()));
+        session.consumed=lane.input;
+#else
+        for(size_t j=lane.reused;j<lane.input.size();++j) {
+          poll();if(lane.done) break;
+          session.last_scores=session.runner->forward({lane.input[j]});session.consumed.push_back(lane.input[j]);
+        }
+#endif
       }
       poll(); // also latch cancellation for the peer while this lane prefills.
       if(lane.trace && !std::filesystem::create_directory(trace_directory+"/lane"+std::to_string(i)))
@@ -308,11 +315,15 @@ class WorkerCore {
   WorkerCore(const std::string& model_directory,const std::string& trace_root,bool trace_root_requested,int cancellation_fd)
     : directory(model_directory),sampling_trace_root(trace_root),cancellation(cancellation_fd),
       cancellation_enabled(cancellation_fd>=0) {
-    // A continuation of a cached prefix is forwarded a token at a time inside one engine call (op generate, text_begin
-    // and generate_batch), which the server's watchdog bounds: at most kMaxContinuation tokens are continued, a longer
-    // one is a full prefill (validation/red-team-2 R5-1: about 17 ms a token near 32K on the GTX 1080, so 18,000
-    // continued tokens passed the 300 s engine timeout and failed the server closed).
+#if !LFM3_PREFILL_CONTINUATION
+    // The parity build continues a cached prefix a token at a time inside one engine call (op generate, text_begin and
+    // generate_batch), as the Thor engine does, which the server's watchdog bounds: at most kMaxContinuation tokens
+    // are continued, a longer one is a full prefill (validation/red-team-2 R5-1: about 17 ms a token near 32K on the
+    // GTX 1080, so 18,000 continued tokens passed the 300 s engine timeout and failed the server closed). The shipping
+    // build continues any length in one Runner::extend, which costs no more than the whole prompt's prefill
+    // (continuation-v1), so it reuses every cached prefix.
     ledger.set_max_continuation(kMaxContinuation);
+#endif
     // validation/image-cache-v1 C3: what the engine's image cache holds, published for the in-process front end
 #ifdef LFM3_WORKER_MEDIA
     image_cache_.set_observer([](const std::string& key,bool kept) {lfm::image::shared_held_images().kept(key,kept);});
@@ -567,9 +578,17 @@ class WorkerCore {
       if(!reuse) {
         session.last_scores=lfm::text::at_cancellation_boundary(check_cancellation,[&] {return runner.forward(input);});
         session.consumed=input;
-      } else for(size_t i=p->reused;i<input.size();++i) {
-        check_cancellation();
-        session.last_scores=runner.forward({input[i]});session.consumed.push_back(input[i]);
+      } else {
+#if LFM3_PREFILL_CONTINUATION
+        session.last_scores=lfm::text::at_cancellation_boundary(check_cancellation,[&] {
+          return runner.extend(std::vector<int>(input.begin()+p->reused,input.end()));});
+        session.consumed=input;
+#else
+        for(size_t i=p->reused;i<input.size();++i) {
+          check_cancellation();
+          session.last_scores=runner.forward({input[i]});session.consumed.push_back(input[i]);
+        }
+#endif
       }
       p->sampling_trace=sampling_trace_root+"/"+std::to_string(rpc_id);
       if(p->trace_sampling && !std::filesystem::create_directory(p->sampling_trace))
@@ -659,7 +678,9 @@ class WorkerCore {
   // Speech (#2, lfm3_speech.cuh): one request at a time on its own runner (capacity kSpeechCapacity per chunk),
   // sharing the loaded weights; created on first use. Same loop as lfm3-speech (run_chunks), so the same bytes.
   static constexpr int kSpeechCapacity=4096;
-  static constexpr std::size_t kMaxContinuation=1024;  // tokens continued after a cached prefix (constructor)
+#if !LFM3_PREFILL_CONTINUATION
+  static constexpr std::size_t kMaxContinuation=1024;  // the parity build: tokens continued after a cached prefix (constructor)
+#endif
   // Decode steps per request, across all its chunks (lfm3_speech::run_chunks): bounds its worst-case time under the
   // default engine timeout (validation/speech-server-v1: ~40 frames/s measured with locked clocks, ~34 assumed).
   static constexpr size_t kSpeechStepBudget=6144;

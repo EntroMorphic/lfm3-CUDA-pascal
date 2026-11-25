@@ -18,6 +18,7 @@ def planner(tmp_path_factory):
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace lfm::text;
 
 void coverage(int total,int first,int rows,int window,bool enumerate) {
@@ -117,6 +118,46 @@ int main(int argc,char** argv) {
         assert(r.end==std::min(total,first+128));
         assert(r.begin==std::max(0,first-255));
       }
+  } else if(mode=="continuation") {
+    // continuation-v1: rows of a continuation read the span of the prefill tile that holds them, for every part of
+    // that tile (any first row, any length within it), so each row's scores, softmax and products are the prefill's.
+    auto tile_parts=[](int capacity,int total,int window,bool every) {
+      const int tile=scratch_rows(capacity);
+      for(int first=0;first<total;first+=tile) {
+        const int full=std::min(tile,total-first);
+        const auto whole=attention_key_range(capacity,0,total,first,full,window);
+        std::vector<int> starts;
+        if(every) for(int q=first;q<first+full;++q) starts.push_back(q);
+        else for(int q:{first,first+1,first+full/2,first+full-1}) if(q>=first && q<first+full) starts.push_back(q);
+        for(int q0:starts) {
+          std::vector<int> lengths;
+          if(every) for(int n=1;n<=first+full-q0;++n) lengths.push_back(n);
+          else lengths={1,std::min(2,first+full-q0),first+full-q0};
+          for(int n:lengths) {
+            const auto r=prefill_key_range(capacity,total,q0,n,window);
+            assert(r.begin==whole.begin && r.end==whole.end);
+          }
+          if(q0+(first+full-q0)<total) {  // one row more crosses into the next prefill tile: refused
+            bool rejected=false;
+            try {prefill_key_range(capacity,total,q0,first+full-q0+1,window);} catch(const std::runtime_error&) {rejected=true;}
+            assert(rejected);
+          }
+        }
+      }
+    };
+    for(int total=1;total<=64;++total) for(int window:{0,1,7,256}) tile_parts(64,total,window,true);
+    for(int total:{2,100,2048,2049,4096}) for(int window:{0,256}) tile_parts(4096,total,window,false);
+    for(int capacity:{4097,8192,32768})
+      for(int total:{2,129,4096,4097,4098,8192,8193})
+        if(total<=capacity) for(int window:{0,1,256}) tile_parts(capacity,total,window,total<=4098);
+    for(int window:{0,256}) tile_parts(32768,32768,window,false), tile_parts(32768,32767,window,false);
+    auto bad=[](int cap,int total,int q0,int rows,int window) {
+      bool rejected=false;
+      try {prefill_key_range(cap,total,q0,rows,window);} catch(const std::runtime_error&) {rejected=true;}
+      assert(rejected);
+    };
+    bad(32768,0,0,1,0); bad(32768,32769,0,1,0); bad(32768,100,-1,1,0); bad(32768,100,99,2,0);
+    bad(32768,100,0,0,0); bad(32768,100,0,1,-1); bad(32768,300,127,2,0); bad(0,1,0,1,0);
   } else if(mode=="counts") {
     const int total=32768,heads=16;
     for(int window:{0,256}) {
@@ -153,7 +194,7 @@ int main(int argc,char** argv) {
     return executable
 
 
-@pytest.mark.parametrize("mode", ["coverage", "optimized-windows", "legacy", "invalid"])
+@pytest.mark.parametrize("mode", ["coverage", "optimized-windows", "legacy", "invalid", "continuation"])
 def test_attention_ranges(planner, mode):
     subprocess.run([str(planner), mode], check=True, timeout=120)
 

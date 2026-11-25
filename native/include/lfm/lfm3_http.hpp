@@ -2007,7 +2007,7 @@ class Service {
     return out;
   }
 
-  // A kText job leaves the queue: checks, then op text_begin (the prefill, or a continuation of the session's cached prefix of at most the worker's kMaxContinuation tokens, one call). Cancelled before it starts,
+  // A kText job leaves the queue: checks, then op text_begin (the prefill, or a continuation of the session's cached prefix: one Runner::extend in the shipping build, at most the worker's kMaxContinuation tokens one at a time in the parity build; one call). Cancelled before it starts,
   // the session is reset instead, as before. A failure fails the service closed (any engine refusal does).
   void begin_text(const std::shared_ptr<Job>& job) {
     const auto& request = *job->text;

@@ -52,7 +52,7 @@ try:
     client.call("POST", f"/sessions/{sid}/close", {})
     per = (n[1100] - n[100]) / 1000  # tokens per line, every line alike
     base = n[100] - 100 * per  # the template's tokens
-    CONTINUE = 1024  # the worker's kMaxContinuation: the most a cached prefix is continued by (R5-1)
+    CONTINUE = 1024  # red-team-2's kMaxContinuation (R5-1), the parity build's since continuation-v1, which continues any length
     # a short prompt (20 lines), room for a continuation and 2,048 new tokens; the rest to the other
     small = int(LIMIT + CONTINUE + 64 + base + 20 * per) + 1
     large = total - small

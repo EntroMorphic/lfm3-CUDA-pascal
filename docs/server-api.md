@@ -40,7 +40,7 @@ The authoritative contract is the comment above each handler in `native/include/
 | Endpoint | Body | Effect |
 |---|---|---|
 | `POST /sessions` | `{"capacity": 4096}` | Creates a session with its own KV cache (2 to the total capacity, which all sessions share); returns `session_id` |
-| `POST /generate` | `{"session_id", "messages": [...], "max_new_tokens", "sampling": {...}}` | Generates on the session, reusing its cached prefix when at most 1,024 new prompt tokens follow it (more: the prompt is prefilled in full, as for a new session) |
+| `POST /generate` | `{"session_id", "messages": [...], "max_new_tokens", "sampling": {...}}` | Generates on the session, reusing its cached prefix whenever the prompt extends it: the new prompt tokens in one pass, each computed as a prefill of the whole prompt computes it ([continuation-v1](../validation/continuation-v1/); the parity build, as the Thor engine: at most 1,024 new tokens, one at a time, more prefilled in full) |
 | `POST /generate_batch` | `{"requests": [A, B]}` | Two sessions decoded together on the GPU; at most 2,048 `max_new_tokens` a lane (the batch is one engine call, bounded by the engine timeout; 501 `batching_unavailable` with `--engine-timeout` under 300 s) |
 | `POST /sessions/ID/reset` | `{}` | Clears the session's cache |
 | `POST /sessions/ID/close` | `{}` | Releases the session |

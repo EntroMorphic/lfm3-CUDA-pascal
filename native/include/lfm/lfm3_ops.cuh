@@ -112,6 +112,42 @@ __global__ void convolution7_prefill(const __nv_bfloat16* projected, const __nv_
   }
 }
 
+// A continuation (continuation-v1): `length` positions after a cached prefix, batch 1: projected=[T,3,D],
+// output=[T,D], state=[D,7] (the prefix's last seven inputs, oldest first, as convolution7 and convolution7_prefill
+// leave it). Each output is convolution7_prefill's arithmetic for that position of the whole prompt: the same seven
+// products, summed in the same order, with the prefix's inputs read from the state where the prefill reads its own
+// earlier rows. The state is read only; convolution7_continue_state replaces it afterwards.
+__global__ void convolution7_continue(const __nv_bfloat16* projected, const __nv_bfloat16* weights,
+                                      const __nv_bfloat16* state, __nv_bfloat16* output, int length, int width) {
+  const size_t i = static_cast<size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+  if (i >= static_cast<size_t>(length) * width) return;
+  const int d = i % width;
+  const int token = i / width;
+  float sum = 0;
+  for (int k = 0; k < 7; ++k) {
+    const int previous = token + k - 6;
+    const size_t offset = static_cast<size_t>(max(previous, 0)) * 3 * width + d;
+    const auto input = previous >= 0 ? __hmul(projected[offset], projected[offset + 2 * width])
+                                     : state[static_cast<size_t>(d) * 7 + 7 + previous];
+    sum = __fadd_rn(sum, __fmul_rn(__bfloat162float(input), __bfloat162float(weights[static_cast<size_t>(d) * 7 + k])));
+  }
+  const size_t current = static_cast<size_t>(token) * 3 * width + d;
+  output[i] = __hmul(projected[current + width], __float2bfloat16_rn(sum));
+}
+// After convolution7_continue: the state becomes the last seven inputs of the prefix and the continuation.
+__global__ void convolution7_continue_state(const __nv_bfloat16* projected, __nv_bfloat16* state, int length, int width) {
+  const int d = blockIdx.x * blockDim.x + threadIdx.x;
+  if (d >= width) return;
+  __nv_bfloat16 next[7];
+  for (int k = 0; k < 7; ++k) {
+    const int previous = length + k - 7;
+    const size_t offset = static_cast<size_t>(max(previous, 0)) * 3 * width + d;
+    next[k] = previous >= 0 ? __hmul(projected[offset], projected[offset + 2 * width])
+                            : state[static_cast<size_t>(d) * 7 + 7 + previous];
+  }
+  for (int k = 0; k < 7; ++k) state[static_cast<size_t>(d) * 7 + k] = next[k];
+}
+
 // Deliberately unoptimized eager-style decode attention, for numerical bring-up.
 // Q=[B,Hq,D], KV=[B,Hkv,capacity,D], inclusive absolute positions=[B].
 // Full causal storage (no ring buffer yet); window=0 is global attention.

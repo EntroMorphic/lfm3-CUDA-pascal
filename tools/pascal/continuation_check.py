@@ -1,5 +1,7 @@
 """red-team-2 R5-1 (and R6-1): a cached prefix is continued by at most 1,024 tokens (the worker's kMaxContinuation);
-a longer continuation is a full prefill. Two parts.
+a longer continuation is a full prefill. Two parts. Since continuation-v1 the cap is the parity build's only: the
+shipping worker continues any length in one Runner::extend (EXPECT new's boundary part fails there by design; its
+check is tools/pascal/continuation_serve_check.py).
 
   boundary (WORKER: liquid-lfm3-worker, through its stdin protocol with exact ids): a session holding a 1,000-token
     prompt is continued by exactly 1,024 tokens (reused_tokens must be 1,000) and, seeded again, by 1,025 (reused_tokens

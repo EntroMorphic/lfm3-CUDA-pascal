@@ -42,6 +42,16 @@ struct WindowSlots {
     if (cursor != base + count || count >= capacity()) throw std::runtime_error("window cache overflow");
     return count++;
   }
+  // A continuation of `rows` positions after `cursor` (continuation-v1, Runner::extend), computed through the full-
+  // length buffer of the prefill: the held positions and the new ones are there at their absolute positions, and the
+  // last min(cursor + rows, window) are kept: copy `n` positions starting at absolute position `from` to slot `to`.
+  // Every one of them is held or new: the held positions end at cursor and reach back at least window - 1 before it.
+  Copy extend(int cursor, int rows) {
+    if (cursor < 1 || rows < 1 || cursor != base + count) throw std::runtime_error("window cache is not contiguous");
+    const int total = cursor + rows;
+    count = std::min(total, window); base = total - count;
+    return {base, 0, count};
+  }
   // The slot of a held absolute position.
   int slot(int position) const {
     if (position < base || position >= base + count) throw std::runtime_error("position not in the window cache");
