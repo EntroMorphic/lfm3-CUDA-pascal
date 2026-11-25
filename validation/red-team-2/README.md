@@ -217,7 +217,9 @@ Not changed, because each is the owner's to decide:
    prefix by more than 1,024 tokens is now a full prefill, so it gives a new session's output rather than the
    token-by-token one, and costs a prefill of the whole prompt (28.6 s at 32,763 tokens on the shipping build; on
    the parity build, the validation build, 429 s, past the engine timeout, which for a large session it was not
-   before). Made under the instruction to remediate; the owner may prefer another bound.
+   before). Made under the instruction to remediate; the owner may prefer another bound. **Closed for the shipping
+   build** by [continuation-v1](../continuation-v1/) (2026-11-25): a continuation of any length in one pass; the
+   parity build keeps this cap.
 4. **Historical job scripts** (C7, D10). They print a comparison whatever the step before returned; they are left as
    the record of what ran (every log shows those steps at rc 0), and the new jobs gate their lines.
 

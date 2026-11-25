@@ -133,6 +133,20 @@ with red-team, remediate, verify, commit.
 | 5 | passed 2026-11-23 ([images-v1](validation/images-v1/)): the vision encoder in FP32 on the CUDA cores (no tensor cores here), its features as accurate as the Thor engine's FP32 encoder's to the digits recorded (error 0.03-0.08 of HF BF16's); POPE 89.03 against HF's 89.11 (lower bound -0.18 points); MMStar answers closer to HF FP32's than HF BF16's are (96.00% against 93.87%); the front end equal to HF's on 1,930 images; device code and every text and speech output unchanged; peak 7,689 MiB with the clip after five full-size images. The image cache 32 MiB here (Thor's 512) |
 | Continuation | passed 2026-11-25 ([continuation-v1](validation/continuation-v1/)): the shipping build continues a session's cached prefix in one call (`Runner::extend`), each new row computed as the whole prompt's prefill computes it; prompts prefilled in parts are byte-identical to the prompt prefilled at once (19 of 19, three cache layouts). 1,024 tokens after 31,744 cached: 1.3 s, against 17.9 s a token at a time and 28.7 s for the full prefill. red-team-2's 1,024-token cap removed from the shipping build (the owner's item 3 there, closed); the parity build keeps the Thor engine's path and its cap. Device code and every earlier output unchanged |
 
+## Parked 2026-11-25
+
+The owner parked the project for other work after continuation-v1. Where it stands:
+
+- **Waiting on the owner.** speech-v1 rule 9, the blind listening verdicts, on the set in
+  `outputs/listening-speech-v1/` (local only, never synced; its key file stays closed until the verdicts are in).
+- **Next phase.** Phase 6: the whole engine (all modalities resident in one binary within 8 GB), a soak test, and a
+  red team.
+- **Owner's order, from the list below.** The exact Pascal kernel made fast (#1), then the proposal for the Thor
+  engine (#3).
+- **Open levers.** Fused long-context decode attention (speed-v1 rule 12); memory levels 2 and 3 if needed.
+- **The card.** Idle, nothing detached. The latest builds are `text-v42` (shipping), `parity-v42` and `text-v42s`
+  (text-only), from `dc44c9e`.
+
 ## Parking list
 
 - **LFM3-1.7B at its 262,144-token context** (owner's question, 2026-11-17). Same backbone as Omni-2B's language
