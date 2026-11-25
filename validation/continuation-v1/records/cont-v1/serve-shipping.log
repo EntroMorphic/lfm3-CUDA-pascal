@@ -1,0 +1,7 @@
+worker: 1024 tokens after a cached 1,000: reused 1000 (expected 1000) in 0.63 s: ok
+worker: 1025 tokens after a cached 1,000: reused 1000 (expected 1000) in 0.68 s: ok
+worker: 7000 tokens after a cached 1,000: reused 1000 (expected 1000) in 4.28 s: ok
+server: seeded 970 tokens, continued to 28882: 200 in 23.5 s, reused 970; /health 200 ready True: ok
+server: a further turn reused 28882 of 28882: ok
+server: batch lanes reused [970, 970] of their seeds [970, 970], consumed [6089, 6089], in 6.2 s: ok
+CONTINUATION SERVE (shipping) PASS

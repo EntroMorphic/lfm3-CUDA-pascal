@@ -1,0 +1,15 @@
+rule 3 capacity 4096, 3072 cached + 1: extend 0.062 s, whole prefill 2.144 s, token at a time 0.016 s: ok
+rule 3 capacity 4096, 3072 cached + 8: extend 0.069 s, whole prefill 2.160 s, token at a time 0.127 s: ok
+rule 3 capacity 4096, 3072 cached + 64: extend 0.079 s, whole prefill 2.159 s, token at a time 1.010 s: ok
+rule 3 capacity 4096, 3072 cached + 1024: extend 0.671 s, whole prefill 2.805 s, token at a time 16.169 s: ok
+rule 3 capacity 4096, 1024 cached + 1024: extend 0.616 s, whole prefill 1.378 s, token at a time 16.120 s: ok
+rule 3 capacity 4096, 1 cached + 4095: extend 2.605 s, whole prefill 2.792 s, token at a time -: ok
+rule 3 capacity 32768, 31744 cached + 1: extend 0.078 s, whole prefill 27.474 s, token at a time 0.018 s: ok
+rule 3 capacity 32768, 31744 cached + 8: extend 0.080 s, whole prefill 27.639 s, token at a time 0.141 s: ok
+rule 3 capacity 32768, 31744 cached + 64: extend 0.100 s, whole prefill 27.633 s, token at a time 1.121 s: ok
+rule 3 capacity 32768, 31744 cached + 1024: extend 1.299 s, whole prefill 28.747 s, token at a time 17.944 s: ok
+rule 3 capacity 32768, 8192 cached + 1024: extend 0.725 s, whole prefill 5.721 s, token at a time 16.528 s: ok
+rule 3 capacity 32768, 16384 cached + 16384: extend 17.477 s, whole prefill 28.624 s, token at a time -: ok
+rule 3 capacity 32768, 1024 cached + 31744: extend 28.132 s, whole prefill 28.789 s, token at a time -: ok
+rule 3 capacity 32768, 1 cached + 32767: extend 28.640 s, whole prefill 28.832 s, token at a time -: ok
+RULE 3 PASS

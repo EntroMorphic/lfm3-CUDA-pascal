@@ -1,0 +1,26 @@
+{
+ "expect": "parity",
+ "worker": {
+  "1024": {
+   "prompt": 2024,
+   "reused_tokens": 1000,
+   "expected": 1000,
+   "seconds": 16.13,
+   "ok": true
+  },
+  "1025": {
+   "prompt": 2025,
+   "reused_tokens": 0,
+   "expected": 0,
+   "seconds": 22.18,
+   "ok": true
+  },
+  "7000": {
+   "prompt": 8000,
+   "reused_tokens": 0,
+   "expected": 0,
+   "seconds": 87.65,
+   "ok": true
+  }
+ }
+}

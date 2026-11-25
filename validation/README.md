@@ -23,6 +23,7 @@ and records sit beside it. [docs/validation.md](../docs/validation.md) describes
 | [red-team-2](red-team-2/) | 4 | Review of the code of phases 1 to 4, end to end (passed) |
 | [images-v1](images-v1/) | 5 | Image input: the vision encoder in FP32, its accuracy, MMStar and POPE against HF, memory (passed) |
 | [memory-v2](memory-v2/) | 5 | A layer's convolution and attention buffers shared: 464 MiB freed at the speech server's defaults, the same outputs |
+| [continuation-v1](continuation-v1/) | 6 | A session's cached prefix continued in one pass, each row as the whole prompt's prefill computes it: byte-identical to it, 1,024 tokens after 31,744 in 1.3 s (17.9 s before), no cap (passed) |
 
 Imported from the Thor engine (inputs and records its rules and tools use, unchanged):
 [speech-e2e-v1](speech-e2e-v1/) (the speech prompts), [speech-normalize-v1](speech-normalize-v1/) (text normalization),

@@ -113,6 +113,64 @@ before these rules were committed:
 The memory a server reserves does not change: `extend` uses the runner's existing buffers, which are sized for its
 capacity.
 
-## Results
+## Results (2026-11-25, job `cont-v1`, tree `dc44c9e`)
 
-Not yet run.
+**All seven rules met.** Records: [records/](records/). `jobs/cont-v1.log` is the whole job. `cont-v1/` holds its
+outputs, without the speech outputs, which stay on the card for speech-v1 rule 9's blindness. `cont-dev1/` and
+`cont-dev2/` are the developments. `SHA256SUMS` covers everything.
+
+| Rule | Result |
+|---|---|
+| 1. Build | All three build. The speech builds and `lfm3-continuation-check`: 0 warnings. The text-only worker: the same #177-D list as `text-v39s` |
+| 2. Identity | **19 of 19** byte-identical (logits, whole cache, 8 decode steps) with `LFM3_COMPACT_WINDOWS` unset, `=1` and `=0`. Memcheck: 0 errors, unset and `=1` |
+| 3. Speed | All 14 cases pass (table below) |
+| 4. Served paths | Shipping worker, both builds: 1,024, 1,025 and 7,000 tokens each reuse the cached 1,000 (0.63, 0.68 and 4.3 s). Both servers: R5-1's case, 970 seeded and continued to 28,882, answers 200 in 23.5 s, reusing all 970, `/health` ready. A further turn reuses all 28,882. The batch's two lanes reuse their 970 and reach 6,089 in 6.2 s. Parity worker: 1,024 reused (16.1 s, a token at a time); 1,025 and 7,000 prefilled in full |
+| 5. Nothing else | Device code identical to the baselines' in all 16 binaries, function for function. Only `convolution7_continue` and `convolution7_continue_state` are new, in each binary but `lfm3-vision-check`, which has neither. Parity gate 7,826 of 7,826. Fixtures pass with compact windows unset and 1, and under memcheck. Scorer byte-identical to v40 at 256, 257 and 4,096, both builds. The A1 prompts' logits identical, both builds. Speech: 16 of 16 Thor clips, the rendering 15 of 15; the shipping seed-1 clips (10 of 10), the split lighthouse, and the 19 LibriSpeech utterances on both builds identical to speech-v1's. Paired decode passes |
+| 6. After decoded positions | 8 of 8 cases run, unset and `=1`, the two runs' records identical byte for byte (table below) |
+| 7. Host suite | 2,398 passed, 5 skipped, 1 failed: the test that needs Transformers 5.x, as in every phase (`records/host-suite.txt`). It ran on the tree before the review's changes, which touched only the GPU check program and the documents |
+
+Rule 3: seconds to continue a session of L cached tokens by N; the whole prompt's prefill and the token-at-a-time
+continuation (the parity build's path, and the shipping build's before this change) on the same build:
+
+| Capacity | L | N | `extend` | Whole prefill | A token at a time |
+|---:|---:|---:|---:|---:|---:|
+| 4,096 | 3,072 | 1 | 0.062 | 2.144 | 0.016 |
+| 4,096 | 3,072 | 8 | 0.069 | 2.160 | 0.127 |
+| 4,096 | 3,072 | 64 | 0.079 | 2.159 | 1.010 |
+| 4,096 | 3,072 | 1,024 | 0.671 | 2.805 | 16.169 |
+| 4,096 | 1,024 | 1,024 | 0.616 | 1.378 | 16.120 |
+| 4,096 | 1 | 4,095 | 2.605 | 2.792 | |
+| 32,768 | 31,744 | 1 | 0.078 | 27.474 | 0.018 |
+| 32,768 | 31,744 | 8 | 0.080 | 27.639 | 0.141 |
+| 32,768 | 31,744 | 64 | 0.100 | 27.633 | 1.121 |
+| 32,768 | 31,744 | 1,024 | 1.299 | 28.747 | 17.944 |
+| 32,768 | 8,192 | 1,024 | 0.725 | 5.721 | 16.528 |
+| 32,768 | 16,384 | 16,384 | 17.477 | 28.624 | |
+| 32,768 | 1,024 | 31,744 | 28.132 | 28.789 | |
+| 32,768 | 1 | 32,767 | 28.640 | 28.832 | |
+
+A continuation of 1 token is the one case slower than before (62-78 ms against 16-18 ms): one row through the
+prefill kernels. At 8 tokens and above it is faster, and a served chat turn adds more than 8.
+
+Rule 6: L prompt tokens, D greedy steps, then N new tokens. The largest logit difference between each pair of `extend`,
+the token-at-a-time continuation and the whole sequence prefilled at once; the next token by each (the three
+agreed in every case); and how many of the 16 greedy steps after agree:
+
+| Capacity | L | D | N | extend / tokens | extend / whole | tokens / whole | Next token | Steps agreeing (e/t, e/w, t/w) |
+|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| 4,096 | 1,000 | 32 | 500 | 0.134 | 0.137 | 0.131 | 3927 | 16, 3, 3 |
+| 4,096 | 300 | 32 | 2,000 | 0.157 | 0.128 | 0.140 | 643 | 16, 16, 16 |
+| 4,096 | 1,000 | 400 | 600 | 0.155 | 0.185 | 0.154 | 1200 | 16, 16, 16 |
+| 32,768 | 8,000 | 32 | 1,024 | 0.146 | 0.140 | 0.136 | 467 | 16, 16, 16 |
+| 32,768 | 5,000 | 32 | 20,000 | 0.160 | 0.155 | 0.101 | 25 | 16, 16, 16 |
+| 32,768 | 30,000 | 32 | 1,000 | 0.120 | 0.139 | 0.155 | 302 | 16, 16, 16 |
+| 32,768 | 8,000 | 400 | 1,024 | 0.142 | 0.144 | 0.147 | 467 | 16, 16, 16 |
+| 32,768 | 4,500 | 400 | 300 | 0.135 | 0.173 | 0.134 | 1033 | 16, 12, 12 |
+
+`extend` is as close to the whole sequence's prefill as the token-at-a-time path is. In the two cases where the
+greedy steps part from the prefill's, `extend` and the token-at-a-time path part at the same step, and agree with
+each other throughout.
+
+The owner's item 3 in red-team-2 (the 1,024-token cap, a departure from the Thor engine's server) is closed for
+the shipping build: it reuses every cached prefix, and a continuation costs at most what the whole prompt's prefill
+costs. The parity build keeps the cap, as the Thor engine's path, and its exposure noted there (R6-3) is unchanged.

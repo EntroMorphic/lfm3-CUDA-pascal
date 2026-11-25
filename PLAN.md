@@ -131,13 +131,14 @@ with red-team, remediate, verify, commit.
 | Red team 2 | passed 2026-11-22 ([red-team-2](validation/red-team-2/)): eight rounds of independent review of the code of phases 1 to 4; every finding fixed or left to the owner with its reason. The parity build's tiles above 4,096 tokens of capacity are the Thor engine's again; two ways an ordinary request could fail the server closed are bounded (a batch at 2,048 new tokens a lane, a continuation at 1,024); speech-v1 rule 12's default capacity lowered to 29,696 |
 | Memory | 2026-11-22 ([memory-v2](validation/memory-v2/)): a layer's convolution and attention buffers share one; 464 MiB freed at the speech server's defaults (peak 7,243 of 7,740 MiB), device code and every output unchanged. Kept for images |
 | 5 | passed 2026-11-23 ([images-v1](validation/images-v1/)): the vision encoder in FP32 on the CUDA cores (no tensor cores here), its features as accurate as the Thor engine's FP32 encoder's to the digits recorded (error 0.03-0.08 of HF BF16's); POPE 89.03 against HF's 89.11 (lower bound -0.18 points); MMStar answers closer to HF FP32's than HF BF16's are (96.00% against 93.87%); the front end equal to HF's on 1,930 images; device code and every text and speech output unchanged; peak 7,689 MiB with the clip after five full-size images. The image cache 32 MiB here (Thor's 512) |
+| Continuation | passed 2026-11-25 ([continuation-v1](validation/continuation-v1/)): the shipping build continues a session's cached prefix in one call (`Runner::extend`), each new row computed as the whole prompt's prefill computes it; prompts prefilled in parts are byte-identical to the prompt prefilled at once (19 of 19, three cache layouts). 1,024 tokens after 31,744 cached: 1.3 s, against 17.9 s a token at a time and 28.7 s for the full prefill. red-team-2's 1,024-token cap removed from the shipping build (the owner's item 3 there, closed); the parity build keeps the Thor engine's path and its cap. Device code and every earlier output unchanged |
 
 ## Parking list
 
 - **LFM3-1.7B at its 262,144-token context** (owner's question, 2026-11-17). Same backbone as Omni-2B's language
   model (3,297 MiB). By calculation it fits in 8 GB only with all three of: keys and values kept for the 6 full
   layers alone (12 KiB per token: 3,072 MiB), row-tiled prefill scratch, and prefill in chunks through the cache
-  (the engine prefills only into an empty cache today). Nothing measured. Written up in
+  (since [continuation-v1](validation/continuation-v1/) the engine prefills into a filled cache: `Runner::extend`). Nothing measured. Written up in
   [docs/long-context-memory.md](docs/long-context-memory.md).
 - **A software model of Blackwell's tensor-core arithmetic** (owner's question, 2026-11-17; started the same day at
   the owner's request). Done for the four forward fixtures: a validation build of this engine with the published

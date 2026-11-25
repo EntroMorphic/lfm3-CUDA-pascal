@@ -1,0 +1,924 @@
+remote.sh: tree sha256 446800b9dd730addf03c3f9e6eccc615a592778eb73140ab227011ce4299d109; dc44c9e
++ date
+Wed Nov 25 06:35:09 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/cont-v1
++ M=/workspace/models/LFM3-Omni-2B
++ PY=/workspace/build/venv-asr/bin/python
++ V=validation/speech-v1/inputs/reference
++ T=/workspace/data/ppl-windows/windows-32768.i32
++ '[' -e /workspace/build/cont-v1 ']'
++ mkdir -p /workspace/build/cont-v1
++ cp validation/speech-v1/records/sp-v1/same.py /workspace/build/cont-v1/same.py
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh parity-v42
++ echo 'build parity-v42 rc=0'
+build parity-v42 rc=0
++ tools/pascal/build_speech.sh text-v42
+build text-v42 rc=0
++ echo 'build text-v42 rc=0'
++ tools/pascal/build_serve.sh text-v42s
+build text-v42s rc=0
++ echo 'build text-v42s rc=0'
++ grep -h warnings /workspace/build/cont-v1/build-parity-v42.log /workspace/build/cont-v1/build-text-v42.log /workspace/build/cont-v1/build-text-v42s.log
+liquid-lfm3: warnings 0, sha256 2b3c5cec01ddb514109491a84e52dcc461942d9519804f2f0f2ff454277504d9, 4692704 bytes
+lfm3-score: warnings 0, sha256 e20970c4d04964885458087e71b7c0d5e87e6a7762670181f5d6cff74dd91609, 4553520 bytes
+lfm3-speech: warnings 0, sha256 098a7b54633eb0590c99b410f774cabdc06aafd36b5cf6f733bb9213401cf08c, 6413440 bytes
+liquid-lfm3-worker: warnings 0, sha256 4c3f2a3a19e092556487cf2168e8941bcad607750462951616c1988ced75ed75, 6326472 bytes
+liquid-lfm3-server: warnings 0, sha256 b73a9682b9ab2ca795895a059363bca3c3208616543afc2fa7a3fb79500f2d3e, 6872616 bytes
+lfm3-vision-check: warnings 0, sha256 745f0ca07a16090a0ebd45c504439b06acdea2a24be6f4d4ef1d4182f47b9f12, 4605648 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
+liquid-lfm3: warnings 0, sha256 2f092aeec3264fc6527d3222083fa1305408ef2b6681683ec37f1ca1266741bd, 4171416 bytes
+lfm3-score: warnings 0, sha256 e089e085652fb78700763f2ba81efc806566507474ebe39acf7700381c7dd4f4, 4036040 bytes
+lfm3-continuation-check: warnings 0, sha256 ae624f422c545bac7114d40056f8e884ca82f76a05eeb5193a5f1104aae5e899, 4057176 bytes
+lfm3-speech: warnings 0, sha256 64f81ca791260a3c283e951ea7bfcf013a47ffc154d6a554b1ed9b390882f0d9, 5895984 bytes
+liquid-lfm3-worker: warnings 0, sha256 7b4d08a8c068834e28b791de6a3759210b1deb322f5c0c6542a45cb7375e1061, 5809408 bytes
+liquid-lfm3-server: warnings 0, sha256 355cc14ef8bb2f551657115a8cd82c45d160013349884ccb340e5dc75dd23421, 6355768 bytes
+lfm3-vision-check: warnings 0, sha256 3b4f82bfd38a19671967a4f957e90072ab44cad1099dc5d650645cecebd4fc16, 4093048 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
+liquid-lfm3: warnings 0, sha256 df85700580537d5c20b41ffc939d8965fa33214782eff47896a2b93193e3fdf1, 4171416 bytes
+lfm3-score: warnings 0, sha256 da63aeebb247ca5c34de6b3dd3d26c4b76375943f90af15d228e49fb30ebef87, 4036040 bytes
+lfm3-continuation-check: warnings 0, sha256 45d058871c7abab08d0b285080d95b5a228838565bf3f4d3baee3c8978a2a515, 4057176 bytes
+liquid-lfm3-worker: warnings 6, sha256 7655f780c5f946e74be1bbd9ac2298f74596891de438c44ffa5983f2ac28a793, 4682880 bytes
+liquid-lfm3-server: warnings 0, sha256 b4e0dabae8288e7f04034a0670582dc601473b8ed28e6c1822f8c8cdd3f2e356, 5242584 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ for b in text-v42 parity-v42
++ cd /workspace/build/text-v42
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ sed 's#  #  text-v42/#'
++ for b in text-v42 parity-v42
++ cd /workspace/build/parity-v42
++ sha256sum liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ sed 's#  #  parity-v42/#'
++ cd /workspace/build/text-v42
++ sha256sum lfm3-continuation-check
++ sed 's#  #  text-v42/#'
++ cd /workspace/build/text-v42s
++ sha256sum liquid-lfm3 lfm3-score liquid-lfm3-worker liquid-lfm3-server
++ sed 's#  #  text-v42s/#'
++ grep -c 177-D /workspace/build/text-v42s/liquid-lfm3-worker.build.log /workspace/build/text-v39s/liquid-lfm3-worker.build.log
+/workspace/build/text-v42s/liquid-lfm3-worker.build.log:5
+/workspace/build/text-v39s/liquid-lfm3-worker.build.log:5
++ diff /dev/fd/63 /dev/fd/62
+++ grep -o 'warning #[0-9]*-D: [^"]*"[^"]*"' /workspace/build/text-v42s/liquid-lfm3-worker.build.log
+++ sort
+++ grep -o 'warning #[0-9]*-D: [^"]*"[^"]*"' /workspace/build/text-v39s/liquid-lfm3-worker.build.log
+++ sort
++ echo 'text-only worker warnings: the same list as text-v39s'
++ C=/workspace/build/text-v42/lfm3-continuation-check
++ /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact
+text-only worker warnings: the same list as text-v39s
+++ tail -1 /workspace/build/cont-v1/exact.jsonl
++ echo 'rule 2 exact rc=0 {"exact":"PASS"}'
++ LFM3_COMPACT_WINDOWS=1
++ /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact
+rule 2 exact rc=0 {"exact":"PASS"}
+++ tail -1 /workspace/build/cont-v1/exact-compact.jsonl
++ echo 'rule 2 exact compact rc=0 {"exact":"PASS"}'
+rule 2 exact compact rc=0 {"exact":"PASS"}
++ LFM3_COMPACT_WINDOWS=0
++ /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact
+++ tail -1 /workspace/build/cont-v1/exact-full.jsonl
++ echo 'rule 2 exact full-length rc=0 {"exact":"PASS"}'
++ for f in exact exact-compact exact-full
+rule 2 exact full-length rc=0 {"exact":"PASS"}
+++ grep -c '"ok":true' /workspace/build/cont-v1/exact.jsonl
+++ grep -c '"ends"' /workspace/build/cont-v1/exact.jsonl
++ echo 'rule 2 exact: 19 of 19 cases ok'
+rule 2 exact: 19 of 19 cases ok
++ for f in exact exact-compact exact-full
+++ grep -c '"ok":true' /workspace/build/cont-v1/exact-compact.jsonl
+++ grep -c '"ends"' /workspace/build/cont-v1/exact-compact.jsonl
++ echo 'rule 2 exact-compact: 19 of 19 cases ok'
++ for f in exact exact-compact exact-full
+rule 2 exact-compact: 19 of 19 cases ok
+++ grep -c '"ok":true' /workspace/build/cont-v1/exact-full.jsonl
+++ grep -c '"ends"' /workspace/build/cont-v1/exact-full.jsonl
++ echo 'rule 2 exact-full: 19 of 19 cases ok'
+rule 2 exact-full: 19 of 19 cases ok
++ SAN='/usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9'
++ /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9 /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact-small
+++ grep 'ERROR SUMMARY' /workspace/build/cont-v1/memcheck.log
+++ grep -o '{"exact":"[A-Z]*"}' /workspace/build/cont-v1/memcheck.log
+rule 2 memcheck rc=0 ========= ERROR SUMMARY: 0 errors {"exact":"PASS"}
++ echo 'rule 2 memcheck rc=0 ========= ERROR SUMMARY: 0 errors {"exact":"PASS"}'
++ LFM3_COMPACT_WINDOWS=1
++ /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9 /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact-small
+++ grep 'ERROR SUMMARY' /workspace/build/cont-v1/memcheck-compact.log
+++ grep -o '{"exact":"[A-Z]*"}' /workspace/build/cont-v1/memcheck-compact.log
++ echo 'rule 2 memcheck compact rc=0 ========= ERROR SUMMARY: 0 errors {"exact":"PASS"}'
++ /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 speed
+rule 2 memcheck compact rc=0 ========= ERROR SUMMARY: 0 errors {"exact":"PASS"}
+rule 3 runs rc=0
++ echo 'rule 3 runs rc=0'
++ python3 - /workspace/build/cont-v1/speed.jsonl
+rule 3 rc=0
++ echo 'rule 3 rc=0'
++ cat /workspace/build/cont-v1/speed.txt
+rule 3 capacity 4096, 3072 cached + 1: extend 0.062 s, whole prefill 2.144 s, token at a time 0.016 s: ok
+rule 3 capacity 4096, 3072 cached + 8: extend 0.069 s, whole prefill 2.160 s, token at a time 0.127 s: ok
+rule 3 capacity 4096, 3072 cached + 64: extend 0.079 s, whole prefill 2.159 s, token at a time 1.010 s: ok
+rule 3 capacity 4096, 3072 cached + 1024: extend 0.671 s, whole prefill 2.805 s, token at a time 16.169 s: ok
+rule 3 capacity 4096, 1024 cached + 1024: extend 0.616 s, whole prefill 1.378 s, token at a time 16.120 s: ok
+rule 3 capacity 4096, 1 cached + 4095: extend 2.605 s, whole prefill 2.792 s, token at a time -: ok
+rule 3 capacity 32768, 31744 cached + 1: extend 0.078 s, whole prefill 27.474 s, token at a time 0.018 s: ok
+rule 3 capacity 32768, 31744 cached + 8: extend 0.080 s, whole prefill 27.639 s, token at a time 0.141 s: ok
+rule 3 capacity 32768, 31744 cached + 64: extend 0.100 s, whole prefill 27.633 s, token at a time 1.121 s: ok
+rule 3 capacity 32768, 31744 cached + 1024: extend 1.299 s, whole prefill 28.747 s, token at a time 17.944 s: ok
+rule 3 capacity 32768, 8192 cached + 1024: extend 0.725 s, whole prefill 5.721 s, token at a time 16.528 s: ok
+rule 3 capacity 32768, 16384 cached + 16384: extend 17.477 s, whole prefill 28.624 s, token at a time -: ok
+rule 3 capacity 32768, 1024 cached + 31744: extend 28.132 s, whole prefill 28.789 s, token at a time -: ok
+rule 3 capacity 32768, 1 cached + 32767: extend 28.640 s, whole prefill 28.832 s, token at a time -: ok
+RULE 3 PASS
++ python3 tools/pascal/continuation_serve_check.py /workspace/build/text-v42/liquid-lfm3-worker /workspace/build/text-v42/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/serve-shipping shipping
+++ tail -1 /workspace/build/cont-v1/serve-shipping.log
++ echo 'rule 4 shipping rc=0 CONTINUATION SERVE (shipping) PASS'
++ clean
+rule 4 shipping rc=0 CONTINUATION SERVE (shipping) PASS
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ python3 tools/pascal/continuation_serve_check.py /workspace/build/text-v42s/liquid-lfm3-worker /workspace/build/text-v42s/liquid-lfm3-server /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/serve-text-only shipping
+++ tail -1 /workspace/build/cont-v1/serve-text-only.log
+rule 4 text-only rc=0 CONTINUATION SERVE (shipping) PASS
++ echo 'rule 4 text-only rc=0 CONTINUATION SERVE (shipping) PASS'
++ clean
++ pkill -TERM -f liquid-lfm3-server
+++ seq 120
++ for i in $(seq 120)
++ pgrep -f liquid-lfm3-server
++ return 0
++ python3 tools/pascal/continuation_serve_check.py /workspace/build/parity-v42/liquid-lfm3-worker - /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/serve-parity parity
+++ tail -1 /workspace/build/cont-v1/serve-parity.log
+rule 4 parity rc=0 CONTINUATION SERVE (parity) PASS
++ echo 'rule 4 parity rc=0 CONTINUATION SERVE (parity) PASS'
++ grep -hE '^(worker|server):' /workspace/build/cont-v1/serve-parity.log /workspace/build/cont-v1/serve-shipping.log /workspace/build/cont-v1/serve-text-only.log
+worker: 1024 tokens after a cached 1,000: reused 1000 (expected 1000) in 16.13 s: ok
+worker: 1025 tokens after a cached 1,000: reused 0 (expected 0) in 22.18 s: ok
+worker: 7000 tokens after a cached 1,000: reused 0 (expected 0) in 87.65 s: ok
+worker: 1024 tokens after a cached 1,000: reused 1000 (expected 1000) in 0.63 s: ok
+worker: 1025 tokens after a cached 1,000: reused 1000 (expected 1000) in 0.68 s: ok
+worker: 7000 tokens after a cached 1,000: reused 1000 (expected 1000) in 4.28 s: ok
+server: seeded 970 tokens, continued to 28882: 200 in 23.5 s, reused 970; /health 200 ready True: ok
+server: a further turn reused 28882 of 28882: ok
+server: batch lanes reused [970, 970] of their seeds [970, 970], consumed [6089, 6089], in 6.2 s: ok
+worker: 1024 tokens after a cached 1,000: reused 1000 (expected 1000) in 0.64 s: ok
+worker: 1025 tokens after a cached 1,000: reused 1000 (expected 1000) in 0.68 s: ok
+worker: 7000 tokens after a cached 1,000: reused 1000 (expected 1000) in 4.29 s: ok
+server: seeded 970 tokens, continued to 28882: 200 in 23.4 s, reused 970; /health 200 ready True: ok
+server: a further turn reused 28882 of 28882: ok
+server: batch lanes reused [970, 970] of their seeds [970, 970], consumed [6089, 6089], in 6.2 s: ok
++ mkdir -p /workspace/build/cont-v1/e1
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ for k in text parity
++ '[' text = text ']'
++ base=text-v41
++ cuobjdump -sass /workspace/build/text-v42/liquid-lfm3
++ cuobjdump -sass /workspace/build/text-v41/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3.text.txt
+rule 5 liquid-lfm3 text-v42 against text-v41 rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3 text-v42 against text-v41 rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ '[' parity = text ']'
++ base=parity-v40
++ cuobjdump -sass /workspace/build/parity-v42/liquid-lfm3
++ cuobjdump -sass /workspace/build/parity-v40/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3.parity.txt
+rule 5 liquid-lfm3 parity-v42 against parity-v40 rc=0 101 and 99 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3 parity-v42 against parity-v40 rc=0 101 and 99 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ for k in text parity
++ '[' text = text ']'
++ base=text-v41
++ cuobjdump -sass /workspace/build/text-v42/lfm3-score
++ cuobjdump -sass /workspace/build/text-v41/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/lfm3-score.text.txt
++ echo 'rule 5 lfm3-score text-v42 against text-v41 rc=0 96 and 94 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ '[' parity = text ']'
++ base=parity-v40
++ cuobjdump -sass /workspace/build/parity-v42/lfm3-score
+rule 5 lfm3-score text-v42 against text-v41 rc=0 96 and 94 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/parity-v40/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/lfm3-score.parity.txt
++ echo 'rule 5 lfm3-score parity-v42 against parity-v40 rc=0 102 and 100 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ for k in text parity
++ '[' text = text ']'
++ base=text-v41
++ cuobjdump -sass /workspace/build/text-v42/lfm3-speech
+rule 5 lfm3-score parity-v42 against parity-v40 rc=0 102 and 100 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v41/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/lfm3-speech.text.txt
+rule 5 lfm3-speech text-v42 against text-v41 rc=0 144 and 142 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 lfm3-speech text-v42 against text-v41 rc=0 144 and 142 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ '[' parity = text ']'
++ base=parity-v40
++ cuobjdump -sass /workspace/build/parity-v42/lfm3-speech
++ cuobjdump -sass /workspace/build/parity-v40/lfm3-speech
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/lfm3-speech.parity.txt
+rule 5 lfm3-speech parity-v42 against parity-v40 rc=0 150 and 148 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 lfm3-speech parity-v42 against parity-v40 rc=0 150 and 148 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ for k in text parity
++ '[' text = text ']'
++ base=text-v41
++ cuobjdump -sass /workspace/build/text-v42/liquid-lfm3-worker
++ cuobjdump -sass /workspace/build/text-v41/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3-worker.text.txt
+rule 5 liquid-lfm3-worker text-v42 against text-v41 rc=0 144 and 142 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3-worker text-v42 against text-v41 rc=0 144 and 142 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ '[' parity = text ']'
++ base=parity-v40
++ cuobjdump -sass /workspace/build/parity-v42/liquid-lfm3-worker
++ cuobjdump -sass /workspace/build/parity-v40/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3-worker.parity.txt
+rule 5 liquid-lfm3-worker parity-v42 against parity-v40 rc=0 150 and 148 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3-worker parity-v42 against parity-v40 rc=0 150 and 148 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ for k in text parity
++ '[' text = text ']'
++ base=text-v41
++ cuobjdump -sass /workspace/build/text-v42/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v41/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3-server.text.txt
+rule 5 liquid-lfm3-server text-v42 against text-v41 rc=0 144 and 142 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3-server text-v42 against text-v41 rc=0 144 and 142 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ '[' parity = text ']'
++ base=parity-v40
++ cuobjdump -sass /workspace/build/parity-v42/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/parity-v40/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3-server.parity.txt
+rule 5 liquid-lfm3-server parity-v42 against parity-v40 rc=0 150 and 148 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3-server parity-v42 against parity-v40 rc=0 150 and 148 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score lfm3-speech liquid-lfm3-worker liquid-lfm3-server lfm3-vision-check
++ for k in text parity
++ '[' text = text ']'
++ base=text-v41
++ cuobjdump -sass /workspace/build/text-v42/lfm3-vision-check
++ cuobjdump -sass /workspace/build/text-v41/lfm3-vision-check
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/lfm3-vision-check.text.txt
+rule 5 lfm3-vision-check text-v42 against text-v41 rc=0 89 and 89 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 lfm3-vision-check text-v42 against text-v41 rc=0 89 and 89 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for k in text parity
++ '[' parity = text ']'
++ base=parity-v40
++ cuobjdump -sass /workspace/build/parity-v42/lfm3-vision-check
++ cuobjdump -sass /workspace/build/parity-v40/lfm3-vision-check
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/lfm3-vision-check.parity.txt
++ echo 'rule 5 lfm3-vision-check parity-v42 against parity-v40 rc=0 95 and 95 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score liquid-lfm3-worker liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v42s/liquid-lfm3
+rule 5 lfm3-vision-check parity-v42 against parity-v40 rc=0 95 and 95 functions; removed as expected: 0; only in one otherwise: 0; same name, different code: 0
++ cuobjdump -sass /workspace/build/text-v39s/liquid-lfm3
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3.text-only.txt
+rule 5 liquid-lfm3 text-v42s against text-v39s rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3 text-v42s against text-v39s rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score liquid-lfm3-worker liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v42s/lfm3-score
++ cuobjdump -sass /workspace/build/text-v39s/lfm3-score
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/lfm3-score.text-only.txt
+rule 5 lfm3-score text-v42s against text-v39s rc=0 96 and 94 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 lfm3-score text-v42s against text-v39s rc=0 96 and 94 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score liquid-lfm3-worker liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v42s/liquid-lfm3-worker
++ cuobjdump -sass /workspace/build/text-v39s/liquid-lfm3-worker
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3-worker.text-only.txt
+rule 5 liquid-lfm3-worker text-v42s against text-v39s rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ echo 'rule 5 liquid-lfm3-worker text-v42s against text-v39s rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ for f in liquid-lfm3 lfm3-score liquid-lfm3-worker liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v42s/liquid-lfm3-server
++ cuobjdump -sass /workspace/build/text-v39s/liquid-lfm3-server
++ python3 validation/speed-v1/sass_compare.py /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass --only-in-a convolution7_continue
+++ head -1 /workspace/build/cont-v1/e1/liquid-lfm3-server.text-only.txt
++ echo 'rule 5 liquid-lfm3-server text-v42s against text-v39s rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0'
++ rm -f /workspace/build/cont-v1/e1/a.sass /workspace/build/cont-v1/e1/b.sass
+rule 5 liquid-lfm3-server text-v42s against text-v39s rc=0 95 and 93 functions; removed as expected: 2; only in one otherwise: 0; same name, different code: 0
++ python3 tools/pascal/compare_pins.py parity-v42
+++ tail -1 /workspace/build/cont-v1/gate.log
++ echo 'gate rc=0 PINS EQUAL: 7826 files equal'
++ tools/pascal/run_text_fixtures.sh text-v42 2
+gate rc=0 PINS EQUAL: 7826 files equal
+++ tail -1 /workspace/build/cont-v1/fixtures.log
+fixtures rc=0 FIXTURES PASS
++ echo 'fixtures rc=0 FIXTURES PASS'
++ LFM3_COMPACT_WINDOWS=1
++ tools/pascal/run_text_fixtures.sh text-v42 2
+++ tail -1 /workspace/build/cont-v1/fixtures-compact.log
++ echo 'fixtures compact rc=0 FIXTURES PASS'
++ tools/pascal/run_text_fixtures.sh text-v42 1 /usr/local/cuda-12.9/bin/compute-sanitizer --tool memcheck --error-exitcode 9
+fixtures compact rc=0 FIXTURES PASS
+++ tail -1 /workspace/build/cont-v1/fixtures-memcheck.log
++ echo 'fixtures memcheck rc=0 FIXTURES PASS'
+fixtures memcheck rc=0 FIXTURES PASS
++ P=/workspace/build/rt2-ppl-subset
++ for k in text parity
++ WINDOWS_DIR=/workspace/build/rt2-ppl-subset
++ tools/pascal/score.sh text-v42 cont1-score-text-v42 256 257 4096
++ for L in 256 257 4096
++ cmp /workspace/build/img1-score-text-v40/nll-pascal-256.f32 /workspace/build/cont1-score-text-v42/nll-pascal-256.f32
+scorer text 256: v42 IDENTICAL to v40
++ echo 'scorer text 256: v42 IDENTICAL to v40'
++ for L in 256 257 4096
++ cmp /workspace/build/img1-score-text-v40/nll-pascal-257.f32 /workspace/build/cont1-score-text-v42/nll-pascal-257.f32
+scorer text 257: v42 IDENTICAL to v40
++ echo 'scorer text 257: v42 IDENTICAL to v40'
++ for L in 256 257 4096
++ cmp /workspace/build/img1-score-text-v40/nll-pascal-4096.f32 /workspace/build/cont1-score-text-v42/nll-pascal-4096.f32
+scorer text 4096: v42 IDENTICAL to v40
++ echo 'scorer text 4096: v42 IDENTICAL to v40'
++ for k in text parity
++ WINDOWS_DIR=/workspace/build/rt2-ppl-subset
++ tools/pascal/score.sh parity-v42 cont1-score-parity-v42 256 257 4096
++ for L in 256 257 4096
++ cmp /workspace/build/img1-score-parity-v40/nll-pascal-256.f32 /workspace/build/cont1-score-parity-v42/nll-pascal-256.f32
+scorer parity 256: v42 IDENTICAL to v40
++ echo 'scorer parity 256: v42 IDENTICAL to v40'
++ for L in 256 257 4096
++ cmp /workspace/build/img1-score-parity-v40/nll-pascal-257.f32 /workspace/build/cont1-score-parity-v42/nll-pascal-257.f32
+scorer parity 257: v42 IDENTICAL to v40
++ echo 'scorer parity 257: v42 IDENTICAL to v40'
++ for L in 256 257 4096
++ cmp /workspace/build/img1-score-parity-v40/nll-pascal-4096.f32 /workspace/build/cont1-score-parity-v42/nll-pascal-4096.f32
+scorer parity 4096: v42 IDENTICAL to v40
++ echo 'scorer parity 4096: v42 IDENTICAL to v40'
++ python3 - /workspace/build/cont-v1/a1
++ for k in text parity
++ '[' text = text ']'
++ base=v41
++ for v in $base v42
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v41-p129
++ mkdir -p /workspace/build/cont-v1/a1/text-v41-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p129.request.json /workspace/build/cont-v1/a1/text-v41-p129
++ /workspace/build/text-v41/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v41-p129/request.json /workspace/build/cont-v1/a1/text-v41-p129/native.json
++ cd /workspace/build/cont-v1/a1/text-v41-p129/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v41-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v41-p136
++ mkdir -p /workspace/build/cont-v1/a1/text-v41-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p136.request.json /workspace/build/cont-v1/a1/text-v41-p136
++ /workspace/build/text-v41/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v41-p136/request.json /workspace/build/cont-v1/a1/text-v41-p136/native.json
++ cd /workspace/build/cont-v1/a1/text-v41-p136/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v41-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v41-p137
++ mkdir -p /workspace/build/cont-v1/a1/text-v41-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p137.request.json /workspace/build/cont-v1/a1/text-v41-p137
++ /workspace/build/text-v41/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v41-p137/request.json /workspace/build/cont-v1/a1/text-v41-p137/native.json
++ cd /workspace/build/cont-v1/a1/text-v41-p137/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v41-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v41-p300
++ mkdir -p /workspace/build/cont-v1/a1/text-v41-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p300.request.json /workspace/build/cont-v1/a1/text-v41-p300
++ /workspace/build/text-v41/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v41-p300/request.json /workspace/build/cont-v1/a1/text-v41-p300/native.json
++ cd /workspace/build/cont-v1/a1/text-v41-p300/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v41-p300/trace
++ for v in $base v42
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v42-p129
++ mkdir -p /workspace/build/cont-v1/a1/text-v42-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p129.request.json /workspace/build/cont-v1/a1/text-v42-p129
++ /workspace/build/text-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v42-p129/request.json /workspace/build/cont-v1/a1/text-v42-p129/native.json
++ cd /workspace/build/cont-v1/a1/text-v42-p129/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v42-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v42-p136
++ mkdir -p /workspace/build/cont-v1/a1/text-v42-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p136.request.json /workspace/build/cont-v1/a1/text-v42-p136
++ /workspace/build/text-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v42-p136/request.json /workspace/build/cont-v1/a1/text-v42-p136/native.json
++ cd /workspace/build/cont-v1/a1/text-v42-p136/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v42-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v42-p137
++ mkdir -p /workspace/build/cont-v1/a1/text-v42-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p137.request.json /workspace/build/cont-v1/a1/text-v42-p137
++ /workspace/build/text-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v42-p137/request.json /workspace/build/cont-v1/a1/text-v42-p137/native.json
++ cd /workspace/build/cont-v1/a1/text-v42-p137/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v42-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/text-v42-p300
++ mkdir -p /workspace/build/cont-v1/a1/text-v42-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p300.request.json /workspace/build/cont-v1/a1/text-v42-p300
++ /workspace/build/text-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/text-v42-p300/request.json /workspace/build/cont-v1/a1/text-v42-p300/native.json
++ cd /workspace/build/cont-v1/a1/text-v42-p300/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/text-v42-p300/trace
++ for L in 129 136 137 300
+++ tr '\n' ' '
++ a='17 842d8261f513d2d0 '
+++ tr '\n' ' '
++ b='17 842d8261f513d2d0 '
+++ '[' '17 842d8261f513d2d0 ' = '17 842d8261f513d2d0 ' ']'
+++ echo IDENTICAL
+++ [[ 17 842d8261f513d2d0  == \1\7\ * ]]
+++ [[ 17 842d8261f513d2d0  == \1\7\ * ]]
++ echo 'above 4,096 text p129: v41 [17 842d8261f513d2d0 ] v42 [17 842d8261f513d2d0 ] IDENTICAL'
++ for L in 129 136 137 300
+above 4,096 text p129: v41 [17 842d8261f513d2d0 ] v42 [17 842d8261f513d2d0 ] IDENTICAL
+++ tr '\n' ' '
++ a='17 99ca55991ffbcc75 '
+++ tr '\n' ' '
++ b='17 99ca55991ffbcc75 '
+++ '[' '17 99ca55991ffbcc75 ' = '17 99ca55991ffbcc75 ' ']'
+++ echo IDENTICAL
+++ [[ 17 99ca55991ffbcc75  == \1\7\ * ]]
+++ [[ 17 99ca55991ffbcc75  == \1\7\ * ]]
+above 4,096 text p136: v41 [17 99ca55991ffbcc75 ] v42 [17 99ca55991ffbcc75 ] IDENTICAL
++ echo 'above 4,096 text p136: v41 [17 99ca55991ffbcc75 ] v42 [17 99ca55991ffbcc75 ] IDENTICAL'
++ for L in 129 136 137 300
+++ tr '\n' ' '
++ a='17 6da7f865965abd6d '
+++ tr '\n' ' '
++ b='17 6da7f865965abd6d '
+++ '[' '17 6da7f865965abd6d ' = '17 6da7f865965abd6d ' ']'
+++ echo IDENTICAL
+++ [[ 17 6da7f865965abd6d  == \1\7\ * ]]
+++ [[ 17 6da7f865965abd6d  == \1\7\ * ]]
+above 4,096 text p137: v41 [17 6da7f865965abd6d ] v42 [17 6da7f865965abd6d ] IDENTICAL
++ echo 'above 4,096 text p137: v41 [17 6da7f865965abd6d ] v42 [17 6da7f865965abd6d ] IDENTICAL'
++ for L in 129 136 137 300
+++ tr '\n' ' '
++ a='17 4a888cd4f12ef709 '
+++ tr '\n' ' '
++ b='17 4a888cd4f12ef709 '
+++ '[' '17 4a888cd4f12ef709 ' = '17 4a888cd4f12ef709 ' ']'
+++ echo IDENTICAL
+++ [[ 17 4a888cd4f12ef709  == \1\7\ * ]]
+++ [[ 17 4a888cd4f12ef709  == \1\7\ * ]]
+above 4,096 text p300: v41 [17 4a888cd4f12ef709 ] v42 [17 4a888cd4f12ef709 ] IDENTICAL
++ echo 'above 4,096 text p300: v41 [17 4a888cd4f12ef709 ] v42 [17 4a888cd4f12ef709 ] IDENTICAL'
++ for k in text parity
++ '[' parity = text ']'
++ base=v40
++ for v in $base v42
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v40-p129
++ mkdir -p /workspace/build/cont-v1/a1/parity-v40-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p129.request.json /workspace/build/cont-v1/a1/parity-v40-p129
++ /workspace/build/parity-v40/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v40-p129/request.json /workspace/build/cont-v1/a1/parity-v40-p129/native.json
++ cd /workspace/build/cont-v1/a1/parity-v40-p129/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v40-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v40-p136
++ mkdir -p /workspace/build/cont-v1/a1/parity-v40-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p136.request.json /workspace/build/cont-v1/a1/parity-v40-p136
++ /workspace/build/parity-v40/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v40-p136/request.json /workspace/build/cont-v1/a1/parity-v40-p136/native.json
++ cd /workspace/build/cont-v1/a1/parity-v40-p136/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ cut -c1-16
++ sha256sum
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v40-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v40-p137
++ mkdir -p /workspace/build/cont-v1/a1/parity-v40-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p137.request.json /workspace/build/cont-v1/a1/parity-v40-p137
++ /workspace/build/parity-v40/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v40-p137/request.json /workspace/build/cont-v1/a1/parity-v40-p137/native.json
++ cd /workspace/build/cont-v1/a1/parity-v40-p137/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v40-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v40-p300
++ mkdir -p /workspace/build/cont-v1/a1/parity-v40-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p300.request.json /workspace/build/cont-v1/a1/parity-v40-p300
++ /workspace/build/parity-v40/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v40-p300/request.json /workspace/build/cont-v1/a1/parity-v40-p300/native.json
++ cd /workspace/build/cont-v1/a1/parity-v40-p300/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v40-p300/trace
++ for v in $base v42
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v42-p129
++ mkdir -p /workspace/build/cont-v1/a1/parity-v42-p129
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p129.request.json /workspace/build/cont-v1/a1/parity-v42-p129
++ /workspace/build/parity-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v42-p129/request.json /workspace/build/cont-v1/a1/parity-v42-p129/native.json
++ cd /workspace/build/cont-v1/a1/parity-v42-p129/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v42-p129/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v42-p136
++ mkdir -p /workspace/build/cont-v1/a1/parity-v42-p136
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p136.request.json /workspace/build/cont-v1/a1/parity-v42-p136
++ /workspace/build/parity-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v42-p136/request.json /workspace/build/cont-v1/a1/parity-v42-p136/native.json
++ cd /workspace/build/cont-v1/a1/parity-v42-p136/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v42-p136/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v42-p137
++ mkdir -p /workspace/build/cont-v1/a1/parity-v42-p137
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p137.request.json /workspace/build/cont-v1/a1/parity-v42-p137
++ /workspace/build/parity-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v42-p137/request.json /workspace/build/cont-v1/a1/parity-v42-p137/native.json
++ cd /workspace/build/cont-v1/a1/parity-v42-p137/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v42-p137/trace
++ for L in 129 136 137 300
++ d=/workspace/build/cont-v1/a1/parity-v42-p300
++ mkdir -p /workspace/build/cont-v1/a1/parity-v42-p300
++ python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); r['\''trace_directory'\'']=sys.argv[2]+'\''/trace'\''; json.dump(r,open(sys.argv[2]+'\''/request.json'\'','\''w'\''))' /workspace/build/cont-v1/a1/p300.request.json /workspace/build/cont-v1/a1/parity-v42-p300
++ /workspace/build/parity-v42/liquid-lfm3 --experimental /workspace/models/LFM3-Omni-2B /workspace/build/cont-v1/a1/parity-v42-p300/request.json /workspace/build/cont-v1/a1/parity-v42-p300/native.json
++ cd /workspace/build/cont-v1/a1/parity-v42-p300/trace
++ shopt -s nullglob
++ f=(*.logits.f32)
++ echo 17
++ '[' 17 -gt 0 ']'
++ sha256sum
++ cut -c1-16
+++ printf '%s\n' 0.logits.f32 1.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32
+++ sort -n
++ sha256sum 0.logits.f32 1.logits.f32 2.logits.f32 3.logits.f32 4.logits.f32 5.logits.f32 6.logits.f32 7.logits.f32 8.logits.f32 9.logits.f32 10.logits.f32 11.logits.f32 12.logits.f32 13.logits.f32 14.logits.f32 15.logits.f32 16.logits.f32
++ rm -rf /workspace/build/cont-v1/a1/parity-v42-p300/trace
++ for L in 129 136 137 300
+++ tr '\n' ' '
++ a='17 3428437ac7f7e78b '
+++ tr '\n' ' '
++ b='17 3428437ac7f7e78b '
+++ '[' '17 3428437ac7f7e78b ' = '17 3428437ac7f7e78b ' ']'
+++ echo IDENTICAL
+++ [[ 17 3428437ac7f7e78b  == \1\7\ * ]]
+++ [[ 17 3428437ac7f7e78b  == \1\7\ * ]]
++ echo 'above 4,096 parity p129: v40 [17 3428437ac7f7e78b ] v42 [17 3428437ac7f7e78b ] IDENTICAL'
++ for L in 129 136 137 300
+above 4,096 parity p129: v40 [17 3428437ac7f7e78b ] v42 [17 3428437ac7f7e78b ] IDENTICAL
+++ tr '\n' ' '
++ a='17 665669da8e808de5 '
+++ tr '\n' ' '
++ b='17 665669da8e808de5 '
+++ '[' '17 665669da8e808de5 ' = '17 665669da8e808de5 ' ']'
+++ echo IDENTICAL
+++ [[ 17 665669da8e808de5  == \1\7\ * ]]
+++ [[ 17 665669da8e808de5  == \1\7\ * ]]
++ echo 'above 4,096 parity p136: v40 [17 665669da8e808de5 ] v42 [17 665669da8e808de5 ] IDENTICAL'
++ for L in 129 136 137 300
+above 4,096 parity p136: v40 [17 665669da8e808de5 ] v42 [17 665669da8e808de5 ] IDENTICAL
+++ tr '\n' ' '
++ a='17 6f2c27c5397fe410 '
+++ tr '\n' ' '
++ b='17 6f2c27c5397fe410 '
+++ '[' '17 6f2c27c5397fe410 ' = '17 6f2c27c5397fe410 ' ']'
+++ echo IDENTICAL
+++ [[ 17 6f2c27c5397fe410  == \1\7\ * ]]
+++ [[ 17 6f2c27c5397fe410  == \1\7\ * ]]
++ echo 'above 4,096 parity p137: v40 [17 6f2c27c5397fe410 ] v42 [17 6f2c27c5397fe410 ] IDENTICAL'
++ for L in 129 136 137 300
+above 4,096 parity p137: v40 [17 6f2c27c5397fe410 ] v42 [17 6f2c27c5397fe410 ] IDENTICAL
+++ tr '\n' ' '
++ a='17 321b5734d842d00c '
+++ tr '\n' ' '
++ b='17 321b5734d842d00c '
+++ '[' '17 321b5734d842d00c ' = '17 321b5734d842d00c ' ']'
+++ echo IDENTICAL
+++ [[ 17 321b5734d842d00c  == \1\7\ * ]]
+++ [[ 17 321b5734d842d00c  == \1\7\ * ]]
++ echo 'above 4,096 parity p300: v40 [17 321b5734d842d00c ] v42 [17 321b5734d842d00c ] IDENTICAL'
+above 4,096 parity p300: v40 [17 321b5734d842d00c ] v42 [17 321b5734d842d00c ] IDENTICAL
++ R3=/workspace/build/cont-v1/rule3
++ mkdir -p /workspace/build/cont-v1/rule3/out
++ RP=/workspace/build/sp-refs-parity-s1
++ python3 - /workspace/build/sp-refs-parity-s1 validation/speech-v1/inputs/thor-clips.json /workspace/build/cont-v1/rule3
++ /workspace/build/parity-v42/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/cont-v1/rule3/list
+++ tail -1 /workspace/build/cont-v1/rule3/err
+speech-v1 rule 3 runs rc=0 lfm3-speech: batch: 15 done, 0 failed
++ echo 'speech-v1 rule 3 runs rc=0 lfm3-speech: batch: 15 done, 0 failed'
++ python3 - /workspace/build/cont-v1/rule3/out validation/speech-v1/inputs/thor-clips.json
+++ tail -1 /workspace/build/cont-v1/rule3.txt
+speech-v1 rule 3 rc=0 rule 3: 16 of 16 clips (15 runs) equal to the Thor engine's
++ echo 'speech-v1 rule 3 rc=0 rule 3: 16 of 16 clips (15 runs) equal to the Thor engine'\''s'
++ N3=/workspace/build/cont-v1/rule3-native
++ mkdir -p /workspace/build/cont-v1/rule3-native/requests /workspace/build/cont-v1/rule3-native/out
++ python3 - /workspace/build/sp-refs-parity-s1 validation/speech-v1/inputs/thor-clips.json /workspace/build/cont-v1/rule3-native
++ /workspace/build/parity-v42/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/cont-v1/rule3-native/list
+++ tail -1 /workspace/build/cont-v1/rule3-native/err
+speech-v1 rule 3 rendering runs rc=0 lfm3-speech: batch: 15 done, 0 failed
++ echo 'speech-v1 rule 3 rendering runs rc=0 lfm3-speech: batch: 15 done, 0 failed'
++ python3 - /workspace/build/cont-v1/rule3/out /workspace/build/cont-v1/rule3-native /workspace/build/sp-refs-parity-s1
+++ tail -1 /workspace/build/cont-v1/rule3-native.txt
+speech-v1 rule 3 rendering rc=0 rule 3 rendering: 15 of 15 equal
++ echo 'speech-v1 rule 3 rendering rc=0 rule 3 rendering: 15 of 15 equal'
++ E=/workspace/build/cont-v1/e2
++ mkdir -p /workspace/build/cont-v1/e2/text /workspace/build/cont-v1/e2/text-split
++ RT=/workspace/build/sp-refs-text-s1
++ S1=/workspace/build/sp-v1/e2
+++ ls /workspace/build/sp-refs-text-s1/speech-e2e-v1/requests
+++ grep -- '-s1\.req\.json$'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-fridge-s1.req.json /workspace/build/cont-v1/e2/text/il-fridge-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-reflective-s1.req.json /workspace/build/cont-v1/e2/text/il-reflective-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/il-study-s1.req.json /workspace/build/cont-v1/e2/text/il-study-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-female-s1.req.json /workspace/build/cont-v1/e2/text/tts-fox-female-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-fox-male-s1.req.json /workspace/build/cont-v1/e2/text/tts-fox-male-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-long-male-s1.req.json /workspace/build/cont-v1/e2/text/tts-long-male-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-female-s1.req.json /workspace/build/cont-v1/e2/text/tts-museum-female-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-museum-male-s1.req.json /workspace/build/cont-v1/e2/text/tts-museum-male-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-female-s1.req.json /workspace/build/cont-v1/e2/text/tts-numbers-female-s1'
++ for f in $(ls $RT/speech-e2e-v1/requests | grep -- '-s1\.req\.json$')
++ echo '/workspace/build/sp-refs-text-s1/speech-e2e-v1/requests/tts-numbers-male-s1.req.json /workspace/build/cont-v1/e2/text/tts-numbers-male-s1'
++ echo '/workspace/build/sp-refs-text-s1/speech-chunk-native-v1/requests/tts-long-male-s1.req.json /workspace/build/cont-v1/e2/text-split/tts-long-male-s1'
++ /workspace/build/text-v42/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/cont-v1/e2/text.list
+++ tail -1 /workspace/build/cont-v1/e2/text.err
++ echo 'E2 shipping speech runs rc=0 lfm3-speech: batch: 11 done, 0 failed'
+E2 shipping speech runs rc=0 lfm3-speech: batch: 11 done, 0 failed
++ tail -1
+++ grep -v text-split /workspace/build/cont-v1/e2/text.list
+++ awk '{print $2}'
+++ xargs -n1 basename
++ python3 /workspace/build/cont-v1/same.py /workspace/build/cont-v1/e2/text /workspace/build/sp-v1/e2/text il-fridge-s1 il-reflective-s1 il-study-s1 tts-fox-female-s1 tts-fox-male-s1 tts-long-male-s1 tts-museum-female-s1 tts-museum-male-s1 tts-numbers-female-s1 tts-numbers-male-s1
+10 of 10 identical (/workspace/build/cont-v1/e2/text against /workspace/build/sp-v1/e2/text)
+E2 shipping speech rc=0
++ echo 'E2 shipping speech rc=0'
++ python3 /workspace/build/cont-v1/same.py /workspace/build/cont-v1/e2/text-split /workspace/build/sp-v1/e2/text-split tts-long-male-s1
++ tail -1
+1 of 1 identical (/workspace/build/cont-v1/e2/text-split against /workspace/build/sp-v1/e2/text-split)
++ echo 'E2 split rc=0'
+E2 split rc=0
++ python3 -c 'import json,sys; print('\'' '\''.join(sorted(c['\''case'\''] for c in json.load(open(sys.argv[1]))['\''cases'\''])))' validation/speech-v1/inputs/reference/audio-in-v1/round2-full-check.json
++ for b in text parity
++ mkdir -p /workspace/build/cont-v1/e2/libri-text
+++ cat /workspace/build/cont-v1/e2/libri-stems.txt
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1221-135766-0011.req.json /workspace/build/cont-v1/e2/libri-text/1221-135766-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123286-0027.req.json /workspace/build/cont-v1/e2/libri-text/260-123286-0027'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5694-0011.req.json /workspace/build/cont-v1/e2/libri-text/3570-5694-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3575-170457-0046.req.json /workspace/build/cont-v1/e2/libri-text/3575-170457-0046'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13751-0011.req.json /workspace/build/cont-v1/e2/libri-text/4077-13751-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13754-0006.req.json /workspace/build/cont-v1/e2/libri-text/4077-13754-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2275-0012.req.json /workspace/build/cont-v1/e2/libri-text/4446-2275-0012'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0026.req.json /workspace/build/cont-v1/e2/libri-text/4507-16021-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0030.req.json /workspace/build/cont-v1/e2/libri-text/4970-29095-0030'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0035.req.json /workspace/build/cont-v1/e2/libri-text/4970-29095-0035'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0007.req.json /workspace/build/cont-v1/e2/libri-text/5142-33396-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0018.req.json /workspace/build/cont-v1/e2/libri-text/6829-68769-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0014.req.json /workspace/build/cont-v1/e2/libri-text/6930-75918-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0018.req.json /workspace/build/cont-v1/e2/libri-text/6930-75918-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-81414-0009.req.json /workspace/build/cont-v1/e2/libri-text/6930-81414-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-79740-0013.req.json /workspace/build/cont-v1/e2/libri-text/7021-79740-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7729-102255-0009.req.json /workspace/build/cont-v1/e2/libri-text/7729-102255-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294825-0006.req.json /workspace/build/cont-v1/e2/libri-text/8463-294825-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-284449-0002.req.json /workspace/build/cont-v1/e2/libri-text/8555-284449-0002'
++ /workspace/build/text-v42/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/cont-v1/e2/libri-text.list
+++ tail -1 /workspace/build/cont-v1/e2/libri-text.err
+E2 LibriSpeech text runs rc=0 lfm3-speech: batch: 19 done, 0 failed
++ echo 'E2 LibriSpeech text runs rc=0 lfm3-speech: batch: 19 done, 0 failed'
++ tail -1
+++ cat /workspace/build/cont-v1/e2/libri-stems.txt
++ python3 /workspace/build/cont-v1/same.py /workspace/build/cont-v1/e2/libri-text /workspace/build/sp-v1/e2/libri-text 1221-135766-0011 260-123286-0027 3570-5694-0011 3575-170457-0046 4077-13751-0011 4077-13754-0006 4446-2275-0012 4507-16021-0026 4970-29095-0030 4970-29095-0035 5142-33396-0007 6829-68769-0018 6930-75918-0014 6930-75918-0018 6930-81414-0009 7021-79740-0013 7729-102255-0009 8463-294825-0006 8555-284449-0002
+19 of 19 identical (/workspace/build/cont-v1/e2/libri-text against /workspace/build/sp-v1/e2/libri-text)
+E2 LibriSpeech text rc=0
++ echo 'E2 LibriSpeech text rc=0'
++ for b in text parity
++ mkdir -p /workspace/build/cont-v1/e2/libri-parity
+++ cat /workspace/build/cont-v1/e2/libri-stems.txt
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/1221-135766-0011.req.json /workspace/build/cont-v1/e2/libri-parity/1221-135766-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/260-123286-0027.req.json /workspace/build/cont-v1/e2/libri-parity/260-123286-0027'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3570-5694-0011.req.json /workspace/build/cont-v1/e2/libri-parity/3570-5694-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/3575-170457-0046.req.json /workspace/build/cont-v1/e2/libri-parity/3575-170457-0046'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13751-0011.req.json /workspace/build/cont-v1/e2/libri-parity/4077-13751-0011'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4077-13754-0006.req.json /workspace/build/cont-v1/e2/libri-parity/4077-13754-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4446-2275-0012.req.json /workspace/build/cont-v1/e2/libri-parity/4446-2275-0012'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4507-16021-0026.req.json /workspace/build/cont-v1/e2/libri-parity/4507-16021-0026'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0030.req.json /workspace/build/cont-v1/e2/libri-parity/4970-29095-0030'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/4970-29095-0035.req.json /workspace/build/cont-v1/e2/libri-parity/4970-29095-0035'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/5142-33396-0007.req.json /workspace/build/cont-v1/e2/libri-parity/5142-33396-0007'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6829-68769-0018.req.json /workspace/build/cont-v1/e2/libri-parity/6829-68769-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0014.req.json /workspace/build/cont-v1/e2/libri-parity/6930-75918-0014'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-75918-0018.req.json /workspace/build/cont-v1/e2/libri-parity/6930-75918-0018'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/6930-81414-0009.req.json /workspace/build/cont-v1/e2/libri-parity/6930-81414-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7021-79740-0013.req.json /workspace/build/cont-v1/e2/libri-parity/7021-79740-0013'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/7729-102255-0009.req.json /workspace/build/cont-v1/e2/libri-parity/7729-102255-0009'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8463-294825-0006.req.json /workspace/build/cont-v1/e2/libri-parity/8463-294825-0006'
++ for s in $(cat $E/libri-stems.txt)
++ echo '/workspace/build/sp-dev3/requests/8555-284449-0002.req.json /workspace/build/cont-v1/e2/libri-parity/8555-284449-0002'
++ /workspace/build/parity-v42/lfm3-speech /workspace/models/LFM3-Omni-2B --batch /workspace/build/cont-v1/e2/libri-parity.list
+++ tail -1 /workspace/build/cont-v1/e2/libri-parity.err
++ echo 'E2 LibriSpeech parity runs rc=0 lfm3-speech: batch: 19 done, 0 failed'
+E2 LibriSpeech parity runs rc=0 lfm3-speech: batch: 19 done, 0 failed
++ tail -1
+++ cat /workspace/build/cont-v1/e2/libri-stems.txt
++ python3 /workspace/build/cont-v1/same.py /workspace/build/cont-v1/e2/libri-parity /workspace/build/sp-v1/e2/libri-parity 1221-135766-0011 260-123286-0027 3570-5694-0011 3575-170457-0046 4077-13751-0011 4077-13754-0006 4446-2275-0012 4507-16021-0026 4970-29095-0030 4970-29095-0035 5142-33396-0007 6829-68769-0018 6930-75918-0014 6930-75918-0018 6930-81414-0009 7021-79740-0013 7729-102255-0009 8463-294825-0006 8555-284449-0002
+19 of 19 identical (/workspace/build/cont-v1/e2/libri-parity against /workspace/build/sp-v1/e2/libri-parity)
+E2 LibriSpeech parity rc=0
++ echo 'E2 LibriSpeech parity rc=0'
++ python3 tools/pascal/paired_decode_check.py /workspace/build/text-v42/liquid-lfm3-worker /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 /workspace/build/cont-v1/paired
++ echo 'paired decode rc=0'
++ grep -E PAIRED /workspace/build/cont-v1/paired.log
+paired decode rc=0
+PAIRED DECODE (rule 10) PASS
++ /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 decoded
+++ grep -c '"mode":"decoded"' /workspace/build/cont-v1/decoded.jsonl
+rule 6 rc=0 8 of 8 cases
++ echo 'rule 6 rc=0 8 of 8 cases'
++ cat /workspace/build/cont-v1/decoded.jsonl /workspace/build/cont-v1/decoded.err
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":32,"added":500,"max_abs_extend_vs_whole":0.136816978,"max_abs_tokens_vs_whole":0.130691051,"max_abs_extend_vs_tokens":0.133997679,"argmax":[3927,3927,3927],"follow_agree_extend_whole":3,"follow_agree_tokens_whole":3,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":300,"generated":32,"added":2000,"max_abs_extend_vs_whole":0.127651215,"max_abs_tokens_vs_whole":0.139511108,"max_abs_extend_vs_tokens":0.156955719,"argmax":[643,643,643],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":400,"added":600,"max_abs_extend_vs_whole":0.185012341,"max_abs_tokens_vs_whole":0.153962135,"max_abs_extend_vs_tokens":0.15495491,"argmax":[1200,1200,1200],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":32,"added":1024,"max_abs_extend_vs_whole":0.139634609,"max_abs_tokens_vs_whole":0.13582623,"max_abs_extend_vs_tokens":0.146016121,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":5000,"generated":32,"added":20000,"max_abs_extend_vs_whole":0.155163765,"max_abs_tokens_vs_whole":0.100728035,"max_abs_extend_vs_tokens":0.159506083,"argmax":[25,25,25],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":30000,"generated":32,"added":1000,"max_abs_extend_vs_whole":0.139496803,"max_abs_tokens_vs_whole":0.154975891,"max_abs_extend_vs_tokens":0.119794071,"argmax":[302,302,302],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":400,"added":1024,"max_abs_extend_vs_whole":0.144400597,"max_abs_tokens_vs_whole":0.147174358,"max_abs_extend_vs_tokens":0.14164257,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":4500,"generated":400,"added":300,"max_abs_extend_vs_whole":0.172657967,"max_abs_tokens_vs_whole":0.134462357,"max_abs_extend_vs_tokens":0.135250092,"argmax":[1033,1033,1033],"follow_agree_extend_whole":12,"follow_agree_tokens_whole":12,"follow_agree_extend_tokens":16,"of":16}
++ LFM3_COMPACT_WINDOWS=1
++ /workspace/build/text-v42/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 decoded
+++ grep -c '"mode":"decoded"' /workspace/build/cont-v1/decoded-compact.jsonl
+rule 6 compact rc=0 8 of 8 cases
++ echo 'rule 6 compact rc=0 8 of 8 cases'
++ cat /workspace/build/cont-v1/decoded-compact.jsonl /workspace/build/cont-v1/decoded-compact.err
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":32,"added":500,"max_abs_extend_vs_whole":0.136816978,"max_abs_tokens_vs_whole":0.130691051,"max_abs_extend_vs_tokens":0.133997679,"argmax":[3927,3927,3927],"follow_agree_extend_whole":3,"follow_agree_tokens_whole":3,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":300,"generated":32,"added":2000,"max_abs_extend_vs_whole":0.127651215,"max_abs_tokens_vs_whole":0.139511108,"max_abs_extend_vs_tokens":0.156955719,"argmax":[643,643,643],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":400,"added":600,"max_abs_extend_vs_whole":0.185012341,"max_abs_tokens_vs_whole":0.153962135,"max_abs_extend_vs_tokens":0.15495491,"argmax":[1200,1200,1200],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":32,"added":1024,"max_abs_extend_vs_whole":0.139634609,"max_abs_tokens_vs_whole":0.13582623,"max_abs_extend_vs_tokens":0.146016121,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":5000,"generated":32,"added":20000,"max_abs_extend_vs_whole":0.155163765,"max_abs_tokens_vs_whole":0.100728035,"max_abs_extend_vs_tokens":0.159506083,"argmax":[25,25,25],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":30000,"generated":32,"added":1000,"max_abs_extend_vs_whole":0.139496803,"max_abs_tokens_vs_whole":0.154975891,"max_abs_extend_vs_tokens":0.119794071,"argmax":[302,302,302],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":400,"added":1024,"max_abs_extend_vs_whole":0.144400597,"max_abs_tokens_vs_whole":0.147174358,"max_abs_extend_vs_tokens":0.14164257,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":4500,"generated":400,"added":300,"max_abs_extend_vs_whole":0.172657967,"max_abs_tokens_vs_whole":0.134462357,"max_abs_extend_vs_tokens":0.135250092,"argmax":[1033,1033,1033],"follow_agree_extend_whole":12,"follow_agree_tokens_whole":12,"follow_agree_extend_tokens":16,"of":16}
++ date
+Wed Nov 25 08:31:44 MST 2026

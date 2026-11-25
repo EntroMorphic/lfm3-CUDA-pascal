@@ -1,0 +1,107 @@
+remote.sh: tree sha256 7bc280e738d1830efd4fdec352d35079d9ee308d131945683123d86296aeb6c2; 06f242b plus uncommitted changes
++ date
+Wed Nov 25 05:27:38 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/cont-dev1
++ M=/workspace/models/LFM3-Omni-2B
++ T=/workspace/data/ppl-windows/windows-32768.i32
++ '[' -e /workspace/build/cont-dev1 ']'
++ mkdir -p /workspace/build/cont-dev1
++ ls -l /workspace/data/ppl-windows/windows-32768.i32
+-rw-rw-r-- 1 ubuntu ubuntu 1179648 Nov 17 13:44 /workspace/data/ppl-windows/windows-32768.i32
++ tools/pascal/build_speech.sh cont-dev1-text
+build text rc=0
++ echo 'build text rc=0'
++ grep -h warnings /workspace/build/cont-dev1/build-text.log
+liquid-lfm3: warnings 2, sha256 2a7e3bae380e8b9f250918007a4f9f7ef038ddce16d22f5b04536468a405de49, 4171416 bytes
+lfm3-score: warnings 0, sha256 a2eb30e24601f3d0e553807eb911d3acc2842fbc2b66014cbe993ac21162a89c, 4036040 bytes
+lfm3-continuation-check: warnings 0, sha256 89c819f94b080ff3adde93eb421546e5fab318ca992b88a16d29d832829a4b7a, 4057168 bytes
+lfm3-speech: warnings 0, sha256 3e77ceab72b84662d692ec6dec61bc6697ee43b99ff6c47fcbb17ae49effa867, 5895984 bytes
+liquid-lfm3-worker: warnings 2, sha256 c0ea098f8a6b3f837f2de03b22efc009b6c5d70ec5fb85ed6d75db0c58beb3a3, 5809608 bytes
+liquid-lfm3-server: warnings 0, sha256 086a3629a0db905325c808d209173cc69884cc95a6b36d64c2f8e30b1027b854, 6355752 bytes
+lfm3-vision-check: warnings 0, sha256 ebde4d82f34c3b6f7d5124729fc03507f934257209ac84ed2c297aa83db635fb, 4093048 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ EXTRA_FLAGS=-DLFM_GEMM_TENSOR_CORE_MODEL
++ tools/pascal/build_speech.sh cont-dev1-parity
++ echo 'build parity rc=0'
++ grep -h warnings /workspace/build/cont-dev1/build-parity.log
+build parity rc=0
+liquid-lfm3: warnings 0, sha256 92f10359f69c280bbd4f38c9fed91e5d6c20e8765c82bd58a98277a40ec688e0, 4692704 bytes
+lfm3-score: warnings 0, sha256 f54d389b68bb82ba75cfb32175d0d57d637f86afe1a3d4e6261c256062c9ea1b, 4553520 bytes
+lfm3-speech: warnings 0, sha256 d3ef614f26c440808149c34211369d3c5fdde70fe550434f08709bcde26953c5, 6413440 bytes
+liquid-lfm3-worker: warnings 0, sha256 efdae2d0cc07980642223f10779868dd045579d34c6a6ded93535c0da2e3cd4a, 6326472 bytes
+liquid-lfm3-server: warnings 0, sha256 847997598669d02df8f91abfffb0fddb46f2753bab7516e6009be479cd68314a, 6872616 bytes
+lfm3-vision-check: warnings 0, sha256 a792e27455cfc58fc377f15076d0ed9f766f06d13cec2e65f3bf0465cc96ea30, 4605648 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ C=/workspace/build/cont-dev1-text/lfm3-continuation-check
++ /workspace/build/cont-dev1-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact-small
+exact-small rc=0
++ echo 'exact-small rc=0'
++ cat /workspace/build/cont-dev1/exact-small.jsonl /workspace/build/cont-dev1/exact-small.err
+{"mode":"exact","capacity":4096,"compact":false,"ends":[40,100],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[296,278,8086,3587,440,8047,405,7207],"whole_prefill_s":0.249993137,"prefix_prefill_s":0.213514672,"extensions_s":0.0622148,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[100,300,301,305],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[309,440,12690,21182,1200,61512,385,8124],"whole_prefill_s":0.344131283,"prefix_prefill_s":0.250315769,"extensions_s":0.247305981,"ok":true}
+{"mode":"exact","capacity":8192,"compact":true,"ends":[4097,4224,4300,4400],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[310,278,4087,395,267,9470,589,835],"whole_prefill_s":2.40457776,"prefix_prefill_s":2.27510873,"extensions_s":0.313716336,"ok":true}
+{"exact":"PASS"}
++ /workspace/build/cont-dev1-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact
+exact rc=0
++ echo 'exact rc=0'
++ cat /workspace/build/cont-dev1/exact.jsonl /workspace/build/cont-dev1/exact.err
+{"mode":"exact","capacity":4096,"compact":false,"ends":[40,100],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[296,278,8086,3587,440,8047,405,7207],"whole_prefill_s":0.253075622,"prefix_prefill_s":0.214847799,"extensions_s":0.062419157,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[500,501],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[296,229,585,25,462,278,7565,7419],"whole_prefill_s":0.410209477,"prefix_prefill_s":0.411391729,"extensions_s":0.05705808,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[500,505],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[462,278,7565,7419,18931,1200,529,229],"whole_prefill_s":0.411780797,"prefix_prefill_s":0.411407248,"extensions_s":0.058437697,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[1000,2048],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[895,272,39712,3671,1228,1194,449,1326],"whole_prefill_s":1.27306858,"prefix_prefill_s":0.676644171,"extensions_s":0.608777695,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[100,300,301,1200,2000],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[302,278,1014,1003,1228,309,278,1532],"whole_prefill_s":1.27477729,"prefix_prefill_s":0.252593386,"extensions_s":1.1898301,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[33,34,41,2047],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[3671,1228,1194,449,1326,278,9470,8895],"whole_prefill_s":1.27919143,"prefix_prefill_s":0.217157158,"extensions_s":1.20550938,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[2049,2050],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[39712,3671,1228,1194,449,1326,278,9470],"whole_prefill_s":1.29748854,"prefix_prefill_s":1.29486266,"extensions_s":0.058753686,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[2100,3000,4000],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[91,1028,8333,15042,355,496,440,6561],"whole_prefill_s":2.53547773,"prefix_prefill_s":1.30968762,"extensions_s":1.16410774,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[3500,4088],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[496,278,9470,21489,496,1200,5954,17577],"whole_prefill_s":2.58547326,"prefix_prefill_s":2.22520929,"extensions_s":0.400349968,"ok":true}
+{"mode":"exact","capacity":8192,"compact":true,"ends":[3000,4000],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[91,1028,8333,15042,355,496,440,6561],"whole_prefill_s":2.58511777,"prefix_prefill_s":1.89603903,"extensions_s":0.623895728,"ok":true}
+{"mode":"exact","capacity":8192,"compact":true,"ends":[4500,8000],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[3701,296,278,19057,52718,1228,4484,467],"whole_prefill_s":4.55560217,"prefix_prefill_s":2.52304159,"extensions_s":2.10893508,"ok":true}
+{"mode":"exact","capacity":8192,"compact":true,"ends":[4097,4224,4225,4300,8184],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[735,46453,462,1579,229,3694,383,278],"whole_prefill_s":4.68227707,"prefix_prefill_s":2.34115645,"extensions_s":2.62022226,"ok":true}
+{"mode":"exact","capacity":32768,"compact":true,"ends":[200,1500],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[3927,296,278,26507,28741,1228,309,449],"whole_prefill_s":0.981761717,"prefix_prefill_s":0.289312083,"extensions_s":0.76170914,"ok":true}
+{"mode":"exact","capacity":32768,"compact":true,"ends":[2500,4000],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[91,1028,8333,15042,355,496,440,6561],"whole_prefill_s":2.65753577,"prefix_prefill_s":1.59492955,"extensions_s":0.947890324,"ok":true}
+{"mode":"exact","capacity":32768,"compact":true,"ends":[4097,4098],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[71092,526,140,247,526,809,881,3850],"whole_prefill_s":2.33833066,"prefix_prefill_s":2.35330262,"extensions_s":0.059690922,"ok":true}
+{"mode":"exact","capacity":32768,"compact":true,"ends":[5000,5130],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[17577,2222,278,21637,302,709,9407,4967],"whole_prefill_s":2.97629972,"prefix_prefill_s":2.87262103,"extensions_s":0.150296657,"ok":true}
+{"mode":"exact","capacity":32768,"compact":true,"ends":[6000,6127,6128,6129,20000],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[22974,4220,309,15268,665,2037,374,648],"whole_prefill_s":13.9216181,"prefix_prefill_s":3.48720194,"extensions_s":10.7431184,"ok":true}
+{"mode":"exact","capacity":32768,"compact":true,"ends":[16384,32760],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[1228,278,3358,7843,497,819,4158,267],"whole_prefill_s":27.7133749,"prefix_prefill_s":10.9924633,"extensions_s":16.8887221,"ok":true}
+{"mode":"exact","capacity":32768,"compact":true,"ends":[4200,32760],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[1228,278,3358,7843,497,819,4158,267],"whole_prefill_s":28.0748571,"prefix_prefill_s":2.44775729,"extensions_s":25.7522325,"ok":true}
+{"exact":"PASS"}
++ LFM3_COMPACT_WINDOWS=1
++ /workspace/build/cont-dev1-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact-small
++ echo 'exact-small compact rc=0'
++ cat /workspace/build/cont-dev1/exact-small-compact.jsonl /workspace/build/cont-dev1/exact-small-compact.err
+exact-small compact rc=0
+{"mode":"exact","capacity":4096,"compact":true,"ends":[40,100],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[296,278,8086,3587,440,8047,405,7207],"whole_prefill_s":0.256911653,"prefix_prefill_s":0.217228312,"extensions_s":0.062822428,"ok":true}
+{"mode":"exact","capacity":4096,"compact":true,"ends":[100,300,301,305],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[309,440,12690,21182,1200,61512,385,8124],"whole_prefill_s":0.350580814,"prefix_prefill_s":0.254988605,"extensions_s":0.250924649,"ok":true}
+{"mode":"exact","capacity":8192,"compact":true,"ends":[4097,4224,4300,4400],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[310,278,4087,395,267,9470,589,835],"whole_prefill_s":2.5952951,"prefix_prefill_s":2.46713491,"extensions_s":0.328735659,"ok":true}
+{"exact":"PASS"}
++ /workspace/build/cont-dev1-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 speed
+speed rc=0
++ echo 'speed rc=0'
++ cat /workspace/build/cont-dev1/speed.jsonl /workspace/build/cont-dev1/speed.err
+{"mode":"speed","capacity":4096,"prefix":3072,"added":1,"extend_s":0.06120446,"whole_prefill_s":2.10923331,"token_at_a_time_s":0.015853642}
+{"mode":"speed","capacity":4096,"prefix":3072,"added":8,"extend_s":0.068287941,"whole_prefill_s":2.13023797,"token_at_a_time_s":0.12632262}
+{"mode":"speed","capacity":4096,"prefix":3072,"added":64,"extend_s":0.078452426,"whole_prefill_s":2.10546501,"token_at_a_time_s":1.00714831}
+{"mode":"speed","capacity":4096,"prefix":3072,"added":1024,"extend_s":0.655079007,"whole_prefill_s":2.7574361,"token_at_a_time_s":16.1559031}
+{"mode":"speed","capacity":4096,"prefix":1024,"added":1024,"extend_s":0.610352311,"whole_prefill_s":1.3516283,"token_at_a_time_s":16.1107789}
+{"mode":"speed","capacity":4096,"prefix":1,"added":4095,"extend_s":2.5321714,"whole_prefill_s":2.67835961,"token_at_a_time_s":-1}
+{"mode":"speed","capacity":32768,"prefix":31744,"added":1,"extend_s":0.07797536,"whole_prefill_s":27.0387204,"token_at_a_time_s":0.017645349}
+{"mode":"speed","capacity":32768,"prefix":31744,"added":8,"extend_s":0.080007332,"whole_prefill_s":27.3638076,"token_at_a_time_s":0.140734044}
+{"mode":"speed","capacity":32768,"prefix":31744,"added":64,"extend_s":0.099769495,"whole_prefill_s":27.4539413,"token_at_a_time_s":1.1205317}
+{"mode":"speed","capacity":32768,"prefix":31744,"added":1024,"extend_s":1.30714836,"whole_prefill_s":28.5545964,"token_at_a_time_s":17.9370436}
+{"mode":"speed","capacity":32768,"prefix":8192,"added":1024,"extend_s":0.725439812,"whole_prefill_s":5.71790011,"token_at_a_time_s":16.5220865}
+{"mode":"speed","capacity":32768,"prefix":16384,"added":16384,"extend_s":17.3569349,"whole_prefill_s":28.4745143,"token_at_a_time_s":-1}
+{"mode":"speed","capacity":32768,"prefix":1024,"added":31744,"extend_s":27.9802653,"whole_prefill_s":28.7226236,"token_at_a_time_s":-1}
+{"mode":"speed","capacity":32768,"prefix":1,"added":32767,"extend_s":28.535027,"whole_prefill_s":28.7638983,"token_at_a_time_s":-1}
++ /workspace/build/cont-dev1-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 decoded
+decoded rc=0
++ echo 'decoded rc=0'
++ cat /workspace/build/cont-dev1/decoded.jsonl /workspace/build/cont-dev1/decoded.err
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":32,"added":500,"max_abs_extend_vs_whole":0.136816978,"max_abs_tokens_vs_whole":0.130691051,"max_abs_extend_vs_tokens":0.133997679,"argmax":[3927,3927,3927],"follow_agree_extend_whole":3,"follow_agree_tokens_whole":3,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":300,"generated":32,"added":2000,"max_abs_extend_vs_whole":0.127651215,"max_abs_tokens_vs_whole":0.139511108,"max_abs_extend_vs_tokens":0.156955719,"argmax":[643,643,643],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":32,"added":1024,"max_abs_extend_vs_whole":0.139634609,"max_abs_tokens_vs_whole":0.13582623,"max_abs_extend_vs_tokens":0.146016121,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":5000,"generated":32,"added":20000,"max_abs_extend_vs_whole":0.155163765,"max_abs_tokens_vs_whole":0.100728035,"max_abs_extend_vs_tokens":0.159506083,"argmax":[25,25,25],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":30000,"generated":32,"added":1000,"max_abs_extend_vs_whole":0.139496803,"max_abs_tokens_vs_whole":0.154975891,"max_abs_extend_vs_tokens":0.119794071,"argmax":[302,302,302],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
++ date
+Wed Nov 25 06:01:30 MST 2026

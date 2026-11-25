@@ -1,0 +1,4 @@
+{"mode":"exact","capacity":4096,"compact":true,"ends":[40,100],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[296,278,8086,3587,440,8047,405,7207],"whole_prefill_s":0.256911653,"prefix_prefill_s":0.217228312,"extensions_s":0.062822428,"ok":true}
+{"mode":"exact","capacity":4096,"compact":true,"ends":[100,300,301,305],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[309,440,12690,21182,1200,61512,385,8124],"whole_prefill_s":0.350580814,"prefix_prefill_s":0.254988605,"extensions_s":0.250924649,"ok":true}
+{"mode":"exact","capacity":8192,"compact":true,"ends":[4097,4224,4300,4400],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[310,278,4087,395,267,9470,589,835],"whole_prefill_s":2.5952951,"prefix_prefill_s":2.46713491,"extensions_s":0.328735659,"ok":true}
+{"exact":"PASS"}

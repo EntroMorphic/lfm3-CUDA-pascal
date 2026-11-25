@@ -1,0 +1,63 @@
+remote.sh: tree sha256 446800b9dd730addf03c3f9e6eccc615a592778eb73140ab227011ce4299d109; 06f242b plus uncommitted changes
++ date
+Wed Nov 25 06:07:30 MST 2026
++ cd /workspace/lfm3-CUDA-pascal
++ B=/workspace/build
++ O=/workspace/build/cont-dev2
++ M=/workspace/models/LFM3-Omni-2B
++ T=/workspace/data/ppl-windows/windows-32768.i32
++ '[' -e /workspace/build/cont-dev2 ']'
++ mkdir -p /workspace/build/cont-dev2
++ tools/pascal/build_speech.sh cont-dev2-text
++ echo 'build text rc=0'
++ grep -h warnings /workspace/build/cont-dev2/build-text.log
+build text rc=0
+liquid-lfm3: warnings 0, sha256 7c50f9441a695aa510ad1b4c27cccfb0c7718a2a302d21e2fdfb940d1809712c, 4171416 bytes
+lfm3-score: warnings 0, sha256 918254c3db5cb7700fef7dab6e45042814ea6dcba2333c9fc5723f6c327b707d, 4036040 bytes
+lfm3-continuation-check: warnings 0, sha256 74a85187183551ce26016f7c3ca5f9e33b135b8995c3629669d26fb0f709b439, 4057176 bytes
+lfm3-speech: warnings 0, sha256 0480b3924a7aa3423600c7c2e78280f3755c8c58186b3b3c684c3e401775adaa, 5895984 bytes
+liquid-lfm3-worker: warnings 0, sha256 097c0c97ad885220fe24af7f6bc990d7dd44dbd9fc3f0df3b66294acc251e5d8, 5809408 bytes
+liquid-lfm3-server: warnings 0, sha256 da5edf5befeb8bdcfd28d4e2d9c47295331ae058a3a4012ea84058e4e0c7fdb4, 6355768 bytes
+lfm3-vision-check: warnings 0, sha256 491ddc309743cb6b2d8b49729556e1dea859e6077661e69a258ffc48ce76329d, 4093048 bytes
+text-sampling-oracle: warnings 0, sha256 ff3c1ddb582e3050fd3bd0c7ab810c45de92389b711a15e7c2fff1fefce0f3a9, 91584 bytes
++ C=/workspace/build/cont-dev2-text/lfm3-continuation-check
++ /workspace/build/cont-dev2-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact-small
+++ tail -1 /workspace/build/cont-dev2/exact-small.jsonl
++ echo 'exact-small rc=0 {"exact":"PASS"}'
++ cat /workspace/build/cont-dev2/exact-small.err
+exact-small rc=0 {"exact":"PASS"}
++ LFM3_COMPACT_WINDOWS=1
++ /workspace/build/cont-dev2-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 exact-small
+++ tail -1 /workspace/build/cont-dev2/exact-small-compact.jsonl
+exact-small compact rc=0 {"exact":"PASS"}
++ echo 'exact-small compact rc=0 {"exact":"PASS"}'
++ cat /workspace/build/cont-dev2/exact-small-compact.err
++ /workspace/build/cont-dev2-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 decoded
+++ grep -c decoded /workspace/build/cont-dev2/decoded.jsonl
++ echo 'decoded rc=0 8'
+decoded rc=0 8
++ cat /workspace/build/cont-dev2/decoded.jsonl /workspace/build/cont-dev2/decoded.err
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":32,"added":500,"max_abs_extend_vs_whole":0.136816978,"max_abs_tokens_vs_whole":0.130691051,"max_abs_extend_vs_tokens":0.133997679,"argmax":[3927,3927,3927],"follow_agree_extend_whole":3,"follow_agree_tokens_whole":3,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":300,"generated":32,"added":2000,"max_abs_extend_vs_whole":0.127651215,"max_abs_tokens_vs_whole":0.139511108,"max_abs_extend_vs_tokens":0.156955719,"argmax":[643,643,643],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":400,"added":600,"max_abs_extend_vs_whole":0.185012341,"max_abs_tokens_vs_whole":0.153962135,"max_abs_extend_vs_tokens":0.15495491,"argmax":[1200,1200,1200],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":32,"added":1024,"max_abs_extend_vs_whole":0.139634609,"max_abs_tokens_vs_whole":0.13582623,"max_abs_extend_vs_tokens":0.146016121,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":5000,"generated":32,"added":20000,"max_abs_extend_vs_whole":0.155163765,"max_abs_tokens_vs_whole":0.100728035,"max_abs_extend_vs_tokens":0.159506083,"argmax":[25,25,25],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":30000,"generated":32,"added":1000,"max_abs_extend_vs_whole":0.139496803,"max_abs_tokens_vs_whole":0.154975891,"max_abs_extend_vs_tokens":0.119794071,"argmax":[302,302,302],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":400,"added":1024,"max_abs_extend_vs_whole":0.144400597,"max_abs_tokens_vs_whole":0.147174358,"max_abs_extend_vs_tokens":0.14164257,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":4500,"generated":400,"added":300,"max_abs_extend_vs_whole":0.172657967,"max_abs_tokens_vs_whole":0.134462357,"max_abs_extend_vs_tokens":0.135250092,"argmax":[1033,1033,1033],"follow_agree_extend_whole":12,"follow_agree_tokens_whole":12,"follow_agree_extend_tokens":16,"of":16}
++ LFM3_COMPACT_WINDOWS=1
++ /workspace/build/cont-dev2-text/lfm3-continuation-check /workspace/models/LFM3-Omni-2B /workspace/data/ppl-windows/windows-32768.i32 decoded
+++ grep -c decoded /workspace/build/cont-dev2/decoded-compact.jsonl
+decoded compact rc=0 8
++ echo 'decoded compact rc=0 8'
++ cat /workspace/build/cont-dev2/decoded-compact.jsonl /workspace/build/cont-dev2/decoded-compact.err
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":32,"added":500,"max_abs_extend_vs_whole":0.136816978,"max_abs_tokens_vs_whole":0.130691051,"max_abs_extend_vs_tokens":0.133997679,"argmax":[3927,3927,3927],"follow_agree_extend_whole":3,"follow_agree_tokens_whole":3,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":300,"generated":32,"added":2000,"max_abs_extend_vs_whole":0.127651215,"max_abs_tokens_vs_whole":0.139511108,"max_abs_extend_vs_tokens":0.156955719,"argmax":[643,643,643],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":4096,"prefix":1000,"generated":400,"added":600,"max_abs_extend_vs_whole":0.185012341,"max_abs_tokens_vs_whole":0.153962135,"max_abs_extend_vs_tokens":0.15495491,"argmax":[1200,1200,1200],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":32,"added":1024,"max_abs_extend_vs_whole":0.139634609,"max_abs_tokens_vs_whole":0.13582623,"max_abs_extend_vs_tokens":0.146016121,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":5000,"generated":32,"added":20000,"max_abs_extend_vs_whole":0.155163765,"max_abs_tokens_vs_whole":0.100728035,"max_abs_extend_vs_tokens":0.159506083,"argmax":[25,25,25],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":30000,"generated":32,"added":1000,"max_abs_extend_vs_whole":0.139496803,"max_abs_tokens_vs_whole":0.154975891,"max_abs_extend_vs_tokens":0.119794071,"argmax":[302,302,302],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":8000,"generated":400,"added":1024,"max_abs_extend_vs_whole":0.144400597,"max_abs_tokens_vs_whole":0.147174358,"max_abs_extend_vs_tokens":0.14164257,"argmax":[467,467,467],"follow_agree_extend_whole":16,"follow_agree_tokens_whole":16,"follow_agree_extend_tokens":16,"of":16}
+{"mode":"decoded","capacity":32768,"prefix":4500,"generated":400,"added":300,"max_abs_extend_vs_whole":0.172657967,"max_abs_tokens_vs_whole":0.134462357,"max_abs_extend_vs_tokens":0.135250092,"argmax":[1033,1033,1033],"follow_agree_extend_whole":12,"follow_agree_tokens_whole":12,"follow_agree_extend_tokens":16,"of":16}
++ date
+Wed Nov 25 06:34:48 MST 2026

@@ -1,0 +1,62 @@
+{
+ "expect": "shipping",
+ "worker": {
+  "1024": {
+   "prompt": 2024,
+   "reused_tokens": 1000,
+   "expected": 1000,
+   "seconds": 0.63,
+   "ok": true
+  },
+  "1025": {
+   "prompt": 2025,
+   "reused_tokens": 1000,
+   "expected": 1000,
+   "seconds": 0.68,
+   "ok": true
+  },
+  "7000": {
+   "prompt": 8000,
+   "reused_tokens": 1000,
+   "expected": 1000,
+   "seconds": 4.28,
+   "ok": true
+  }
+ },
+ "long": {
+  "seed_consumed": 970,
+  "status": 200,
+  "seconds": 23.5,
+  "reused_tokens": 970,
+  "consumed_tokens": 28882,
+  "error": null,
+  "health_status": 200,
+  "health": {
+   "ready": true,
+   "gpu_batching": false
+  },
+  "ok": true
+ },
+ "again": {
+  "reused_tokens": 28882,
+  "previous_consumed": 28882,
+  "ok": true
+ },
+ "batch": {
+  "seconds": 6.2,
+  "reused": [
+   970,
+   970
+  ],
+  "seeds": [
+   970,
+   970
+  ],
+  "consumed": [
+   6089,
+   6089
+  ],
+  "ok": true
+ },
+ "server_exit": 0
+}

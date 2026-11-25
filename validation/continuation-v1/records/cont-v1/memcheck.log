@@ -1,0 +1,6 @@
+========= COMPUTE-SANITIZER
+{"mode":"exact","capacity":4096,"compact":false,"ends":[40,100],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[296,278,8086,3587,440,8047,405,7207],"whole_prefill_s":7.81970104,"prefix_prefill_s":6.84401137,"extensions_s":2.15562756,"ok":true}
+{"mode":"exact","capacity":4096,"compact":false,"ends":[100,300,301,305],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[309,440,12690,21182,1200,61512,385,8124],"whole_prefill_s":10.9816996,"prefix_prefill_s":7.80096615,"extensions_s":8.25020652,"ok":true}
+{"mode":"exact","capacity":8192,"compact":true,"ends":[4097,4224,4300,4400],"logits_identical":true,"cache_identical":true,"decode_steps_identical":8,"decode_ids":[310,278,4087,395,267,9470,589,835],"whole_prefill_s":79.0100398,"prefix_prefill_s":74.5132592,"extensions_s":10.1906996,"ok":true}
+{"exact":"PASS"}
+========= ERROR SUMMARY: 0 errors

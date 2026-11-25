@@ -107,9 +107,10 @@ It fits only with all three of:
 2. **Row-tiled prefill scratch** (change 2 and the rest). At 121 KiB per token, 262,144 tokens need about 31 GiB.
 3. **Chunked prefill.** A one-pass prefill keeps the hidden state of every row (4 KiB per token: 1,024 MiB) and the
    shared windowed-layer scratch (2 KiB per token: 512 MiB), leaving under 100 MiB. Prefilling the prompt in chunks
-   through the cache avoids both. The engine cannot do this today: `Runner::forward` accepts an empty-cache prefill
-   or a single-token decode. Hugging Face has such a path (`tools/ppl_reference.py --chunk-rows`), which is what a
-   chunked engine would be compared with.
+   through the cache avoids both. The engine has the mechanism: since [continuation-v1](../validation/continuation-v1/),
+   `Runner::extend` prefills rows after a filled cache. Its buffers are still sized for the whole capacity; making
+   them chunk-sized is the remaining step. Hugging Face has such a path (`tools/ppl_reference.py --chunk-rows`), which
+   is what a chunked engine would be compared with.
 
 Not known:
 
